@@ -11,16 +11,33 @@ function Login() {
 
                 <div className="text-center space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
-                    Welcome back 👋
+                    Create Your Account 🚀
                 </h2>
-                <p className="text-gray-600">Login to continue.</p>
+                <p className="text-gray-600">Join the community today.</p>
                 </div>
 
                 <div className="space-y-4">
                 <div className="space-y-2">
                     <input
+                    type="string"
+                    placeholder="Username"
+                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                </div>
+
+                <div className="flex justify-between space-y-2 space-x-2">
+                    <input
                     type="email"
                     placeholder="Email"
+                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button className="w-50 bg-blue-600 cursor-pointer text-white h-12 rounded-lg hover:bg-blue-700">Get OTP</button>
+                </div>
+
+                <div className="space-y-2">
+                    <input
+                    type="number"
+                    placeholder="Enter OTP"
                     className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
@@ -28,19 +45,21 @@ function Login() {
                 <div className="space-y-2">
                     <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Enter Password"
                     className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
-                <div className="text-left">
-                    <button className="text-sm text-blue-600 hover:underline cursor-pointer">
-                    Forgot password?
-                    </button>
+                <div className="space-y-2">
+                    <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
                 </div>
 
                 <button className="w-full h-12 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
-                    Login
+                    Signup
                 </button>
                 </div>
 
@@ -69,14 +88,14 @@ function Login() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                 </svg>
-                <span>Continue with Google</span>
+                <span>Signup with Google</span>
                 </button>
 
                 <div className="text-center">
                 <span className="text-sm text-gray-600">
-                    Dont have an account?{" "}
+                    Already have an account?{" "}
                     <button className="text-blue-600 hover:underline cursor-pointer">
-                    Sign Up
+                    Login
                     </button>
                 </span>
                 </div>
