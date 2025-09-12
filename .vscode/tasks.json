@@ -6,6 +6,18 @@
             "type": "shell",
             "command": "npm run dev",
             "options": { "cwd": "frontend"}
+        },
+        {
+            "label": "watch api-gateway",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/api-gateway"}
+        },
+        {
+            "label": "run api-gateway",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/api-gateway"}
         }
     ]
 }
