@@ -18,6 +18,18 @@
             "type": "shell",
             "command": "npm run dev",
             "options": {"cwd": "backend/api-gateway"}
+        },
+        {
+            "label": "watch user-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/user-service"}
+        },
+        {
+            "label": "run user-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/user-service"}
         }
     ]
 }
