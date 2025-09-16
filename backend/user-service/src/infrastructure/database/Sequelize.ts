@@ -15,6 +15,7 @@ export const sequelize = new Sequelize(
 export const connectDB = async () =>{
     try {
         await sequelize.authenticate()
+        await sequelize.sync({ alter: true });
         console.log('PSQL database connected successfully!')
     } catch (error) {
         console.log('Database connection failed', error)

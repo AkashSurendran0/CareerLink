@@ -5,7 +5,8 @@ import { UserModel } from "../models/UserModel";
 export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
-        const userDoc=await UserModel.findOne({where: {email}})
+        const userDoc=await UserModel.findOne({where: {email}, raw:true})
+        console.log(userDoc, 'userdoc')
         if(!userDoc) return null
         return new User(
             userDoc.id.toString(), 
