@@ -24,6 +24,7 @@ export class SignupUser {
             '',
             username,
             email, 
+            '',
             hashedPass,
             false
         )

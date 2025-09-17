@@ -6,13 +6,13 @@ export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
         const userDoc=await UserModel.findOne({where: {email}, raw:true})
-        console.log(userDoc, 'userdoc')
         if(!userDoc) return null
         return new User(
             userDoc.id.toString(), 
             userDoc.username, 
             userDoc.email, 
-            userDoc.password, 
+            userDoc.password,
+            userDoc.googleId, 
             userDoc.suspended
         )
     }
@@ -22,14 +22,32 @@ export class UserRepository implements IUserRepository {
             username:user.username, 
             email: user.email, 
             password:user.password,
-            suspended: user.suspended ?? false
         })
+        const userData=userDoc.get({plain:true})
         return new User(
-            userDoc.id.toString(), 
-            userDoc.username, 
-            userDoc.email, 
-            userDoc.password, 
-            userDoc.suspended
+            userData.id.toString(), 
+            userData.username, 
+            userData.email, 
+            userData.password, 
+            userData.googleId,
+            userData.suspended
+        )
+    }
+
+    async createUserWithGoogle(email: string, googleId: string, username: string): Promise<User> {
+        const user=await UserModel.create({
+            username: username, 
+            email: email,
+            googleId: googleId
+        })
+        const userData=user.get({plain:true})
+        return new User(
+            userData.id.toString(), 
+            userData.username, 
+            userData.email, 
+            userData.password, 
+            userData.googleId,
+            userData.suspended
         )
     }
 
