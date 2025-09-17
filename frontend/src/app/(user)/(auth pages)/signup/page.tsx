@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 
-function Login() {
+function Signup() {
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
@@ -138,13 +138,13 @@ function Login() {
             return
         }
 
-        if(!correctOtp){
-            setErrors({otp:'Please enter a valid Username'})
+        if(!localStorage.getItem('signinDetails')){
+            setErrors({otp: 'OTP expired'})
             return
         }
 
-        if(!localStorage.getItem('signinDetails')){
-            setErrors({otp: 'OTP expired'})
+        if(!correctOtp){
+            setErrors({otp:'Please enter a valid OTP'})
             return
         }
 
@@ -164,12 +164,8 @@ function Login() {
         }
 
         const result=await axios.post('http://localhost:5000/user/signup', signupForm)
-        console.log(result)
         if(!result.data.token.success){
-            enqueueSnackbar(result.data.token.message, {variant:'error'})
-        }
-        if(!result.data.token.success){
-            enqueueSnackbar(result.data.token.message, {variant:'error'})
+            return enqueueSnackbar(result.data.token.message, {variant:'error'})
         }
 
         router.push('/feed')
@@ -331,4 +327,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Signup;
