@@ -4,8 +4,10 @@ import React,{ useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 function Login() {
+    const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
     const [sendOtp, setSendOtp]=useState(false)
@@ -166,6 +168,15 @@ function Login() {
         if(!result.data.token.success){
             enqueueSnackbar(result.data.token.message, {variant:'error'})
         }
+        if(!result.data.token.success){
+            enqueueSnackbar(result.data.token.message, {variant:'error'})
+        }
+
+        router.push('/feed')
+    }
+
+    const googleSignup = async () =>{
+        window.location.href='http://localhost:5000/user/google'
     }
 
 
@@ -272,7 +283,7 @@ function Login() {
                     <div className="flex-1 h-px bg-gray-300"></div>
                     </div>
 
-                    <button className="w-full h-12 bg-white border border-gray-300 text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 cursor-pointer">
+                    <button className="w-full h-12 bg-white border border-gray-300 text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 cursor-pointer" onClick={googleSignup}>
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                         <path
                         fill="#4285F4"

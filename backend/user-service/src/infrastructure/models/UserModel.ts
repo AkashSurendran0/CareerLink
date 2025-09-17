@@ -6,6 +6,7 @@ export class UserModel extends Model {
     public username!: string;
     public email!: string;
     public password!: string;
+    public googleId!: string;
     public suspended!: boolean
 }
 
@@ -26,7 +27,11 @@ UserModel.init(
         },
         password:{
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
+        },
+        googleId:{
+            type: DataTypes.STRING,
+            allowNull: true
         },
         suspended:{
             type: DataTypes.BOOLEAN,
