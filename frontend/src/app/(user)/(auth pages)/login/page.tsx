@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function Login() {
     const router=useRouter()
@@ -96,7 +97,7 @@ function Login() {
 
                     <div className="text-left">
                         <button className="text-sm text-blue-600 hover:underline cursor-pointer">
-                        Forgot password?
+                        <Link href={'/resetPassword'}>Forgot password?</Link>
                         </button>
                     </div>
 
@@ -137,7 +138,7 @@ function Login() {
                     <span className="text-sm text-gray-600">
                         Dont have an account?{" "}
                         <button className="text-blue-600 hover:underline cursor-pointer">
-                        Sign Up
+                        <Link href={'/signup'}>Sign Up</Link>
                         </button>
                     </span>
                     </div>

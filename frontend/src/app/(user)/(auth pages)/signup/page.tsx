@@ -5,6 +5,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function Signup() {
     const router=useRouter()
@@ -303,9 +304,9 @@ function Signup() {
 
                     <div className="text-center">
                     <span className="text-sm text-gray-600">
-                        Already have an account?{" "}
+                        Already have an account?
                         <button className="text-blue-600 hover:underline cursor-pointer">
-                        Login
+                        <Link href={'/login'}>Login</Link>
                         </button>
                     </span>
                     </div>
