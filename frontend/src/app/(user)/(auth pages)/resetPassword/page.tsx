@@ -5,6 +5,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function ForgotPassword() {
     const router=useRouter()
@@ -251,9 +252,9 @@ function ForgotPassword() {
 
                     <div className="text-center">
                     <span className="text-sm text-gray-600">
-                        Back to Login?{" "}
+                        Back to Login?
                         <button className="text-blue-600 hover:underline cursor-pointer">
-                        Login
+                        <Link href={'/login'}>Login</Link>
                         </button>
                     </span>
                     </div>
