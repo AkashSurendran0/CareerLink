@@ -51,4 +51,23 @@ export class UserRepository implements IUserRepository {
         )
     }
 
+    async updateUserPassword(email:string, password:string): Promise<User> {
+        const [rowsUpdated, updatedUsers]= await UserModel.update(
+            {password},
+            {
+                where:{email},
+                returning:true
+            }
+        )
+        const updatedUser=updatedUsers[0]!.get({plain:true})
+        return new User(
+            updatedUser.id.toString(), 
+            updatedUser.username, 
+            updatedUser.email, 
+            updatedUser.password, 
+            updatedUser.googleId,
+            updatedUser.suspended
+        )
+    }
+
 }

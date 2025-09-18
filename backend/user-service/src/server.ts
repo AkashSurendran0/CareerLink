@@ -1,6 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import AuthRouter from './routes/authRoutes'
+import AuthRouter from './routes/UserRoutes'
 import { connectDB } from './infrastructure/database/Sequelize'
 import passport from 'passport'
 import session from 'express-session'

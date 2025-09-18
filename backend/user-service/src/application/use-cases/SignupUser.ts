@@ -11,7 +11,7 @@ export class SignupUser {
         this.userRepository=userRepository
     }
 
-    async createUser(username:string, email:string, password:string): Promise<string | {success:boolean, message:string}> {
+    async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
         const userExists=await this.userRepository.findByEmail(email)
         if(userExists){
             return {
@@ -24,8 +24,8 @@ export class SignupUser {
             '',
             username,
             email, 
-            '',
             hashedPass,
+            '',
             false
         )
         const newuser=await this.userRepository.create(user)
@@ -34,7 +34,10 @@ export class SignupUser {
             'jwt_secret',
             {expiresIn: '1h'}
         )
-        return token
+        return {
+                success:true, 
+                token: token
+            }
     }
 }
 
