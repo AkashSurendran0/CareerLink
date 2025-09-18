@@ -2,8 +2,9 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { Mailer } from "../../utils/MailHelper";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-
-export class ChangePass {
+import { IChangePass } from "../../domain/use-cases/IUserUseCase";
+import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
+export class ChangePass implements IChangePass {
     private userRepository:IUserRepository
 
     constructor(userRepository:IUserRepository){
@@ -22,7 +23,7 @@ export class ChangePass {
     }
 }
 
-export class SendResetOTP {
+export class SendResetOTP implements ISendResetOtp {
     private mailer:Mailer
     private userRepository:IUserRepository
 

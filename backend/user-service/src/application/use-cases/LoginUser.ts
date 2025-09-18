@@ -1,9 +1,9 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
-import { User } from "../../domain/entities/User";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
 
-export class LoginUser {
+export class LoginUser implements ILoginUser {
     private userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository){
