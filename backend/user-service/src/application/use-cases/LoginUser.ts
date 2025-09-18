@@ -10,15 +10,22 @@ export class LoginUser {
         this.userRepository=userRepository
     }
 
-    async execute(email:string, password:string): Promise<string> {
+    async execute(email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
         const user=await this.userRepository.findByEmail(email)
         if(!user){
-            throw new Error('No user found')
+            return {
+                success: false,
+                message: 'User not found'
+            }
         }
-
+        console.log(user)
         const isMatch=await bcrypt.compare(password, user.password)
+        console.log(isMatch)
         if(!isMatch){
-            throw new Error('Incorrect Password')
+            return {
+                success: false,
+                message: 'Invalid Credentials'
+            }
         }
 
         const token=jwt.sign(
@@ -27,6 +34,9 @@ export class LoginUser {
             {expiresIn: '1h'}
         )
 
-        return token
+        return {
+                success:true, 
+                token: token
+            }
     }
 }

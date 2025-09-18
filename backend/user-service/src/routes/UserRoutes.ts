@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { AuthController } from "../interfaces/controllers/AuthController";
+import { UserController } from "../interfaces/controllers/UserController";
 import passport from "passport";
 
 const router=Router()
-const authController=new AuthController()
+const userController=new UserController()
 
-router.post('/login', authController.login)
-router.post('/signup', authController.signup)
-router.post('/sendOTP', authController.sendOtp)
+router.post('/login', userController.login)
+router.post('/signup', userController.signup)
+router.post('/sendOTP', userController.sendOtp)
 router.get(
     '/google', 
     passport.authenticate('google', {scope:['profile', 'email']})
@@ -19,5 +19,7 @@ router.get(
         res.redirect('http://localhost:3000/feed')
     }
 )
+router.post('/changePassword', userController.changePassword)
+router.post('/sendResetOTP', userController.sendPassResetOtp)
 
 export default router
