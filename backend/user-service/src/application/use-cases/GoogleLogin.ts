@@ -1,7 +1,8 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import jwt from 'jsonwebtoken'
+import { IGoogleLogin } from "../../domain/use-cases/IUserUseCase";
 
-export class GoogleLogin {
+export class GoogleLogin implements IGoogleLogin {
     private userRepository:IUserRepository
 
     constructor(userRepository: IUserRepository){

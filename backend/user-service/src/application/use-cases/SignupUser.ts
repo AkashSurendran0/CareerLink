@@ -3,8 +3,10 @@ import { User } from "../../domain/entities/User";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { Mailer } from "../../utils/MailHelper";
+import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
+import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
 
-export class SignupUser {
+export class SignupUser implements ISignupUser {
     private userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository){
@@ -41,7 +43,7 @@ export class SignupUser {
     }
 }
 
-export class SendOTP {
+export class SendOTP implements ISendOtp {
     private mailer:Mailer
 
     constructor(){
