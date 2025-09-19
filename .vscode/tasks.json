@@ -30,6 +30,18 @@
             "type": "shell",
             "command": "npm run dev",
             "options": {"cwd": "backend/user-service"}
+        },
+        {
+            "label": "watch admin-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/admin-service"}
+        },
+        {
+            "label": "run admin-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/admin-service"}
         }
     ]
 }
