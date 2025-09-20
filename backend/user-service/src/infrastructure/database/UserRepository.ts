@@ -74,6 +74,11 @@ export class UserRepository implements IUserRepository {
         )
     }
 
+    async getAllUsersCount(): Promise<number> {
+        const users=await UserModel.findAll({raw:true})
+        return users.length
+    }
+
     async getUsers(page: number, limit: number): Promise<User[]> {
         const offset=(page-1)*limit 
         const users=await UserModel.findAll({raw:true, offset, limit}) 

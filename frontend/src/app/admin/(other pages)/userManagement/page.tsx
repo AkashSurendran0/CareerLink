@@ -14,20 +14,28 @@ type User = {
 
 function UserManagement() {
     const [users, setUsers]=useState<User[]>([])
+    const [pageLimit, setPageLimit]=useState(0)
+    const [page, setPage]=useState(1)
     
     useEffect(()=>{
         const fetchUsers= async () => {
-            const result=await axios.get('http://localhost:5000/user/getUsers?page=1&limit=2')
-            setUsers(result.data.users)
-            console.log(result.data)
+            const result=await axios.get('http://localhost:5000/user/getUsers?page=1&limit=3')
+            setUsers(result.data.users.result)
+            console.log(result.data.users.pageLimit)
+            setPageLimit(result.data.users.pageLimit)
         }
         fetchUsers()
-        console.log(users)
+
     }, [])
+
+    const getPaginatedUsers = async (i: number) =>{
+        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${i}&limit=3`)
+        setUsers(result.data.users.result)
+        setPage(i)
+    }
 
     return (
         <div className="flex-1">
-            {/* Header */}
             <div className="bg-white border-b border-gray-200 px-8 py-6">
             <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                 <div>
@@ -42,9 +50,7 @@ function UserManagement() {
             </div>
             </div>
 
-            {/* Content */}
             <div className="p-8">
-            {/* Search Bar */}
             <div className="mb-6">
                 <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
@@ -56,7 +62,6 @@ function UserManagement() {
                 </div>
             </div>
 
-            {/* Premium Users Section */}
             <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900">All Users</h2>
             </div>
@@ -78,7 +83,6 @@ function UserManagement() {
                 </label>
             </div>
 
-            {/* Users Table */}
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                 <table className="w-full">
@@ -135,15 +139,27 @@ function UserManagement() {
                 </table>
                 </div>
 
-                {/* Pagination */}
                 <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">‹</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">2</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">3</button>
-                <span className="text-gray-400">...</span>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">10</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">›</button>
+                <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                disabled={page==1? true:false}
+                onClick={()=>getPaginatedUsers(page-1)}
+                >‹</button>
+                { pageLimit &&  
+                    Array.from({length: pageLimit}, (_, i) => i+1)
+                    .filter(p=>{
+                        console.log(p)
+                        if(p==1) return p<=3
+                        if(p==pageLimit) return p>=pageLimit-2
+                        return p>=page-1 && p<=page+1
+                    })
+                    .map(p=>
+                        <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedUsers(p)}>{p}</button>
+                    )
+                }
+                <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                disabled={page==pageLimit? true:false}
+                onClick={()=>getPaginatedUsers(page+1)}
+                >›</button>
                 </div>
             </div>
             </div>
