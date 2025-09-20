@@ -28,7 +28,7 @@ export class SignupUser implements ISignupUser {
             email, 
             hashedPass,
             '',
-            false,
+            false
         )
         const newuser=await this.userRepository.create(user)
         const token=jwt.sign(
