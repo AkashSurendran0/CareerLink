@@ -1,42 +1,29 @@
-import React from 'react'
+"use client"
+
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import axios from 'axios'
+
+type User = {
+    id:string,
+    username:string,
+    email:string,
+    createdAt:Date,
+    status:boolean    
+}
 
 function UserManagement() {
-    const users = [
-        {
-            id: 1,
-            name: "Emma H",
-            email: "emma.h@email.com",
-            dateJoined: "2022-01-15",
-            status: "Active",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 2,
-            name: "Liam D",
-            email: "liam.d@email.com",
-            dateJoined: "2022-03-22",
-            status: "Active",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 3,
-            name: "Olivia R",
-            email: "olivia.r@email.com",
-            dateJoined: "2022-05-10",
-            status: "Suspended",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 4,
-            name: "Olivia R",
-            email: "olivia.r@email.com",
-            dateJoined: "2022-05-10",
-            status: "Suspended",
-            avatar: "/logo.jpeg",
-        },
-    ]
-
+    const [users, setUsers]=useState<User[]>([])
+    
+    useEffect(()=>{
+        const fetchUsers= async () => {
+            const result=await axios.get('http://localhost:5000/user/getUsers?page=1&limit=2')
+            setUsers(result.data.users)
+            console.log(result.data)
+        }
+        fetchUsers()
+        console.log(users)
+    }, [])
 
     return (
         <div className="flex-1">
@@ -105,41 +92,41 @@ function UserManagement() {
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                    {users.map((user) => (
+                    {users && users.map((user) => (
                         <tr key={user.id} className="hover:bg-gray-50">
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
-                            <Image
+                            {/* <Image
                                 src={user.avatar || "/placeholder.svg"}
                                 alt={user.name}
                                 width={300}
                                 height={300}
                                 className="w-8 h-8 rounded-full object-cover"
-                            />
-                            <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                            /> */}
+                            <span className="text-sm font-medium text-gray-900">{user.username}</span>
                             </div>
                         </td>
                         <td className="py-4 px-6 text-sm text-gray-600">{user.email}</td>
-                        <td className="py-4 px-6 text-sm text-gray-600">{user.dateJoined}</td>
+                        <td className="py-4 px-6 text-sm text-gray-600">{new Date(user.createdAt).toLocaleDateString()}</td>
                         <td className="py-4 px-6">
                             <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                user.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                user.status? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
                             }`}
                             >
-                            {user.status}
+                            {user.status? 'Suspended':'Active'}
                             </span>
                         </td>
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-1 text-sm">
-                            <button className="text-blue-600 hover:text-blue-800">View</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800">
-                                {user.status === "Active" ? "Suspend" : "Suspend"}
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">
+                                {user.status? "make Active" : "Suspend"}
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800">Upgrade/</button>
-                            <button className="text-blue-600 hover:text-blue-800">Downgrade</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
                             </div>
                         </td>
                         </tr>
