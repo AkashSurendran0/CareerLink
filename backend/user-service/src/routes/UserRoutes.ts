@@ -21,5 +21,6 @@ router.get(
 )
 router.post('/changePassword', userController.changePassword)
 router.post('/sendResetOTP', userController.sendPassResetOtp)
+router.get('/getUsers', userController.getPageUsers)
 
 export default router

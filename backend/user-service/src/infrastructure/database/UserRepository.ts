@@ -13,7 +13,8 @@ export class UserRepository implements IUserRepository {
             userDoc.email, 
             userDoc.password,
             userDoc.googleId, 
-            userDoc.suspended
+            userDoc.suspended,
+            userDoc.createdAt
         )
     }
 
@@ -30,7 +31,8 @@ export class UserRepository implements IUserRepository {
             userData.email, 
             userData.password, 
             userData.googleId,
-            userData.suspended
+            userData.suspended,
+            userData.createdAt
         )
     }
 
@@ -47,7 +49,8 @@ export class UserRepository implements IUserRepository {
             userData.email, 
             userData.password, 
             userData.googleId,
-            userData.suspended
+            userData.suspended,
+            userData.createdAt
         )
     }
 
@@ -66,7 +69,24 @@ export class UserRepository implements IUserRepository {
             updatedUser.email, 
             updatedUser.password, 
             updatedUser.googleId,
-            updatedUser.suspended
+            updatedUser.suspended,
+            updatedUser.createdAt
+        )
+    }
+
+    async getUsers(page: number, limit: number): Promise<User[]> {
+        const offset=(page-1)*limit 
+        const users=await UserModel.findAll({raw:true, offset, limit}) 
+        return users.map((user:any)=> 
+            new User( 
+                user.id.toString(), 
+                user.username, 
+                user.email, 
+                user.password, 
+                user.googleId, 
+                user.suspended,
+                user.createdAt
+            ) 
         )
     }
 

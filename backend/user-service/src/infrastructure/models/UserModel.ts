@@ -8,6 +8,8 @@ export class UserModel extends Model {
     public password!: string;
     public googleId!: string;
     public suspended!: boolean
+
+    public readonly createdAt!:Date
 }
 
 UserModel.init(

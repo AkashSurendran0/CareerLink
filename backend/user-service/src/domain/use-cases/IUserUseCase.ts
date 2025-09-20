@@ -21,3 +21,7 @@ export interface ISignupUser {
 export interface ISendOtp {
      mailOtp(email:string):Promise<number>
 }
+
+export interface GetUsers {
+    getUsers(page:number, limit:number):Promise<{id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[]>
+}

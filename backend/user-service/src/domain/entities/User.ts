@@ -5,6 +5,7 @@ export class User {
         public email:string,
         public password:string,
         public googleId:string,
-        public suspended:boolean
+        public suspended:boolean,
+        public createdAt?:Date
     ){}
 }
