@@ -162,7 +162,8 @@ function ForgotPassword() {
         }
 
         const result=await axios.post('http://localhost:5000/user/changePassword', signupForm)
-        console.log(result.data)
+
+        localStorage.setItem('token', result.data.token)
         router.push('/feed')
     }
 
