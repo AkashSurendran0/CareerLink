@@ -34,7 +34,7 @@ export class SignupUser implements ISignupUser {
         const token=jwt.sign(
             {id:newuser.id, email:email},
             'jwt_secret',
-            {expiresIn: '1h'}
+            {expiresIn: '3h'}
         )
         return {
                 success:true, 

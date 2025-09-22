@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { UserController } from "../interfaces/controllers/UserController";
 import passport from "passport";
+import { UserDetailsController } from "../interfaces/controllers/UserDetailsController";
 
 const router=Router()
 const userController=new UserController()
+const userDetailsController=new UserDetailsController()
 
 router.post('/login', userController.login)
 router.post('/signup', userController.signup)
@@ -22,5 +24,6 @@ router.get(
 router.post('/changePassword', userController.changePassword)
 router.post('/sendResetOTP', userController.sendPassResetOtp)
 router.get('/getUsers', userController.getPageUsers)
+router.post('/addUserDetails', userDetailsController.insertUserDetails)
 
 export default router

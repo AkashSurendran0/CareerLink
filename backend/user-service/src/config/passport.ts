@@ -1,7 +1,7 @@
 import passport from 'passport'
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import { GoogleLogin } from '../application/use-cases/GoogleLogin'
-import { UserRepository } from '../infrastructure/database/UserRepository'
+import { UserRepository } from '../infrastructure/repositories/UserRepository'
 import dotenv from 'dotenv'
 
 dotenv.config()

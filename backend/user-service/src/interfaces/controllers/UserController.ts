@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserRepository } from "../../infrastructure/database/UserRepository";
+import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { LoginUser } from "../../application/use-cases/LoginUser";
 import { SignupUser } from "../../application/use-cases/SignupUser";
 import { SendOTP } from "../../application/use-cases/SignupUser";
