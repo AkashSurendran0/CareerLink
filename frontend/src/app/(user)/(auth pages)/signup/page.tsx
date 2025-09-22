@@ -171,7 +171,7 @@ function Signup() {
 
         localStorage.setItem('token', result.data.token.token)
 
-        router.push('/feed')
+        router.push('/welcomePage')
     }
 
     const googleSignup = async () =>{
