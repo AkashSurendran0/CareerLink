@@ -45,6 +45,8 @@ function Login() {
             return enqueueSnackbar(result.data.token.message, {variant:'error'})
         }
 
+        localStorage.setItem('token', result.data.token.token)
+
         router.push('/feed')
     }
 
