@@ -7,15 +7,22 @@ import { useRouter } from "next/navigation"
 export default function ProfileForm() {
   const router=useRouter()
   const [skillsFields, setSkillsFields] = useState([{ id: 1, value: "" }])
-  const [educationFields, setEducationFields] = useState([{ id: 1, value: "" }])
-  const [experienceFields, setExperienceFields] = useState([{ id: 1, value: "" }])
+  const [educationFields, setEducationFields] = useState([{ id: 1, degree:"", university:"", passingYear:"" }])
+  const [experienceFields, setExperienceFields] = useState([{ id: 1, company:'', experience:'' }])
   const [detailsForm, setDetailsForm]=useState({
     gender:'',
     location:'',
     aboutMe:'',
-    experience:[''],
+    experience:[{
+      company:'',
+      experience:''
+    }],
     skills:[''],
-    education:[''],
+    education:[{
+      degree:'',
+      university:'',
+      passingYear:''
+    }],
     linkedinLink:'',
     githubLink:''
   })
@@ -45,19 +52,19 @@ export default function ProfileForm() {
 
   const addEducationField = () => {
     const newId = educationFields.length + 1
-    setEducationFields([...educationFields, { id: newId, value: "" }])
+    setEducationFields([...educationFields, { id: newId, degree:"", university:"", passingYear:"" }])
     setDetailsForm(prev=>({
       ...prev,
-      education:[...prev.education, '']
+      education:[...prev.education, {degree:'', university:'', passingYear:''}]
     }))
   }
 
   const addExperienceField = () => {
     const newId = experienceFields.length + 1
-    setExperienceFields([...experienceFields, {id:newId, value:''}])
+    setExperienceFields([...experienceFields, {id:newId, company:'', experience:''}])
     setDetailsForm(prev=>({
       ...prev, 
-      experience:[...prev.education, '']
+      experience:[...prev.experience, {company:'',experience:''}]
     }))
 
   }
@@ -71,20 +78,22 @@ export default function ProfileForm() {
     })
   }
 
-  const updateEducationField = (id: number, value: string) => {
-    setEducationFields(educationFields.map((field) => (field.id === id ? { ...field, value } : field)))
+  const updateEducationField = (id: number, fieldName:'degree'|'university'|'passingYear', value: string) => {
+    setEducationFields(educationFields.map((field) => (field.id === id ? { ...field, [fieldName]:value } : field)))
     setDetailsForm(prev=>{
-      const updatedEducation=[...prev.education]
-      updatedEducation[id-1]=value
+      const updatedEducation=prev.education.map((edu, ind) => 
+        ind==id-1? {...edu, [fieldName]:value}:edu
+      )
       return {...prev, education:updatedEducation}
     })
   }
 
-  const updateExperienceField = (id: number, value: string) => {
-    setExperienceFields(experienceFields.map((field) => (field.id === id ? { ...field, value } : field)))
+  const updateExperienceField = (id: number, fieldName:'company'|'experience', value: string) => {
+    setExperienceFields(experienceFields.map((field) => (field.id === id ? { ...field, [fieldName]:value } : field)))
     setDetailsForm(prev=>{
-      const updatedExperience=[...prev.experience]
-      updatedExperience[id-1]=value
+      const updatedExperience=prev.experience.map((exp, ind)=>
+        ind==id-1? {...exp, [fieldName]:value}:exp
+      )
       return {...prev, experience:updatedExperience}
     })
   }
@@ -95,6 +104,8 @@ export default function ProfileForm() {
 
   const setUserDetails = async () =>{
     clearErrors()
+
+    console.log('firstr',detailsForm)
 
     if (!detailsForm.gender) {
       return setErrors({gender : "Please select your gender"})
@@ -108,7 +119,9 @@ export default function ProfileForm() {
       return setErrors({aboutMe : "About Me must be at least 20 characters"})
     }
 
-    if (!detailsForm.experience.length || detailsForm.experience.every(exp => !exp.trim())) {
+    if (!detailsForm.experience.length || 
+      detailsForm.experience.every(exp => 
+        !exp.company.trim() && !exp.experience.trim())) {
       return setErrors({experience : "Please add at least one experience"})
     }
 
@@ -116,7 +129,12 @@ export default function ProfileForm() {
       return setErrors({skills : "Please add at least one skill"})
     }
 
-    if (!detailsForm.education.length || detailsForm.education.every(ed => !ed.trim())) {
+    if (
+      !detailsForm.education.length ||
+      detailsForm.education.every(
+        (ed) => !ed.degree.trim() && !ed.university.trim() && !ed.passingYear.trim()
+      )
+    ) {
       return setErrors({education : "Please add at least one education entry"})
     }
 
@@ -128,9 +146,21 @@ export default function ProfileForm() {
       return setErrors({githubLink : "Enter a valid GitHub profile URL"})
     }
 
+    const filteredEdu=detailsForm.education.filter(edu=>edu.degree.trim() && edu.university.trim() && edu.passingYear.trim())
+    const filteredExp=detailsForm.experience.filter(exp=>exp.company.trim() && exp.experience.trim())
+    const filteredSkills=detailsForm.skills.filter(skill=>skill.trim())
+    const updatedForm={
+      ...detailsForm,
+      education:filteredEdu,
+      experience:filteredExp,
+      skills:filteredSkills
+    }
+
+    setDetailsForm(updatedForm)
+
     const token=localStorage.getItem('token')
 
-    const result=await axios.post('http://localhost:5000/user/addUserDetails', detailsForm, {
+    const result=await axios.post('http://localhost:5000/user/addUserDetails', updatedForm, {
       headers:{
         Authorization:`Bearer ${token}`
       }
@@ -224,14 +254,24 @@ export default function ProfileForm() {
                   </div>
                   <div className="space-y-2">
                     {experienceFields.map((field) => (
-                      <input
-                        key={field.id}
-                        type="text"
-                        placeholder="Company - Years of Experience"
-                        value={field.value}
-                        onChange={(e) => updateExperienceField(field.id, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
+                      <div key={field.id} className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Company"
+                          name="company"
+                          value={field.company}
+                          onChange={(e) => updateExperienceField(field.id, 'company', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Years of Experience"
+                          name="experience"
+                          value={field.experience}
+                          onChange={(e) => updateExperienceField(field.id, 'experience', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     ))}
                   </div>
                   {errors.experience && (
@@ -282,14 +322,32 @@ export default function ProfileForm() {
               </div>
               <div className="space-y-2">
                 {educationFields.map((field) => (
-                  <input
-                    key={field.id}
-                    type="text"
-                    placeholder="Degree - University - Passing Year"
-                    value={field.value}
-                    onChange={(e) => updateEducationField(field.id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  <div key={field.id} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Degree"
+                      name="degree"
+                      value={field.degree}
+                      onChange={(e) => updateEducationField(field.id, 'degree', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <input
+                      type="text"
+                      placeholder="University"
+                      name="university"
+                      value={field.university}
+                      onChange={(e) => updateEducationField(field.id, 'university', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Passing Year"
+                      name="passingYear"
+                      value={field.passingYear}
+                      onChange={(e) => updateEducationField(field.id, 'passingYear', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
                 ))}
               </div>
               {errors.education && (
