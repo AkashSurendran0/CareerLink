@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import Navbar from '@/components/navbar';
+import Navbar from '@/components/authNavbar';
 import {SnackbarProvider} from 'notistack'
 
 
