@@ -12,6 +12,7 @@ export default function ProfileForm() {
   const [detailsForm, setDetailsForm]=useState({
     gender:'',
     location:'',
+    proficiency:'',
     aboutMe:'',
     experience:[{
       company:'',
@@ -26,7 +27,7 @@ export default function ProfileForm() {
     linkedinLink:'',
     githubLink:''
   })
-  const [errors, setErrors]=useState<Partial<Record<"gender" | "location" | "aboutMe" | "experience" | "skills" | "education" | "linkedinLink" | "githubLink", string>>>({})
+  const [errors, setErrors]=useState<Partial<Record<"gender" | "location" | "aboutMe" | "experience" | "skills" | "education" | "linkedinLink" | "githubLink" | "proficiency", string>>>({})
 
   const clearErrors = () => {
     setErrors({
@@ -113,6 +114,10 @@ export default function ProfileForm() {
 
     if (!detailsForm.location.trim()) {
       return setErrors({location : "Location is required"})
+    }
+
+    if (!detailsForm.proficiency.trim()) {
+      return setErrors({proficiency : "Please enter your area of expertise"})
     }
 
     if (detailsForm.aboutMe.trim().length < 20) {
@@ -218,6 +223,21 @@ export default function ProfileForm() {
                 </div>
                 {errors.location && (
                   <p className="text-red-500 text-sm">{errors.location}</p>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Proficiency</label>
+                  <input
+                    type="text"
+                    name="proficiency"
+                    value={detailsForm.proficiency}
+                    onChange={changeDetailsForm}
+                    placeholder="eg. Software Engineer"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                {errors.proficiency && (
+                  <p className="text-red-500 text-sm">{errors.proficiency}</p>
                 )}
 
                 <div>

@@ -5,6 +5,7 @@ import { UserDetailsModel } from "../models/UserDetailsModel";
 type details={
     gender:string,
     location:string,
+    proficiency:string,
     aboutMe:string,
     experience:string,
     skills:string,
@@ -28,11 +29,32 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             newDetails.profilePicture,
             newDetails.gender,
             newDetails.aboutMe,
+            newDetails.location,
+            newDetails.proficiency,
             newDetails.skills,
             newDetails.education,
             newDetails.experience,
             newDetails.linkedinLink,
             newDetails.githubLink
+        )
+    }
+
+    async getUserDetails(id:string): Promise<UserDetailsEntity | null> {
+        const details=await UserDetailsModel.findOne({user:id})
+        if(!details) return null
+        return new UserDetailsEntity(
+            details.id.toString(),
+            details.user,
+            details.profilePicture,
+            details.gender,
+            details.aboutMe,
+            details.location,
+            details.proficiency,
+            details.skills,
+            details.education,
+            details.experience,
+            details.linkedinLink,
+            details.githubLink
         )
     }
 

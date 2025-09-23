@@ -5,6 +5,8 @@ export interface IUserDetails extends Document {
     profilePicture:string,
     gender:string,
     aboutMe:string,
+    location:string,
+    proficiency:string,
     skills:[string],
     education:[string],
     experience:[string],
@@ -29,6 +31,14 @@ const userDetailsSchema: Schema<IUserDetails> = new Schema (
         aboutMe:{
             type: String,
             required: false
+        },
+        location:{
+            type: String,
+            required:false
+        },
+        proficiency:{
+            type: String,
+            required:false
         },
         skills:[{
             type: String,
