@@ -6,8 +6,8 @@ export class UserDetailsEntity {
         public gender:string,
         public aboutMe:string,
         public skills:[string],
-        public education:[string],
-        public experience:[string],
+        public education:string[],
+        public experience:string[],
         public linkedinLink:string,
         public githubLink:string
     ){}

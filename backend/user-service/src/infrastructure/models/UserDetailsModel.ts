@@ -35,12 +35,28 @@ const userDetailsSchema: Schema<IUserDetails> = new Schema (
             required: false
         }],
         education:[{
-            type: String,
-            required: false
+            degree:{
+                type: String,
+                required:false
+            },
+            university:{
+                type: String,
+                required: false
+            },
+            passingYear:{
+                type: String,
+                required:false
+            }
         }],
         experience:[{
-            type: String,
-            required: false
+            company:{
+                type:String,
+                required:false
+            },
+            experience:{
+                type:String,
+                required:false
+            }
         }],
         linkedinLink:{
             type: String,
