@@ -13,14 +13,7 @@ export class SignupUser implements ISignupUser {
         this.userRepository=userRepository
     }
 
-    async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
-        const userExists=await this.userRepository.findByEmail(email)
-        if(userExists){
-            return {
-                success:false, 
-                message:'User already exists'
-            }
-        }
+    async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string}> {
         const hashedPass=await bcrypt.hash(password, 10)
         const user=new User(
             '',
@@ -45,12 +38,21 @@ export class SignupUser implements ISignupUser {
 
 export class SendOTP implements ISendOtp {
     private mailer:Mailer
+    private userRepository:IUserRepository
 
-    constructor(){
+    constructor(userRepository:IUserRepository){
         this.mailer=new Mailer()
+        this.userRepository=userRepository
     }
 
-    async mailOtp(email:string):Promise<number>{
+    async mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>{
+        const userExists=await this.userRepository.findByEmail(email)
+        if(userExists){
+            return {
+                success:false, 
+                message:'User already exists'
+            }
+        }
         const otp=Math.floor(100000 + Math.random() * 900000)
         const data={
             to: email,
@@ -64,6 +66,9 @@ export class SendOTP implements ISendOtp {
                     The CareerLink Team 🚀`
         }
         await this.mailer.sendMail(data.to, data.subject, data.text)
-        return otp
+        return {
+            success:true,
+            otp
+        }
     }
 }

@@ -19,7 +19,7 @@ export class UserController {
         const userRepository=new UserRepository()
         this.loginUser=new LoginUser(userRepository)
         this.signupUser=new SignupUser(userRepository)
-        this.sendOTP=new SendOTP()
+        this.sendOTP=new SendOTP(userRepository)
         this.changePass=new ChangePass(userRepository)
         this.sendResetOtp=new SendResetOTP(userRepository)
         this.getUsers=new GetAllUsers(userRepository)
@@ -49,8 +49,8 @@ export class UserController {
     sendOtp = async (req:Request, res:Response): Promise<void> =>{
         try {
             const {email}=req.body
-            const otp=await this.sendOTP.mailOtp(email)
-            res.json({otp})
+            const result=await this.sendOTP.mailOtp(email)
+            res.json({result})
         } catch (error:any) {
             res.status(400).json({message:error.message})
         }

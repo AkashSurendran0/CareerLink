@@ -2,7 +2,7 @@
 
 import React, {useState} from "react";
 import MainSidebar from "@/components/mainSidebar";
-import MainNavbar from "@/components/mainnavbar";
+import MainNavbar from "@/components/mainNavbar";
 
 function MainLayout({
     children,
