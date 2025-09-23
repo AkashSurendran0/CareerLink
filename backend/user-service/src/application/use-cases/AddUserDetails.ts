@@ -5,6 +5,7 @@ import { IAddUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 type details={
     gender:string,
     location:string,
+    proficiency:string,
     aboutMe:string,
     experience:string,
     skills:string,

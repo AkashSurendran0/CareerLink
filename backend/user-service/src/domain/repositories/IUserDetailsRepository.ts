@@ -13,4 +13,5 @@ type details={
 
 export interface IUserDetailsRepository {
     addUserDetails(id:string, details:details):Promise<UserDetailsEntity>
+    getUserDetails(id:string):Promise<UserDetailsEntity | null>
 }

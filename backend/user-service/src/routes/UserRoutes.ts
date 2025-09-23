@@ -25,5 +25,6 @@ router.post('/changePassword', userController.changePassword)
 router.post('/sendResetOTP', userController.sendPassResetOtp)
 router.get('/getUsers', userController.getPageUsers)
 router.post('/addUserDetails', userDetailsController.insertUserDetails)
+router.get('/getUserDetails', userDetailsController.queryUserDetails)
 
 export default router
