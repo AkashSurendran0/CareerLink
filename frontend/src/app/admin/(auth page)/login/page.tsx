@@ -47,6 +47,7 @@ function Login() {
         if(!result.data.result.success){
             return enqueueSnackbar(result.data.result.message, {variant:'error'})
         }
+        localStorage.setItem('adminToken', result.data.result.token)
 
         router.push('/admin/userManagement')
     }

@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
 import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
+
 export class ChangePass implements IChangePass {
     private userRepository:IUserRepository
 

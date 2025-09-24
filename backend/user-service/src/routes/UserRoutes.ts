@@ -28,5 +28,7 @@ router.get('/getUsers', userController.getPageUsers)
 router.post('/addUserDetails', userDetailsController.insertUserDetails)
 router.get('/getUserDetails', userDetailsController.queryUserDetails)
 router.patch('/editUserDetails', upload.single("profilePicture"), userDetailsController.modifyUserDetails)
+router.patch('/alterUserStatus', userController.changeUserStatus)
+router.get('/check', userController.checkBlock)
 
 export default router

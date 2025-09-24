@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
 import axios from "axios";
@@ -17,6 +17,11 @@ function Login() {
         password: ''
     })
     const [errors, setErrors]=useState<Partial<Record<"email" | "password", string>>>({})
+
+    // useEffect(()=>{
+    //     const token=localStorage.getItem('token')
+    //     if(token) router.push('/feed')
+    // }, [])
 
     const resetErrors= () =>{
         setErrors({
@@ -44,7 +49,7 @@ function Login() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/login', loginDetails)
+        const result=await axios.post('http://localhost:5000/user/login', loginDetails, {withCredentials:true})
         if(!result.data.token.success){
             setLoading(false)
             return enqueueSnackbar(result.data.token.message, {variant:'error'})

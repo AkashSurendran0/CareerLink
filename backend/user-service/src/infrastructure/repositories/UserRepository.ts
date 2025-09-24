@@ -2,6 +2,16 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
 
+type UserType={
+    id:string,
+    username:string,
+    email:string,
+    password:string | null,
+    googleId:string | null,
+    suspended:boolean,
+    createdAt:string
+}
+
 export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
@@ -114,6 +124,41 @@ export class UserRepository implements IUserRepository {
             updatedUser.createdAt
         )
         
+    }
+
+    async findById(id: string): Promise<User | null> {
+        const user=await UserModel.findByPk(id, {raw:true})
+        console.log(user)
+        if(!user) return null
+        return new User (
+            user.id.toString(), 
+            user.username, 
+            user.email, 
+            user.password, 
+            user.googleId, 
+            user.suspended,
+            user.createdAt
+        )
+    }
+
+    async alterUserStatus(user:UserType): Promise<User> {
+        const [rowsUpdated, updatedUsers]=await UserModel.update(
+            {suspended: !user.suspended},
+            {
+                where:{id:user.id},
+                returning:true
+            }
+        )
+        const updatedUser=updatedUsers[0]!.get({plain:true})
+        return new User(
+            updatedUser.id.toString(), 
+            updatedUser.username, 
+            updatedUser.email, 
+            updatedUser.password, 
+            updatedUser.googleId,
+            updatedUser.suspended,
+            updatedUser.createdAt
+        )
     }
 
 }

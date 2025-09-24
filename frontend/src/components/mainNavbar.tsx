@@ -46,13 +46,13 @@ function MainNavbar({ setSidebarOpen }:NavbarProps) {
                 <span className="text-lg">🔔</span>
               </button>
               <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
-                <Image
+                {/* <Image
                   width={300}
                   height={300}
                   src="/professional-woman-avatar.png"
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
-                />
+                /> */}
               </div>
             </div>
           </div>
