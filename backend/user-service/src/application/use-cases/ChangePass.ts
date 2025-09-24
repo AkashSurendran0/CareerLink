@@ -6,15 +6,15 @@ import { IChangePass } from "../../domain/use-cases/IUserUseCase";
 import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
 
 export class ChangePass implements IChangePass {
-    private userRepository:IUserRepository
+    private _userRepository:IUserRepository
 
     constructor(userRepository:IUserRepository){
-        this.userRepository=userRepository
+        this._userRepository=userRepository
     }
 
     async changePass(email:string, password:string){
         const hashedPass=await bcrypt.hash(password, 10)
-        const user=await this.userRepository.updateUserPassword(email, hashedPass)
+        const user=await this._userRepository.updateUserPassword(email, hashedPass)
         const token=jwt.sign(
             {id:user.id, email:email},
             'jwt_secret',
@@ -25,16 +25,16 @@ export class ChangePass implements IChangePass {
 }
 
 export class SendResetOTP implements ISendResetOtp {
-    private mailer:Mailer
-    private userRepository:IUserRepository
+    private _mailer:Mailer
+    private _userRepository:IUserRepository
 
     constructor(userRepository:IUserRepository){
-        this.mailer=new Mailer()
-        this.userRepository=userRepository
+        this._mailer=new Mailer()
+        this._userRepository=userRepository
     }
 
     async mailOtp(email:string):Promise<{success:boolean, message:string} | {success:boolean, otp:number}>{
-        const userExists=await this.userRepository.findByEmail(email)
+        const userExists=await this._userRepository.findByEmail(email)
         if(!userExists){
             return {
                 success:false, 
@@ -53,7 +53,7 @@ export class SendResetOTP implements ISendResetOtp {
                     Thanks,  
                     The CareerLink Team 🚀`
         }
-        await this.mailer.sendMail(data.to, data.subject, data.text)
+        await this._mailer.sendMail(data.to, data.subject, data.text)
         return {
             success:true, 
             otp:otp

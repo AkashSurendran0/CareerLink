@@ -1,15 +1,15 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 
 export class AlterUserStatus {
-    private userRepository:IUserRepository
+    private _userRepository:IUserRepository
 
     constructor(userRepository:IUserRepository){
-        this.userRepository=userRepository
+        this._userRepository=userRepository
     }
 
     async changeUserStatus (id:string) {
-        const user=await this.userRepository.findById(id)
-        const updatedUser=await this.userRepository.alterUserStatus(user)
+        const user=await this._userRepository.findById(id)
+        const updatedUser=await this._userRepository.alterUserStatus(user)
         return updatedUser
     }
 

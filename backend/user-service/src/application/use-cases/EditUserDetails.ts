@@ -1,5 +1,6 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository"
 import { IUserRepository } from "../../domain/repositories/IUserRepository"
+import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 
 type Education = {
     degree: string;
@@ -26,17 +27,17 @@ type Details = {
     githubLink:string
 };
 
-export class EditUserDetails {
-    private userRepository:IUserRepository
-    private userDetailsRepository:IUserDetailsRepository
+export class EditUserDetails implements IEditUserDetails {
+    private _userRepository:IUserRepository
+    private _userDetailsRepository:IUserDetailsRepository
 
     constructor(userDetailsRepository:IUserDetailsRepository, userRepository:IUserRepository) {
-        this.userRepository=userRepository
-        this.userDetailsRepository=userDetailsRepository
+        this._userRepository=userRepository
+        this._userDetailsRepository=userDetailsRepository
     }
 
-    async editUserDetails (details:Details, id:string) {
-        await this.userRepository.editUserName(id, details.username)
+    async editUserDetails (details:Details, id:string): Promise<{success:boolean} {
+        await this._userRepository.editUserName(id, details.username)
         const updationDetails = {
             profilePicture: details.profilePicture,
             gender: details.gender,
@@ -49,7 +50,7 @@ export class EditUserDetails {
             linkedinLink: details.linkedinLink,
             githubLink: details.githubLink,
         };
-        await this.userDetailsRepository.editUserDetails(id, updationDetails)
+        await this._userDetailsRepository.editUserDetails(id, updationDetails)
         return {success:true}
     }
 

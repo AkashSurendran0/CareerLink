@@ -6,23 +6,23 @@ import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
 import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
 
 export class UserDetailsController {
-    private addUserDetails:AddUserDetails
-    private getUserDetails:GetUserDetails
-    private editUserDetails:EditUserDetails
+    private _addUserDetails:AddUserDetails
+    private _getUserDetails:GetUserDetails
+    private _editUserDetails:EditUserDetails
 
     constructor(){
         const userdetailsRepository=new UserDetailsRepository()
         const userRepository=new UserRepository()
-        this.addUserDetails=new AddUserDetails(userdetailsRepository, userRepository)
-        this.getUserDetails=new GetUserDetails(userdetailsRepository, userRepository)
-        this.editUserDetails=new EditUserDetails(userdetailsRepository, userRepository)
+        this._addUserDetails=new AddUserDetails(userdetailsRepository, userRepository)
+        this._getUserDetails=new GetUserDetails(userdetailsRepository, userRepository)
+        this._editUserDetails=new EditUserDetails(userdetailsRepository, userRepository)
     }
 
     insertUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {
             const details=req.body
             const userEmail=req.headers['user-email'] as string
-            await this.addUserDetails.addUserDetails(details, userEmail)
+            await this._addUserDetails.addUserDetails(details, userEmail)
             res.json({success:true})
         } catch (error: any) {
             res.status(400).json({message:error.message})
@@ -32,7 +32,7 @@ export class UserDetailsController {
     queryUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {
             const userEmail=req.headers['user-email'] as string
-            const userDetails=await this.getUserDetails.getUserDetails(userEmail)
+            const userDetails=await this._getUserDetails.getUserDetails(userEmail)
             res.json({userDetails})
         } catch (error: any) {
             res.status(400).json({message:error.message})
@@ -50,7 +50,7 @@ export class UserDetailsController {
             if(imageUrl){
                 details.profilePicture=imageUrl
             }
-            await this.editUserDetails.editUserDetails(details, userId)
+            await this._editUserDetails.editUserDetails(details, userId)
             res.json({success:true})
         } catch (error: any) {
             res.status(400).json({message:error.message})

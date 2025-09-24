@@ -23,5 +23,5 @@ export interface ISendOtp {
 }
 
 export interface GetUsers {
-        getUsers(page:number, limit:number):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }>
+    getUsers(page:number, limit:number):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }>
 }

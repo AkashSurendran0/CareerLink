@@ -15,17 +15,17 @@ type details={
 }
 
 export class AddUserDetails implements IAddUserDetails {
-    private userDetailsRepository:IUserDetailsRepository
-    private userRepository:IUserRepository
+    private _userDetailsRepository:IUserDetailsRepository
+    private _userRepository:IUserRepository
 
     constructor (userDetailsRepository:IUserDetailsRepository, userRepository:IUserRepository) {
-        this.userDetailsRepository=userDetailsRepository
-        this.userRepository=userRepository
+        this._userDetailsRepository=userDetailsRepository
+        this._userRepository=userRepository
     }
 
     async addUserDetails(details:details, email:string): Promise<{success:boolean}>{
-        const user=await this.userRepository.findByEmail(email)
-        await this.userDetailsRepository.addUserDetails(user!.id, details)
+        const user=await this._userRepository.findByEmail(email)
+        await this._userDetailsRepository.addUserDetails(user!.id, details)
         return {success:true}
     }
 }   

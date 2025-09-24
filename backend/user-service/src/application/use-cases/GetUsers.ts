@@ -2,16 +2,16 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { GetUsers } from "../../domain/use-cases/IUserUseCase";
 
 export class GetAllUsers implements GetUsers {
-    public userRepository:IUserRepository
+    private _userRepository:IUserRepository
 
     constructor(userRepository:IUserRepository){
-        this.userRepository=userRepository
+        this._userRepository=userRepository
     }
 
     async getUsers (page:number, limit:number):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }> {
-        const count=await this.userRepository.getAllUsersCount()
+        const count=await this._userRepository.getAllUsersCount()
         const pageLimit=Math.ceil(count/limit)
-        const users=await this.userRepository.getUsers(page, limit)
+        const users=await this._userRepository.getUsers(page, limit)
         const result=users.map(user=>({
             id:user.id,
             username:user.username,

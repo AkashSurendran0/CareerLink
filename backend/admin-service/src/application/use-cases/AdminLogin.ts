@@ -3,15 +3,15 @@ import { IAdminRepository } from "../../domain/repositories/IAdminRepository";
 import jwt from 'jsonwebtoken'
 
 export class AdminLogin implements IAdminLogin {
-    private adminRepository:IAdminRepository
+    private _adminRepository:IAdminRepository
 
-    constructor(adminRepository:IAdminRepository){
-        this.adminRepository=adminRepository
+    constructor(_adminRepository:IAdminRepository){
+        this._adminRepository=_adminRepository
     }
 
     async findAdmin(email: string, password: string): Promise<{ success: boolean; message: string; } | { success: true; token: string; }> {
         console.log('reacheddddd')
-        const admin=await this.adminRepository.findAdmin(email, password)
+        const admin=await this._adminRepository.findAdmin(email, password)
         if(!admin){
             return {
                 success: false, 

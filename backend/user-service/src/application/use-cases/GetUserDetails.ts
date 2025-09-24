@@ -1,5 +1,6 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 
 type Education = {
     degree: string;
@@ -22,22 +23,23 @@ type Details = {
     skills: string[];
     education: Education[];
     experience: Experience[];
-    linkedin: string;
+    linkedinLink: string;
+    githubLink:string
 };
 
-export class GetUserDetails {
-    private userDetailsRepository:IUserDetailsRepository
-    private userRepository:IUserRepository
+export class GetUserDetails implements IGetUserDetails {
+    private _userDetailsRepository:IUserDetailsRepository
+    private _userRepository:IUserRepository
 
     constructor(userDetailsRepository:IUserDetailsRepository, userRepository:IUserRepository){
-        this.userDetailsRepository=userDetailsRepository
-        this.userRepository=userRepository
+        this._userDetailsRepository=userDetailsRepository
+        this._userRepository=userRepository
     }
 
     async getUserDetails(email:string): Promise<Details | null> {
-        const user=await this.userRepository.findByEmail(email)
+        const user=await this._userRepository.findByEmail(email)
         if(!user) return null
-        const details=await this.userDetailsRepository.getUserDetails(user.id)
+        const details=await this._userDetailsRepository.getUserDetails(user.id)
         const result={
             username:user.username,
             profilePicture:details?.profilePicture,
@@ -48,7 +50,8 @@ export class GetUserDetails {
             skills:details?.skills,
             education:details?.education,
             experience:details?.experience,
-            linkedin:details?.linkedinLink,
+            linkedinLink:details?.linkedinLink,
+            githubLink:details?.githubLink,
         }
         return result
     }

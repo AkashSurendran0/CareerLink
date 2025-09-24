@@ -4,14 +4,14 @@ import jwt from 'jsonwebtoken'
 import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
 
 export class LoginUser implements ILoginUser {
-    private userRepository: IUserRepository
+    private _userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository){
-        this.userRepository=userRepository
+        this._userRepository=userRepository
     }
 
     async execute(email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
-        const user=await this.userRepository.findByEmail(email)
+        const user=await this._userRepository.findByEmail(email)
         if(!user){
             return {
                 success: false,

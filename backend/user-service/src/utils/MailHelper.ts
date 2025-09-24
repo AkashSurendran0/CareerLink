@@ -1,10 +1,10 @@
 import nodemailer,{Transporter} from 'nodemailer'
 
 export class Mailer {
-    private transporter:Transporter
+    private _transporter:Transporter
 
     constructor(){
-        this.transporter=nodemailer.createTransport({
+        this._transporter=nodemailer.createTransport({
             service:"gmail",
             auth:{
                 user:"achusnjr11@gmail.com",
@@ -21,7 +21,7 @@ export class Mailer {
             text
         }
 
-        const info=await this.transporter.sendMail(mailOptions)
+        const info=await this._transporter.sendMail(mailOptions)
         console.log('Mail send')
         return info
     }

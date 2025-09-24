@@ -7,10 +7,10 @@ import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
 
 export class SignupUser implements ISignupUser {
-    private userRepository: IUserRepository
+    private _userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository){
-        this.userRepository=userRepository
+        this._userRepository=userRepository
     }
 
     async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string}> {
@@ -23,7 +23,7 @@ export class SignupUser implements ISignupUser {
             '',
             false
         )
-        const newuser=await this.userRepository.create(user)
+        const newuser=await this._userRepository.create(user)
         const token=jwt.sign(
             {id:newuser.id, email:email},
             'jwt_secret',

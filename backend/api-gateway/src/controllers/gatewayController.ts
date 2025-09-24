@@ -1,14 +1,14 @@
 import { GatewayService } from "../services/gatewayService";
 
 export class GatewayController {
-    private gatewayService:GatewayService
+    private _gatewayService:GatewayService
 
     constructor() {
-        this.gatewayService = new GatewayService()
+        this._gatewayService = new GatewayService()
     }
 
     getPath(path:string){
-        return this.gatewayService.getProxy(path)
+        return this._gatewayService.getProxy(path)
     }
 
 }
