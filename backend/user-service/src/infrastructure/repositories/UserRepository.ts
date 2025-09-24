@@ -94,5 +94,26 @@ export class UserRepository implements IUserRepository {
             ) 
         )
     }
+    
+    async editUserName(id:string, username:string): Promise<User> {
+        const [rowsUpdated, updatedUsers]=await UserModel.update(
+            {username},
+            {
+                where:{id},
+                returning:true
+            }
+        )
+        const updatedUser=updatedUsers[0]!.get({plain:true})
+        return new User(
+            updatedUser.id.toString(), 
+            updatedUser.username, 
+            updatedUser.email, 
+            updatedUser.password, 
+            updatedUser.googleId,
+            updatedUser.suspended,
+            updatedUser.createdAt
+        )
+        
+    }
 
 }

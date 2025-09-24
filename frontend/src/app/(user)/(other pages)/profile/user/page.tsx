@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import {UserCircle} from 'lucide-react'
+import { useRouter } from "next/navigation";
 
 type Education = {
     degree: string;
@@ -30,6 +31,7 @@ type Details = {
 
 
 export default function ProfileDashboard() {
+    const router=useRouter()
     const [activeTab, setActiveTab] = useState("About");
     const [userDetails, setUserDetails] = useState<Details>()
 
@@ -40,6 +42,10 @@ export default function ProfileDashboard() {
         "Github Activity",
         "My Resumes",
     ];
+
+    const goToEditPage = () => {
+        router.push("/profile/editUser")
+    }
 
     useEffect(()=>{
 
@@ -86,7 +92,7 @@ export default function ProfileDashboard() {
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
                 <div className="flex-shrink-0">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md" onClick={goToEditPage}>
                     Edit Profile
                 </button>
                 </div>
@@ -157,32 +163,34 @@ export default function ProfileDashboard() {
                         </div>
 
                         {/* Work Experience Section */}
-                        <div>
-                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                            Work Experience
-                        </h2>
-                        <div className="space-y-4">
-                            {userDetails && userDetails.experience.map((exp, ind)=>(
-                                <div key={ind} className="space-y-15">
-                                    <div className="flex items-start space-x-4">
-                                    <div className="flex-shrink-0">
-                                        <div className="h-12 w-12 bg-gray-800 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-lg">
-                                            {exp.company[0]}
-                                        </span>
+                        { userDetails && userDetails.experience.length>0 && (
+                            <div>
+                            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                                Work Experience
+                            </h2>
+                            <div className="space-y-4">
+                                {userDetails.experience.map((exp, ind)=>(
+                                    <div key={ind} className="space-y-15">
+                                        <div className="flex items-start space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-12 w-12 bg-gray-800 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-lg">
+                                                {exp.company[0]}
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">
+                                            {exp.company}
+                                            </h3>
+                                            <p className="text-gray-600">{exp.experience} Years of Experience</p>
+                                        </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-gray-900">
-                                        {exp.company}
-                                        </h3>
-                                        <p className="text-gray-600">{exp.experience} Years of Experience</p>
-                                    </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        </div>
+                                ))}
+                            </div>
+                            </div>
+                        )}
 
                         {/* Skills Section */}
                         <div>

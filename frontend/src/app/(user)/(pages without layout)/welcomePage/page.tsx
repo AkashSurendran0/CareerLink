@@ -126,12 +126,6 @@ export default function ProfileForm() {
       return setErrors({aboutMe : "About Me must be at least 20 characters"})
     }
 
-    if (!detailsForm.experience.length || 
-      detailsForm.experience.every(exp => 
-        !exp.company.trim() && !exp.experience.trim())) {
-      return setErrors({experience : "Please add at least one experience"})
-    }
-
     if (!detailsForm.skills.length || detailsForm.skills.every(skill => !skill.trim())) {
       return setErrors({skills : "Please add at least one skill"})
     }

@@ -15,6 +15,7 @@ type Experience = {
 type Details = {
     username: string;
     profilePicture?: string;
+    gender:string;
     aboutMe: string;
     location: string,
     proficiency: string,
@@ -37,11 +38,10 @@ export class GetUserDetails {
         const user=await this.userRepository.findByEmail(email)
         if(!user) return null
         const details=await this.userDetailsRepository.getUserDetails(user.id)
-        console.log('user', user)
-        console.log('details', details)
         const result={
             username:user.username,
             profilePicture:details?.profilePicture,
+            gender:details?.gender,
             aboutMe:details?.aboutMe,
             location:details?.location,
             proficiency:details?.proficiency,

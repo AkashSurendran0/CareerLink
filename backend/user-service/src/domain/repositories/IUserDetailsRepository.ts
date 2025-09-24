@@ -2,6 +2,7 @@ import { UserDetailsEntity } from "../entities/UserDetails";
 
 type details={
     gender:string,
+    profilePicture:string,
     location:string,
     aboutMe:string,
     experience:string,
@@ -14,4 +15,5 @@ type details={
 export interface IUserDetailsRepository {
     addUserDetails(id:string, details:details):Promise<UserDetailsEntity>
     getUserDetails(id:string):Promise<UserDetailsEntity | null>
+    editUserDetails (id:string, details:details): Promise<UserDetailsEntity | null>
 }

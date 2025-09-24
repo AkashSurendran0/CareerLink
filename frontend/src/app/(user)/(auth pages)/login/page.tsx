@@ -46,6 +46,7 @@ function Login() {
 
         const result=await axios.post('http://localhost:5000/user/login', loginDetails)
         if(!result.data.token.success){
+            setLoading(false)
             return enqueueSnackbar(result.data.token.message, {variant:'error'})
         }
 
