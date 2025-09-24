@@ -1,9 +1,9 @@
-import nodemailer,{Transporter} from 'nodemailer'
-import {inject, injectable} from 'inversify'
+import nodemailer,{Transporter} from "nodemailer";
+import {inject, injectable} from "inversify";
 
 @injectable()
 export class Mailer {
-    private _transporter:Transporter
+    private _transporter:Transporter;
 
     constructor(){
         this._transporter=nodemailer.createTransport({
@@ -12,19 +12,19 @@ export class Mailer {
                 user:"achusnjr11@gmail.com",
                 pass:"ighj btwr mzlr tgud"
             }
-        })
+        });
     }
 
     async sendMail(to:string, subject:string, text:string){
         const mailOptions={
-            from: `CareerLink@gmail.com`,
+            from: "CareerLink@gmail.com",
             to,
             subject,
             text
-        }
+        };
 
-        const info=await this._transporter.sendMail(mailOptions)
-        console.log('Mail send')
-        return info
+        const info=await this._transporter.sendMail(mailOptions);
+        console.log("Mail send");
+        return info;
     }
 }

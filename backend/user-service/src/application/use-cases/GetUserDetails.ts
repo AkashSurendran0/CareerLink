@@ -1,7 +1,7 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
-import {inject, injectable} from 'inversify'
+import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 
 type Education = {
@@ -35,9 +35,9 @@ export class GetUserDetails implements IGetUserDetails {
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
 
     async getUserDetails(email:string): Promise<Details | null> {
-        const user=await this._userRepository.findByEmail(email)
-        if(!user) return null
-        const details=await this._userDetailsRepository.getUserDetails(user.id)
+        const user=await this._userRepository.findByEmail(email);
+        if(!user) return null;
+        const details=await this._userDetailsRepository.getUserDetails(user.id);
         const result={
             username:user.username,
             profilePicture:details?.profilePicture,
@@ -50,8 +50,8 @@ export class GetUserDetails implements IGetUserDetails {
             experience:details?.experience,
             linkedinLink:details?.linkedinLink,
             githubLink:details?.githubLink,
-        }
-        return result
+        };
+        return result;
     }
 
 }

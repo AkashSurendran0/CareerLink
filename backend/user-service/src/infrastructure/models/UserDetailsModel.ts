@@ -80,6 +80,6 @@ const userDetailsSchema: Schema<IUserDetails> = new Schema (
     {
         timestamps:true
     }
-) 
+); 
 
-export const UserDetailsModel: Model<IUserDetails> = mongoose.model<IUserDetails>("UserDetails", userDetailsSchema)
+export const UserDetailsModel: Model<IUserDetails> = mongoose.model<IUserDetails>("UserDetails", userDetailsSchema);

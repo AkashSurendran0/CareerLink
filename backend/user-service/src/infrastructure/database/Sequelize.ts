@@ -10,14 +10,14 @@ export const sequelize = new Sequelize(
         dialect: "postgres",
         logging: false
     }
-)
+);
 
 export const connectDB = async () =>{
     try {
-        await sequelize.authenticate()
+        await sequelize.authenticate();
         await sequelize.sync({ alter: true });
-        console.log('PSQL database connected successfully!')
+        console.log("PSQL database connected successfully!");
     } catch (error) {
-        console.log('Database connection failed', error)
+        console.log("Database connection failed", error);
     }
-}
+};
