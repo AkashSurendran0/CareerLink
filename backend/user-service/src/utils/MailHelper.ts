@@ -1,5 +1,7 @@
 import nodemailer,{Transporter} from 'nodemailer'
+import {inject, injectable} from 'inversify'
 
+@injectable()
 export class Mailer {
     private _transporter:Transporter
 

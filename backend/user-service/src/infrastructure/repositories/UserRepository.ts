@@ -1,6 +1,7 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
+import {injectable} from 'inversify'
 
 type UserType={
     id:string,
@@ -12,6 +13,7 @@ type UserType={
     createdAt:string
 }
 
+@injectable()
 export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {

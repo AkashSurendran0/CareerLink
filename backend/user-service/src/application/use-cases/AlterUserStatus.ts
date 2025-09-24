@@ -1,11 +1,11 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class AlterUserStatus {
-    private _userRepository:IUserRepository
-
-    constructor(userRepository:IUserRepository){
-        this._userRepository=userRepository
-    }
+    
+    constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
     async changeUserStatus (id:string) {
         const user=await this._userRepository.findById(id)

@@ -4,13 +4,13 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
 import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class ChangePass implements IChangePass {
-    private _userRepository:IUserRepository
 
-    constructor(userRepository:IUserRepository){
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
     async changePass(email:string, password:string){
         const hashedPass=await bcrypt.hash(password, 10)
@@ -25,13 +25,8 @@ export class ChangePass implements IChangePass {
 }
 
 export class SendResetOTP implements ISendResetOtp {
-    private _mailer:Mailer
-    private _userRepository:IUserRepository
 
-    constructor(userRepository:IUserRepository){
-        this._mailer=new Mailer()
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.Mailer) private _mailer:Mailer, @inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
     async mailOtp(email:string):Promise<{success:boolean, message:string} | {success:boolean, otp:number}>{
         const userExists=await this._userRepository.findByEmail(email)

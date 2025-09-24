@@ -1,11 +1,11 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class CheckUserBlock {
-    private _userRepository:IUserRepository
-
-    constructor(userRepository:IUserRepository){
-        this._userRepository=userRepository
-    }
+    
+    constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
     async checkUserBlock (id:string): Promise<{success:boolean} | null> {
         console.log('heeeeeeeee')

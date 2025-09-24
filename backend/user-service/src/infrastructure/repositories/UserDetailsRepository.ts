@@ -1,6 +1,7 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { UserDetailsEntity } from "../../domain/entities/UserDetails";
 import { UserDetailsModel } from "../models/UserDetailsModel";
+import {injectable} from 'inversify'
 
 type details={
     username:string,
@@ -16,6 +17,7 @@ type details={
     githubLink:string
 }
 
+@injectable()
 export class UserDetailsRepository implements IUserDetailsRepository {
     
     async addUserDetails(id:string, details:details):Promise<UserDetailsEntity> {
