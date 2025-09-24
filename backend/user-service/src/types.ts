@@ -16,4 +16,4 @@ export const TYPES={
     UserController:"UserController",
     UserDetailsController:"UserDetailsController",
     Mailer:"Mailer"
-}
+};

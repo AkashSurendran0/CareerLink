@@ -1,7 +1,7 @@
-import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository"
-import { IUserRepository } from "../../domain/repositories/IUserRepository"
+import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
-import {inject, injectable} from 'inversify'
+import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 
 type Education = {
@@ -35,7 +35,7 @@ export class EditUserDetails implements IEditUserDetails {
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
 
     async editUserDetails (details:Details, id:string): Promise<{success:boolean}> {
-        await this._userRepository.editUserName(id, details.username)
+        await this._userRepository.editUserName(id, details.username);
         const updationDetails = {
             profilePicture: details.profilePicture,
             gender: details.gender,
@@ -48,8 +48,8 @@ export class EditUserDetails implements IEditUserDetails {
             linkedinLink: details.linkedinLink,
             githubLink: details.githubLink,
         };
-        await this._userDetailsRepository.editUserDetails(id, updationDetails)
-        return {success:true}
+        await this._userDetailsRepository.editUserDetails(id, updationDetails);
+        return {success:true};
     }
 
 }

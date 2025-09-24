@@ -20,24 +20,24 @@ import { Mailer } from "./utils/MailHelper";
 
 const container = new Container();
 
-container.bind(TYPES.IUserRepository).to(UserRepository).inSingletonScope()
-container.bind(TYPES.IUserDetailsRepository).to(UserDetailsRepository).inSingletonScope()
+container.bind(TYPES.IUserRepository).to(UserRepository).inSingletonScope();
+container.bind(TYPES.IUserDetailsRepository).to(UserDetailsRepository).inSingletonScope();
 
-container.bind<LoginUser>(TYPES.LoginUser).to(LoginUser)
-container.bind<SignupUser>(TYPES.SignupUser).to(SignupUser)
-container.bind<AddUserDetails>(TYPES.AddUserDetails).to(AddUserDetails)
-container.bind<AlterUserStatus>(TYPES.AlterUserStatus).to(AlterUserStatus)
-container.bind<ChangePass>(TYPES.ChangePass).to(ChangePass)
-container.bind<CheckUserBlock>(TYPES.CheckUserBlock).to(CheckUserBlock)
-container.bind<EditUserDetails>(TYPES.EditUserDetails).to(EditUserDetails)
-container.bind<GetUserDetails>(TYPES.GetUserDetails).to(GetUserDetails)
-container.bind<GetAllUsers>(TYPES.GetAllUsers).to(GetAllUsers)
-container.bind<GoogleLogin>(TYPES.GoogleLogin).to(GoogleLogin)
-container.bind<SendOTP>(TYPES.SendOTP).to(SendOTP)
-container.bind<SendResetOTP>(TYPES.SendResetOTP).to(SendResetOTP)
-container.bind<Mailer>(TYPES.Mailer).to(Mailer)
+container.bind<LoginUser>(TYPES.LoginUser).to(LoginUser);
+container.bind<SignupUser>(TYPES.SignupUser).to(SignupUser);
+container.bind<AddUserDetails>(TYPES.AddUserDetails).to(AddUserDetails);
+container.bind<AlterUserStatus>(TYPES.AlterUserStatus).to(AlterUserStatus);
+container.bind<ChangePass>(TYPES.ChangePass).to(ChangePass);
+container.bind<CheckUserBlock>(TYPES.CheckUserBlock).to(CheckUserBlock);
+container.bind<EditUserDetails>(TYPES.EditUserDetails).to(EditUserDetails);
+container.bind<GetUserDetails>(TYPES.GetUserDetails).to(GetUserDetails);
+container.bind<GetAllUsers>(TYPES.GetAllUsers).to(GetAllUsers);
+container.bind<GoogleLogin>(TYPES.GoogleLogin).to(GoogleLogin);
+container.bind<SendOTP>(TYPES.SendOTP).to(SendOTP);
+container.bind<SendResetOTP>(TYPES.SendResetOTP).to(SendResetOTP);
+container.bind<Mailer>(TYPES.Mailer).to(Mailer);
 
-container.bind<UserController>(TYPES.UserController).to(UserController)
-container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController)
+container.bind<UserController>(TYPES.UserController).to(UserController);
+container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);
 
-export default container
+export default container;

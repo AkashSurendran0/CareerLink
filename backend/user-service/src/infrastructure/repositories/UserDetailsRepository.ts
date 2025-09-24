@@ -1,7 +1,7 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { UserDetailsEntity } from "../../domain/entities/UserDetails";
 import { UserDetailsModel } from "../models/UserDetailsModel";
-import {injectable} from 'inversify'
+import {injectable} from "inversify";
 
 type details={
     username:string,
@@ -21,12 +21,12 @@ type details={
 export class UserDetailsRepository implements IUserDetailsRepository {
     
     async addUserDetails(id:string, details:details):Promise<UserDetailsEntity> {
-        console.log('here babyyy')
+        console.log("here babyyy");
         const data={
             user:id,
             ...details
-        }
-        const newDetails = await UserDetailsModel.insertOne(data)
+        };
+        const newDetails = await UserDetailsModel.insertOne(data);
         return new UserDetailsEntity(
             newDetails.id.toString(),
             newDetails.user,
@@ -40,12 +40,12 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             newDetails.experience,
             newDetails.linkedinLink,
             newDetails.githubLink
-        )
+        );
     }
 
     async getUserDetails(id:string): Promise<UserDetailsEntity | null> {
-        const details=await UserDetailsModel.findOne({user:id})
-        if(!details) return null
+        const details=await UserDetailsModel.findOne({user:id});
+        if(!details) return null;
         return new UserDetailsEntity(
             details.id.toString(),
             details.user,
@@ -59,7 +59,7 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             details.experience,
             details.linkedinLink,
             details.githubLink
-        )
+        );
     }
 
     async editUserDetails (id:string, details:details): Promise<UserDetailsEntity | null> {
@@ -67,8 +67,8 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             {user:id},
             {$set: details},
             {new:true}
-        )
-        if(!newDetails) return null
+        );
+        if(!newDetails) return null;
         return new UserDetailsEntity(
             newDetails.id.toString(),
             newDetails.user,
@@ -82,7 +82,7 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             newDetails.experience,
             newDetails.linkedinLink,
             newDetails.githubLink
-        )
+        );
 
     } 
 

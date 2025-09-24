@@ -1,7 +1,7 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
-import {injectable} from 'inversify'
+import {injectable} from "inversify";
 
 type UserType={
     id:string,
@@ -17,8 +17,8 @@ type UserType={
 export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
-        const userDoc=await UserModel.findOne({where: {email}, raw:true})
-        if(!userDoc) return null
+        const userDoc=await UserModel.findOne({where: {email}, raw:true});
+        if(!userDoc) return null;
         return new User(
             userDoc.id.toString(), 
             userDoc.username, 
@@ -27,7 +27,7 @@ export class UserRepository implements IUserRepository {
             userDoc.googleId, 
             userDoc.suspended,
             userDoc.createdAt
-        )
+        );
     }
 
     async create(user: User): Promise<User> {
@@ -35,8 +35,8 @@ export class UserRepository implements IUserRepository {
             username:user.username, 
             email: user.email, 
             password:user.password,
-        })
-        const userData=userDoc.get({plain:true})
+        });
+        const userData=userDoc.get({plain:true});
         return new User(
             userData.id.toString(), 
             userData.username, 
@@ -45,7 +45,7 @@ export class UserRepository implements IUserRepository {
             userData.googleId,
             userData.suspended,
             userData.createdAt
-        )
+        );
     }
 
     async createUserWithGoogle(email: string, googleId: string, username: string): Promise<User> {
@@ -53,8 +53,8 @@ export class UserRepository implements IUserRepository {
             username: username, 
             email: email,
             googleId: googleId
-        })
-        const userData=user.get({plain:true})
+        });
+        const userData=user.get({plain:true});
         return new User(
             userData.id.toString(), 
             userData.username, 
@@ -63,7 +63,7 @@ export class UserRepository implements IUserRepository {
             userData.googleId,
             userData.suspended,
             userData.createdAt
-        )
+        );
     }
 
     async updateUserPassword(email:string, password:string): Promise<User> {
@@ -73,8 +73,8 @@ export class UserRepository implements IUserRepository {
                 where:{email},
                 returning:true
             }
-        )
-        const updatedUser=updatedUsers[0]!.get({plain:true})
+        );
+        const updatedUser=updatedUsers[0]!.get({plain:true});
         return new User(
             updatedUser.id.toString(), 
             updatedUser.username, 
@@ -83,17 +83,17 @@ export class UserRepository implements IUserRepository {
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
-        )
+        );
     }
 
     async getAllUsersCount(): Promise<number> {
-        const users=await UserModel.findAll({raw:true})
-        return users.length
+        const users=await UserModel.findAll({raw:true});
+        return users.length;
     }
 
     async getUsers(page: number, limit: number): Promise<User[]> {
-        const offset=(page-1)*limit     
-        const users=await UserModel.findAll({raw:true, offset, limit}) 
+        const offset=(page-1)*limit;     
+        const users=await UserModel.findAll({raw:true, offset, limit}); 
         return users.map((user:any)=> 
             new User( 
                 user.id.toString(), 
@@ -104,7 +104,7 @@ export class UserRepository implements IUserRepository {
                 user.suspended,
                 user.createdAt
             ) 
-        )
+        );
     }
     
     async editUserName(id:string, username:string): Promise<User> {
@@ -114,8 +114,8 @@ export class UserRepository implements IUserRepository {
                 where:{id},
                 returning:true
             }
-        )
-        const updatedUser=updatedUsers[0]!.get({plain:true})
+        );
+        const updatedUser=updatedUsers[0]!.get({plain:true});
         return new User(
             updatedUser.id.toString(), 
             updatedUser.username, 
@@ -124,14 +124,14 @@ export class UserRepository implements IUserRepository {
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
-        )
+        );
         
     }
 
     async findById(id: string): Promise<User | null> {
-        const user=await UserModel.findByPk(id, {raw:true})
-        console.log(user)
-        if(!user) return null
+        const user=await UserModel.findByPk(id, {raw:true});
+        console.log(user);
+        if(!user) return null;
         return new User (
             user.id.toString(), 
             user.username, 
@@ -140,7 +140,7 @@ export class UserRepository implements IUserRepository {
             user.googleId, 
             user.suspended,
             user.createdAt
-        )
+        );
     }
 
     async alterUserStatus(user:UserType): Promise<User> {
@@ -150,8 +150,8 @@ export class UserRepository implements IUserRepository {
                 where:{id:user.id},
                 returning:true
             }
-        )
-        const updatedUser=updatedUsers[0]!.get({plain:true})
+        );
+        const updatedUser=updatedUsers[0]!.get({plain:true});
         return new User(
             updatedUser.id.toString(), 
             updatedUser.username, 
@@ -160,7 +160,7 @@ export class UserRepository implements IUserRepository {
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
-        )
+        );
     }
 
 }

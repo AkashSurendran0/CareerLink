@@ -1,17 +1,17 @@
-import passport from 'passport'
-import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
-import { GoogleLogin } from '../application/use-cases/GoogleLogin'
-import { UserRepository } from '../infrastructure/repositories/UserRepository'
-import dotenv from 'dotenv'
+import passport from "passport";
+import {Strategy as GoogleStrategy} from "passport-google-oauth20";
+import { GoogleLogin } from "../application/use-cases/GoogleLogin";
+import { UserRepository } from "../infrastructure/repositories/UserRepository";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 passport.use(
     new GoogleStrategy(
         {
-            clientID: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-            callbackURL: '/google/callback'
+            clientID: process.env.GOOGLE_CLIENT_ID || "",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+            callbackURL: "/google/callback"
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -19,16 +19,16 @@ passport.use(
                     email: profile.emails?.[0]?.value ?? "",
                     username: profile.displayName,
                     googleId: profile.id
-                }
-                const googleLogin=new GoogleLogin(new UserRepository())
-                const user=await googleLogin.googleSignin(googleUser.email, googleUser.googleId, googleUser.username)
-                return done(null, user)
+                };
+                const googleLogin=new GoogleLogin(new UserRepository());
+                const user=await googleLogin.googleSignin(googleUser.email, googleUser.googleId, googleUser.username);
+                return done(null, user);
             } catch (error:any) {
-                return done(error, false)
+                return done(error, false);
             }
         }
     )
-)
+);
 
 passport.serializeUser((user: any, done) => {
   done(null, user);

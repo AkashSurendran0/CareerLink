@@ -8,7 +8,7 @@ import { SendResetOTP } from "../../application/use-cases/ChangePass";
 import { GetAllUsers } from "../../application/use-cases/GetUsers";
 import { AlterUserStatus } from "../../application/use-cases/AlterUserStatus";
 import { CheckUserBlock } from "../../application/use-cases/CheckUserBlock";
-import {inject, injectable} from 'inversify'
+import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 
 @injectable()
@@ -28,103 +28,103 @@ export class UserController {
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {email, password}=req.body
-            const token=await this._loginUser.execute(email, password)
+            const {email, password}=req.body;
+            const token=await this._loginUser.execute(email, password);
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            res.json({token})
+            res.json({token});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     signup = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {username, email, password}=req.body
-            const token=await this._signupUser.createUser(username, email, password)
+            const {username, email, password}=req.body;
+            const token=await this._signupUser.createUser(username, email, password);
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            console.log(token)
-            res.json({token})
+            console.log(token);
+            res.json({token});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     sendOtp = async (req:Request, res:Response): Promise<void> =>{
         try {
-            const {email}=req.body
-            const result=await this._sendOTP.mailOtp(email)
-            res.json({result})
+            const {email}=req.body;
+            const result=await this._sendOTP.mailOtp(email);
+            res.json({result});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     changePassword = async (req:Request, res:Response): Promise<void> =>{
         try {
-            const {email, password}=req.body
-            const token=await this._changePass.changePass(email, password)
+            const {email, password}=req.body;
+            const token=await this._changePass.changePass(email, password);
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            res.json({token})
+            res.json({token});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     sendPassResetOtp = async (req:Request, res:Response): Promise<void> =>{
         try {
-            const {email}=req.body
-            const otp=await this._sendResetOtp.mailOtp(email)
-            res.json({otp})
+            const {email}=req.body;
+            const otp=await this._sendResetOtp.mailOtp(email);
+            res.json({otp});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     getPageUsers = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {page, limit}=req.query
-            const pageNum=parseInt(page as string, 10) || 1
-            const limitNum=parseInt(limit as string, 5) || 5
-            const users=await this._getUsers.getUsers(pageNum, limitNum)
-            res.json({users})
+            const {page, limit}=req.query;
+            const pageNum=parseInt(page as string, 10) || 1;
+            const limitNum=parseInt(limit as string, 5) || 5;
+            const users=await this._getUsers.getUsers(pageNum, limitNum);
+            res.json({users});
         } catch (error:any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     changeUserStatus = async (req:Request, res:Response): Promise<void> => {
         try {
-            const user=req.body
-            const users=await this._alterUserStatus.changeUserStatus(user.id)
-            res.json({users})
+            const user=req.body;
+            const users=await this._alterUserStatus.changeUserStatus(user.id);
+            res.json({users});
         } catch (error: any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 
     checkBlock = async (req:Request, res:Response): Promise<void> => {
         try {
-            console.log('heheheheheheh')
-            const userId=req.headers['user-id'] as string
-            const result=await this._checkUserBlock.checkUserBlock(userId)
-            res.json({result})
+            console.log("heheheheheheh");
+            const userId=req.headers["user-id"] as string;
+            const result=await this._checkUserBlock.checkUserBlock(userId);
+            res.json({result});
         } catch (error: any) {
-            res.status(400).json({message:error.message})
+            res.status(400).json({message:error.message});
         }
-    }
+    };
 }
