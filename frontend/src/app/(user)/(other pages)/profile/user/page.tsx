@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import {UserCircle} from 'lucide-react'
+import { useRouter } from "next/navigation";
 
 type Education = {
     degree: string;
@@ -30,6 +31,7 @@ type Details = {
 
 
 export default function ProfileDashboard() {
+    const router=useRouter()
     const [activeTab, setActiveTab] = useState("About");
     const [userDetails, setUserDetails] = useState<Details>()
 
@@ -40,6 +42,10 @@ export default function ProfileDashboard() {
         "Github Activity",
         "My Resumes",
     ];
+
+    const goToEditPage = () => {
+        router.push("/profile/editUser")
+    }
 
     useEffect(()=>{
 
@@ -86,7 +92,7 @@ export default function ProfileDashboard() {
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
                 <div className="flex-shrink-0">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md" onClick={goToEditPage}>
                     Edit Profile
                 </button>
                 </div>
@@ -114,102 +120,113 @@ export default function ProfileDashboard() {
             </div>
 
             {/* Tab Content */}
-            <div className="p-6">
-                {activeTab === "About" && (
-                <div className="space-y-8">
-                    {/* About Section */}
-                    <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                        About
-                    </h2>
-                    <p className="text-gray-700 leading-relaxed">
-                        {userDetails && userDetails.aboutMe}
-                    </p>
-                    </div>
+            {userDetails && userDetails.aboutMe? (
+                <div className="p-6">
+                    {activeTab === "About" && (
+                    <div className="space-y-8">
+                        {/* About Section */}
+                        <div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                            About
+                        </h2>
+                        <p className="text-gray-700 leading-relaxed">
+                            {userDetails && userDetails.aboutMe}
+                        </p>
+                        </div>
 
-                    {/* Education Section */}
-                    <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                        Education
-                    </h2>
-                    <div className="space-y-4">
-                        {userDetails && userDetails.education.map((edu, ind)=>(
-                            <div key={ind} className="flex items-start space-x-4">
-                                <div className="flex-shrink-0">
-                                <div className="h-12 w-12 bg-red-600 rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-bold text-lg">{edu.university[0]}</span>
-                                </div>
-                                </div>
-                                <div>
-                                <h3 className="font-semibold text-gray-900">
-                                    {edu.university}
-                                </h3>
-                                <p className="text-gray-600">{edu.passingYear}</p>
-                                <p className="text-gray-500">
-                                    {edu.degree}
-                                </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    
-                    </div>
-
-                    {/* Work Experience Section */}
-                    <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                        Work Experience
-                    </h2>
-                    <div className="space-y-4">
-                        {userDetails && userDetails.experience.map((exp, ind)=>(
-                            <div key={ind} className="space-y-15">
-                                <div className="flex items-start space-x-4">
-                                <div className="flex-shrink-0">
-                                    <div className="h-12 w-12 bg-gray-800 rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-bold text-lg">
-                                        {exp.company[0]}
-                                    </span>
+                        {/* Education Section */}
+                        <div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                            Education
+                        </h2>
+                        <div className="space-y-4">
+                            {userDetails && userDetails.education.map((edu, ind)=>(
+                                <div key={ind} className="flex items-start space-x-4">
+                                    <div className="flex-shrink-0">
+                                    <div className="h-12 w-12 bg-red-600 rounded-lg flex items-center justify-center">
+                                        <span className="text-white font-bold text-lg">{edu.university[0]}</span>
+                                    </div>
+                                    </div>
+                                    <div>
+                                    <h3 className="font-semibold text-gray-900">
+                                        {edu.university}
+                                    </h3>
+                                    <p className="text-gray-600">{edu.passingYear}</p>
+                                    <p className="text-gray-500">
+                                        {edu.degree}
+                                    </p>
                                     </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">
-                                    {exp.company}
-                                    </h3>
-                                    <p className="text-gray-600">{exp.experience} Years of Experience</p>
-                                </div>
-                                </div>
+                            ))}
+                        </div>
+                        
+                        </div>
+
+                        {/* Work Experience Section */}
+                        { userDetails && userDetails.experience.length>0 && (
+                            <div>
+                            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                                Work Experience
+                            </h2>
+                            <div className="space-y-4">
+                                {userDetails.experience.map((exp, ind)=>(
+                                    <div key={ind} className="space-y-15">
+                                        <div className="flex items-start space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-12 w-12 bg-gray-800 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-lg">
+                                                {exp.company[0]}
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">
+                                            {exp.company}
+                                            </h3>
+                                            <p className="text-gray-600">{exp.experience} Years of Experience</p>
+                                        </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                    </div>
+                            </div>
+                        )}
 
-                    {/* Skills Section */}
-                    <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                        Skills
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                        {userDetails?.skills.map((skill, index) => (
-                        <span
-                            key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
-                        >
-                            {skill}
-                        </span>
-                        ))}
+                        {/* Skills Section */}
+                        <div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                            Skills
+                        </h2>
+                        <div className="flex flex-wrap gap-2">
+                            {userDetails?.skills.map((skill, index) => (
+                            <span
+                                key={index}
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+                            >
+                                {skill}
+                            </span>
+                            ))}
+                        </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
-                )}
+                    )}
 
-                {activeTab !== "About" && (
-                <div className="text-center py-12">
-                    <p className="text-gray-500">
-                    Content for {activeTab} tab coming soon...
-                    </p>
+                    {activeTab !== "About" && (
+                    <div className="text-center py-12">
+                        <p className="text-gray-500">
+                        Content for {activeTab} tab coming soon...
+                        </p>
+                    </div>
+                    )}
                 </div>
-                )}
-            </div>
+            ) : (
+                <div className="flex justify-center">
+                    <div className="p-6">
+                        <h3>Would recommend adding details to your profile to make you stand out :)</h3>
+                    </div>
+                    
+                </div>
+            )}
             </div>
         </div>
         </main>

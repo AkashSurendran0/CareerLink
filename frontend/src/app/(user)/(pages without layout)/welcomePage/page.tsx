@@ -3,8 +3,10 @@
 import axios from "axios"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useLoading } from "../../template"
 
 export default function ProfileForm() {
+  const setLoading=useLoading()
   const router=useRouter()
   const [skillsFields, setSkillsFields] = useState([{ id: 1, value: "" }])
   const [educationFields, setEducationFields] = useState([{ id: 1, degree:"", university:"", passingYear:"" }])
@@ -124,12 +126,6 @@ export default function ProfileForm() {
       return setErrors({aboutMe : "About Me must be at least 20 characters"})
     }
 
-    if (!detailsForm.experience.length || 
-      detailsForm.experience.every(exp => 
-        !exp.company.trim() && !exp.experience.trim())) {
-      return setErrors({experience : "Please add at least one experience"})
-    }
-
     if (!detailsForm.skills.length || detailsForm.skills.every(skill => !skill.trim())) {
       return setErrors({skills : "Please add at least one skill"})
     }
@@ -150,6 +146,8 @@ export default function ProfileForm() {
     if (detailsForm.githubLink && !/^https:\/\/(www\.)?github\.com\/.*$/i.test(detailsForm.githubLink)) {
       return setErrors({githubLink : "Enter a valid GitHub profile URL"})
     }
+
+    setLoading(true)
 
     const filteredEdu=detailsForm.education.filter(edu=>edu.degree.trim() && edu.university.trim() && edu.passingYear.trim())
     const filteredExp=detailsForm.experience.filter(exp=>exp.company.trim() && exp.experience.trim())
@@ -172,6 +170,21 @@ export default function ProfileForm() {
     })
 
     if(result.data.success) router.push('/feed')
+
+  }
+
+  const skipPage = async () =>{
+    setLoading(true)
+  
+    const token=localStorage.getItem('token')
+
+    const result=await axios.post('http://localhost:5000/user/addUserDetails', detailsForm, {
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+
+    if(result.data.success) router.push('/profile/user')
 
   }
 
@@ -419,7 +432,7 @@ export default function ProfileForm() {
             >
               Save & Continue
             </button>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium focus:outline-none focus:underline cursor-pointer">
+            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium focus:outline-none focus:underline cursor-pointer" onClick={skipPage}>
               Skip for Now
             </button>
           </div>

@@ -6,8 +6,10 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLoading } from "../../template";
 
 function Signup() {
+    const setLoading=useLoading()
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
@@ -115,9 +117,12 @@ function Signup() {
         }
 
         const result=await axios.post('http://localhost:5000/user/sendOTP', data)
+        if(!result.data.result.success){
+            return enqueueSnackbar(result.data.result.message, {variant:'error'})
+        }
         const expiry=Date.now()+60*1000
         const emailDetails={
-            otp: result.data.otp,
+            otp: result.data.result.otp,
             email: signupForm.email,
             expiry,
         }
@@ -164,10 +169,9 @@ function Signup() {
             return
         }
 
+        setLoading(true)
+
         const result=await axios.post('http://localhost:5000/user/signup', signupForm)
-        if(!result.data.token.success){
-            return enqueueSnackbar(result.data.token.message, {variant:'error'})
-        }
 
         localStorage.setItem('token', result.data.token.token)
 

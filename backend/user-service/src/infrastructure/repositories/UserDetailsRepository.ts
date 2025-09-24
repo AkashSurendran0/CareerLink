@@ -3,6 +3,8 @@ import { UserDetailsEntity } from "../../domain/entities/UserDetails";
 import { UserDetailsModel } from "../models/UserDetailsModel";
 
 type details={
+    username:string,
+    profilePicture:string,
     gender:string,
     location:string,
     proficiency:string,
@@ -57,5 +59,29 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             details.githubLink
         )
     }
+
+    async editUserDetails (id:string, details:details): Promise<UserDetailsEntity | null> {
+        const newDetails=await UserDetailsModel.findOneAndUpdate(
+            {user:id},
+            {$set: details},
+            {new:true}
+        )
+        if(!newDetails) return null
+        return new UserDetailsEntity(
+            newDetails.id.toString(),
+            newDetails.user,
+            newDetails.profilePicture,
+            newDetails.gender,
+            newDetails.aboutMe,
+            newDetails.location,
+            newDetails.proficiency,
+            newDetails.skills,
+            newDetails.education,
+            newDetails.experience,
+            newDetails.linkedinLink,
+            newDetails.githubLink
+        )
+
+    } 
 
 }

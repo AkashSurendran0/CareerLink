@@ -19,7 +19,7 @@ export interface ISignupUser {
 }
 
 export interface ISendOtp {
-    mailOtp(email:string):Promise<number>
+    mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>
 }
 
 export interface GetUsers {

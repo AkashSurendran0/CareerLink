@@ -6,8 +6,10 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLoading } from "../../template";
 
 function ForgotPassword() {
+    const setLoading=useLoading()
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
@@ -160,6 +162,8 @@ function ForgotPassword() {
             setErrors({confirmPass:'Passwords do not match'})
             return
         }
+
+        setLoading(true)
 
         const result=await axios.post('http://localhost:5000/user/changePassword', signupForm)
 

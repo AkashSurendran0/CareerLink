@@ -7,4 +7,5 @@ export interface IUserRepository {
     updateUserPassword(email:string, password:string):Promise<User>
     getUsers(page:number, limit:number):Promise<User[]>
     getAllUsersCount(): Promise<number>
+    editUserName(id:string, username:string): Promise<User>
 }

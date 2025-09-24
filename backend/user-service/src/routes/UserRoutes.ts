@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserController } from "../interfaces/controllers/UserController";
 import passport from "passport";
 import { UserDetailsController } from "../interfaces/controllers/UserDetailsController";
+import upload from "../middlewares/upload";
 
 const router=Router()
 const userController=new UserController()
@@ -26,5 +27,6 @@ router.post('/sendResetOTP', userController.sendPassResetOtp)
 router.get('/getUsers', userController.getPageUsers)
 router.post('/addUserDetails', userDetailsController.insertUserDetails)
 router.get('/getUserDetails', userDetailsController.queryUserDetails)
+router.patch('/editUserDetails', upload.single("profilePicture"), userDetailsController.modifyUserDetails)
 
 export default router

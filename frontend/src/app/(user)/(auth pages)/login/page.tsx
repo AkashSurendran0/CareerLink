@@ -6,8 +6,10 @@ import { useSnackbar } from "notistack";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLoading } from "../../template";
 
 function Login() {
+    const setLoading=useLoading()
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [loginDetails, setLoginDetails]=useState({
@@ -40,8 +42,11 @@ function Login() {
             return
         }
 
+        setLoading(true)
+
         const result=await axios.post('http://localhost:5000/user/login', loginDetails)
         if(!result.data.token.success){
+            setLoading(false)
             return enqueueSnackbar(result.data.token.message, {variant:'error'})
         }
 

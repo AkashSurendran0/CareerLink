@@ -10,5 +10,6 @@ export const authMiddleware = (req:Request, res:Response, next:NextFunction) => 
     const decoded=jwt.verify(token, 'jwt_secret')
     console.log(decoded)
     req.headers['user-email']=decoded.email
+    req.headers['user-id']=decoded.id
     next()
 }
