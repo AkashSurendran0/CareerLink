@@ -1,13 +1,13 @@
 import { IAdminLogin } from "../../domain/use-cases/IAdminLogin";
 import { IAdminRepository } from "../../domain/repositories/IAdminRepository";
 import jwt from 'jsonwebtoken'
+import {injectable, inject} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class AdminLogin implements IAdminLogin {
-    private _adminRepository:IAdminRepository
 
-    constructor(_adminRepository:IAdminRepository){
-        this._adminRepository=_adminRepository
-    }
+    constructor(@inject(TYPES.IAdminRepository) private _adminRepository:IAdminRepository){}
 
     async findAdmin(email: string, password: string): Promise<{ success: boolean; message: string; } | { success: true; token: string; }> {
         console.log('reacheddddd')

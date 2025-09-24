@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import { AdminRepository } from "../../infrastructure/database/AdminRepository";
 import { AdminLogin } from "../../application/use-cases/AdminLogin";
+import {injectable, inject} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class AdminController {
-    private _adminLogin:AdminLogin
 
-    constructor(){
-        const adminRepository=new AdminRepository()
-        this._adminLogin=new AdminLogin(adminRepository)
-    }
+    constructor(@inject(TYPES.AdminLogin) private _adminLogin:AdminLogin){}
 
     adminLoginCase = async (req:Request, res:Response):Promise<void> => {
         try {
