@@ -3,10 +3,12 @@ import { UserController } from "../interfaces/controllers/UserController";
 import passport from "passport";
 import { UserDetailsController } from "../interfaces/controllers/UserDetailsController";
 import upload from "../middlewares/upload";
+import container from "../inversify.config";
+import { TYPES } from "../types";
 
 const router=Router()
-const userController=new UserController()
-const userDetailsController=new UserDetailsController()
+const userController=container.get<UserController>(TYPES.UserController)
+const userDetailsController=container.get<UserDetailsController>(TYPES.UserDetailsController)
 
 router.post('/login', userController.login)
 router.post('/signup', userController.signup)

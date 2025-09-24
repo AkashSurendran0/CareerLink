@@ -1,12 +1,12 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { GetUsers } from "../../domain/use-cases/IUserUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class GetAllUsers implements GetUsers {
-    private _userRepository:IUserRepository
 
-    constructor(userRepository:IUserRepository){
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
     async getUsers (page:number, limit:number):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }> {
         const count=await this._userRepository.getAllUsersCount()

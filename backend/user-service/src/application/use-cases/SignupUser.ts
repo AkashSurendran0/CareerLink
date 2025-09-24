@@ -5,13 +5,13 @@ import jwt from 'jsonwebtoken'
 import { Mailer } from "../../utils/MailHelper";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class SignupUser implements ISignupUser {
-    private _userRepository: IUserRepository
 
-    constructor(userRepository: IUserRepository){
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
     async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string}> {
         const hashedPass=await bcrypt.hash(password, 10)
@@ -36,17 +36,13 @@ export class SignupUser implements ISignupUser {
     }
 }
 
+@injectable()
 export class SendOTP implements ISendOtp {
-    private mailer:Mailer
-    private userRepository:IUserRepository
 
-    constructor(userRepository:IUserRepository){
-        this.mailer=new Mailer()
-        this.userRepository=userRepository
-    }
+    constructor(@inject(TYPES.Mailer) private _mailer:Mailer, @inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
     async mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>{
-        const userExists=await this.userRepository.findByEmail(email)
+        const userExists=await this._userRepository.findByEmail(email)
         if(userExists){
             return {
                 success:false, 
@@ -65,7 +61,7 @@ export class SendOTP implements ISendOtp {
                     Thanks,  
                     The CareerLink Team 🚀`
         }
-        await this.mailer.sendMail(data.to, data.subject, data.text)
+        await this._mailer.sendMail(data.to, data.subject, data.text)
         return {
             success:true,
             otp

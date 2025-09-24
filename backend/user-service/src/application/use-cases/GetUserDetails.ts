@@ -1,6 +1,8 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
 type Education = {
     degree: string;
@@ -27,14 +29,10 @@ type Details = {
     githubLink:string
 };
 
+@injectable()
 export class GetUserDetails implements IGetUserDetails {
-    private _userDetailsRepository:IUserDetailsRepository
-    private _userRepository:IUserRepository
 
-    constructor(userDetailsRepository:IUserDetailsRepository, userRepository:IUserRepository){
-        this._userDetailsRepository=userDetailsRepository
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
 
     async getUserDetails(email:string): Promise<Details | null> {
         const user=await this._userRepository.findByEmail(email)

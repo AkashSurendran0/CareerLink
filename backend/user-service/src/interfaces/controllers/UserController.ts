@@ -8,29 +8,23 @@ import { SendResetOTP } from "../../application/use-cases/ChangePass";
 import { GetAllUsers } from "../../application/use-cases/GetUsers";
 import { AlterUserStatus } from "../../application/use-cases/AlterUserStatus";
 import { CheckUserBlock } from "../../application/use-cases/CheckUserBlock";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
-
+@injectable()
 export class UserController {
-    private _loginUser:LoginUser
-    private _signupUser:SignupUser
-    private _sendOTP:SendOTP
-    private _changePass:ChangePass
-    private _sendResetOtp:SendResetOTP
-    private _getUsers:GetAllUsers
-    private _alterUserStatus:AlterUserStatus
-    private _checkUserBlock:CheckUserBlock
 
-    constructor() {
-        const userRepository=new UserRepository()
-        this._loginUser=new LoginUser(userRepository)
-        this._signupUser=new SignupUser(userRepository)
-        this._sendOTP=new SendOTP(userRepository)
-        this._changePass=new ChangePass(userRepository)
-        this._sendResetOtp=new SendResetOTP(userRepository)
-        this._getUsers=new GetAllUsers(userRepository)
-        this._alterUserStatus=new AlterUserStatus(userRepository)
-        this._checkUserBlock=new CheckUserBlock(userRepository)
-    }
+    constructor(
+        @inject(TYPES.LoginUser) private _loginUser:LoginUser,
+        @inject(TYPES.SignupUser) private _signupUser:SignupUser,
+        @inject(TYPES.SendOTP) private _sendOTP:SendOTP,
+        @inject(TYPES.ChangePass) private _changePass:ChangePass,
+        @inject(TYPES.SendResetOTP) private _sendResetOtp:SendResetOTP,
+        @inject(TYPES.GetAllUsers) private _getUsers:GetAllUsers,
+        @inject(TYPES.AlterUserStatus) private _alterUserStatus:AlterUserStatus,
+        @inject(TYPES.CheckUserBlock) private _checkUserBlock:CheckUserBlock,
+
+    ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {

@@ -4,19 +4,17 @@ import { UserDetailsRepository } from "../../infrastructure/repositories/UserDet
 import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
 import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class UserDetailsController {
-    private _addUserDetails:AddUserDetails
-    private _getUserDetails:GetUserDetails
-    private _editUserDetails:EditUserDetails
 
-    constructor(){
-        const userdetailsRepository=new UserDetailsRepository()
-        const userRepository=new UserRepository()
-        this._addUserDetails=new AddUserDetails(userdetailsRepository, userRepository)
-        this._getUserDetails=new GetUserDetails(userdetailsRepository, userRepository)
-        this._editUserDetails=new EditUserDetails(userdetailsRepository, userRepository)
-    }
+    constructor(
+        @inject(TYPES.AddUserDetails) private _addUserDetails:AddUserDetails,
+        @inject(TYPES.GetUserDetails) private _getUserDetails:GetUserDetails,
+        @inject(TYPES.EditUserDetails) private _editUserDetails:EditUserDetails,
+    ){}
 
     insertUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {

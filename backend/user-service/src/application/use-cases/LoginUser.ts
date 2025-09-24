@@ -2,13 +2,13 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
+@injectable()
 export class LoginUser implements ILoginUser {
-    private _userRepository: IUserRepository
 
-    constructor(userRepository: IUserRepository){
-        this._userRepository=userRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
     async execute(email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
         const user=await this._userRepository.findByEmail(email)

@@ -1,6 +1,8 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository"
 import { IUserRepository } from "../../domain/repositories/IUserRepository"
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
+import {inject, injectable} from 'inversify'
+import { TYPES } from "../../types";
 
 type Education = {
     degree: string;
@@ -27,16 +29,12 @@ type Details = {
     githubLink:string
 };
 
+@injectable()
 export class EditUserDetails implements IEditUserDetails {
-    private _userRepository:IUserRepository
-    private _userDetailsRepository:IUserDetailsRepository
 
-    constructor(userDetailsRepository:IUserDetailsRepository, userRepository:IUserRepository) {
-        this._userRepository=userRepository
-        this._userDetailsRepository=userDetailsRepository
-    }
+    constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
 
-    async editUserDetails (details:Details, id:string): Promise<{success:boolean} {
+    async editUserDetails (details:Details, id:string): Promise<{success:boolean}> {
         await this._userRepository.editUserName(id, details.username)
         const updationDetails = {
             profilePicture: details.profilePicture,
