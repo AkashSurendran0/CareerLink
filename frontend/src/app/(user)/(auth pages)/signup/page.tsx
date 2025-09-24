@@ -171,7 +171,7 @@ function Signup() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/signup', signupForm)
+        const result=await axios.post('http://localhost:5000/user/signup', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token.token)
 

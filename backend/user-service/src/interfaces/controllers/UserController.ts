@@ -6,6 +6,9 @@ import { SendOTP } from "../../application/use-cases/SignupUser";
 import { ChangePass } from "../../application/use-cases/ChangePass";
 import { SendResetOTP } from "../../application/use-cases/ChangePass";
 import { GetAllUsers } from "../../application/use-cases/GetUsers";
+import { AlterUserStatus } from "../../application/use-cases/AlterUserStatus";
+import { CheckUserBlock } from "../../application/use-cases/CheckUserBlock";
+
 
 export class UserController {
     private loginUser:LoginUser
@@ -14,6 +17,8 @@ export class UserController {
     private changePass:ChangePass
     private sendResetOtp:SendResetOTP
     private getUsers:GetAllUsers
+    private alterUserStatus:AlterUserStatus
+    private checkUserBlock:CheckUserBlock
 
     constructor() {
         const userRepository=new UserRepository()
@@ -23,12 +28,20 @@ export class UserController {
         this.changePass=new ChangePass(userRepository)
         this.sendResetOtp=new SendResetOTP(userRepository)
         this.getUsers=new GetAllUsers(userRepository)
+        this.alterUserStatus=new AlterUserStatus(userRepository)
+        this.checkUserBlock=new CheckUserBlock(userRepository)
     }
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {
             const {email, password}=req.body
             const token=await this.loginUser.execute(email, password)
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             res.json({token})
         } catch (error:any) {
             res.status(400).json({message:error.message})
@@ -39,6 +52,12 @@ export class UserController {
         try {
             const {username, email, password}=req.body
             const token=await this.signupUser.createUser(username, email, password)
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             console.log(token)
             res.json({token})
         } catch (error:any) {
@@ -60,6 +79,12 @@ export class UserController {
         try {
             const {email, password}=req.body
             const token=await this.changePass.changePass(email, password)
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             res.json({token})
         } catch (error:any) {
             res.status(400).json({message:error.message})
@@ -84,6 +109,27 @@ export class UserController {
             const users=await this.getUsers.getUsers(pageNum, limitNum)
             res.json({users})
         } catch (error:any) {
+            res.status(400).json({message:error.message})
+        }
+    }
+
+    changeUserStatus = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const user=req.body
+            const users=await this.alterUserStatus.changeUserStatus(user.id)
+            res.json({users})
+        } catch (error: any) {
+            res.status(400).json({message:error.message})
+        }
+    }
+
+    checkBlock = async (req:Request, res:Response): Promise<void> => {
+        try {
+            console.log('heheheheheheh')
+            const userId=req.headers['user-id'] as string
+            const result=await this.checkUserBlock.checkUserBlock(userId)
+            res.json({result})
+        } catch (error: any) {
             res.status(400).json({message:error.message})
         }
     }

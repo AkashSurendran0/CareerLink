@@ -165,7 +165,7 @@ function ForgotPassword() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/changePassword', signupForm)
+        const result=await axios.post('http://localhost:5000/user/changePassword', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token)
         router.push('/feed')

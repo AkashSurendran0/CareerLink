@@ -34,6 +34,20 @@ function UserManagement() {
         setPage(i)
     }
 
+    const alterUserStatus = async (id:string) => {
+        const user={    
+            id:id
+        }
+        const result=await axios.patch('http://localhost:5000/user/alterUserStatus', user)
+        console.log(result)
+        const updatedUser=result.data.users
+        setUsers((prev)=>
+            prev.map(u=>
+                u.id==updatedUser.id? updatedUser:u
+            )
+        )
+    }   
+
     return (
         <div className="flex-1">
             <div className="bg-white border-b border-gray-200 px-8 py-6">
@@ -125,8 +139,8 @@ function UserManagement() {
                             <div className="flex items-center gap-1 text-sm">
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">
-                                {user.status? "make Active" : "Suspend"}
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterUserStatus(user.id)}>
+                                {user.status? "Make Active" : "Suspend"}
                             </button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
