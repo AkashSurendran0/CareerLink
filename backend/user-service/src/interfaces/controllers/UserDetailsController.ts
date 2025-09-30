@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { AddUserDetails } from "../../application/use-cases/AddUserDetails";
-import { UserDetailsRepository } from "../../infrastructure/repositories/UserDetailsRepository";
-import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
 import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
 import {inject, injectable} from "inversify";
@@ -43,13 +41,14 @@ export class UserDetailsController {
         try {
             const userId=req.headers["user-id"] as string;
             let imageUrl: string | undefined;
-            let url;
-            if (req.file && "path" in req.file) {
-                url = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
+            console.log(req.file, 'file')
+            if (req.file) {
+                imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
+            console.log('image', imageUrl)
             const details=req.body;
             if(imageUrl){
-                details.profilePicture=url;
+                details.profilePicture=imageUrl;
             }
             await this._editUserDetails.editUserDetails(details, userId);
             res.json({success:true});

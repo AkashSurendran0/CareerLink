@@ -6,7 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export async function uploadImageToS3 (fileBuffer: Buffer, fileType: string) {
-    const fileKey = `upload/${fileType}`;
+    const timestamp = Date.now()
+    const fileKey = `upload/${timestamp}.${fileType}`;
 
     const command = new PutObjectCommand ({
         Bucket: process.env.AWS_BUCKET_NAME,
