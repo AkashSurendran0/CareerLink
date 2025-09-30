@@ -3,19 +3,24 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
+import {LoaderIcon} from 'lucide-react'
+
 
 type User = {
     id:string,
     username:string,
     email:string,
+    suspended:boolean,
     createdAt:Date,
-    status:boolean    
+
 }
 
 function UserManagement() {
     const [users, setUsers]=useState<User[]>([])
     const [pageLimit, setPageLimit]=useState(0)
     const [page, setPage]=useState(1)
+    const [loadingUserId, setLoadingUserId]=useState<string | null>()
+
     
     useEffect(()=>{
         const fetchUsers= async () => {
@@ -35,17 +40,22 @@ function UserManagement() {
     }
 
     const alterUserStatus = async (id:string) => {
+        setLoadingUserId(id)
+
         const user={    
             id:id
         }
         const result=await axios.patch('http://localhost:5000/user/alterUserStatus', user)
-        console.log(result)
+        console.log(result, 'resultttt') 
         const updatedUser=result.data.users
+        console.log(updatedUser, 'userssss')
         setUsers((prev)=>
             prev.map(u=>
-                u.id==updatedUser.id? updatedUser:u
+                u.id===updatedUser.id? updatedUser:u
             )
         )
+        setLoadingUserId(null)
+
     }   
 
     return (
@@ -129,10 +139,12 @@ function UserManagement() {
                         <td className="py-4 px-6">
                             <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                user.status? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                                user.suspended? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
                             }`}
                             >
-                            {user.status? 'Suspended':'Active'}
+                                {loadingUserId==user.id? ( <LoaderIcon id={`${user.id}`} className='animate-spin text-blue-500'/> ) : (`${user.suspended? 'Suspended':'Active'}`)}
+                            
+
                             </span>
                         </td>
                         <td className="py-4 px-6">
@@ -140,7 +152,8 @@ function UserManagement() {
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterUserStatus(user.id)}>
-                                {user.status? "Make Active" : "Suspend"}
+                                {user.suspended? "Make Active" : "Suspend"}
+
                             </button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>

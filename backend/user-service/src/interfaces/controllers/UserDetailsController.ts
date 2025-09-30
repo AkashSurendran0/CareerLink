@@ -6,6 +6,8 @@ import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
 import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { uploadImageToS3 } from "../../config/upload";
+
 
 @injectable()
 export class UserDetailsController {
@@ -41,12 +43,13 @@ export class UserDetailsController {
         try {
             const userId=req.headers["user-id"] as string;
             let imageUrl: string | undefined;
+            let url;
             if (req.file && "path" in req.file) {
-                imageUrl = (req.file as any).path;
+                url = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
             const details=req.body;
             if(imageUrl){
-                details.profilePicture=imageUrl;
+                details.profilePicture=url;
             }
             await this._editUserDetails.editUserDetails(details, userId);
             res.json({success:true});

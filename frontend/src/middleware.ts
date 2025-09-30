@@ -26,32 +26,33 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(new URL("/feed", req.url));
     }
 
-//     if (!pathname.startsWith("/login") &&
-//         !pathname.startsWith("/signup") &&
-//         !pathname.startsWith("/resetPassword") &&
-//         !pathname.startsWith("/blocked") &&
-//         !pathname.startsWith("/admin")) {
-//     try {
-//       const res = await fetch("http://localhost:5000/user/check", {
-//         method: "GET",
-//         headers: { Authorization: `Bearer ${token}` },
-//         cache: "no-store",
-//       });
+    if (!pathname.startsWith("/login") &&
+        !pathname.startsWith("/signup") &&
+        !pathname.startsWith("/resetPassword") &&
+        !pathname.startsWith("/blocked") &&
+        !pathname.startsWith("/admin")) {
+    try {
+      const res = await fetch("http://localhost:5000/user/check", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
 
-//       if (!res.ok) {
-//         return NextResponse.redirect(new URL("/blocked", req.url));
-//       }
+      if (!res.ok) {
+        return NextResponse.redirect(new URL("/blocked", req.url));
+      }
 
-//       const data = await res.json();
-//       if (data.blocked) {
-//         return NextResponse.redirect(new URL("/blocked", req.url));
-//       }
+      const data = await res.json();
+      if (data.result.success) {
+        return NextResponse.redirect(new URL("/blocked", req.url));
+      }
 
-//     } catch (err) {
-//       console.error("Middleware fetch error:", err);
-//       return NextResponse.redirect(new URL("/login", req.url));
-//     }
-//   }
+    } catch (err) {
+      console.error("Middleware fetch error:", err);
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
 
     return NextResponse.next();
 }

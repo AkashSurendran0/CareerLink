@@ -50,12 +50,14 @@ function Login() {
         setLoading(true)
 
         const result=await axios.post('http://localhost:5000/user/login', loginDetails, {withCredentials:true})
-        if(!result.data.token.success){
+        console.log(result)
+        if(!result.data.result.success){
             setLoading(false)
-            return enqueueSnackbar(result.data.token.message, {variant:'error'})
+            return enqueueSnackbar(result.data.result.message, {variant:'error'})
+
         }
 
-        localStorage.setItem('token', result.data.token.token)
+        localStorage.setItem('token', result.data.result.token)
 
         router.push('/feed')
     }

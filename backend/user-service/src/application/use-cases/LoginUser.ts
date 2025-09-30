@@ -18,6 +18,12 @@ export class LoginUser implements ILoginUser {
                 message: "User not found"
             };
         }
+        if(user.suspended){
+            return {
+                success:false,
+                message: 'User entry restricted'
+            }
+        }
         console.log(user);
         const isMatch=await bcrypt.compare(password, user.password);
         console.log(isMatch);

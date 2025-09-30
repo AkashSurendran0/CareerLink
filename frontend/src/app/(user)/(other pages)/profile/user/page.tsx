@@ -83,16 +83,18 @@ export default function ProfileDashboard() {
                     )}
                 </div>
                 <div className="flex-1 min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                <h1 className="text-1xl md:text-2xl font-bold text-gray-900">
                     {userDetails && userDetails.username}
                 </h1>
-                <p className="text-lg text-gray-600 mt-1">
+                <p className="text-md text-gray-600 mt-1">
+
                     {userDetails && userDetails.proficiency}
                 </p>
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
                 <div className="flex-shrink-0">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md" onClick={goToEditPage}>
+                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer" onClick={goToEditPage}>
+
                     Edit Profile
                 </button>
                 </div>
