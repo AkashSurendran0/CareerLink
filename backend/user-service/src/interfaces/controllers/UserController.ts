@@ -24,9 +24,18 @@ export class UserController {
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {email, password}=req.body
-            const token=await this.loginUser.execute(email, password)
-            res.json({token})
+            const {email, password}=req.body;
+            const result=await this._loginUser.execute(email, password);
+            if(result.success){
+                const token=result.token
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "strict",
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                });
+            }
+            res.json({result});
         } catch (error:any) {
             res.status(400).json({message:error.message})
         }
@@ -71,5 +80,39 @@ export class UserController {
         } catch (error:any) {
             res.status(400).json({message:error.message})
         }
-    }
+    };
+
+    getPageUsers = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {page, limit}=req.query;
+            const pageNum=parseInt(page as string, 10) || 1;
+            const limitNum=parseInt(limit as string, 5) || 5;
+            const users=await this._getUsers.getUsers(pageNum, limitNum);
+            res.json({users});
+        } catch (error:any) {
+            res.status(400).json({message:error.message});
+        }
+    };
+
+    changeUserStatus = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const user=req.body;
+            const users=await this._alterUserStatus.changeUserStatus(user.id);
+            res.json({users});
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    };
+
+    checkBlock = async (req:Request, res:Response): Promise<void> => {
+        try {
+            console.log("heheheheheheh");
+            const userId=req.headers["user-id"] as string;
+            const result=await this._checkUserBlock.checkUserBlock(userId);
+            console.log(result, 'result')
+            res.json({result});
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    };
 }

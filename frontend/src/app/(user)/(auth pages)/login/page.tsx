@@ -40,12 +40,16 @@ function Login() {
             return
         }
 
-        const result=await axios.post('http://localhost:5000/user/login', loginDetails)
-        if(!result.data.token.success){
-            return enqueueSnackbar(result.data.token.message, {variant:'error'})
+        setLoading(true)
+
+        const result=await axios.post('http://localhost:5000/user/login', loginDetails, {withCredentials:true})
+        console.log(result)
+        if(!result.data.result.success){
+            setLoading(false)
+            return enqueueSnackbar(result.data.result.message, {variant:'error'})
         }
 
-        localStorage.setItem('token', result.data.token.token)
+        localStorage.setItem('token', result.data.result.token)
 
         router.push('/feed')
     }

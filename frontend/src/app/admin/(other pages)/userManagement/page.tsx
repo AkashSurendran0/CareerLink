@@ -1,42 +1,55 @@
 import React from 'react'
 import Image from 'next/image'
+import axios from 'axios'
+import {LoaderIcon} from 'lucide-react'
+
+type User = {
+    id:string,
+    username:string,
+    email:string,
+    suspended:boolean,
+    createdAt:Date,
+}
 
 function UserManagement() {
-    const users = [
-        {
-            id: 1,
-            name: "Emma H",
-            email: "emma.h@email.com",
-            dateJoined: "2022-01-15",
-            status: "Active",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 2,
-            name: "Liam D",
-            email: "liam.d@email.com",
-            dateJoined: "2022-03-22",
-            status: "Active",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 3,
-            name: "Olivia R",
-            email: "olivia.r@email.com",
-            dateJoined: "2022-05-10",
-            status: "Suspended",
-            avatar: "/logo.jpeg",
-        },
-        {
-            id: 4,
-            name: "Olivia R",
-            email: "olivia.r@email.com",
-            dateJoined: "2022-05-10",
-            status: "Suspended",
-            avatar: "/logo.jpeg",
-        },
-    ]
+    const [users, setUsers]=useState<User[]>([])
+    const [pageLimit, setPageLimit]=useState(0)
+    const [page, setPage]=useState(1)
+    const [loadingUserId, setLoadingUserId]=useState<string | null>()
+    
+    useEffect(()=>{
+        const fetchUsers= async () => {
+            const result=await axios.get('http://localhost:5000/user/getUsers?page=1&limit=3')
+            setUsers(result.data.users.result)
+            console.log(result.data.users.pageLimit)
+            setPageLimit(result.data.users.pageLimit)
+        }
+        fetchUsers()
 
+    }, [])
+
+    const getPaginatedUsers = async (i: number) =>{
+        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${i}&limit=3`)
+        setUsers(result.data.users.result)
+        setPage(i)
+    }
+
+    const alterUserStatus = async (id:string) => {
+        setLoadingUserId(id)
+        const user={    
+            id:id
+        }
+        const result=await axios.patch('http://localhost:5000/user/alterUserStatus', user)
+        console.log(result, 'resultttt') 
+        const updatedUser=result.data.users
+        console.log(updatedUser, 'userssss')
+        setUsers((prev)=>
+            prev.map(u=>
+                u.id===updatedUser.id? updatedUser:u
+            )
+        )
+        setLoadingUserId(null)
+    }   
 
     return (
         <div className="flex-1">
@@ -124,18 +137,19 @@ function UserManagement() {
                         <td className="py-4 px-6">
                             <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                user.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                user.suspended? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
                             }`}
                             >
-                            {user.status}
+                                {loadingUserId==user.id? ( <LoaderIcon id={`${user.id}`} className='animate-spin text-blue-500'/> ) : (`${user.suspended? 'Suspended':'Active'}`)}
+                            
                             </span>
                         </td>
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-1 text-sm">
                             <button className="text-blue-600 hover:text-blue-800">View</button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800">
-                                {user.status === "Active" ? "Suspend" : "Suspend"}
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterUserStatus(user.id)}>
+                                {user.suspended? "Make Active" : "Suspend"}
                             </button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800">Upgrade/</button>

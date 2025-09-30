@@ -6,8 +6,17 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+<<<<<<< Updated upstream
 
 function Signup() {
+=======
+import { useLoading } from "../../template";
+import {LoaderIcon} from 'lucide-react'
+
+function Signup() {
+    const [loadOTP, setLoadOTP]=useState(false)
+    const setLoading=useLoading()
+>>>>>>> Stashed changes
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
@@ -109,6 +118,7 @@ function Signup() {
             setErrors({email:'Please enter a valid email address'})
             return 
         }
+        setLoadOTP(true)
 
         const data={
             email:signupForm.email
@@ -123,6 +133,7 @@ function Signup() {
         }
         handleTimer(emailDetails.expiry)
         localStorage.setItem('signinDetails', JSON.stringify(emailDetails))
+        setLoadOTP(false)
         setSendOtp(true)
     }
 
@@ -218,7 +229,7 @@ function Signup() {
                         className={`w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${sendOtp? 'opacity-50':''}`}
                         disabled={sendOtp? true:false}
                         />
-                        <button className={`w-50 ${sendOtp? `${correctOtp? 'bg-green-600':'bg-gray-600'}`:'bg-blue-600'} cursor-pointer text-white h-12 rounded-lg ${sendOtp? '':'hover:bg-blue-700'}`} onClick={sendOTP}>{sendOtp? `${correctOtp? 'Verified': `${timeLeft}`}`:'Get OTP'}</button>
+                        <button className={`w-50 ${sendOtp? `${correctOtp? 'bg-green-600':'bg-gray-600'}`:'bg-blue-600'} cursor-pointer text-white h-12 flex justify-center items-center rounded-lg ${sendOtp? '':'hover:bg-blue-700'}`} onClick={sendOTP}>{loadOTP? <LoaderIcon className='animate-spin text-white-500'/> : `${sendOtp? `${correctOtp? 'Verified': `${timeLeft}`}`:'Get OTP'}`}</button>
                     </div>
                     {errors.email && (
                         <p className="text-red-500 text-sm">{errors.email}</p>

@@ -18,9 +18,19 @@ export class LoginUser implements ILoginUser {
                 message: 'User not found'
             }
         }
+<<<<<<< Updated upstream
         console.log(user)
         const isMatch=await bcrypt.compare(password, user.password)
         console.log(isMatch)
+=======
+        if(user.suspended){
+            return {
+                success:false,
+                message: 'User entry restricted'
+            }
+        }
+        const isMatch=await bcrypt.compare(password, user.password);
+>>>>>>> Stashed changes
         if(!isMatch){
             return {
                 success: false,
