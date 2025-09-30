@@ -6,17 +6,12 @@ import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-<<<<<<< Updated upstream
-
-function Signup() {
-=======
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
 
 function Signup() {
     const [loadOTP, setLoadOTP]=useState(false)
     const setLoading=useLoading()
->>>>>>> Stashed changes
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
@@ -125,9 +120,12 @@ function Signup() {
         }
 
         const result=await axios.post('http://localhost:5000/user/sendOTP', data)
+        if(!result.data.result.success){
+            return enqueueSnackbar(result.data.result.message, {variant:'error'})
+        }
         const expiry=Date.now()+60*1000
         const emailDetails={
-            otp: result.data.otp,
+            otp: result.data.result.otp,
             email: signupForm.email,
             expiry,
         }
@@ -175,14 +173,13 @@ function Signup() {
             return
         }
 
-        const result=await axios.post('http://localhost:5000/user/signup', signupForm)
-        if(!result.data.token.success){
-            return enqueueSnackbar(result.data.token.message, {variant:'error'})
-        }
+        setLoading(true)
+
+        const result=await axios.post('http://localhost:5000/user/signup', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token.token)
 
-        router.push('/feed')
+        router.push('/welcomePage')
     }
 
     const googleSignup = async () =>{

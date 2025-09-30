@@ -1,7 +1,10 @@
-import React from 'react'
+"use client"
+
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 import {LoaderIcon} from 'lucide-react'
+
 
 type User = {
     id:string,
@@ -9,6 +12,7 @@ type User = {
     email:string,
     suspended:boolean,
     createdAt:Date,
+
 }
 
 function UserManagement() {
@@ -16,6 +20,7 @@ function UserManagement() {
     const [pageLimit, setPageLimit]=useState(0)
     const [page, setPage]=useState(1)
     const [loadingUserId, setLoadingUserId]=useState<string | null>()
+
     
     useEffect(()=>{
         const fetchUsers= async () => {
@@ -36,6 +41,7 @@ function UserManagement() {
 
     const alterUserStatus = async (id:string) => {
         setLoadingUserId(id)
+
         const user={    
             id:id
         }
@@ -49,11 +55,11 @@ function UserManagement() {
             )
         )
         setLoadingUserId(null)
+
     }   
 
     return (
         <div className="flex-1">
-            {/* Header */}
             <div className="bg-white border-b border-gray-200 px-8 py-6">
             <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                 <div>
@@ -68,9 +74,7 @@ function UserManagement() {
             </div>
             </div>
 
-            {/* Content */}
             <div className="p-8">
-            {/* Search Bar */}
             <div className="mb-6">
                 <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
@@ -82,7 +86,6 @@ function UserManagement() {
                 </div>
             </div>
 
-            {/* Premium Users Section */}
             <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900">All Users</h2>
             </div>
@@ -104,7 +107,6 @@ function UserManagement() {
                 </label>
             </div>
 
-            {/* Users Table */}
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                 <table className="w-full">
@@ -118,22 +120,22 @@ function UserManagement() {
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                    {users.map((user) => (
+                    {users && users.map((user) => (
                         <tr key={user.id} className="hover:bg-gray-50">
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-3">
-                            <Image
+                            {/* <Image
                                 src={user.avatar || "/placeholder.svg"}
                                 alt={user.name}
                                 width={300}
                                 height={300}
                                 className="w-8 h-8 rounded-full object-cover"
-                            />
-                            <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                            /> */}
+                            <span className="text-sm font-medium text-gray-900">{user.username}</span>
                             </div>
                         </td>
                         <td className="py-4 px-6 text-sm text-gray-600">{user.email}</td>
-                        <td className="py-4 px-6 text-sm text-gray-600">{user.dateJoined}</td>
+                        <td className="py-4 px-6 text-sm text-gray-600">{new Date(user.createdAt).toLocaleDateString()}</td>
                         <td className="py-4 px-6">
                             <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -142,18 +144,20 @@ function UserManagement() {
                             >
                                 {loadingUserId==user.id? ( <LoaderIcon id={`${user.id}`} className='animate-spin text-blue-500'/> ) : (`${user.suspended? 'Suspended':'Active'}`)}
                             
+
                             </span>
                         </td>
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-1 text-sm">
-                            <button className="text-blue-600 hover:text-blue-800">View</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterUserStatus(user.id)}>
                                 {user.suspended? "Make Active" : "Suspend"}
+
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800">Upgrade/</button>
-                            <button className="text-blue-600 hover:text-blue-800">Downgrade</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
+                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
                             </div>
                         </td>
                         </tr>
@@ -162,15 +166,27 @@ function UserManagement() {
                 </table>
                 </div>
 
-                {/* Pagination */}
                 <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">‹</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">2</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">3</button>
-                <span className="text-gray-400">...</span>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">10</button>
-                <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">›</button>
+                <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                disabled={page==1? true:false}
+                onClick={()=>getPaginatedUsers(page-1)}
+                >‹</button>
+                { pageLimit &&  
+                    Array.from({length: pageLimit}, (_, i) => i+1)
+                    .filter(p=>{
+                        console.log(p)
+                        if(p==1) return p<=3
+                        if(p==pageLimit) return p>=pageLimit-2
+                        return p>=page-1 && p<=page+1
+                    })
+                    .map(p=>
+                        <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedUsers(p)}>{p}</button>
+                    )
+                }
+                <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                disabled={page==pageLimit? true:false}
+                onClick={()=>getPaginatedUsers(page+1)}
+                >›</button>
                 </div>
             </div>
             </div>

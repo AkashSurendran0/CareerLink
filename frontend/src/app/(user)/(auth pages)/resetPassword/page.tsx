@@ -11,6 +11,7 @@ import {LoaderIcon} from 'lucide-react'
 
 function ForgotPassword() {
     const [loadOTP, setLoadOTP]=useState(false)
+
     const setLoading=useLoading()
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
@@ -167,7 +168,9 @@ function ForgotPassword() {
             return
         }
 
-        const result=await axios.post('http://localhost:5000/user/changePassword', signupForm)
+        setLoading(true)
+
+        const result=await axios.post('http://localhost:5000/user/changePassword', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token)
         router.push('/feed')

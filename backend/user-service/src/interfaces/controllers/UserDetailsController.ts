@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { AddUserDetails } from "../../application/use-cases/AddUserDetails";
+import { UserDetailsRepository } from "../../infrastructure/repositories/UserDetailsRepository";
+import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
 import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { uploadImageToS3 } from "../../config/upload";
+
 
 @injectable()
 export class UserDetailsController {

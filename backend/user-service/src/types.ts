@@ -1,0 +1,19 @@
+export const TYPES={
+    IUserRepository:"IUserRepository",
+    IUserDetailsRepository:"IUserDetailsRepository",
+    AddUserDetails:"AddUserDetails",
+    AlterUserStatus:"AlterUserStatus",
+    ChangePass:"ChangePass",
+    SendResetOTP:"SendResetOTP",
+    CheckUserBlock:"CheckUserBlock",
+    EditUserDetails:"EditUserDetails",
+    GetUserDetails:"GetUserDetails",
+    GetAllUsers:"GetAllUsers",
+    GoogleLogin:"GoogleLogin",
+    LoginUser:"LoginUser",
+    SignupUser:"SignupUser",
+    SendOTP:"SendOTP",
+    UserController:"UserController",
+    UserDetailsController:"UserDetailsController",
+    Mailer:"Mailer"
+};

@@ -6,7 +6,6 @@ export const authMiddleware = (req:Request, res:Response, next:NextFunction) => 
     if(!authHeader){
         return next()
     }
-    console.log(authHeader)
     const token=authHeader.split(' ')[1]
     const decoded=jwt.verify(token, 'jwt_secret')
     console.log(decoded)

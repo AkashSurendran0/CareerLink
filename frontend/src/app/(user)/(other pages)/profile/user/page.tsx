@@ -87,12 +87,14 @@ export default function ProfileDashboard() {
                     {userDetails && userDetails.username}
                 </h1>
                 <p className="text-md text-gray-600 mt-1">
+
                     {userDetails && userDetails.proficiency}
                 </p>
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
                 <div className="flex-shrink-0">
                 <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer" onClick={goToEditPage}>
+
                     Edit Profile
                 </button>
                 </div>

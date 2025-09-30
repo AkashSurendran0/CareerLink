@@ -7,7 +7,9 @@ export class UserModel extends Model {
     public email!: string;
     public password!: string;
     public googleId!: string;
-    public suspended!: boolean
+    public suspended!: boolean;
+
+    public readonly createdAt!:Date;
 }
 
 UserModel.init(
@@ -43,4 +45,4 @@ UserModel.init(
         tableName: "users",
         timestamps: true
     }
-)
+);
