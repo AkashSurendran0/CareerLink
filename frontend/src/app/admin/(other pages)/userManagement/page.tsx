@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 import {LoaderIcon} from 'lucide-react'
@@ -20,21 +20,48 @@ function UserManagement() {
     const [pageLimit, setPageLimit]=useState(0)
     const [page, setPage]=useState(1)
     const [loadingUserId, setLoadingUserId]=useState<string | null>()
-
+    const [query, setQuery]=useState('')
+    const STARTING_PAGE=1
+    const LIMIT=3
+    const debouncer=useRef<NodeJS.Timeout | null>(null)
     
     useEffect(()=>{
         const fetchUsers= async () => {
-            const result=await axios.get('http://localhost:5000/user/getUsers?page=1&limit=3')
+            const result=await axios.get(`http://localhost:5000/user/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${query}`)
+            if(result.data.users.result.length<LIMIT){
+                setPageLimit(1)
+            }else{
+                setPageLimit(result.data.users.pageLimit)
+            }
             setUsers(result.data.users.result)
-            console.log(result.data.users.pageLimit)
-            setPageLimit(result.data.users.pageLimit)
         }
         fetchUsers()
 
     }, [])
 
+    const searchUsers = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val=e.target.value
+        setQuery(val) 
+        if(debouncer.current) clearTimeout(debouncer.current)
+        debouncer.current=setTimeout(() => {
+            fetchUser(val)
+        }, 1500);  
+    }
+        
+    const fetchUser = async (v:string) => {
+        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${v}`)
+        console.log(result.data.users.result)
+        if(result.data.users.result.length<LIMIT){
+            setPageLimit(1)
+        }else{
+            setPageLimit(result.data.users.pageLimit) 
+        }
+        setPage(1)
+        setUsers(result.data.users.result)
+    }
+
     const getPaginatedUsers = async (i: number) =>{
-        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${i}&limit=3`)
+        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${i}&limit=${LIMIT}&query=${query}`)
         setUsers(result.data.users.result)
         setPage(i)
     }
@@ -46,9 +73,7 @@ function UserManagement() {
             id:id
         }
         const result=await axios.patch('http://localhost:5000/user/alterUserStatus', user)
-        console.log(result, 'resultttt') 
         const updatedUser=result.data.users
-        console.log(updatedUser, 'userssss')
         setUsers((prev)=>
             prev.map(u=>
                 u.id===updatedUser.id? updatedUser:u
@@ -82,6 +107,8 @@ function UserManagement() {
                     type="text"
                     placeholder="Search users by name, email..."
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={query}
+                    onChange={searchUsers}
                 />
                 </div>
             </div>

@@ -10,7 +10,8 @@ export async function middleware(req: NextRequest) {
         if (
             !pathname.startsWith("/login") &&
             !pathname.startsWith("/signup") &&
-            !pathname.startsWith("/resetPassword")
+            !pathname.startsWith("/resetPassword")&&
+            !pathname.startsWith("/admin")
         ) {
             return NextResponse.redirect(new URL("/login", req.url));
         }
