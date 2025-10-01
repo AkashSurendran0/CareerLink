@@ -17,7 +17,6 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.896.0",
-
     "@elastic/elasticsearch": "^9.1.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
@@ -63,6 +62,8 @@
     "globals": "^16.4.0",
     "jiti": "^2.6.0",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1"
   }
 }

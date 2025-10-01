@@ -100,10 +100,10 @@ export class UserController {
 
     getPageUsers = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {page, limit}=req.query;
+            const {page, limit, query}=req.query;
             const pageNum=parseInt(page as string, 10) || 1;
             const limitNum=parseInt(limit as string, 5) || 5;
-            const users=await this._getUsers.getUsers(pageNum, limitNum);
+            const users=await this._getUsers.getUsers(pageNum, limitNum, query);
             res.json({users});
         } catch (error:any) {
             res.status(400).json({message:error.message});
