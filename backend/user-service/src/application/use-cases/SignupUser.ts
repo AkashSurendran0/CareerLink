@@ -7,6 +7,7 @@ import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { elasticClient } from "../../utils/ElasticClient";
 
 @injectable()
 export class SignupUser implements ISignupUser {
@@ -24,6 +25,23 @@ export class SignupUser implements ISignupUser {
             false
         );
         const newuser=await this._userRepository.create(user);
+        try {
+            await elasticClient.index({
+                index:"users",
+                id:newuser.id.toString(),
+                document:{
+                    id:newuser.id,
+                    username:newuser.username,
+                    email:newuser.email,
+                    createdAt:newuser.createdAt,
+                    suspended:newuser.suspended
+                }
+            });
+
+            await elasticClient.indices.refresh({ index: "users" });
+        } catch (error:any) {
+            console.log("Cant insert into elasticsearch", error);
+        }
         const token=jwt.sign(
             {id:newuser.id, email:email},
             "jwt_secret",
