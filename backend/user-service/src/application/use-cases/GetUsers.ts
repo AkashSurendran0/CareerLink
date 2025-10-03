@@ -3,6 +3,7 @@ import { IGetAllUsers } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
+import { UserMapper } from "../../mappers/UserMapper";
 
 @injectable()
 export class GetAllUsers implements IGetAllUsers {
@@ -41,13 +42,7 @@ export class GetAllUsers implements IGetAllUsers {
         });
 
         const hits=users.hits.hits.map((hit:any)=>hit._source);
-        const result=hits.map(user=>({
-            id:user.id, 
-            username:user.username,
-            email:user.email,
-            status:user.suspended,
-            createdAt:user.createdAt,
-        }));
+        const result=hits.map((user:any)=>UserMapper.toDTO(user))
         return {
             result: result,
             pageLimit: pageLimit
