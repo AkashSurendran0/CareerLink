@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import UserRouter from "./routes/UserRoutes";
+import V1UserRouter from "./routes/UserRoutes";
 import { connectDB } from "./infrastructure/database/Sequelize";
 import passport from "passport";
 import session from "express-session";
@@ -22,7 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 
-app.use("/", UserRouter);
+app.use("/v1", V1UserRouter);
 
 app.listen(5001, ()=>{
     console.log("User service running");
