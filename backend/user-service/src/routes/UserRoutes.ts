@@ -36,5 +36,6 @@ router.get("/getUserDetails", userDetailsController.queryUserDetails);
 router.patch("/editUserDetails", upload.single("profilePicture"), userDetailsController.modifyUserDetails);
 router.patch("/alterUserStatus", userController.changeUserStatus);
 router.get("/check", userController.checkBlock);
+router.get("/getOTP", userController.verifyOTP)
 
 export default router;

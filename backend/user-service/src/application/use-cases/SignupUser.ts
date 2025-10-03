@@ -8,6 +8,7 @@ import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
+import { redisClient } from "../../utils/RedisClient";
 
 @injectable()
 export class SignupUser implements ISignupUser {
@@ -80,6 +81,8 @@ export class SendOTP implements ISendOtp {
                     The CareerLink Team 🚀`
         };
         await this._mailer.sendMail(data.to, data.subject, data.text);
+        const cacheKey=`keyFor${email}`;
+        await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60); 
         return {
             success:true,
             otp

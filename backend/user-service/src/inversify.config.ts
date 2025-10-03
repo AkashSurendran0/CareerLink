@@ -17,6 +17,7 @@ import { UserDetailsController } from "./interfaces/controllers/UserDetailsContr
 import { SendOTP } from "./application/use-cases/SignupUser";
 import { SendResetOTP } from "./application/use-cases/ChangePass";
 import { Mailer } from "./utils/MailHelper";
+import { VerifyOTP } from "./application/use-cases/VerifyOTP";
 
 const container = new Container();
 
@@ -36,6 +37,7 @@ container.bind<GoogleLogin>(TYPES.GoogleLogin).to(GoogleLogin);
 container.bind<SendOTP>(TYPES.SendOTP).to(SendOTP);
 container.bind<SendResetOTP>(TYPES.SendResetOTP).to(SendResetOTP);
 container.bind<Mailer>(TYPES.Mailer).to(Mailer);
+container.bind<VerifyOTP>(TYPES.VerifyOTP).to(VerifyOTP);
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);
