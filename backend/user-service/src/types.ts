@@ -15,5 +15,6 @@ export const TYPES={
     SendOTP:"SendOTP",
     UserController:"UserController",
     UserDetailsController:"UserDetailsController",
-    Mailer:"Mailer"
+    Mailer:"Mailer",
+    VerifyOTP:"VerifyOTP"
 };

@@ -25,3 +25,7 @@ export interface ISendOtp {
 export interface IGetAllUsers {
     getUsers(page:number, limit:number, query:string | undefined):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }>
 }
+
+export interface IVerifyOTP {
+    verifyOtp(email:string): Promise<{success:boolean, otp:string} | {success:boolean, message:string}>
+}

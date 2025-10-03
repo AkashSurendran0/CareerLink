@@ -8,6 +8,7 @@ import { SendResetOTP } from "../../application/use-cases/ChangePass";
 import { GetAllUsers } from "../../application/use-cases/GetUsers";
 import { AlterUserStatus } from "../../application/use-cases/AlterUserStatus";
 import { CheckUserBlock } from "../../application/use-cases/CheckUserBlock";
+import { VerifyOTP } from "../../application/use-cases/VerifyOTP";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 
@@ -23,7 +24,7 @@ export class UserController {
         @inject(TYPES.GetAllUsers) private _getUsers:GetAllUsers,
         @inject(TYPES.AlterUserStatus) private _alterUserStatus:AlterUserStatus,
         @inject(TYPES.CheckUserBlock) private _checkUserBlock:CheckUserBlock,
-
+        @inject(TYPES.VerifyOTP) private _verifyOtp:VerifyOTP
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -130,4 +131,15 @@ export class UserController {
             res.status(400).json({message:error.message});
         }
     };
+
+    verifyOTP = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {email}=req.query
+            const result=await this._verifyOtp.verifyOtp(email)
+            res.json({result})
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
 }
