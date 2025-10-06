@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -8,18 +8,24 @@ interface SidebarProps {
 }
 
 function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const [activeBar, setActiveBar]=useState('Feeds')
 
   const sidebarItems = [
-    { icon: "🏠", label: "Feeds", active: false },
-    { icon: "👥", label: "Meet People", active: false },
-    { icon: "💼", label: "Hiring", active: false },
-    { icon: "💬", label: "Chats", active: false },
-    { icon: "👤", label: "Your Profile", active: true },
-    { icon: "🏢", label: "Register A Company", active: false },
-    { icon: "📄", label: "Generate A Cover Letter", active: false },
-    { icon: "📋", label: "Generate A Resume", active: false },
-    { icon: "⚙️", label: "Settings", active: false },
+    { icon: "🏠", label: "Feeds", value:"" },
+    { icon: "👥", label: "Meet People", value:"" },
+    { icon: "💼", label: "Hiring", value:"" },
+    { icon: "💬", label: "Chats", value:"" },
+    { icon: "👤", label: "Your Profile", value:"/profile/user" },
+    { icon: "🏢", label: "Register A Company", value:"/company/registrationPage" },
+    { icon: "📄", label: "Generate A Cover Letter", value:"" },
+    { icon: "📋", label: "Generate A Resume", value:"" },
+    { icon: "⚙️", label: "Settings", value:"" },
   ];
+
+  const handleSidebarClick = (label:string) => {
+    setActiveBar(label)
+    setSidebarOpen(false)
+  }
 
   return (
     <>
@@ -64,13 +70,13 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
               {sidebarItems.map((item, index) => (
                 <a
                   key={index}
-                  href="#"
+                  href={item.value}
                   className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    item.active
+                    activeBar==item.label
                       ? "bg-blue-50 text-blue-700"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={()=>handleSidebarClick(item.label)}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   {item.label}

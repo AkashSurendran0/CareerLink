@@ -7,5 +7,6 @@ const gatewayController=new GatewayController()
 
 route.use('/user', authMiddleware, gatewayController.getPath('/user'))
 route.use('/admin', authMiddleware, gatewayController.getPath('/admin'))
+route.use('/company', authMiddleware, gatewayController.getPath('/company'))
 
 export default route

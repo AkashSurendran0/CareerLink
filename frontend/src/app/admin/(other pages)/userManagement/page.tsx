@@ -27,7 +27,7 @@ function UserManagement() {
     
     useEffect(()=>{
         const fetchUsers= async () => {
-            const result=await axios.get(`http://localhost:5000/user/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${query}`)
+            const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${query}`)
             if(result.data.users.result.length<LIMIT){
                 setPageLimit(1)
             }else{
@@ -49,7 +49,7 @@ function UserManagement() {
     }
         
     const fetchUser = async (v:string) => {
-        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${v}`)
+        const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${v}`)
         console.log(result.data.users.result)
         if(result.data.users.result.length<LIMIT){
             setPageLimit(1)
@@ -61,25 +61,28 @@ function UserManagement() {
     }
 
     const getPaginatedUsers = async (i: number) =>{
-        const result=await axios.get(`http://localhost:5000/user/getUsers?page=${i}&limit=${LIMIT}&query=${query}`)
+        const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${i}&limit=${LIMIT}&query=${query}`)
         setUsers(result.data.users.result)
         setPage(i)
     }
 
     const alterUserStatus = async (id:string) => {
         setLoadingUserId(id)
+        console.log(users)
 
         const user={    
             id:id
         }
-        const result=await axios.patch('http://localhost:5000/user/alterUserStatus', user)
+        const result=await axios.patch('http://localhost:5000/user/v1/alterUserStatus', user)
         const updatedUser=result.data.users
+        console.log(updatedUser)
         setUsers((prev)=>
             prev.map(u=>
-                u.id===updatedUser.id? updatedUser:u
+                u.id==updatedUser.id? updatedUser:u
             )
         )
         setLoadingUserId(null)
+        console.log(users)
 
     }   
 

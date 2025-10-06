@@ -42,7 +42,7 @@ export default function EditProfile() {
     
             const fetchUserDetails=async ()=>{
                 const token=localStorage.getItem('token')
-                const result=await axios.get('http://localhost:5000/user/getUserDetails', {
+                const result=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
                     headers:{
                         Authorization:`Bearer ${token}`
                     }
@@ -56,14 +56,14 @@ export default function EditProfile() {
 
     const clearErrors = () => {
         setErrors({
-        gender:'',
-        location:'',
-        aboutMe:'',
-        experience:'',
-        skills:'',
-        education:'',
-        linkedinLink:'',
-        githubLink:''
+            gender:'',
+            location:'',
+            aboutMe:'',
+            experience:'',
+            skills:'',
+            education:'',
+            linkedinLink:'',
+            githubLink:''
         })
     }
     
@@ -227,7 +227,7 @@ export default function EditProfile() {
 
         const token=localStorage.getItem('token')
 
-        const result=await axios.patch('http://localhost:5000/user/editUserDetails', formData, {
+        const result=await axios.patch('http://localhost:5000/user/v1/editUserDetails', formData, {
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -238,7 +238,7 @@ export default function EditProfile() {
 
     const handleCancel = () => {
         console.log("Cancelling profile edit...")
-        // Handle cancel logic here
+        router.push('/profile/user')
     }
 
     return (

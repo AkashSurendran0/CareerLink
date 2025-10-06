@@ -14,7 +14,15 @@ export class AdminController {
             console.log('reacheddd')
             const {email, password}=req.body
             const result=await this._adminLogin.findAdmin(email, password)
-            console.log(result, 'resulttt')
+            if(result.success){
+                const token=result.token
+                res.cookie("adminToken", token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "strict",
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                })
+            }
             res.json({result})
         } catch (error: any) {
             res.status(400).json({message:error.message})

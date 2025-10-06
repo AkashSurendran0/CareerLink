@@ -43,13 +43,13 @@ export class UserDetailsController {
         try {
             const userId=req.headers["user-id"] as string;
             let imageUrl: string | undefined;
-            let url;
+            console.log(req.file)
             if (req.file && "path" in req.file) {
-                url = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
+                imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
             const details=req.body;
             if(imageUrl){
-                details.profilePicture=url;
+                details.profilePicture=imageUrl;
             }
             await this._editUserDetails.editUserDetails(details, userId);
             res.json({success:true});
