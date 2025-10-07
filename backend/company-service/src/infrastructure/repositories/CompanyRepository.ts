@@ -60,4 +60,12 @@ export class CompanyRepository implements ICompanyRepository {
         )
     }
 
+    async editCompany (userId:string, details:Details): Promise<{success:boolean}> {
+        await CompanyModel.update(
+            details,
+            {where:{registeredBy:userId}}            
+        )
+        return {success:true}
+    }
+
 }

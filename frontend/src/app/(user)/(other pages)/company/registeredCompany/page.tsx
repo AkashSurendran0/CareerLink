@@ -4,6 +4,7 @@ import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useLoading } from "@/app/(user)/template"
 
 type Company = {
     id:string,
@@ -18,6 +19,7 @@ type Company = {
 }
 
 export default function CompanyProfilePage() {
+    const setLoading=useLoading()
     const router=useRouter()
     const [companyDetails, setCompanyDetails]=useState<Company>()
     const [activeTab, setActiveTab] = useState("About");
@@ -44,6 +46,7 @@ export default function CompanyProfilePage() {
     ];
 
     const goToEditPage = () => {
+        setLoading(true)
         router.push('/company/editCompany')
     }
 

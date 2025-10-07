@@ -156,7 +156,7 @@ export default function CompanyRegistrationPage() {
         })
         setLoading(false)
         if(result.data.success){
-            router.push('/feed')
+            router.push('/company/registeredCompany')
         }
     }
 

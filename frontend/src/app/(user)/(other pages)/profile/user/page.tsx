@@ -5,6 +5,7 @@ import Image from "next/image";
 import axios from "axios";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
+import { useLoading } from "@/app/(user)/template";
 
 type Education = {
     degree: string;
@@ -31,6 +32,7 @@ type Details = {
 
 
 export default function ProfileDashboard() {
+    const setLoading=useLoading()
     const router=useRouter()
     const [activeTab, setActiveTab] = useState("About");
     const [userDetails, setUserDetails] = useState<Details>()
@@ -44,6 +46,7 @@ export default function ProfileDashboard() {
     ];
 
     const goToEditPage = () => {
+        setLoading(true)
         router.push("/profile/editUser")
     }
 

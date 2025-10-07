@@ -3,5 +3,6 @@ export const TYPES = {
     AddCompany:"AddCompany",
     ICompanyRepository:"ICompanyRepository",
     CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo",
-    GetCompanyDetails:"GetCompanyDetails"
+    GetCompanyDetails:"GetCompanyDetails",
+    EditCompany:"EditCompany"
 }

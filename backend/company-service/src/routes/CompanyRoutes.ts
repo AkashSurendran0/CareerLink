@@ -11,5 +11,6 @@ const companyController=container.get<CompanyController>(TYPES.CompanyController
 router.post('/addCompany', upload.single("logo"), companyController.addCompany)
 router.get('/getCompanyRegistrationInfo', companyController.getRegistrationInfo)
 router.get('/getCompanyDetails', companyController.getCompanyInfo)
+router.post('/editCompany', upload.single("logo"), companyController.editCompany)
 
 export default router;
