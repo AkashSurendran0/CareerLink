@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import axios from "axios"
@@ -15,25 +15,40 @@ export default function CompanyRegistrationPage() {
     const dropRef = useRef<HTMLDivElement | null>(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [companyDetails, setCompanyDetails]=useState({
-        companyName:'',
+        name:'',
         logo:null as File | null,
         industry:'',
         companySize:'',
         foundedYear:2025,
-        websiteUrl:'',
+        websiteURL:null as string | null,
         location:'',
         aboutCompany:''
     })
-    const [errors, setErrors]=useState<Partial<Record<"companyName" | "logo" | "industry" | "companySize" | "foundedYear" | "websiteUrl" | "location" | "aboutCompany", string>>>({})
+    const [errors, setErrors]=useState<Partial<Record<"name" | "logo" | "industry" | "companySize" | "foundedYear" | "websiteURL" | "location" | "aboutCompany", string>>>({})
   
+    useEffect(()=>{
+        async function getCompanyDetails () {
+            const token=localStorage.getItem('token')
+            const result=await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            })
+            console.log(result.data.result)
+            setCompanyDetails({...result.data.result})
+        }
+
+        getCompanyDetails()
+    }, [])
+
     const clearErrors = () => {
         setErrors({
-            companyName:'',
+            name:'',
             logo:'',
             industry:'',
             companySize:'',
             foundedYear:'',
-            websiteUrl:'',
+            websiteURL:'',
             location:'',
             aboutCompany:''
         })
@@ -79,13 +94,13 @@ export default function CompanyRegistrationPage() {
         e.preventDefault()
         clearErrors()
 
-        if(!companyDetails.companyName && companyDetails.companyName.trim()==''){
-            setErrors({companyName:'Please enter a company name'})
+        if(!companyDetails.name && companyDetails.name.trim()==''){
+            setErrors({name:'Please enter a company name'})
             return
         }
 
-        if(companyDetails.companyName.length<3){
-            setErrors({companyName:'Minimum length for a company name should be 3'})
+        if(companyDetails.name.length<3){
+            setErrors({name:'Minimum length for a company name should be 3'})
             return
         }
 
@@ -106,9 +121,10 @@ export default function CompanyRegistrationPage() {
         }
 
         const websiteRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/;
-        if (companyDetails.websiteUrl && !websiteRegex.test(companyDetails.websiteUrl)) {
+        if (companyDetails.websiteURL && !websiteRegex.test(companyDetails.websiteURL)) {
             console.log(1)
-            setErrors({websiteUrl:'Please enter a valid url'});
+            setErrors({websiteURL:'Please enter a valid url'});
+            return 
         }
 
         if(!companyDetails.location){
@@ -124,11 +140,6 @@ export default function CompanyRegistrationPage() {
 
         if(companyDetails.aboutCompany.length<10){
             setErrors({aboutCompany:'About section should be minimum 10 words'})
-            return
-        }
-
-        if(!companyDetails.logo){
-            setErrors({logo:'Please provide a logo for your company'})
             return
         }
 
@@ -149,7 +160,7 @@ export default function CompanyRegistrationPage() {
         }
 
         const token=localStorage.getItem('token')
-        const result=await axios.post('http://localhost:5000/company/v1/addCompany', formData, {
+        const result=await axios.post('http://localhost:5000/company/v1/editCompany', formData, {
             headers:{
                 Authorization:`Bearer ${token}`
             }
@@ -198,20 +209,20 @@ export default function CompanyRegistrationPage() {
                 <form className="space-y-6">
                 {/* Company Name */}
                 <div>
-                    <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Company Name
                     </label>
                     <input
-                    id="companyName"
-                    name="companyName"
-                    value={companyDetails.companyName}
+                    id="name"
+                    name="name"
+                    value={companyDetails.name}
                     onChange={handleChange}
                     type="text"
                     placeholder="Enter company name"
                     className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    {errors.companyName && (
-                        <p className="text-red-500 text-sm">{errors.companyName}</p>
+                    {errors.name && (
+                        <p className="text-red-500 text-sm">{errors.name}</p>
                     )}
                 </div>
 
@@ -345,8 +356,8 @@ export default function CompanyRegistrationPage() {
                     <div className="mt-2 relative">
                         <input
                         id="website"
-                        name="websiteUrl"
-                        value={companyDetails.websiteUrl}
+                        name="websiteURL"
+                        value={companyDetails.websiteURL}
                         onChange={handleChange}
                         type="url"
                         placeholder="Enter website URL"
@@ -367,8 +378,8 @@ export default function CompanyRegistrationPage() {
                         </svg>
                         </span>
                     </div>
-                    {errors.websiteUrl && (
-                        <p className="text-red-500 text-sm">{errors.websiteUrl}</p>
+                    {errors.websiteURL && (
+                        <p className="text-red-500 text-sm">{errors.websiteURL}</p>
                     )}
                     </div>
 
@@ -439,7 +450,7 @@ export default function CompanyRegistrationPage() {
                     className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onClick={createCompany}
                     >
-                    Register Company
+                    Update Changes
                     </button>
                 </div>
                 </form>

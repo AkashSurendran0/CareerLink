@@ -37,11 +37,35 @@ export class CompanyRepository implements ICompanyRepository {
     }
 
     async checkCompany (userId:string): Promise<{success:boolean}> {
-        console.log(10, userId)
         const company=await CompanyModel.findOne({where: {registeredBy:userId}})
-        console.log(company, 'company')
         if(company) return {success:true}
         return {success:false}
+    }
+
+    async getCompanyDetails (userId:string): Promise<Company> {
+        const companyDetails=await CompanyModel.findOne({where: {registeredBy:userId}, raw:true})
+        return new Company (
+            companyDetails!.id,
+            companyDetails!.registeredBy,
+            companyDetails!.logo,
+            companyDetails!.name,
+            companyDetails!.companySize,
+            companyDetails!.foundedYear,
+            companyDetails!.industry,
+            companyDetails!.websiteURL,
+            companyDetails!.location,
+            companyDetails!.aboutCompany,
+            companyDetails!.suspended,
+            companyDetails!.createdAt
+        )
+    }
+
+    async editCompany (userId:string, details:Details): Promise<{success:boolean}> {
+        await CompanyModel.update(
+            details,
+            {where:{registeredBy:userId}}            
+        )
+        return {success:true}
     }
 
 }

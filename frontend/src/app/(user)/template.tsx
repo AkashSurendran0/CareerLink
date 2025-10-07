@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import LoadingScreen from "@/components/loadingScreen";
 
 const LoadingContext = createContext<{
@@ -13,6 +14,10 @@ function LoadingLayout({
   children: React.ReactNode;
 }>) {
   const [loading, setLoading] = useState(false);
+  const pathname=usePathname()
+  useEffect(()=>{
+    setLoading(false)
+  }, [pathname])
 
   return (
     <LoadingContext.Provider value={{ setLoading }}>

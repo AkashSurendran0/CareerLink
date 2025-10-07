@@ -2,5 +2,7 @@ export const TYPES = {
     CompanyController:"CompanyController",
     AddCompany:"AddCompany",
     ICompanyRepository:"ICompanyRepository",
-    CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo"
+    CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo",
+    GetCompanyDetails:"GetCompanyDetails",
+    EditCompany:"EditCompany"
 }

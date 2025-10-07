@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -37,7 +38,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   }
 
   const sidebarItems = [
-    { icon: "🏠", label: "Feeds", value:"" },
+    { icon: "🏠", label: "Feeds", value:"/feed" },
     { icon: "👥", label: "Meet People", value:"" },
     { icon: "💼", label: "Hiring", value:"" },
     { icon: "💬", label: "Chats", value:"" },
@@ -95,7 +96,8 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           <div className="mt-8 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
               {sidebarItems.map((item, index) => (
-                <p
+                <Link
+                  href={item.value}
                   key={index}
                   className={`cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                     activeBar==item.label
@@ -106,7 +108,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   {item.label}
-                </p>
+                </Link>
               ))}
             </nav>
           </div>
