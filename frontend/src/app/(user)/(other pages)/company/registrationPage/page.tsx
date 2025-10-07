@@ -64,7 +64,6 @@ export default function CompanyRegistrationPage() {
         e.preventDefault()
         e.stopPropagation()
         if (dropRef.current) dropRef.current.classList.remove("ring-2", "ring-blue-500")
-        handleFiles(e.dataTransfer.files)
     }
 
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {

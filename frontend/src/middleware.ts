@@ -68,6 +68,40 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  if(pathname.startsWith('/company/registrationPage')){
+    try {
+      const res = await fetch("http://localhost:5000/company/v1/getCompanyRegistrationInfo", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const data=await res.json()
+      if(data.result.success){
+        return NextResponse.redirect(new URL("/company/registeredCompany", req.url));
+      }
+    } catch (err) {
+      console.error("Middleware fetch error:", err);
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
+  if(pathname.startsWith('/company/registeredCompany')){
+    try {
+      const res = await fetch("http://localhost:5000/company/v1/getCompanyRegistrationInfo", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const data=await res.json()
+      if(!data.result.success){
+        return NextResponse.redirect(new URL("/company/registrationPage", req.url));
+      }
+    } catch (err) {
+      console.error("Middleware fetch error:", err);
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
   return NextResponse.next();
 }
 

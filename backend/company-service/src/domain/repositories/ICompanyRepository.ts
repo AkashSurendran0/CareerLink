@@ -15,4 +15,5 @@ type Details = {
 export interface ICompanyRepository {
     addCompany(userId:string, details:Details): Promise<{success:boolean}>
     checkCompany (userId:string): Promise<{success:boolean}>
+    getCompanyDetails (userId:string): Promise<Company>
 }
