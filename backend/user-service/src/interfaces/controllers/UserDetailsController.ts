@@ -43,8 +43,7 @@ export class UserDetailsController {
         try {
             const userId=req.headers["user-id"] as string;
             let imageUrl: string | undefined;
-            console.log(req.file)
-            if (req.file && "path" in req.file) {
+            if (req.file) {
                 imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
             const details=req.body;

@@ -14,15 +14,11 @@ export class CompanyController {
 
     addCompany = async (req:Request, res:Response): Promise<void> => {
         try {
-            console.log(1)
             const userId=req.headers["user-id"] as string
             let imageUrl:string | undefined
-            console.log('fileee',req.file)
-            if(req.file && "path" in req.file){
-                console.log('hererere')
+            if(req.file){
                 imageUrl=await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1])
             }
-            return console.log(imageUrl)
             console.log(2)
             const details=req.body
             if(imageUrl){
