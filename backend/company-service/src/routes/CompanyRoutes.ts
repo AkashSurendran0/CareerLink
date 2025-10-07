@@ -9,5 +9,6 @@ const upload=multer()
 const companyController=container.get<CompanyController>(TYPES.CompanyController)
 
 router.post('/addCompany', upload.single("logo"), companyController.addCompany)
+router.get('/getCompanyRegistrationInfo', companyController.getRegistrationInfo)
 
 export default router;

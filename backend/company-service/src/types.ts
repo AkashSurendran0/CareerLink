@@ -1,5 +1,6 @@
 export const TYPES = {
     CompanyController:"CompanyController",
     AddCompany:"AddCompany",
-    ICompanyRepository:"ICompanyRepository"
+    ICompanyRepository:"ICompanyRepository",
+    CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo"
 }

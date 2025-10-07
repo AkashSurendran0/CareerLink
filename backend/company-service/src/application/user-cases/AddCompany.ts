@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
+import { IAddCompany } from "../../domain/use-cases/ICompanyUserCase";
 
 type Details = {
     registeredBy:string,
@@ -15,16 +16,14 @@ type Details = {
 }
 
 @injectable()
-export class AddCompany {
+export class AddCompany implements IAddCompany {
 
     constructor(
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
-    async addCompany (userId:string, details:Details) {
-        console.log(10)
+    async addCompany (userId:string, details:Details): Promise<{success:boolean}> {
         const result=await this._companyRepository.addCompany(userId, details)
-        console.log(11)
         return result
     }
 

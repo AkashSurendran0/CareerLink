@@ -1,5 +1,3 @@
-import { Company } from "../entities/Company";
-
 type Details = {
     registeredBy:string,
     logo:string,
@@ -12,7 +10,7 @@ type Details = {
     aboutCompany:string
 }
 
-export interface ICompanyRepository {
-    addCompany(userId:string, details:Details): Promise<{success:boolean}>
-    checkCompany (userId:string): Promise<{success:boolean}>
+
+export interface IAddCompany {
+    addCompany (userId:string, details:Details): Promise<{success:boolean}>
 }
