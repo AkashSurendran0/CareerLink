@@ -163,7 +163,7 @@ export default function ProfileForm() {
 
     const token=localStorage.getItem('token')
 
-    const result=await axios.post('http://localhost:5000/user/addUserDetails', updatedForm, {
+    const result=await axios.post('http://localhost:5000/user/v1/addUserDetails', updatedForm, {
       headers:{
         Authorization:`Bearer ${token}`
       }
@@ -178,7 +178,7 @@ export default function ProfileForm() {
   
     const token=localStorage.getItem('token')
 
-    const result=await axios.post('http://localhost:5000/user/addUserDetails', detailsForm, {
+    const result=await axios.post('http://localhost:5000/user/v1/addUserDetails', detailsForm, {
       headers:{
         Authorization:`Bearer ${token}`
       }

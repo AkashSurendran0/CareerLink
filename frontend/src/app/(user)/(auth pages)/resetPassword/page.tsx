@@ -16,6 +16,7 @@ function ForgotPassword() {
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
+    const [storedOtp, setStoredOtp]=useState(undefined)
     const [sendOtp, setSendOtp]=useState(false)
     const [timeLeft, setTimeLeft]=useState(0)
     const [otp, setOtp]=useState<number>()
@@ -58,7 +59,6 @@ function ForgotPassword() {
         const details=localStorage.getItem('signinDetails')
         if(details){
             const parsedDetails=JSON.parse(details) as {
-                otp:number,
                 email:string,
                 expiry:number
             }
@@ -66,9 +66,10 @@ function ForgotPassword() {
                 setSendOtp(true)
                 signupForm.email=parsedDetails.email
                 handleTimer(parsedDetails.expiry)
+                getOtp()
                 const lock=localStorage.getItem('locked')
                 if(lock){
-                    setOtp(parsedDetails.otp)
+                    setOtp(storedOtp)
                     setCorrectOtp(true)
                 }
             }else{
@@ -83,21 +84,33 @@ function ForgotPassword() {
         }
     }, [])
 
-    const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-        const details=localStorage.getItem('signinDetails')
-        if(details){
-            const parsedDetails=JSON.parse(details) as {
-                otp:number,
-                email:string,
-                expiry:number
+     const getOtp = async () => {
+        const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+        console.log(result.data)
+        if(result.data.result.success){
+            setStoredOtp(result.data.result.otp)
+            return result.data.result.otp
+        }else{
+            enqueueSnackbar(result.data.result.message, {variant:'error'})
+            return null
+        }
+    }
+
+    const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
+        if(!storedOtp){
+            const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+            if(result.data.result.success){
+                setStoredOtp(result.data.result.otp)
+            }else{
+                enqueueSnackbar(result.data.result.message, {variant:'error'})
             }
-            if(e.target.value==parsedDetails.otp.toString()){
-                setCorrectOtp(true)
-                const locked={
-                    otp:true
-                }
-                localStorage.setItem('locked', JSON.stringify(locked))
+        }
+        if(e.target.value==storedOtp){
+            setCorrectOtp(true)
+            const locked={
+                otp:true
             }
+            localStorage.setItem('locked', JSON.stringify(locked))
         }
     }
 
@@ -119,13 +132,13 @@ function ForgotPassword() {
             email:signupForm.email
         }
 
-        const result=await axios.post('http://localhost:5000/user/sendResetOTP', data)
+        const result=await axios.post('http://localhost:5000/user/v1/sendResetOTP', data)
         if(!result.data.otp.success){
+            setLoadOTP(false)
             return enqueueSnackbar(result.data.otp.message, {variant:'error'})
         }
         const expiry=Date.now()+60*1000
         const emailDetails={
-            otp: result.data.otp.otp,
             email: signupForm.email,
             expiry,
         }
@@ -170,7 +183,7 @@ function ForgotPassword() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/changePassword', signupForm, {withCredentials:true})
+        const result=await axios.post('http://localhost:5000/user/v1/changePassword', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token)
         router.push('/feed')

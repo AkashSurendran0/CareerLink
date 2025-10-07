@@ -15,6 +15,7 @@ function Signup() {
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
+    const [storedOtp, setStoredOtp]=useState(undefined)
     const [sendOtp, setSendOtp]=useState(false)
     const [timeLeft, setTimeLeft]=useState(0)
     const [otp, setOtp]=useState<number>()
@@ -59,7 +60,6 @@ function Signup() {
         const details=localStorage.getItem('signinDetails')
         if(details){
             const parsedDetails=JSON.parse(details) as {
-                otp:number,
                 email:string,
                 expiry:number
             }
@@ -67,9 +67,10 @@ function Signup() {
                 setSendOtp(true)
                 signupForm.email=parsedDetails.email
                 handleTimer(parsedDetails.expiry)
+                getOtp()
                 const lock=localStorage.getItem('locked')
                 if(lock){
-                    setOtp(parsedDetails.otp)
+                    setOtp(storedOtp)
                     setCorrectOtp(true)
                 }
             }else{
@@ -84,21 +85,33 @@ function Signup() {
         }
     }, [])
 
-    const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-        const details=localStorage.getItem('signinDetails')
-        if(details){
-            const parsedDetails=JSON.parse(details) as {
-                otp:number,
-                email:string,
-                expiry:number
+    const getOtp = async () => {
+        const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+        console.log(result.data)
+        if(result.data.result.success){
+            setStoredOtp(result.data.result.otp)
+            return result.data.result.otp
+        }else{
+            enqueueSnackbar(result.data.result.message, {variant:'error'})
+            return null
+        }
+    }
+
+    const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
+        if(!storedOtp){
+            const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+            if(result.data.result.success){
+                setStoredOtp(result.data.result.otp)
+            }else{
+                enqueueSnackbar(result.data.result.message, {variant:'error'})
             }
-            if(e.target.value==parsedDetails.otp.toString()){
-                setCorrectOtp(true)
-                const locked={
-                    otp:true
-                }
-                localStorage.setItem('locked', JSON.stringify(locked))
+        }
+        if(e.target.value==storedOtp){
+            setCorrectOtp(true)
+            const locked={
+                otp:true
             }
+            localStorage.setItem('locked', JSON.stringify(locked))
         }
     }
 
@@ -119,16 +132,17 @@ function Signup() {
             email:signupForm.email
         }
 
-        const result=await axios.post('http://localhost:5000/user/sendOTP', data)
+        const result=await axios.post('http://localhost:5000/user/v1/sendOTP', data)
         if(!result.data.result.success){
+            setLoadOTP(false)
             return enqueueSnackbar(result.data.result.message, {variant:'error'})
         }
         const expiry=Date.now()+60*1000
         const emailDetails={
-            otp: result.data.result.otp,
             email: signupForm.email,
             expiry,
         }
+        setStoredOtp(result.data.result.otp)
         handleTimer(emailDetails.expiry)
         localStorage.setItem('signinDetails', JSON.stringify(emailDetails))
         setLoadOTP(false)
@@ -175,7 +189,7 @@ function Signup() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/signup', signupForm, {withCredentials:true})
+        const result=await axios.post('http://localhost:5000/user/v1/signup', signupForm, {withCredentials:true})
 
         localStorage.setItem('token', result.data.token.token)
 
@@ -183,7 +197,7 @@ function Signup() {
     }
 
     const googleSignup = async () =>{
-        window.location.href='http://localhost:5000/user/google'
+        window.location.href='http://localhost:5000/user/v1/google'
     }
 
 

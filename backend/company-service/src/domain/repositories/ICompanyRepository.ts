@@ -1,0 +1,18 @@
+import { Company } from "../entities/Company";
+
+type Details = {
+    registeredBy:string,
+    logo:string,
+    companyName:string,
+    companySize:string,
+    foundedYear:number,
+    industry:string,
+    websiteURL:string | null,
+    location:string,
+    aboutCompany:string
+}
+
+export interface ICompanyRepository {
+    addCompany(userId:string, details:Details): Promise<{success:boolean}>
+    checkCompany (userId:string): Promise<{success:boolean}>
+}

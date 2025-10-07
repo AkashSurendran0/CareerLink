@@ -7,7 +7,8 @@ export class GatewayService {
     constructor(){
         this._routes={
             '/user':'http://localhost:5001',
-            '/admin':'http://localhost:5002'
+            '/admin':'http://localhost:5002',
+            '/company':'http://localhost:5003'
         }
     }
 

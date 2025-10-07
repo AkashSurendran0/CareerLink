@@ -49,7 +49,7 @@ function Login() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/login', loginDetails, {withCredentials:true})
+        const result=await axios.post('http://localhost:5000/user/v1/login', loginDetails, {withCredentials:true})
         console.log(result)
         if(!result.data.result.success){
             setLoading(false)
@@ -63,7 +63,7 @@ function Login() {
     }
 
     const googleLogin = async () =>{
-        window.location.href='http://localhost:5000/user/google'
+        window.location.href='http://localhost:5000/user/v1/google'
     }
  
     return (

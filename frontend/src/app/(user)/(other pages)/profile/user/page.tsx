@@ -51,7 +51,7 @@ export default function ProfileDashboard() {
 
         const fetchUserDetails=async ()=>{
             const token=localStorage.getItem('token')
-            const details=await axios.get('http://localhost:5000/user/getUserDetails', {
+            const details=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
                 headers:{
                     Authorization:`Bearer ${token}`
                 }

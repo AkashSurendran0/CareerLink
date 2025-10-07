@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -8,18 +10,49 @@ interface SidebarProps {
 }
 
 function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const router=useRouter()
+  const [activeBar, setActiveBar]=useState('Feeds')
+  const [activeCompany, setActiveCompany]=useState(false)
+  const [tab, setTab]=useState({ label:'', value:'' })
+
+  useEffect(()=>{
+    getCompanyInfo()
+  }, [])
+
+  async function getCompanyInfo () {
+    const token=localStorage.getItem('token')
+    const result=await axios.get('http://localhost:5000/company/v1/getCompanyRegistrationInfo', {
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+    console.log(result)
+    if(result.data.result.success){
+      setActiveCompany(true)
+      setTab({label:'Your Company', value:'/company/registeredCompany'})
+    }else{
+      setActiveCompany(false)
+      setTab({label:'Register A Company', value:'/company/registrationPage'})
+    }
+  }
 
   const sidebarItems = [
-    { icon: "🏠", label: "Feeds", active: false },
-    { icon: "👥", label: "Meet People", active: false },
-    { icon: "💼", label: "Hiring", active: false },
-    { icon: "💬", label: "Chats", active: false },
-    { icon: "👤", label: "Your Profile", active: true },
-    { icon: "🏢", label: "Register A Company", active: false },
-    { icon: "📄", label: "Generate A Cover Letter", active: false },
-    { icon: "📋", label: "Generate A Resume", active: false },
-    { icon: "⚙️", label: "Settings", active: false },
+    { icon: "🏠", label: "Feeds", value:"" },
+    { icon: "👥", label: "Meet People", value:"" },
+    { icon: "💼", label: "Hiring", value:"" },
+    { icon: "💬", label: "Chats", value:"" },
+    { icon: "👤", label: "Your Profile", value:"/profile/user" },
+    { icon: "🏢", label: `${tab.label}`, value:`${tab.value}` },
+    { icon: "📄", label: "Generate A Cover Letter", value:"" },
+    { icon: "📋", label: "Generate A Resume", value:"" },
+    { icon: "⚙️", label: "Settings", value:"" },
   ];
+
+  const handleSidebarClick = (label:string, value:string) => {
+    setActiveBar(label)
+    setSidebarOpen(false)
+    router.push(value)
+  }
 
   return (
     <>
@@ -62,19 +95,18 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           <div className="mt-8 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
               {sidebarItems.map((item, index) => (
-                <a
+                <p
                   key={index}
-                  href="#"
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    item.active
+                  className={`cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    activeBar==item.label
                       ? "bg-blue-50 text-blue-700"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={()=>handleSidebarClick(item.label, item.value)}
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   {item.label}
-                </a>
+                </p>
               ))}
             </nav>
           </div>

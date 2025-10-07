@@ -26,4 +26,4 @@ app.use("/v1", V1UserRouter);
 
 app.listen(5001, ()=>{
     console.log("User service running");
-});
+}); 

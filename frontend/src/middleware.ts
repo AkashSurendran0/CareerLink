@@ -1,39 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
 
 export async function middleware(req: NextRequest) {
-    const token = req.cookies.get("token")?.value;
-    const { pathname } = req.nextUrl;
+  const token = req.cookies.get("token")?.value;
+  const adminToken = req.cookies.get("adminToken")?.value;
+  const { pathname } = req.nextUrl;
 
-    if (!token) {
-        if (
-            !pathname.startsWith("/login") &&
-            !pathname.startsWith("/signup") &&
-            !pathname.startsWith("/resetPassword")&&
-            !pathname.startsWith("/admin")
-        ) {
-            return NextResponse.redirect(new URL("/login", req.url));
-        }
-            return NextResponse.next();
+
+  if (pathname.startsWith("/admin")) {
+    if (!adminToken && !pathname.startsWith("/admin/login")) {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
 
+    if (adminToken && pathname.startsWith("/admin/login")) {
+      return NextResponse.redirect(new URL("/admin/userManagement", req.url));
+    }
+
+    return NextResponse.next();
+  }
+
+
+  if (!token) {
     if (
-            (pathname.startsWith("/login") ||
-            pathname.startsWith("/signup") ||
-            pathname.startsWith("/resetPassword")) &&
-            token
-        )   {
-            return NextResponse.redirect(new URL("/feed", req.url));
+      pathname.startsWith("/login") ||
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/resetPassword")
+    ) {
+      return NextResponse.next();
     }
 
-    if (!pathname.startsWith("/login") &&
-        !pathname.startsWith("/signup") &&
-        !pathname.startsWith("/resetPassword") &&
-        !pathname.startsWith("/blocked") &&
-        !pathname.startsWith("/admin")) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  if (
+    token &&
+    (pathname.startsWith("/login") ||
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/resetPassword"))
+  ) {
+    return NextResponse.redirect(new URL("/feed", req.url));
+  }
+
+  if (
+    !pathname.startsWith("/blocked") &&
+    !pathname.startsWith("/login") &&
+    !pathname.startsWith("/signup") &&
+    !pathname.startsWith("/resetPassword")
+  ) {
     try {
-      const res = await fetch("http://localhost:5000/user/check", {
+      const res = await fetch("http://localhost:5000/user/v1/check", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
         cache: "no-store",
@@ -47,17 +62,15 @@ export async function middleware(req: NextRequest) {
       if (data.result.success) {
         return NextResponse.redirect(new URL("/blocked", req.url));
       }
-
     } catch (err) {
       console.error("Middleware fetch error:", err);
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-
-    return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!api|_next|static|favicon.ico).*)"],
+  matcher: ["/((?!api|_next|static|favicon.ico).*)"],
 };

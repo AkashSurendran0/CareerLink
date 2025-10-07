@@ -43,10 +43,11 @@ function Login() {
             return
         }
 
-        const result=await axios.post('http://localhost:5000/admin/login', loginDetails)
+        const result=await axios.post('http://localhost:5000/admin/v1/login', loginDetails, {withCredentials:true})
         if(!result.data.result.success){
             return enqueueSnackbar(result.data.result.message, {variant:'error'})
         }
+        console.log(result.data)
         localStorage.setItem('adminToken', result.data.result.token)
 
         router.push('/admin/userManagement')

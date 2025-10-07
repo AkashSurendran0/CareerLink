@@ -42,6 +42,33 @@
             "type": "shell",
             "command": "npm run dev",
             "options": {"cwd": "backend/admin-service"}
+        },
+        {
+            "label": "watch company-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/company-service"}
+        },
+        {
+            "label": "run company-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/company-service"}
+        },
+        {
+            "label": "Start all services",
+            "dependsOn":[
+                "run frontend",
+                "watch api-gateway",
+                "run api-gateway",
+                "watch user-service",
+                "run user-service",
+                "watch admin-service",
+                "run admin-service",
+                "watch company-service",
+                "run company-service",
+            ],
+            "dependsOrder": "parallel"
         }
     ]
 }
