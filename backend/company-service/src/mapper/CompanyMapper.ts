@@ -11,7 +11,9 @@ export class CompanyMapper {
             industry:company.industry,
             websiteURL:company.websiteURL,
             location:company.location,
-            aboutCompany:company.aboutCompany
+            aboutCompany:company.aboutCompany,
+            createdAt:company.createdAt,
+            suspended:company.suspended
         }
     }
 }

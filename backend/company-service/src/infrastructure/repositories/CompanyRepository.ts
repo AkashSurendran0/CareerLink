@@ -68,4 +68,51 @@ export class CompanyRepository implements ICompanyRepository {
         return {success:true}
     }
 
+    async findById (id:string):Promise<Company | null> {
+        const company=await CompanyModel.findByPk(id, {raw:true})
+        console.log('blahh', company)
+        if(!company) return null
+        return new Company (
+            company!.id,
+            company!.registeredBy,
+            company!.logo,
+            company!.name,
+            company!.companySize,
+            company!.foundedYear,
+            company!.industry,
+            company!.websiteURL,
+            company!.location,
+            company!.aboutCompany,
+            company!.suspended,
+            company!.createdAt
+        )
+    }
+
+    async changeCompanyStatus (company:Company): Promise<Company> {
+        console.log(company, 55)
+        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
+            {suspended:!company.suspended},
+            {
+                where:{id:company.id},
+                returning:true
+            }
+        )
+        console.log(updatedCompanies, 66)
+        const updatedCompany=updatedCompanies[0]!.get({plain:true});
+        return new Company (
+            updatedCompany!.id,
+            updatedCompany!.registeredBy,
+            updatedCompany!.logo,
+            updatedCompany!.name,
+            updatedCompany!.companySize,
+            updatedCompany!.foundedYear,
+            updatedCompany!.industry,
+            updatedCompany!.websiteURL,
+            updatedCompany!.location,
+            updatedCompany!.aboutCompany,
+            updatedCompany!.suspended,
+            updatedCompany!.createdAt
+        )
+    }
+
 }

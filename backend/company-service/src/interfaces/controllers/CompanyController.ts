@@ -6,6 +6,8 @@ import { AddCompany } from "../../application/user-cases/AddCompany";
 import { CheckCompanyRegistrationInfo } from "../../application/user-cases/CheckCompanyRegistrationInfo";
 import { GetCompanyDetails } from "../../application/user-cases/GetCompanyDetails";
 import { EditCompany } from "../../application/user-cases/EditCompany";
+import { GetAllCompanies } from "../../application/user-cases/GetAllCompanies";
+import { AlterCompanyStatus } from "../../application/user-cases/AlterCompanyStatus";
 
 injectable()
 export class CompanyController {
@@ -14,7 +16,9 @@ export class CompanyController {
         @inject(TYPES.AddCompany) private _addCompany:AddCompany,
         @inject(TYPES.CheckCompanyRegistrationInfo) private _checkCompanyRegistrationInfo:CheckCompanyRegistrationInfo,
         @inject(TYPES.GetCompanyDetails) private _getCompanyDetails:GetCompanyDetails,
-        @inject(TYPES.EditCompany) private _editCompany:EditCompany
+        @inject(TYPES.EditCompany) private _editCompany:EditCompany,
+        @inject(TYPES.GetAllCompanies) private _getAllCompanies:GetAllCompanies,
+        @inject(TYPES.AlterCompanyStatus) private _alterCompanyStatus:AlterCompanyStatus
     ){}
 
     addCompany = async (req:Request, res:Response): Promise<void> => {
@@ -69,6 +73,29 @@ export class CompanyController {
             }
             await this._editCompany.editCompany(userId, details)
             res.json({success:true})
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    getAllCompanies = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {page, limit, query}=req.query;
+            const pageNum=parseInt(page as string, 10) || 1;
+            const limitNum=parseInt(limit as string, 5) || 5;
+            const companies=await this._getAllCompanies.getAllCompanies(pageNum, limitNum, query)
+            console.log(companies, 'bl;ahhhhh')
+            res.json({companies})
+        } catch (error:any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    changeCompanyStatus = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const company=req.body
+            const companies=await this._alterCompanyStatus.changeCompanyStatus(company.id)
+            res.json({companies})
         } catch (error: any) {
             res.status(400).json({message:error.message});
         }

@@ -4,5 +4,7 @@ export const TYPES = {
     ICompanyRepository:"ICompanyRepository",
     CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo",
     GetCompanyDetails:"GetCompanyDetails",
-    EditCompany:"EditCompany"
+    EditCompany:"EditCompany",
+    GetAllCompanies:"GetAllCompanies",
+    AlterCompanyStatus:"AlterCompanyStatus"
 }

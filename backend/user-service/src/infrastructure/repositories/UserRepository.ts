@@ -147,7 +147,7 @@ export class UserRepository implements IUserRepository {
         const [rowsUpdated, updatedUsers]=await UserModel.update(
             {suspended: !user.suspended},
             {
-                where:{id:user.id},
+                where:{id:user.id}, 
                 returning:true
             }
         );
