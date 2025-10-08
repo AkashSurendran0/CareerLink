@@ -120,7 +120,7 @@ function UserManagement() {
                 <h2 className="text-lg font-bold text-gray-900">All Users</h2>
             </div>
 
-            <div className="mb-4 space-x-4 text-sm flex">
+            {/* <div className="mb-4 space-x-4 text-sm flex">
                 <label className="flex items-center space-x-2">
                     <input type="checkbox" className="h-3 w-3" />
                     <span>Premium Users</span>
@@ -135,7 +135,7 @@ function UserManagement() {
                     <input type="checkbox" className="h-3 w-3" />
                     <span>Suspended Users</span>
                 </label>
-            </div>
+            </div> */}
 
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">

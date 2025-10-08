@@ -5,5 +5,6 @@ export const TYPES = {
     CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo",
     GetCompanyDetails:"GetCompanyDetails",
     EditCompany:"EditCompany",
-    GetAllCompanies:"GetAllCompanies"
+    GetAllCompanies:"GetAllCompanies",
+    AlterCompanyStatus:"AlterCompanyStatus"
 }

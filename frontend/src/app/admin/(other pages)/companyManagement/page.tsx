@@ -75,6 +75,8 @@ function UserManagement() {
         }
         const result=await axios.patch('http://localhost:5000/company/v1/alterCompanyStatus', company)
         const updatedCompany=result.data.companies
+        console.log(updatedCompany, 'aaaaaaa')
+        console.log(companies)
         setCompanies((prev)=>
             prev.map(u=>
                 u.id==updatedCompany.id? updatedCompany:u
@@ -91,7 +93,7 @@ function UserManagement() {
                 <div>
                 <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
                     Manage Companies
-                    <span className="text-blue-600">👥</span>
+                    <span className="text-blue-600">🏢</span>
                 </h1>
                 <p className="text-gray-600 mt-1">View, search, and manage all registered companies.</p>
                 </div>
@@ -106,7 +108,7 @@ function UserManagement() {
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
                 <input
                     type="text"
-                    placeholder="Search comapnies by name"
+                    placeholder="Search companies by name"
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={query}
                     onChange={searchCompanies}
@@ -118,7 +120,7 @@ function UserManagement() {
                 <h2 className="text-lg font-bold text-gray-900">All Companies</h2>
             </div>
 
-            <div className="mb-4 space-x-4 text-sm flex">
+            {/* <div className="mb-4 space-x-4 text-sm flex">
 
                 <label className="flex items-center text-sm space-x-2">
                     <input type="checkbox" className="h-3 w-3" />
@@ -129,7 +131,7 @@ function UserManagement() {
                     <input type="checkbox" className="h-3 w-3" />
                     <span>Suspended Companies</span>
                 </label>
-            </div>
+            </div> */}
 
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">

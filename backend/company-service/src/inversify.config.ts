@@ -7,6 +7,7 @@ import { CheckCompanyRegistrationInfo } from "./application/user-cases/CheckComp
 import { GetCompanyDetails } from "./application/user-cases/GetCompanyDetails";
 import { EditCompany } from "./application/user-cases/EditCompany";
 import { GetAllCompanies } from "./application/user-cases/GetAllCompanies";
+import { AlterCompanyStatus } from "./application/user-cases/AlterCompanyStatus";
 
 const container=new Container()
 
@@ -17,6 +18,7 @@ container.bind<CheckCompanyRegistrationInfo>(TYPES.CheckCompanyRegistrationInfo)
 container.bind<GetCompanyDetails>(TYPES.GetCompanyDetails).to(GetCompanyDetails)
 container.bind<EditCompany>(TYPES.EditCompany).to(EditCompany)
 container.bind<GetAllCompanies>(TYPES.GetAllCompanies).to(GetAllCompanies)
+container.bind<AlterCompanyStatus>(TYPES.AlterCompanyStatus).to(AlterCompanyStatus)
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 

@@ -17,4 +17,6 @@ export interface ICompanyRepository {
     checkCompany (userId:string): Promise<{success:boolean}>
     getCompanyDetails (userId:string): Promise<Company>
     editCompany (userId:string, details:Details): Promise<{success:boolean}>
+    findById (id:string):Promise<Company | null>
+    changeCompanyStatus (company:Company): Promise<Company>
 }
