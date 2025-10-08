@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
 import { IAddCompany } from "../../domain/use-cases/ICompanyUserCase";
+import { elasticClient } from "../../utils/ElasticClient";
 
 type Details = {
     registeredBy:string,
@@ -24,7 +25,18 @@ export class AddCompany implements IAddCompany {
 
     async addCompany (userId:string, details:Details): Promise<{success:boolean}> {
         const result=await this._companyRepository.addCompany(userId, details)
-        return result
+        await elasticClient.index({
+            index:'companies',
+            id:result.id.toString(),
+            document:{
+                id:result.id,
+                logo:result.logo,
+                name:result.name,
+                createdAt:result.createdAt,
+                suspended:result.suspended
+            }
+        })
+        return {success:true}
     }
 
 }

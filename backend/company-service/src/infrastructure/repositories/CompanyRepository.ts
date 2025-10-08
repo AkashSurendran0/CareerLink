@@ -18,10 +18,8 @@ type Details = {
 @injectable()
 export class CompanyRepository implements ICompanyRepository {
     
-    async addCompany(userId:string, details:Details): Promise<{success:boolean}> {
-        console.log(20)
-        console.log(details)
-        await CompanyModel.create({
+    async addCompany(userId:string, details:Details): Promise<Company> {
+        const newCompany=await CompanyModel.create({
             registeredBy:userId,
             logo:details.logo,
             name:details.companyName,
@@ -32,8 +30,22 @@ export class CompanyRepository implements ICompanyRepository {
             location:details.location,
             aboutCompany:details.aboutCompany
         })
+        const companyData=newCompany.get({plain:true})
         console.log(21)
-        return {success:true}
+        return new Company (
+            companyData!.id,
+            companyData!.registeredBy,
+            companyData!.logo,
+            companyData!.name,
+            companyData!.companySize,
+            companyData!.foundedYear,
+            companyData!.industry,
+            companyData!.websiteURL,
+            companyData!.location,
+            companyData!.aboutCompany,
+            companyData!.suspended,
+            companyData!.createdAt
+        )
     }
 
     async checkCompany (userId:string): Promise<{success:boolean}> {
