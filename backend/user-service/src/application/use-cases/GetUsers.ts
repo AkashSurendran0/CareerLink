@@ -16,7 +16,7 @@ export class GetAllUsers implements IGetAllUsers {
             query: {
                 match_all: {}
             }
-        });
+        }); 
         const totalUsers = countResponse.count;
         const pageLimit = Math.ceil(totalUsers / limit);
 

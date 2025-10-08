@@ -6,6 +6,7 @@ import { CompanyRepository } from "./infrastructure/repositories/CompanyReposito
 import { CheckCompanyRegistrationInfo } from "./application/user-cases/CheckCompanyRegistrationInfo";
 import { GetCompanyDetails } from "./application/user-cases/GetCompanyDetails";
 import { EditCompany } from "./application/user-cases/EditCompany";
+import { GetAllCompanies } from "./application/user-cases/GetAllCompanies";
 
 const container=new Container()
 
@@ -15,6 +16,7 @@ container.bind<AddCompany>(TYPES.AddCompany).to(AddCompany)
 container.bind<CheckCompanyRegistrationInfo>(TYPES.CheckCompanyRegistrationInfo).to(CheckCompanyRegistrationInfo)
 container.bind<GetCompanyDetails>(TYPES.GetCompanyDetails).to(GetCompanyDetails)
 container.bind<EditCompany>(TYPES.EditCompany).to(EditCompany)
+container.bind<GetAllCompanies>(TYPES.GetAllCompanies).to(GetAllCompanies)
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 
