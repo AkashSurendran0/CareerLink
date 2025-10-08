@@ -2,17 +2,18 @@
 
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react"; // for hamburger icons
+import Link from "next/link";
 
 function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const sidebarItems = [
-    { icon: "🏠", label: "Dashboard", active: false },
-    { icon: "👥", label: "Users", active: true },
-    { icon: "🏢", label: "Companies", active: false },
-    { icon: "📄", label: "Reports", active: false },
-    { icon: "📊", label: "Analytics", active: false },
-    { icon: "💳", label: "Subscriptions", active: false },
+    { icon: "🏠", label: "Dashboard", active: false, value:"" },
+    { icon: "👥", label: "Users", active: true, value:"/admin/userManagement" },
+    { icon: "🏢", label: "Companies", active: false, value:"/admin/companyManagement" },
+    { icon: "📄", label: "Reports", active: false, value:"" },
+    { icon: "📊", label: "Analytics", active: false, value:"" },
+    { icon: "💳", label: "Subscriptions", active: false, value:"" },
   ];
 
   return (
@@ -39,7 +40,8 @@ function AdminSidebar() {
                 {isOpen? <X className="h-6 w-6"/> : ''}
             </button>
             {sidebarItems.map((item) => (
-                <button
+                <Link
+                href={item.value}
                 key={item.label}
                 className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
                     item.active
@@ -49,7 +51,7 @@ function AdminSidebar() {
                 >
                 <span className="w-4 h-4 text-center">{item.icon}</span>
                 {item.label}
-                </button>
+                </Link>
             ))}
             </nav>
         </div>
