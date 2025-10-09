@@ -48,6 +48,7 @@ export async function middleware(req: NextRequest) {
     !pathname.startsWith("/resetPassword")
   ) {
     try {
+      console.log(token)
       const res = await fetch("http://localhost:5000/user/v1/check", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },

@@ -50,7 +50,7 @@ export class UserController {
         try {
             const {username, email, password}=req.body;
             const token=await this._signupUser.createUser(username, email, password);
-            res.cookie("token", token, {
+            res.cookie("token", token.token, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
