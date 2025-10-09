@@ -1,18 +1,17 @@
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
+import { ICheckCompanyRegistrationInfo } from "../../domain/use-cases/ICompanyUserCase";
 
 @injectable()
-export class CheckCompanyRegistrationInfo {
+export class CheckCompanyRegistrationInfo implements ICheckCompanyRegistrationInfo {
     
     constructor(
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
-    async CheckCompanyRegistrationInfo (userId:string) {
-        console.log(5)
+    async checkCompanyRegistrationInfo (userId:string):Promise<{success:boolean}> {
         const result=await this._companyRepository.checkCompany(userId)
-        console.log(4)
         return result
     }
 

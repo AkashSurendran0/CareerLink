@@ -13,12 +13,12 @@ const container=new Container()
 
 container.bind(TYPES.ICompanyRepository).to(CompanyRepository).inSingletonScope()
 
-container.bind<AddCompany>(TYPES.AddCompany).to(AddCompany)
-container.bind<CheckCompanyRegistrationInfo>(TYPES.CheckCompanyRegistrationInfo).to(CheckCompanyRegistrationInfo)
-container.bind<GetCompanyDetails>(TYPES.GetCompanyDetails).to(GetCompanyDetails)
-container.bind<EditCompany>(TYPES.EditCompany).to(EditCompany)
-container.bind<GetAllCompanies>(TYPES.GetAllCompanies).to(GetAllCompanies)
-container.bind<AlterCompanyStatus>(TYPES.AlterCompanyStatus).to(AlterCompanyStatus)
+container.bind(TYPES.IAddCompany).to(AddCompany).inSingletonScope()
+container.bind(TYPES.ICheckCompanyRegistrationInfo).to(CheckCompanyRegistrationInfo).inSingletonScope()
+container.bind(TYPES.IGetCompanyDetails).to(GetCompanyDetails).inSingletonScope()
+container.bind(TYPES.IEditCompany).to(EditCompany).inSingletonScope()
+container.bind(TYPES.IGetAllCompanies).to(GetAllCompanies).inSingletonScope()
+container.bind(TYPES.IAlterCompanyStatus).to(AlterCompanyStatus).inSingletonScope()
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 

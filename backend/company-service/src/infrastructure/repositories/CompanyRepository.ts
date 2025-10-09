@@ -31,7 +31,6 @@ export class CompanyRepository implements ICompanyRepository {
             aboutCompany:details.aboutCompany
         })
         const companyData=newCompany.get({plain:true})
-        console.log(21)
         return new Company (
             companyData!.id,
             companyData!.registeredBy,
@@ -82,7 +81,6 @@ export class CompanyRepository implements ICompanyRepository {
 
     async findById (id:string):Promise<Company | null> {
         const company=await CompanyModel.findByPk(id, {raw:true})
-        console.log('blahh', company)
         if(!company) return null
         return new Company (
             company!.id,

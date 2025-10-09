@@ -21,8 +21,8 @@ export class LoginUser implements ILoginUser {
         if(user.suspended){
             return {
                 success:false,
-                message: 'User entry restricted'
-            }
+                message: "User entry restricted"
+            };
         }
         console.log(user);
         const isMatch=await bcrypt.compare(password, user.password);

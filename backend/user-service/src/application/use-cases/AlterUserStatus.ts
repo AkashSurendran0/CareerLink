@@ -3,13 +3,15 @@ import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { UserMapper } from "../../mappers/UserMapper";
+import { UserDTO } from "../../dto/UserDTO";
+import { IAlterUserStatus } from "../../domain/use-cases/IUserUseCase";
 
 @injectable()
-export class AlterUserStatus {
+export class AlterUserStatus implements IAlterUserStatus {
     
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
-    async changeUserStatus (id:string) {
+    async changeUserStatus (id:string):Promise<UserDTO> {
         const user=await this._userRepository.findById(id);
         const updatedUser=await this._userRepository.alterUserStatus(user);
         await elasticClient.update({

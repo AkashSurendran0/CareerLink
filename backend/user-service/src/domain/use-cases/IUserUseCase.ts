@@ -1,3 +1,5 @@
+import { UserDTO } from "../../dto/UserDTO";
+
 export interface IChangePass {
     changePass(email:string, password:string): Promise<string>
 }
@@ -18,7 +20,7 @@ export interface ISignupUser {
     createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> 
 }
 
-export interface ISendOtp {
+export interface ISendOTP {
     mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>
 }
 
@@ -28,4 +30,12 @@ export interface IGetAllUsers {
 
 export interface IVerifyOTP {
     verifyOtp(email:string): Promise<{success:boolean, otp:string} | {success:boolean, message:string}>
+}
+
+export interface IAlterUserStatus {
+    changeUserStatus (id:string):Promise<UserDTO>
+}
+
+export interface ICheckUserBlock {
+    checkUserBlock (id:string): Promise<{success:boolean} | null>
 }

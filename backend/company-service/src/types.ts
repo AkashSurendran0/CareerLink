@@ -1,10 +1,10 @@
 export const TYPES = {
     CompanyController:"CompanyController",
-    AddCompany:"AddCompany",
+    IAddCompany:"IAddCompany",
     ICompanyRepository:"ICompanyRepository",
-    CheckCompanyRegistrationInfo:"CheckCompanyRegistrationInfo",
-    GetCompanyDetails:"GetCompanyDetails",
-    EditCompany:"EditCompany",
-    GetAllCompanies:"GetAllCompanies",
-    AlterCompanyStatus:"AlterCompanyStatus"
+    ICheckCompanyRegistrationInfo:"ICheckCompanyRegistrationInfo",
+    IGetCompanyDetails:"IGetCompanyDetails",
+    IEditCompany:"IEditCompany",
+    IGetAllCompanies:"IGetAllCompanies",
+    IAlterCompanyStatus:"IAlterCompanyStatus"
 }

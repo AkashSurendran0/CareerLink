@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Mailer } from "../../utils/MailHelper";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
-import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
+import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
@@ -56,7 +56,7 @@ export class SignupUser implements ISignupUser {
 }
 
 @injectable()
-export class SendOTP implements ISendOtp {
+export class SendOTP implements ISendOTP {
 
     constructor(@inject(TYPES.Mailer) private _mailer:Mailer, @inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 

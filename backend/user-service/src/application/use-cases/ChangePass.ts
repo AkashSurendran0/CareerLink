@@ -13,7 +13,7 @@ export class ChangePass implements IChangePass {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
-    async changePass(email:string, password:string){
+    async changePass(email:string, password:string):Promise<string>{
         const hashedPass=await bcrypt.hash(password, 10);
         const user=await this._userRepository.updateUserPassword(email, hashedPass);
         const token=jwt.sign(
