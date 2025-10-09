@@ -6,6 +6,7 @@ import { IChangePass } from "../../domain/use-cases/IUserUseCase";
 import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { redisClient } from "../../utils/RedisClient";
 
 @injectable()
 export class ChangePass implements IChangePass {
@@ -49,6 +50,8 @@ export class SendResetOTP implements ISendResetOtp {
                     The CareerLink Team 🚀`
         };
         await this._mailer.sendMail(data.to, data.subject, data.text);
+        const cacheKey=`keyFor${email}`;
+        await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60);
         return {
             success:true, 
             otp:otp

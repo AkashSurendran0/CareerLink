@@ -66,7 +66,7 @@ export class UserDetailsRepository implements IUserDetailsRepository {
         const newDetails=await UserDetailsModel.findOneAndUpdate(
             {user:id},
             {$set: details},
-            {new:true}
+            {new:true, upsert:true}
         );
         if(!newDetails) return null;
         return new UserDetailsEntity(
