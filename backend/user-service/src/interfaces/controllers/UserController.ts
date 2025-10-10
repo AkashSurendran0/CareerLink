@@ -28,21 +28,22 @@ export class UserController {
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {
-            console.log('here mahn')
             const {email, password}=req.body;
-            console.log(2)
             const result=await this._loginUser.execute(email, password);
-            console.log(3)
             if(result.success){
-                const token=result.token
-                res.cookie("token", token, {
+                res.cookie("token", result.token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "strict",
+                    maxAge: 60 * 60 * 1000,
+                });
+                res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: true,
                     sameSite: "strict",
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                 });
             }
-            console.log(4)
             res.json({result});
         } catch (error:any) {
             res.status(400).json({message:error.message});
@@ -57,9 +58,14 @@ export class UserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
+                maxAge: 60 * 60 * 1000,
+            });
+            res.cookie("refreshToken", token.refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            console.log(token);
             res.json({token});
         } catch (error:any) {
             res.status(400).json({message:error.message});
@@ -80,7 +86,13 @@ export class UserController {
         try {
             const {email, password}=req.body;
             const token=await this._changePass.changePass(email, password);
-            res.cookie("token", token, {
+            res.cookie("token", token.token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 60 * 60 * 1000,
+            });
+            res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",

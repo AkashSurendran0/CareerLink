@@ -185,7 +185,7 @@ function ForgotPassword() {
 
         const result=await api.post('/user/v1/changePassword', signupForm)
 
-        localStorage.setItem('token', result.data.token)
+        localStorage.setItem('token', result.data.token.token)
         router.push('/feed')
     }
 

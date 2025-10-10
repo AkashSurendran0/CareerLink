@@ -5,7 +5,7 @@ const api=await axios.create({
     withCredentials:true
 })
 
-axios.interceptors.request.use(
+api.interceptors.request.use(
     (config)=>{
         const openRoutes=["/user/v1/login", "/user/v1/signup", "/user/v1/changePassword", "/user/v1/getOTP", "/user/v1/sendOTP", "/user/v1/google", "/user/v1/sendResetOTP"]
 
@@ -17,7 +17,10 @@ axios.interceptors.request.use(
             const token=localStorage.getItem('token')
             if(token){
                 config.headers.Authorization=`Bearer ${token}`
-            }
+            }else{
+                window.location.href='http://localhost:3000/sessionOver'
+                return Promise.reject(new Error("No token, redirecting to login"));
+            }   
         }
 
         return config
@@ -25,13 +28,12 @@ axios.interceptors.request.use(
     (error)=>Promise.reject(error)
 )
 
-axios.interceptors.response.use(
+api.interceptors.response.use(
     (response)=>{
         const newToken=response.headers["access-token"] || response.data?.accessToken
 
         if(newToken){
             localStorage.setItem('token', newToken)
-            document.cookie=`token=${newToken}; path=/; SameSite=strict`
         }
 
         return response

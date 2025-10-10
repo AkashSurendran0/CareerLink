@@ -29,8 +29,11 @@ export class UserDetailsController {
 
     queryUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {
+            console.log(1)
             const userEmail=req.headers["user-email"] as string;
+            console.log(2, userEmail)
             const userDetails=await this._getUserDetails.getUserDetails(userEmail);
+            console.log(3)
             res.json({userDetails});
         } catch (error: any) {
             res.status(400).json({message:error.message});

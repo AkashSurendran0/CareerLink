@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import Link from "next/link";
+import api from "@/lib/api";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -20,13 +20,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   }, [])
 
   async function getCompanyInfo () {
-    const token=localStorage.getItem('token')
-    const result=await axios.get('http://localhost:5000/company/v1/getCompanyRegistrationInfo', {
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    })
-    console.log(result)
+    const result=await api.get('company/v1/getCompanyRegistrationInfo')
     if(result.data.result.success){
       setTab({label:'Your Company', value:'/company/registeredCompany'})
     }else{

@@ -4,13 +4,14 @@ import jwt from "jsonwebtoken";
 import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
 
 @injectable()
 export class LoginUser implements ILoginUser {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
-    async execute(email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> {
+    async execute(email:string, password:string): Promise<{success:boolean, token:string, refreshToken:string} | {success:boolean, message:string}> {
         const user=await this._userRepository.findByEmail(email);
         if(!user){
             return {
@@ -24,9 +25,7 @@ export class LoginUser implements ILoginUser {
                 message: "User entry restricted"
             };
         }
-        console.log(user);
         const isMatch=await bcrypt.compare(password, user.password);
-        console.log(isMatch);
         if(!isMatch){
             return {
                 success: false,
@@ -34,15 +33,13 @@ export class LoginUser implements ILoginUser {
             };
         }
 
-        const token=jwt.sign(
-            {id:user.id, email:email},
-            "jwt_secret",
-            {expiresIn: "1h"}
-        );
+        const token=await createAccessToken(user.id, email);
+        const refreshToken=await createRefreshToken(user.id, email);
 
         return {
                 success:true, 
-                token: token
+                token: token,
+                refreshToken: refreshToken
             };
     }
 }
