@@ -7,21 +7,22 @@ import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { redisClient } from "../../utils/RedisClient";
+import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
 
 @injectable()
 export class ChangePass implements IChangePass {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
-    async changePass(email:string, password:string){
+    async changePass(email:string, password:string):Promise<{token: string, refreshToken:String}>{
         const hashedPass=await bcrypt.hash(password, 10);
         const user=await this._userRepository.updateUserPassword(email, hashedPass);
-        const token=jwt.sign(
-            {id:user.id, email:email},
-            "jwt_secret",
-            {expiresIn: "1h"}
-        );
-        return token;
+        const token=await createAccessToken(user.id, email);
+        const refreshToken=await createRefreshToken(user.id, email);
+        return {
+            token:token,
+            refreshToken:refreshToken
+        };
     }
 }
 

@@ -24,22 +24,22 @@ const container = new Container();
 container.bind(TYPES.IUserRepository).to(UserRepository).inSingletonScope();
 container.bind(TYPES.IUserDetailsRepository).to(UserDetailsRepository).inSingletonScope();
 
-container.bind<LoginUser>(TYPES.LoginUser).to(LoginUser);
-container.bind<SignupUser>(TYPES.SignupUser).to(SignupUser);
-container.bind<AddUserDetails>(TYPES.AddUserDetails).to(AddUserDetails);
-container.bind<AlterUserStatus>(TYPES.AlterUserStatus).to(AlterUserStatus);
-container.bind<ChangePass>(TYPES.ChangePass).to(ChangePass);
-container.bind<CheckUserBlock>(TYPES.CheckUserBlock).to(CheckUserBlock);
-container.bind<EditUserDetails>(TYPES.EditUserDetails).to(EditUserDetails);
-container.bind<GetUserDetails>(TYPES.GetUserDetails).to(GetUserDetails);
-container.bind<GetAllUsers>(TYPES.GetAllUsers).to(GetAllUsers);
-container.bind<GoogleLogin>(TYPES.GoogleLogin).to(GoogleLogin);
-container.bind<SendOTP>(TYPES.SendOTP).to(SendOTP);
-container.bind<SendResetOTP>(TYPES.SendResetOTP).to(SendResetOTP);
-container.bind<Mailer>(TYPES.Mailer).to(Mailer);
-container.bind<VerifyOTP>(TYPES.VerifyOTP).to(VerifyOTP);
+container.bind(TYPES.ILoginUser).to(LoginUser).inSingletonScope();
+container.bind(TYPES.ISignupUser).to(SignupUser).inSingletonScope();
+container.bind(TYPES.IAddUserDetails).to(AddUserDetails).inSingletonScope();
+container.bind(TYPES.IAlterUserStatus).to(AlterUserStatus).inSingletonScope();
+container.bind(TYPES.IChangePass).to(ChangePass).inSingletonScope();
+container.bind(TYPES.ICheckUserBlock).to(CheckUserBlock).inSingletonScope();
+container.bind(TYPES.IEditUserDetails).to(EditUserDetails).inSingletonScope();
+container.bind(TYPES.IGetUserDetails).to(GetUserDetails).inSingletonScope();
+container.bind(TYPES.IGetAllUsers).to(GetAllUsers).inSingletonScope();
+container.bind(TYPES.IGoogleLogin).to(GoogleLogin).inSingletonScope();
+container.bind(TYPES.ISendOTP).to(SendOTP).inSingletonScope();
+container.bind(TYPES.ISendResetOtp).to(SendResetOTP).inSingletonScope();
+container.bind(TYPES.Mailer).to(Mailer).inSingletonScope();
+container.bind(TYPES.IVerifyOTP).to(VerifyOTP).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);
 
-export default container;
+export default container; 

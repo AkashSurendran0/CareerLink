@@ -1,5 +1,7 @@
+import { UserDTO } from "../../dto/UserDTO";
+
 export interface IChangePass {
-    changePass(email:string, password:string): Promise<string>
+    changePass(email:string, password:string): Promise<{token: string, refreshToken:String}>
 }
 
 export interface ISendResetOtp {
@@ -11,14 +13,14 @@ export interface IGoogleLogin {
 }
 
 export interface ILoginUser {
-    execute(email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}>
+    execute(email:string, password:string): Promise<{success:boolean, token:string, refreshToken:string} | {success:boolean, message:string}>
 }
 
 export interface ISignupUser {
-    createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string} | {success:boolean, message:string}> 
+    createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string, refreshToken:String} | {success:boolean, message:string}> 
 }
 
-export interface ISendOtp {
+export interface ISendOTP {
     mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>
 }
 
@@ -28,4 +30,12 @@ export interface IGetAllUsers {
 
 export interface IVerifyOTP {
     verifyOtp(email:string): Promise<{success:boolean, otp:string} | {success:boolean, message:string}>
+}
+
+export interface IAlterUserStatus {
+    changeUserStatus (id:string):Promise<UserDTO>
+}
+
+export interface ICheckUserBlock {
+    checkUserBlock (id:string): Promise<{success:boolean} | null>
 }

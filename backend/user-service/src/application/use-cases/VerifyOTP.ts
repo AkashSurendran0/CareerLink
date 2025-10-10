@@ -7,7 +7,7 @@ export class VerifyOTP implements IVerifyOTP {
 
     async verifyOtp (email:string): Promise<{success:boolean, otp:string} | {success:boolean, message:string}> {
         const cachedOtp=await redisClient.get(`keyFor${email}`);
-        console.log(cachedOtp, 'otp')
+        console.log(cachedOtp, "otp");
         if(!cachedOtp){
             return {
                 success:false,

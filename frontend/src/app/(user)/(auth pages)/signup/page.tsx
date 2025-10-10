@@ -2,12 +2,12 @@
 
 import React,{ useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
+import api from "@/lib/api";
 
 function Signup() {
     const [loadOTP, setLoadOTP]=useState(false)
@@ -86,7 +86,7 @@ function Signup() {
     }, [])
 
     const getOtp = async () => {
-        const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+        const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
         console.log(result.data)
         if(result.data.result.success){
             setStoredOtp(result.data.result.otp)
@@ -99,7 +99,7 @@ function Signup() {
 
     const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         if(!storedOtp){
-            const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+            const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
             if(result.data.result.success){
                 setStoredOtp(result.data.result.otp)
             }else{
@@ -132,7 +132,7 @@ function Signup() {
             email:signupForm.email
         }
 
-        const result=await axios.post('http://localhost:5000/user/v1/sendOTP', data)
+        const result=await api.post('/user/v1/sendOTP', data)
         if(!result.data.result.success){
             setLoadOTP(false)
             return enqueueSnackbar(result.data.result.message, {variant:'error'})
@@ -189,7 +189,7 @@ function Signup() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/v1/signup', signupForm, {withCredentials:true})
+        const result=await api.post('/user/v1/signup', signupForm)
         console.log(result, 'result')
         console.log(result.data.token.token, 'token')
 

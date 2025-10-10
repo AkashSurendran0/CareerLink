@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
 import { TYPES } from "../../types";
+import { IEditCompany } from "../../domain/use-cases/ICompanyUserCase";
 
 type Details = {
     registeredBy:string,
@@ -15,7 +16,7 @@ type Details = {
 }
 
 @injectable()
-export class EditCompany {
+export class EditCompany implements IEditCompany {
 
     constructor(
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository

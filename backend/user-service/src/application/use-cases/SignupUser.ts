@@ -4,18 +4,19 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Mailer } from "../../utils/MailHelper";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
-import { ISendOtp } from "../../domain/use-cases/IUserUseCase";
+import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { redisClient } from "../../utils/RedisClient";
+import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
 
 @injectable()
 export class SignupUser implements ISignupUser {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
-    async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string}> {
+    async createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string, refreshToken:String}> {
         const hashedPass=await bcrypt.hash(password, 10);
         const user=new User(
             "",
@@ -43,20 +44,19 @@ export class SignupUser implements ISignupUser {
         } catch (error:any) {
             console.log("Cant insert into elasticsearch", error);
         }
-        const token=jwt.sign(
-            {id:newuser.id, email:email},
-            "jwt_secret",
-            {expiresIn: "3h"}
-        );
+
+        const token=await createAccessToken(newuser.id, email);
+        const refreshToken=await createRefreshToken(newuser.id, email);
         return {
                 success:true, 
-                token: token
+                token: token,
+                refreshToken: refreshToken
             };
     }
 }
 
 @injectable()
-export class SendOTP implements ISendOtp {
+export class SendOTP implements ISendOTP {
 
     constructor(@inject(TYPES.Mailer) private _mailer:Mailer, @inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 

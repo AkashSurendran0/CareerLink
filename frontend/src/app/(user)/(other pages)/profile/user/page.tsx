@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
+import api from "@/lib/api";
 
 type Education = {
     degree: string;
@@ -53,13 +53,7 @@ export default function ProfileDashboard() {
     useEffect(()=>{
 
         const fetchUserDetails=async ()=>{
-            const token=localStorage.getItem('token')
-            const details=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            })
-            console.log(details)
+            const details=await api.get('/user/v1/getUserDetails')
             setUserDetails(details.data.userDetails)
         }
 

@@ -3,9 +3,10 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
+import { IGetAllCompanies } from "../../domain/use-cases/ICompanyUserCase";
 
 @injectable()
-export class GetAllCompanies {
+export class GetAllCompanies implements IGetAllCompanies {
 
     constructor(
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository

@@ -1,9 +1,10 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { ICheckUserBlock } from "../../domain/use-cases/IUserUseCase";
 
 @injectable()
-export class CheckUserBlock {
+export class CheckUserBlock implements ICheckUserBlock {
     
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 

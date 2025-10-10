@@ -2,23 +2,23 @@ import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { uploadImageToS3 } from "../../config/upload";
 import { TYPES } from "../../types";
-import { AddCompany } from "../../application/user-cases/AddCompany";
-import { CheckCompanyRegistrationInfo } from "../../application/user-cases/CheckCompanyRegistrationInfo";
-import { GetCompanyDetails } from "../../application/user-cases/GetCompanyDetails";
-import { EditCompany } from "../../application/user-cases/EditCompany";
-import { GetAllCompanies } from "../../application/user-cases/GetAllCompanies";
-import { AlterCompanyStatus } from "../../application/user-cases/AlterCompanyStatus";
+import { IAddCompany } from "../../domain/use-cases/ICompanyUserCase";
+import { ICheckCompanyRegistrationInfo } from "../../domain/use-cases/ICompanyUserCase";
+import { IGetCompanyDetails } from "../../domain/use-cases/ICompanyUserCase";
+import { IEditCompany } from "../../domain/use-cases/ICompanyUserCase";
+import { IGetAllCompanies } from "../../domain/use-cases/ICompanyUserCase";
+import { IAlterCompanyStatus } from "../../domain/use-cases/ICompanyUserCase";
 
 injectable()
 export class CompanyController {
 
     constructor(
-        @inject(TYPES.AddCompany) private _addCompany:AddCompany,
-        @inject(TYPES.CheckCompanyRegistrationInfo) private _checkCompanyRegistrationInfo:CheckCompanyRegistrationInfo,
-        @inject(TYPES.GetCompanyDetails) private _getCompanyDetails:GetCompanyDetails,
-        @inject(TYPES.EditCompany) private _editCompany:EditCompany,
-        @inject(TYPES.GetAllCompanies) private _getAllCompanies:GetAllCompanies,
-        @inject(TYPES.AlterCompanyStatus) private _alterCompanyStatus:AlterCompanyStatus
+        @inject(TYPES.IAddCompany) private _addCompany:IAddCompany,
+        @inject(TYPES.ICheckCompanyRegistrationInfo) private _checkCompanyRegistrationInfo:ICheckCompanyRegistrationInfo,
+        @inject(TYPES.IGetCompanyDetails) private _getCompanyDetails:IGetCompanyDetails,
+        @inject(TYPES.IEditCompany) private _editCompany:IEditCompany,
+        @inject(TYPES.IGetAllCompanies) private _getAllCompanies:IGetAllCompanies,
+        @inject(TYPES.IAlterCompanyStatus) private _alterCompanyStatus:IAlterCompanyStatus
     ){}
 
     addCompany = async (req:Request, res:Response): Promise<void> => {
@@ -42,7 +42,7 @@ export class CompanyController {
     getRegistrationInfo = async (req:Request, res:Response):Promise<void> => {
         try {
             const userId=req.headers["user-id"] as string
-            const result=await this._checkCompanyRegistrationInfo.CheckCompanyRegistrationInfo(userId)
+            const result=await this._checkCompanyRegistrationInfo.checkCompanyRegistrationInfo(userId)
             res.json({result})
         } catch (error: any) {
             res.status(400).json({message:error.message});
@@ -84,7 +84,6 @@ export class CompanyController {
             const pageNum=parseInt(page as string, 10) || 1;
             const limitNum=parseInt(limit as string, 5) || 5;
             const companies=await this._getAllCompanies.getAllCompanies(pageNum, limitNum, query)
-            console.log(companies, 'bl;ahhhhh')
             res.json({companies})
         } catch (error:any) {
             res.status(400).json({message:error.message});

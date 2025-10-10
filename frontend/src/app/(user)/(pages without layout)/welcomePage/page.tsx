@@ -1,9 +1,9 @@
 "use client"
 
-import axios from "axios"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
+import api from "@/lib/api"
 
 export default function ProfileForm() {
   const setLoading=useLoading()
@@ -161,13 +161,8 @@ export default function ProfileForm() {
 
     setDetailsForm(updatedForm)
 
-    const token=localStorage.getItem('token')
 
-    const result=await axios.post('http://localhost:5000/user/v1/addUserDetails', updatedForm, {
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    })
+    const result=await api.post('/user/v1/addUserDetails', updatedForm)
 
     if(result.data.success) router.push('/feed')
 
@@ -176,13 +171,8 @@ export default function ProfileForm() {
   const skipPage = async () =>{
     setLoading(true)
   
-    const token=localStorage.getItem('token')
 
-    const result=await axios.post('http://localhost:5000/user/v1/addUserDetails', detailsForm, {
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    })
+    const result=await api.post('/user/v1/addUserDetails', detailsForm)
 
     if(result.data.success) router.push('/profile/user')
 

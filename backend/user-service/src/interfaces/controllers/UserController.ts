@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { UserRepository } from "../../infrastructure/repositories/UserRepository";
-import { LoginUser } from "../../application/use-cases/LoginUser";
-import { SignupUser } from "../../application/use-cases/SignupUser";
-import { SendOTP } from "../../application/use-cases/SignupUser";
-import { ChangePass } from "../../application/use-cases/ChangePass";
-import { SendResetOTP } from "../../application/use-cases/ChangePass";
-import { GetAllUsers } from "../../application/use-cases/GetUsers";
-import { AlterUserStatus } from "../../application/use-cases/AlterUserStatus";
-import { CheckUserBlock } from "../../application/use-cases/CheckUserBlock";
-import { VerifyOTP } from "../../application/use-cases/VerifyOTP";
+import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
+import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
+import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
+import { IChangePass } from "../../domain/use-cases/IUserUseCase";
+import { ISendResetOtp } from "../../domain/use-cases/IUserUseCase";
+import { IGetAllUsers } from "../../domain/use-cases/IUserUseCase";
+import { IAlterUserStatus } from "../../domain/use-cases/IUserUseCase";
+import { ICheckUserBlock } from "../../domain/use-cases/IUserUseCase";
+import { IVerifyOTP } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 
@@ -16,15 +15,15 @@ import { TYPES } from "../../types";
 export class UserController {
 
     constructor(
-        @inject(TYPES.LoginUser) private _loginUser:LoginUser,
-        @inject(TYPES.SignupUser) private _signupUser:SignupUser,
-        @inject(TYPES.SendOTP) private _sendOTP:SendOTP,
-        @inject(TYPES.ChangePass) private _changePass:ChangePass,
-        @inject(TYPES.SendResetOTP) private _sendResetOtp:SendResetOTP,
-        @inject(TYPES.GetAllUsers) private _getUsers:GetAllUsers,
-        @inject(TYPES.AlterUserStatus) private _alterUserStatus:AlterUserStatus,
-        @inject(TYPES.CheckUserBlock) private _checkUserBlock:CheckUserBlock,
-        @inject(TYPES.VerifyOTP) private _verifyOtp:VerifyOTP
+        @inject(TYPES.ILoginUser) private _loginUser:ILoginUser,
+        @inject(TYPES.ISignupUser) private _signupUser:ISignupUser,
+        @inject(TYPES.ISendOTP) private _sendOTP:ISendOTP,
+        @inject(TYPES.IChangePass) private _changePass:IChangePass,
+        @inject(TYPES.ISendResetOtp) private _sendResetOtp:ISendResetOtp,
+        @inject(TYPES.IGetAllUsers) private _getUsers:IGetAllUsers,
+        @inject(TYPES.IAlterUserStatus) private _alterUserStatus:IAlterUserStatus,
+        @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
+        @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -32,8 +31,13 @@ export class UserController {
             const {email, password}=req.body;
             const result=await this._loginUser.execute(email, password);
             if(result.success){
-                const token=result.token
-                res.cookie("token", token, {
+                res.cookie("token", result.token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "strict",
+                    maxAge: 60 * 60 * 1000,
+                });
+                res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: true,
                     sameSite: "strict",
@@ -54,9 +58,14 @@ export class UserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
+                maxAge: 60 * 60 * 1000,
+            });
+            res.cookie("refreshToken", token.refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            console.log(token);
             res.json({token});
         } catch (error:any) {
             res.status(400).json({message:error.message});
@@ -77,7 +86,13 @@ export class UserController {
         try {
             const {email, password}=req.body;
             const token=await this._changePass.changePass(email, password);
-            res.cookie("token", token, {
+            res.cookie("token", token.token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 60 * 60 * 1000,
+            });
+            res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "strict",
@@ -140,6 +155,6 @@ export class UserController {
         } catch (error: any) {
             res.status(400).json({message:error.message});
         }
-    }
+    };
 
 }

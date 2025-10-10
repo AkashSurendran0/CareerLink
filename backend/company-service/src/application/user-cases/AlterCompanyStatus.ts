@@ -3,15 +3,17 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
+import { CompanyDTO } from "../../dto/CompanyDTO";
+import { IAlterCompanyStatus } from "../../domain/use-cases/ICompanyUserCase";
 
 @injectable()
-export class AlterCompanyStatus {
+export class AlterCompanyStatus implements IAlterCompanyStatus {
 
     constructor(
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
-    async changeCompanyStatus (id:string) { 
+    async changeCompanyStatus (id:string):Promise<CompanyDTO> { 
         const company=await this._companyRepository.findById(id)
         const updatedCompany=await this._companyRepository.changeCompanyStatus(company)
         await elasticClient.update({
