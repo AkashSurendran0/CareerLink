@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
+import api from "@/lib/api";
 
 function Login() {
     const setLoading=useLoading()
@@ -49,7 +49,7 @@ function Login() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/v1/login', loginDetails, {withCredentials:true})
+        const result=await api.post('/user/v1/login', loginDetails)
         console.log(result)
         if(!result.data.result.success){
             setLoading(false)

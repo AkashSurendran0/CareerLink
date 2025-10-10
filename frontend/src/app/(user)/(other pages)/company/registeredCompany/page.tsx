@@ -1,11 +1,11 @@
 "use client"
 
-import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import CompanyBlockedPage from "@/components/companyBlocked"
+import api from "@/lib/api"
 
 type Company = {
     id:string,
@@ -28,13 +28,7 @@ export default function CompanyProfilePage() {
 
     useEffect(()=>{
         async function getCompanyDetails () {
-            const token=localStorage.getItem('token')
-            const result=await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            })
-            console.log(result.data.result)
+            const result=await api.get('/company/v1/getCompanyDetails')
             setCompanyDetails(result.data.result)
         }
 

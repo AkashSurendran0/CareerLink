@@ -4,7 +4,7 @@ export const TYPES={
     IAddUserDetails:"IAddUserDetails",
     IAlterUserStatus:"IAlterUserStatus",
     IChangePass:"IChangePass",
-    ISendResetOTP:"ISendResetOTP",
+    ISendResetOtp:"ISendResetOtp",
     ICheckUserBlock:"ICheckUserBlock",
     IEditUserDetails:"IEditUserDetails",
     IGetUserDetails:"IGetUserDetails",

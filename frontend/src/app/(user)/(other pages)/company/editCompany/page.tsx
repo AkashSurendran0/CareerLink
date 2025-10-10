@@ -5,8 +5,8 @@ import type React from "react"
 import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
-import axios from "axios"
 import {useRouter} from "next/navigation"
+import api from "@/lib/api"
 
 export default function CompanyRegistrationPage() {
     const setLoading=useLoading()
@@ -28,13 +28,7 @@ export default function CompanyRegistrationPage() {
   
     useEffect(()=>{
         async function getCompanyDetails () {
-            const token=localStorage.getItem('token')
-            const result=await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            })
-            console.log(result.data.result)
+            const result=await api.get('/company/v1/getCompanyDetails')
             setCompanyDetails({...result.data.result})
         }
 
@@ -159,12 +153,7 @@ export default function CompanyRegistrationPage() {
             formData.append('logo', companyDetails.logo)
         }
 
-        const token=localStorage.getItem('token')
-        const result=await axios.post('http://localhost:5000/company/v1/editCompany', formData, {
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-        })
+        const result=await api.post('/company/v1/editCompany', formData)
         setLoading(false)
         if(result.data.success){
             router.push('/company/registeredCompany')

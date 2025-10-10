@@ -13,7 +13,6 @@ interface SidebarProps {
 function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const router=useRouter()
   const [activeBar, setActiveBar]=useState('Feeds')
-  const [activeCompany, setActiveCompany]=useState(false)
   const [tab, setTab]=useState({ label:'', value:'' })
 
   useEffect(()=>{
@@ -29,10 +28,8 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     })
     console.log(result)
     if(result.data.result.success){
-      setActiveCompany(true)
       setTab({label:'Your Company', value:'/company/registeredCompany'})
     }else{
-      setActiveCompany(false)
       setTab({label:'Register A Company', value:'/company/registrationPage'})
     }
   }

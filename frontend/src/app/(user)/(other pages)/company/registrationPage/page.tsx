@@ -5,8 +5,8 @@ import type React from "react"
 import { useRef, useState } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
-import axios from "axios"
 import {useRouter} from "next/navigation"
+import api from "@/lib/api"
 
 export default function CompanyRegistrationPage() {
     const setLoading=useLoading()
@@ -148,12 +148,7 @@ export default function CompanyRegistrationPage() {
             formData.append('logo', companyDetails.logo)
         }
 
-        const token=localStorage.getItem('token')
-        const result=await axios.post('http://localhost:5000/company/v1/addCompany', formData, {
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-        })
+        const result=await api.post('/company/v1/addCompany', formData)
         setLoading(false)
         if(result.data.success){
             router.push('/company/registeredCompany')

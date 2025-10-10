@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import axios from "axios"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import { useRouter } from "next/navigation"
 import {UserCircle} from 'lucide-react'
+import api from "@/lib/api"
 
 
 export default function EditProfile() {
@@ -41,12 +41,7 @@ export default function EditProfile() {
     useEffect(()=>{
     
             const fetchUserDetails=async ()=>{
-                const token=localStorage.getItem('token')
-                const result=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
-                    headers:{
-                        Authorization:`Bearer ${token}`
-                    }
-                })
+                const result=await api.get('/user/v1/getUserDetails')
                 const details=result.data.userDetails
                 setDetailsForm({...details, skills:[...details.skills], education:[...details.education], experience:[...details.experience]})
             }
@@ -222,16 +217,9 @@ export default function EditProfile() {
             formData.append("profilePicture", detailsForm.profilePicture);
         }
 
-
         setDetailsForm(updatedForm)
 
-        const token=localStorage.getItem('token')
-
-        const result=await axios.patch('http://localhost:5000/user/v1/editUserDetails', formData, {
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-        })
+        const result=await api.patch('/user/v1/editUserDetails', formData)
         setLoading(false)
         if(result.data.success) router.push('/profile/user')
     }

@@ -2,12 +2,12 @@
 
 import React, {useState, useEffect} from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
+import api from "@/lib/api";
 
 function ForgotPassword() {
     const [loadOTP, setLoadOTP]=useState(false)
@@ -85,7 +85,7 @@ function ForgotPassword() {
     }, [])
 
      const getOtp = async () => {
-        const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+        const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
         console.log(result.data)
         if(result.data.result.success){
             setStoredOtp(result.data.result.otp)
@@ -98,7 +98,7 @@ function ForgotPassword() {
 
     const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         if(!storedOtp){
-            const result=await axios.get(`http://localhost:5000/user/v1/getOTP?email=${signupForm.email}`)
+            const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
             if(result.data.result.success){
                 setStoredOtp(result.data.result.otp)
             }else{
@@ -132,7 +132,7 @@ function ForgotPassword() {
             email:signupForm.email
         }
 
-        const result=await axios.post('http://localhost:5000/user/v1/sendResetOTP', data)
+        const result=await api.post('/user/v1/sendResetOTP', data)
         if(!result.data.otp.success){
             setLoadOTP(false)
             return enqueueSnackbar(result.data.otp.message, {variant:'error'})
@@ -183,7 +183,7 @@ function ForgotPassword() {
 
         setLoading(true)
 
-        const result=await axios.post('http://localhost:5000/user/v1/changePassword', signupForm, {withCredentials:true})
+        const result=await api.post('/user/v1/changePassword', signupForm)
 
         localStorage.setItem('token', result.data.token)
         router.push('/feed')

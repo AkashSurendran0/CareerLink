@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import { AddUserDetails } from "../../application/use-cases/AddUserDetails";
-import { UserDetailsRepository } from "../../infrastructure/repositories/UserDetailsRepository";
-import { UserRepository } from "../../infrastructure/repositories/UserRepository";
-import { GetUserDetails } from "../../application/use-cases/GetUserDetails";
-import { EditUserDetails } from "../../application/use-cases/EditUserDetails";
+import { IAddUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
+import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
+import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { uploadImageToS3 } from "../../config/upload";
@@ -13,9 +11,9 @@ import { uploadImageToS3 } from "../../config/upload";
 export class UserDetailsController {
 
     constructor(
-        @inject(TYPES.AddUserDetails) private _addUserDetails:AddUserDetails,
-        @inject(TYPES.GetUserDetails) private _getUserDetails:GetUserDetails,
-        @inject(TYPES.EditUserDetails) private _editUserDetails:EditUserDetails,
+        @inject(TYPES.IAddUserDetails) private _addUserDetails:IAddUserDetails,
+        @inject(TYPES.IGetUserDetails) private _getUserDetails:IGetUserDetails,
+        @inject(TYPES.IEditUserDetails) private _editUserDetails:IEditUserDetails,
     ){}
 
     insertUserDetails = async (req:Request, res:Response): Promise<void> => {

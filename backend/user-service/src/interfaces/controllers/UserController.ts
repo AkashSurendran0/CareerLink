@@ -19,7 +19,7 @@ export class UserController {
         @inject(TYPES.ISignupUser) private _signupUser:ISignupUser,
         @inject(TYPES.ISendOTP) private _sendOTP:ISendOTP,
         @inject(TYPES.IChangePass) private _changePass:IChangePass,
-        @inject(TYPES.ISendResetOTP) private _sendResetOtp:ISendResetOtp,
+        @inject(TYPES.ISendResetOtp) private _sendResetOtp:ISendResetOtp,
         @inject(TYPES.IGetAllUsers) private _getUsers:IGetAllUsers,
         @inject(TYPES.IAlterUserStatus) private _alterUserStatus:IAlterUserStatus,
         @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
@@ -28,8 +28,11 @@ export class UserController {
 
     login = async (req:Request, res:Response): Promise<void> => {
         try {
+            console.log('here mahn')
             const {email, password}=req.body;
+            console.log(2)
             const result=await this._loginUser.execute(email, password);
+            console.log(3)
             if(result.success){
                 const token=result.token
                 res.cookie("token", token, {
@@ -39,6 +42,7 @@ export class UserController {
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                 });
             }
+            console.log(4)
             res.json({result});
         } catch (error:any) {
             res.status(400).json({message:error.message});
