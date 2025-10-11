@@ -8,7 +8,8 @@ export interface CompanyDTO {
     websiteURL:string,
     location:string,
     aboutCompany:string,
-    createdAt:Date,
+    approved:boolean,
     suspended:boolean
+    createdAt:Date,
 }
     

@@ -2,12 +2,13 @@ import { Router } from "express";
 import { UserController } from "../interfaces/controllers/UserController";
 import passport from "passport";
 import { UserDetailsController } from "../interfaces/controllers/UserDetailsController";
-// import upload from "../middlewares/upload";
 import container from "../inversify.config";
 import { TYPES } from "../types";
 import multer from "multer";
+import dotenv from "dotenv";
+import { createAccessToken, createRefreshToken } from "../utils/SetToken";
 
-
+dotenv.config();
 const router=Router();
 const userController=container.get<UserController>(TYPES.UserController);
 const userDetailsController=container.get<UserDetailsController>(TYPES.UserDetailsController);
@@ -25,6 +26,21 @@ router.get(
     "/google/callback",
     passport.authenticate("google", {failureRedirect:"/login"}),
     (req, res)=>{
+        const user=req.user;
+        const accessToken=createAccessToken(user!.id, user!.email);
+        const refreshToken=createRefreshToken(user!.id, user!.email);
+        res.cookie("token", accessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 1000, 
+        });
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
         res.redirect("http://localhost:3000/feed");
     }
 );

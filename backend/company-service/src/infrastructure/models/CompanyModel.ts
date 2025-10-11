@@ -12,6 +12,7 @@ export class CompanyModel extends Model {
     public websiteURL!:string;
     public location!:string;
     public aboutCompany!:string;
+    public approved!:boolean;
     public suspended!:boolean;
 
     public readonly createdAt!:Date
@@ -59,6 +60,10 @@ CompanyModel.init(
         aboutCompany:{
             type:DataTypes.STRING,
             allowNull:false
+        },
+        approved:{
+            type:DataTypes.BOOLEAN,
+            defaultValue:false
         },
         suspended:{
             type:DataTypes.BOOLEAN,

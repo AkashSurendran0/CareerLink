@@ -188,9 +188,7 @@ function Signup() {
 
         setLoading(true)
 
-        const result=await signUp(signupForm)
-
-        localStorage.setItem('token', result.token.token)
+        await signUp(signupForm)
 
         router.push('/welcomePage')
     }

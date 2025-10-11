@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import CompanyBlockedPage from "@/components/companyBlocked"
-import { getCompanyDetails } from "@/services/userService"
+import { getCompanyInfo } from "@/services/userService"
 
 type Company = {
     id:string,
@@ -28,7 +28,8 @@ export default function CompanyProfilePage() {
 
     useEffect(()=>{
         async function getCompanyDetails () {
-            const result=await getCompanyDetails()
+            const result=await getCompanyInfo()
+            console.log('1', result)
             setCompanyDetails(result.result)
         }
 

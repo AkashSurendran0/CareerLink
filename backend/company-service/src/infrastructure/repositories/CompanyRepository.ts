@@ -42,6 +42,7 @@ export class CompanyRepository implements ICompanyRepository {
             companyData!.websiteURL,
             companyData!.location,
             companyData!.aboutCompany,
+            companyData!.approved,
             companyData!.suspended,
             companyData!.createdAt
         )
@@ -66,6 +67,7 @@ export class CompanyRepository implements ICompanyRepository {
             companyDetails!.websiteURL,
             companyDetails!.location,
             companyDetails!.aboutCompany,
+            companyDetails!.approved,
             companyDetails!.suspended,
             companyDetails!.createdAt
         )
@@ -93,6 +95,7 @@ export class CompanyRepository implements ICompanyRepository {
             company!.websiteURL,
             company!.location,
             company!.aboutCompany,
+            company!.approved,
             company!.suspended,
             company!.createdAt
         )
@@ -120,6 +123,7 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
+            updatedCompany!.approved,
             updatedCompany!.suspended,
             updatedCompany!.createdAt
         )

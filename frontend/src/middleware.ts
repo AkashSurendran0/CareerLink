@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { jwtVerify, SignJWT } from "jose";
+const secret=new TextEncoder().encode(process.env.JWT_SECRET)
 
-export async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest, res:NextResponse) {
   const token = req.cookies.get("token")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value
   const adminToken = req.cookies.get("adminToken")?.value;
   const { pathname } = req.nextUrl;
-
 
   if (pathname.startsWith("/admin")) {
     if (!adminToken && !pathname.startsWith("/admin/login")) {
@@ -21,32 +21,44 @@ export async function middleware(req: NextRequest) {
   }
 
   if(!token && refreshToken){
-    const res = await fetch("http://localhost:5000/refreshToken", {
-      method:'GET',
-      headers: { Authorization: `Bearer ${refreshToken}` },
-      credentials:'include',
-      cache: "no-store",
-    });
-    if(res.ok){
-      return NextResponse.next();
-    }else{
-      return NextResponse.redirect(new URL("/sessionOver", req.url));
+    try {
+      const {payload}=await jwtVerify(refreshToken, secret)
+      const newToken=await new SignJWT({
+        id:payload.id,
+        email:payload.email
+      })
+      .setProtectedHeader({alg:'HS256'})
+      .setExpirationTime('1h')
+      .sign(secret)
+  
+      const response = NextResponse.next()
+      response.cookies.set({
+        name: 'token',
+        value: newToken,
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 60 * 60, // 1 hour
+        path: '/',
+      })
+  
+      return response
+    } catch (error: any) {
+      console.log('Token refresh failed', error)
+      return NextResponse.redirect(new URL('/sessionOver', req.url))
     }
   }
 
-  if (!token) {
+  if (!token || !refreshToken) {
     if (
       pathname.startsWith("/login") ||
       pathname.startsWith("/signup") ||
-      pathname.startsWith("/resetPassword")
+      pathname.startsWith("/resetPassword") ||
+      pathname.startsWith("/sessionOver")
     ) {
       return NextResponse.next();
     }
 
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  if(!refreshToken){
     return NextResponse.redirect(new URL("/sessionOver", req.url));
   }
 
@@ -69,8 +81,10 @@ export async function middleware(req: NextRequest) {
       console.log(token)
       const res = await fetch("http://localhost:5000/user/v1/check", {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
+        credentials: 'include',
+        headers:{
+          'Cookie':`token=${token}`
+        }
       });
 
       if (!res.ok) {
@@ -78,6 +92,7 @@ export async function middleware(req: NextRequest) {
       }
 
       const data = await res.json();
+      console.log('aaaaaaaa', data)
       if (data.result.success) {
         return NextResponse.redirect(new URL("/blocked", req.url));
       }
@@ -91,8 +106,10 @@ export async function middleware(req: NextRequest) {
     try {
       const res = await fetch("http://localhost:5000/company/v1/getCompanyRegistrationInfo", {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
+        credentials: 'include',
+        headers:{
+          'Cookie':`token=${token}`
+        }
       });
       const data=await res.json()
       if(data.result.success){
@@ -108,8 +125,10 @@ export async function middleware(req: NextRequest) {
     try {
       const res = await fetch("http://localhost:5000/company/v1/getCompanyRegistrationInfo", {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
+        credentials: 'include',
+        headers:{
+          'Cookie':`token=${token}`
+        }
       });
       const data=await res.json()
       if(!data.result.success){

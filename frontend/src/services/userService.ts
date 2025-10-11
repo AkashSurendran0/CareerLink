@@ -57,7 +57,7 @@ export const signUp = async (signupForm: SignupForm) => {
     return res.data
 }
 
-export const getCompanyDetails = async () => {
+export const getCompanyInfo = async () => {
     const res=await api.get('/company/v1/getCompanyDetails')
     return res.data
 }

@@ -18,10 +18,6 @@ function Login() {
     })
     const [errors, setErrors]=useState<Partial<Record<"email" | "password", string>>>({})
 
-    // useEffect(()=>{
-    //     const token=localStorage.getItem('token')
-    //     if(token) router.push('/feed')
-    // }, [])
 
     const resetErrors= () =>{
         setErrors({
@@ -55,8 +51,6 @@ function Login() {
             return enqueueSnackbar(result.result.message, {variant:'error'})
 
         }
-
-        localStorage.setItem('token', result.result.token)
 
         router.push('/feed')
     }
