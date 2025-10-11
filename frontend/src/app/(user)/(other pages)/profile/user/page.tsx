@@ -5,7 +5,7 @@ import Image from "next/image";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
-import api from "@/lib/api";
+import { getUserDetails } from "@/services/userService";
 
 type Education = {
     degree: string;
@@ -53,8 +53,8 @@ export default function ProfileDashboard() {
     useEffect(()=>{
 
         const fetchUserDetails=async ()=>{
-            const details=await api.get('/user/v1/getUserDetails')
-            setUserDetails(details.data.userDetails)
+            const details=await getUserDetails()
+            setUserDetails(details.userDetails)
         }
 
         fetchUserDetails()

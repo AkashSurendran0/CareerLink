@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import { useRouter } from "next/navigation"
 import {UserCircle} from 'lucide-react'
-import api from "@/lib/api"
+import { editUserDetails, getUserDetails } from "@/services/userService"
 
 
 export default function EditProfile() {
@@ -41,8 +41,8 @@ export default function EditProfile() {
     useEffect(()=>{
     
             const fetchUserDetails=async ()=>{
-                const result=await api.get('/user/v1/getUserDetails')
-                const details=result.data.userDetails
+                const result=await getUserDetails()
+                const details=result.userDetails
                 setDetailsForm({...details, skills:[...details.skills], education:[...details.education], experience:[...details.experience]})
             }
     
@@ -219,9 +219,9 @@ export default function EditProfile() {
 
         setDetailsForm(updatedForm)
 
-        const result=await api.patch('/user/v1/editUserDetails', formData)
+        const result=await editUserDetails(formData)
         setLoading(false)
-        if(result.data.success) router.push('/profile/user')
+        if(result.success) router.push('/profile/user')
     }
 
     const handleCancel = () => {

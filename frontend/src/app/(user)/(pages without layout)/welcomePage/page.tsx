@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
-import api from "@/lib/api"
+import { addUserDetails } from "@/services/userService"
 
 export default function ProfileForm() {
   const setLoading=useLoading()
@@ -162,9 +162,9 @@ export default function ProfileForm() {
     setDetailsForm(updatedForm)
 
 
-    const result=await api.post('/user/v1/addUserDetails', updatedForm)
+    const result=await addUserDetails(updatedForm)
 
-    if(result.data.success) router.push('/feed')
+    if(result.success) router.push('/feed')
 
   }
 
@@ -172,9 +172,9 @@ export default function ProfileForm() {
     setLoading(true)
   
 
-    const result=await api.post('/user/v1/addUserDetails', detailsForm)
+    const result=await addUserDetails(detailsForm)
 
-    if(result.data.success) router.push('/profile/user')
+    if(result.success) router.push('/profile/user')
 
   }
 

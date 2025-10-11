@@ -1,0 +1,93 @@
+import api from "@/lib/api";
+
+type Data = {
+    email:string
+}
+
+type LoginDetails = {
+    email:string,
+    password:string
+}
+
+type ChangePassForm = {
+    email:string,
+    password:string,
+    confirmPass:string
+}
+
+type SignupForm = {
+    username:string,
+    email:string,
+    password:string,
+    confirmPass:string
+}
+
+export const loginUser = async (loginDetails: LoginDetails) => {
+    const res=await api.post('/user/v1/login', loginDetails)
+    return res.data
+}
+
+export const resetGetOtp = async (email: string) => {
+    const res=await api.get(`/user/v1/getOTP?email=${email}`)
+    return res.data
+}
+
+export const sendResetOtp = async (data: Data) => {
+    const res=await api.post('/user/v1/sendResetOTP', data)
+    return res.data
+}
+
+export const changePassword = async (changePassForm: ChangePassForm) => {
+    const res=await api.post('/user/v1/changePassword', changePassForm)
+    return res.data
+}
+
+export const getSignupOtp = async (email: string) => {
+    const res=await api.get(`/user/v1/getOTP?email=${email}`)
+    return res.data
+}
+
+export const sendSignupOtp = async (data: Data) => {
+    const res=await api.post('/user/v1/sendOTP', data)
+    return res.data
+}
+
+export const signUp = async (signupForm: SignupForm) => {
+    const res=await api.post('/user/v1/signup', signupForm)
+    return res.data
+}
+
+export const getCompanyDetails = async () => {
+    const res=await api.get('/company/v1/getCompanyDetails')
+    return res.data
+}
+
+export const editCompany = async (formData) => {
+    const res=await api.post('/company/v1/editCompany', formData)
+    return res.data
+}
+
+export const addCompany = async (formData) => {
+    const res=await api.post('/company/v1/addCompany', formData)
+    return res.data 
+}
+
+export const getUserDetails = async () => {
+    const res=await api.get('/user/v1/getUserDetails')
+    return res.data
+}
+
+export const editUserDetails = async (formData) => {
+    const res=await api.patch('/user/v1/editUserDetails', formData)
+    return res.data
+}
+
+export const addUserDetails = async (form) => {
+    const res=await api.post('/user/v1/addUserDetails', form)
+    return res.data
+}
+
+export const getCompanyRegistrationInfo = async () => {
+    const res=await api.get('company/v1/getCompanyRegistrationInfo')
+    return res.data
+}

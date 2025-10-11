@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import api from "@/lib/api";
+import { useLoading } from "@/app/(user)/template";
+import { getCompanyRegistrationInfo } from "@/services/userService";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -11,6 +12,7 @@ interface SidebarProps {
 }
 
 function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const setLoading=useLoading()
   const router=useRouter()
   const [activeBar, setActiveBar]=useState('Feeds')
   const [tab, setTab]=useState({ label:'', value:'' })
@@ -20,8 +22,8 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   }, [])
 
   async function getCompanyInfo () {
-    const result=await api.get('company/v1/getCompanyRegistrationInfo')
-    if(result.data.result.success){
+    const result=await getCompanyRegistrationInfo()
+    if(result.result.success){
       setTab({label:'Your Company', value:'/company/registeredCompany'})
     }else{
       setTab({label:'Register A Company', value:'/company/registrationPage'})
@@ -41,6 +43,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   ];
 
   const handleSidebarClick = (label:string, value:string) => {
+    setLoading(true)
     setActiveBar(label)
     setSidebarOpen(false)
     router.push(value)
