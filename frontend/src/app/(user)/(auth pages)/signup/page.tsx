@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
-import api from "@/lib/api";
+import { getSignupOtp, sendSignupOtp, signUp } from "@/services/userService";
 
 function Signup() {
     const [loadOTP, setLoadOTP]=useState(false)
@@ -86,24 +86,23 @@ function Signup() {
     }, [])
 
     const getOtp = async () => {
-        const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
-        console.log(result.data)
-        if(result.data.result.success){
-            setStoredOtp(result.data.result.otp)
-            return result.data.result.otp
+        const result=await getSignupOtp(signupForm.email)
+        if(result.result.success){
+            setStoredOtp(result.result.otp)
+            return result.result.otp
         }else{
-            enqueueSnackbar(result.data.result.message, {variant:'error'})
+            enqueueSnackbar(result.result.message, {variant:'error'})
             return null
         }
     }
 
     const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         if(!storedOtp){
-            const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
-            if(result.data.result.success){
-                setStoredOtp(result.data.result.otp)
+            const result=await getSignupOtp(signupForm.email)
+            if(result.result.success){
+                setStoredOtp(result.result.otp)
             }else{
-                enqueueSnackbar(result.data.result.message, {variant:'error'})
+                enqueueSnackbar(result.result.message, {variant:'error'})
             }
         }
         if(e.target.value==storedOtp){
@@ -132,17 +131,17 @@ function Signup() {
             email:signupForm.email
         }
 
-        const result=await api.post('/user/v1/sendOTP', data)
-        if(!result.data.result.success){
+        const result=await sendSignupOtp(data)
+        if(!result.result.success){
             setLoadOTP(false)
-            return enqueueSnackbar(result.data.result.message, {variant:'error'})
+            return enqueueSnackbar(result.result.message, {variant:'error'})
         }
         const expiry=Date.now()+60*1000
         const emailDetails={
             email: signupForm.email,
             expiry,
         }
-        setStoredOtp(result.data.result.otp)
+        setStoredOtp(result.result.otp)
         handleTimer(emailDetails.expiry)
         localStorage.setItem('signinDetails', JSON.stringify(emailDetails))
         setLoadOTP(false)
@@ -189,11 +188,9 @@ function Signup() {
 
         setLoading(true)
 
-        const result=await api.post('/user/v1/signup', signupForm)
-        console.log(result, 'result')
-        console.log(result.data.token.token, 'token')
+        const result=await signUp(signupForm)
 
-        localStorage.setItem('token', result.data.token.token)
+        localStorage.setItem('token', result.token.token)
 
         router.push('/welcomePage')
     }

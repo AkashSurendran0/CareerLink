@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import {useRouter} from "next/navigation"
-import api from "@/lib/api"
+import { editCompany, getCompanyDetails } from "@/services/userService"
 
 export default function CompanyRegistrationPage() {
     const setLoading=useLoading()
@@ -28,8 +28,8 @@ export default function CompanyRegistrationPage() {
   
     useEffect(()=>{
         async function getCompanyDetails () {
-            const result=await api.get('/company/v1/getCompanyDetails')
-            setCompanyDetails({...result.data.result})
+            const result=await getCompanyDetails()
+            setCompanyDetails({...result.result})
         }
 
         getCompanyDetails()
@@ -153,9 +153,9 @@ export default function CompanyRegistrationPage() {
             formData.append('logo', companyDetails.logo)
         }
 
-        const result=await api.post('/company/v1/editCompany', formData)
+        const result=await editCompany(formData)
         setLoading(false)
-        if(result.data.success){
+        if(result.success){
             router.push('/company/registeredCompany')
         }
     }

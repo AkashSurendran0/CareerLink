@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
-import api from "@/lib/api";
+import { resetGetOtp, sendResetOtp, changePassword } from "@/services/userService";
 
 function ForgotPassword() {
     const [loadOTP, setLoadOTP]=useState(false)
@@ -20,7 +20,7 @@ function ForgotPassword() {
     const [sendOtp, setSendOtp]=useState(false)
     const [timeLeft, setTimeLeft]=useState(0)
     const [otp, setOtp]=useState<number>()
-    const [signupForm, setSignupForm]=useState({
+    const [changePassForm, setChangePassForm]=useState({
         email:'',
         password:'',
         confirmPass:''
@@ -64,7 +64,7 @@ function ForgotPassword() {
             }
             if(parsedDetails.expiry>Date.now()){
                 setSendOtp(true)
-                signupForm.email=parsedDetails.email
+                changePassForm.email=parsedDetails.email
                 handleTimer(parsedDetails.expiry)
                 getOtp()
                 const lock=localStorage.getItem('locked')
@@ -85,24 +85,23 @@ function ForgotPassword() {
     }, [])
 
      const getOtp = async () => {
-        const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
-        console.log(result.data)
-        if(result.data.result.success){
-            setStoredOtp(result.data.result.otp)
-            return result.data.result.otp
+        const result=await resetGetOtp(changePassForm.email)
+        if(result.result.success){
+            setStoredOtp(result.result.otp)
+            return result.result.otp
         }else{
-            enqueueSnackbar(result.data.result.message, {variant:'error'})
+            enqueueSnackbar(result.result.message, {variant:'error'})
             return null
         }
     }
 
     const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         if(!storedOtp){
-            const result=await api.get(`/user/v1/getOTP?email=${signupForm.email}`)
-            if(result.data.result.success){
-                setStoredOtp(result.data.result.otp)
+            const result=await resetGetOtp(changePassForm.email)
+            if(result.result.success){
+                setStoredOtp(result.result.otp)
             }else{
-                enqueueSnackbar(result.data.result.message, {variant:'error'})
+                enqueueSnackbar(result.result.message, {variant:'error'})
             }
         }
         if(e.target.value==storedOtp){
@@ -115,31 +114,31 @@ function ForgotPassword() {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-        setSignupForm({...signupForm, [e.target.name]:e.target.value})
+        setChangePassForm({...changePassForm, [e.target.name]:e.target.value})
     }
 
 
     const sendOTP = async () =>{
-        console.log(signupForm)
+        console.log(changePassForm)
 
-        if (!signupForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        if (!changePassForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             setErrors({email:'Please enter a valid email address'})
             return 
         }
         setLoadOTP(true)
 
         const data={
-            email:signupForm.email
+            email:changePassForm.email
         }
 
-        const result=await api.post('/user/v1/sendResetOTP', data)
-        if(!result.data.otp.success){
+        const result=await sendResetOtp(data)
+        if(!result.otp.success){
             setLoadOTP(false)
-            return enqueueSnackbar(result.data.otp.message, {variant:'error'})
+            return enqueueSnackbar(result.otp.message, {variant:'error'})
         }
         const expiry=Date.now()+60*1000
         const emailDetails={
-            email: signupForm.email,
+            email: changePassForm.email,
             expiry,
         }
         handleTimer(emailDetails.expiry)
@@ -151,7 +150,7 @@ function ForgotPassword() {
     const resetPassword = async () => {
         clearErrors()
 
-        if(!signupForm.email){
+        if(!changePassForm.email){
             setErrors({email:'Email Required'})
             return
         }
@@ -166,26 +165,26 @@ function ForgotPassword() {
             return
         }
 
-        if(!signupForm.password){
+        if(!changePassForm.password){
             setErrors({password:'Password required'})
             return
         }
 
-        if (!/^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{3,}$/.test(signupForm.password)) {
+        if (!/^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{3,}$/.test(changePassForm.password)) {
             setErrors({password:'Password must be at least 3 characters, with at least 1 number and 1 special character'})
             return 
         }
 
-        if (signupForm.password !== signupForm.confirmPass) {
+        if (changePassForm.password !== changePassForm.confirmPass) {
             setErrors({confirmPass:'Passwords do not match'})
             return
         }
 
         setLoading(true)
 
-        const result=await api.post('/user/v1/changePassword', signupForm)
+        const result=await changePassword(changePassForm)
 
-        localStorage.setItem('token', result.data.token.token)
+        localStorage.setItem('token', result.token.token)
         router.push('/feed')
     }
 
@@ -209,7 +208,7 @@ function ForgotPassword() {
                         <input
                         type="email"
                         name="email"
-                        value={signupForm.email}
+                        value={changePassForm.email}
                         onChange={handleChange}
                         placeholder="Email"
                         className={`w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${sendOtp? 'opacity-50':''}`}
@@ -242,7 +241,7 @@ function ForgotPassword() {
                         <input
                         type="password"
                         name="password"
-                        value={signupForm.password}
+                        value={changePassForm.password}
                         onChange={handleChange}
                         placeholder="Enter Password"
                         className={`w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${correctOtp? '':'opacity-50'}`}
@@ -257,7 +256,7 @@ function ForgotPassword() {
                         <input
                         type="password"
                         name="confirmPass"
-                        value={signupForm.confirmPass}
+                        value={changePassForm.confirmPass}
                         onChange={handleChange}
                         placeholder="Confirm Password"
                         className={`w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${correctOtp? '':'opacity-50'}`}

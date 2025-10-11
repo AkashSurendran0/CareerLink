@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
+  const refreshToken = req.cookies.get("refreshToken")?.value
   const adminToken = req.cookies.get("adminToken")?.value;
   const { pathname } = req.nextUrl;
 
@@ -19,6 +20,19 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if(!token && refreshToken){
+    const res = await fetch("http://localhost:5000/refreshToken", {
+      method:'GET',
+      headers: { Authorization: `Bearer ${refreshToken}` },
+      credentials:'include',
+      cache: "no-store",
+    });
+    if(res.ok){
+      return NextResponse.next();
+    }else{
+      return NextResponse.redirect(new URL("/sessionOver", req.url));
+    }
+  }
 
   if (!token) {
     if (
@@ -30,6 +44,10 @@ export async function middleware(req: NextRequest) {
     }
 
     return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  if(!refreshToken){
+    return NextResponse.redirect(new URL("/sessionOver", req.url));
   }
 
   if (

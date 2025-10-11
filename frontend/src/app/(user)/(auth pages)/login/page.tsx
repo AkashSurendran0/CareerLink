@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
-import api from "@/lib/api";
+import { loginUser } from "@/services/userService";
 
 function Login() {
     const setLoading=useLoading()
@@ -49,15 +49,14 @@ function Login() {
 
         setLoading(true)
 
-        const result=await api.post('/user/v1/login', loginDetails)
-        console.log(result)
-        if(!result.data.result.success){
+        const result=await loginUser(loginDetails)
+        if(!result.result.success){
             setLoading(false)
-            return enqueueSnackbar(result.data.result.message, {variant:'error'})
+            return enqueueSnackbar(result.result.message, {variant:'error'})
 
         }
 
-        localStorage.setItem('token', result.data.result.token)
+        localStorage.setItem('token', result.result.token)
 
         router.push('/feed')
     }

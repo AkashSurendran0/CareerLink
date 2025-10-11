@@ -6,7 +6,7 @@ import { useRef, useState } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import {useRouter} from "next/navigation"
-import api from "@/lib/api"
+import { addCompany } from "@/services/userService"
 
 export default function CompanyRegistrationPage() {
     const setLoading=useLoading()
@@ -148,9 +148,9 @@ export default function CompanyRegistrationPage() {
             formData.append('logo', companyDetails.logo)
         }
 
-        const result=await api.post('/company/v1/addCompany', formData)
+        const result=await addCompany(formData)
         setLoading(false)
-        if(result.data.success){
+        if(result.success){
             router.push('/company/registeredCompany')
         }
     }
