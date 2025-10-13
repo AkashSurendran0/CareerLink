@@ -11,6 +11,7 @@ export class Company {
         public location:string,
         public aboutCompany:string,
         public approved:boolean,
+        public rejected:boolean,
         public suspended:boolean,
         public createdAt:Date
     ){}

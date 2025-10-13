@@ -13,6 +13,7 @@ export class CompanyModel extends Model {
     public location!:string;
     public aboutCompany!:string;
     public approved!:boolean;
+    public rejected!:boolean;
     public suspended!:boolean;
 
     public readonly createdAt!:Date
@@ -62,6 +63,10 @@ CompanyModel.init(
             allowNull:false
         },
         approved:{
+            type:DataTypes.BOOLEAN,
+            defaultValue:false
+        },
+        rejected:{
             type:DataTypes.BOOLEAN,
             defaultValue:false
         },

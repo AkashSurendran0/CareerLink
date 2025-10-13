@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useLoading } from "@/app/(user)/template";
 import { getCompanyRegistrationInfo } from "@/services/userService";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   sidebarOpen:boolean,
@@ -12,6 +12,7 @@ interface SidebarProps {
 }
 
 function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const pathname=usePathname()
   const setLoading=useLoading()
   const router=useRouter()
   const [activeBar, setActiveBar]=useState('Feeds')
@@ -43,6 +44,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   ];
 
   const handleSidebarClick = (label:string, value:string) => {
+    if(pathname==value) return 
     setLoading(true)
     setActiveBar(label)
     setSidebarOpen(false)
@@ -90,10 +92,9 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           <div className="mt-8 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
               {sidebarItems.map((item, index) => (
-                <Link
-                  href={item.value}
+                <button
                   key={index}
-                  className={`cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  className={`cursor-pointer w-full group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                     activeBar==item.label
                       ? "bg-blue-50 text-blue-700"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -102,7 +103,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                 >
                   <span className="mr-3 text-lg">{item.icon}</span>
                   {item.label}
-                </Link>
+                </button>
               ))}
             </nav>
           </div>

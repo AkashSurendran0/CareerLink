@@ -9,7 +9,8 @@ export interface CompanyDTO {
     location:string,
     aboutCompany:string,
     approved:boolean,
-    suspended:boolean
+    suspended:boolean,
+    rejected:boolean,
     createdAt:Date,
 }
     

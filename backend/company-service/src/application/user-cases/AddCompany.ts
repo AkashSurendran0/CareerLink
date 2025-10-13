@@ -33,7 +33,9 @@ export class AddCompany implements IAddCompany {
                 logo:result.logo,
                 name:result.name,
                 createdAt:result.createdAt,
-                suspended:result.suspended
+                suspended:result.suspended,
+                approved:result.approved,
+                rejected:result.rejected
             }
         })
         return {success:true}
