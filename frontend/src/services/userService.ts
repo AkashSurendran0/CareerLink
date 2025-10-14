@@ -91,3 +91,8 @@ export const getCompanyRegistrationInfo = async () => {
     const res=await api.get('company/v1/getCompanyRegistrationInfo')
     return res.data
 }
+
+export const reapplyCompany = async () => {
+    const res=await api.patch('company/v1/reapplyCompany')
+    return res.data
+}

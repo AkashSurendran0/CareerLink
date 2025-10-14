@@ -14,5 +14,8 @@ router.get('/getCompanyDetails', companyController.getCompanyInfo)
 router.post('/editCompany', upload.single("logo"), companyController.editCompany)
 router.get('/getCompanies', companyController.getAllCompanies)
 router.patch('/alterCompanyStatus', companyController.changeCompanyStatus)
+router.get('/checkCompanyDetails', companyController.checkCompanyDetails)
+router.patch('/alterCompanyRegistrationStatus', companyController.alterCompanyRegistrationStatus)
+router.patch('/reapplyCompany', companyController.reapplyCompany)
 
 export default router;

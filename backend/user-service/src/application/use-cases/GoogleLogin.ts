@@ -4,13 +4,15 @@ import { IGoogleLogin } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
+import { UserMapper } from "../../mappers/UserMapper";
+import { UserDTO } from "../../dto/UserDTO";
 
 @injectable()
 export class GoogleLogin implements IGoogleLogin {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
-    async googleSignin (email:string, googleId:string, username:string) : Promise<string> {
+    async googleSignin (email:string, googleId:string, username:string) : Promise<UserDTO> {
         let user=await this._userRepository.findByEmail(email);
         if(!user){
             user=await this._userRepository.createUserWithGoogle(email, googleId, username);
@@ -32,13 +34,7 @@ export class GoogleLogin implements IGoogleLogin {
                 console.log("Cant insert into elasticsearch", error);
             }
         }
-
-        const token=jwt.sign(
-            {id:user.id, email:email},
-            "jwt_secret",
-            {expiresIn: "1h"}
-        );
         
-        return token;
+        return UserMapper.toDTO(user);
     }
 }

@@ -6,6 +6,7 @@ export class CompanyMapper {
             id:company.id,
             logo:company.logo,
             name:company.name,
+            registeredBy:company.registeredBy,
             companySize:company.companySize,
             foundedYear:company.foundedYear,
             industry:company.industry,

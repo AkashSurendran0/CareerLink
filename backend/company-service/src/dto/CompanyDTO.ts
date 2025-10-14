@@ -2,6 +2,7 @@ export interface CompanyDTO {
     id:string,
     logo:string,
     name:string,
+    registeredBy:string,
     companySize:string,
     foundedYear:number,
     industry:string,

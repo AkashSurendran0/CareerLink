@@ -10,8 +10,8 @@ export class CheckCompanyRegistrationInfo implements ICheckCompanyRegistrationIn
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
-    async checkCompanyRegistrationInfo (userId:string):Promise<{success:boolean}> {
-        const result=await this._companyRepository.checkCompany(userId)
+    async checkCompanyRegistrationInfo (user:string):Promise<{success:boolean}> {
+        const result=await this._companyRepository.checkCompany(user)
         return result
     }
 

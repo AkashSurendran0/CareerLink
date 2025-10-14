@@ -22,7 +22,7 @@ export interface IAlterCompanyStatus {
 }
 
 export interface ICheckCompanyRegistrationInfo {
-    checkCompanyRegistrationInfo (userId:string):Promise<{success:boolean}>
+    checkCompanyRegistrationInfo (user:string):Promise<{success:boolean}>
 }
 
 export interface IEditCompany {
@@ -34,5 +34,17 @@ export interface IGetAllCompanies {
 }
 
 export interface IGetCompanyDetails {
-    getCompanyDetails (userId:string):Promise<CompanyDTO>
+    getCompanyDetails (user:string):Promise<CompanyDTO>
+}
+
+export interface ICheckCompanyDetails {
+    getCompanyInfo(id:string):Promise<CompanyDTO>
+}
+
+export interface IAlterCompanyRegistrationStatus {
+    alterCompanyRegistrationStatus(code:number, id:string):Promise<{success:boolean} | null>
+}
+
+export interface IReapplyCompany {
+    reapplyCompany (user:string): Promise<CompanyDTO>
 }

@@ -4,19 +4,23 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 import {LoaderIcon} from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 
 type Company = {
     id:string,
     logo:string,
-    // registeredUser:string,
     name:string,
+    registeredBy:string,
     suspended:boolean,
+    rejected:boolean,
+    approved:boolean,
     createdAt:Date,
-
 }
 
 function UserManagement() {
+    const router=useRouter()
+    const [allCompanyTable, setAllCompanyTable]=useState(true)
     const [companies, setCompanies]=useState<Company[]>([])
     const [pageLimit, setPageLimit]=useState(0)
     const [page, setPage]=useState(1)
@@ -34,7 +38,7 @@ function UserManagement() {
             }else{
                 setPageLimit(result.data.companies.pageLimit)
             }
-            console.log(result.data.companies.result)
+            console.log('result', result.data.companies.result)
             setCompanies(result.data.companies.result)
         }
         fetchCompanies()
@@ -86,6 +90,16 @@ function UserManagement() {
 
     }   
 
+    const viewCompanyDetails = (id:string) => {
+        router.push(`/admin/companyManagement/${id}`)
+    }
+
+    const alterStatus = async (code:number, id:number) => {
+        const result=await axios.patch(`http://localhost:5000/company/v1/alterCompanyRegistrationStatus?code=${code}&id=${id}`)
+        if(result.data.result.success){
+            setAllCompanyTable(true)
+        }
+    }
     return (
         <div className="flex-1">
             <div className="bg-white border-b border-gray-200 px-8 py-6">
@@ -120,6 +134,21 @@ function UserManagement() {
                 <h2 className="text-lg font-bold text-gray-900">All Companies</h2>
             </div>
 
+            <nav className="flex items-center gap-2 text-sm my-4">
+                <button 
+                className={`cursor-pointer rounded-md px-3 py-1.5 ${allCompanyTable? 'bg-black text-white':'border hover:bg-gray-200'}`}
+                onClick={()=>setAllCompanyTable(true)}
+                >
+                Companies
+                </button>
+                <button 
+                className={`cursor-pointer rounded-md px-3 py-1.5 ${allCompanyTable? 'border hover:bg-gray-200':'bg-black text-white'}`}
+                onClick={()=>setAllCompanyTable(false)}
+                >
+                Pending approvals
+                </button>
+          </nav>
+
             {/* <div className="mb-4 space-x-4 text-sm flex">
 
                 <label className="flex items-center text-sm space-x-2">
@@ -133,89 +162,158 @@ function UserManagement() {
                 </label>
             </div> */}
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Logo</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Name</th>
-                        {/* <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Email</th> */}
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Date Joined</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Status</th>
-                        <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                    {companies && companies.map((company) => (
-                        <tr key={company.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6">
-                            <div className="flex items-center gap-3">
-                            <Image
-                                src={company.logo}
-                                alt={company.name}
-                                width={300}
-                                height={300}
-                                className="w-8 h-8 rounded-full object-cover"
-                            />
-                            {/* <span className="text-sm font-medium text-gray-900">{company.name}</span> */}
-                            </div>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-gray-600">{company.name}</td>
-                        <td className="py-4 px-6 text-sm text-gray-600">{new Date(company.createdAt).toLocaleDateString()}</td>
-                        <td className="py-4 px-6">
-                            <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                company.suspended? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
-                            }`}
-                            >
-                                {loadingCompanyId==company.id? ( <LoaderIcon id={`${company.id}`} className='animate-spin text-blue-500'/> ) : (`${company.suspended? 'Suspended':'Active'}`)}
-                            
-
-                            </span>
-                        </td>
-                        <td className="py-4 px-6">
-                            <div className="flex items-center gap-1 text-sm">
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
-                            <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterCompanyStatus(company.id)}>
-                                {company.suspended? "Make Active" : "Suspend"}
-
-                            </button>
-                            <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
-                            </div>
-                        </td>
+            {allCompanyTable? (
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Logo</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Name</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Date Joined</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Status</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Actions</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-                </div>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                        {companies.filter((company)=>company.approved).map((company) => (
+                            <tr key={company.id} className="hover:bg-gray-50">
+                            <td className="py-4 px-6">
+                                <div className="flex items-center gap-3">
+                                <Image
+                                    src={company.logo}
+                                    alt={company.name}
+                                    width={300}
+                                    height={300}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                />
+                                </div>
+                            </td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{company.name}</td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{new Date(company.createdAt).toLocaleDateString()}</td>
+                            <td className="py-4 px-6">
+                                <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    company.suspended? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                                }`}
+                                >
+                                    {loadingCompanyId==company.id? ( <LoaderIcon id={`${company.id}`} className='animate-spin text-blue-500'/> ) : (`${company.suspended? 'Suspended':'Active'}`)}
+                                
 
-                <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
-                <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
-                disabled={page==1? true:false}
-                onClick={()=>getPaginatedCompanies(page-1)}
-                >‹</button>
-                { pageLimit &&  
-                    Array.from({length: pageLimit}, (_, i) => i+1)
-                    .filter(p=>{
-                        console.log(p)
-                        if(p==1) return p<=3
-                        if(p==pageLimit) return p>=pageLimit-2
-                        return p>=page-1 && p<=page+1
-                    })
-                    .map(p=>
-                        <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedCompanies(p)}>{p}</button>
-                    )
-                }
-                <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
-                disabled={page==pageLimit? true:false}
-                onClick={()=>getPaginatedCompanies(page+1)}
-                >›</button>
+                                </span>
+                            </td>
+                            <td className="py-4 px-6">
+                                <div className="flex items-center gap-1 text-sm">
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
+                                <span className="text-gray-300">|</span>
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterCompanyStatus(company.id)}>
+                                    {company.suspended? "Make Active" : "Suspend"}
+
+                                </button>
+                                <span className="text-gray-300">|</span>
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
+                                </div>
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
+                    <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                    disabled={page==1? true:false}
+                    onClick={()=>getPaginatedCompanies(page-1)}
+                    >‹</button>
+                    { pageLimit &&  
+                        Array.from({length: pageLimit}, (_, i) => i+1)
+                        .filter(p=>{
+                            console.log(p)
+                            if(p==1) return p<=3
+                            if(p==pageLimit) return p>=pageLimit-2
+                            return p>=page-1 && p<=page+1
+                        })
+                        .map(p=>
+                            <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedCompanies(p)}>{p}</button>
+                        )
+                    }
+                    <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                    disabled={page==pageLimit? true:false}
+                    onClick={()=>getPaginatedCompanies(page+1)}
+                    >›</button>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Logo</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Name</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Applied By</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Date Applied</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                        {companies.filter((company)=>!company.approved).filter((company)=>!company.rejected).map((company) => (
+                            <tr key={company.id} className="hover:bg-gray-50">
+                            <td className="py-4 px-6">
+                                <div className="flex items-center gap-3">
+                                <Image
+                                    src={company.logo}
+                                    alt={company.name}
+                                    width={300}
+                                    height={300}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                />
+                                </div>
+                            </td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{company.name}</td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{company.registeredBy}</td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{new Date(company.createdAt).toLocaleDateString()}</td>
+                            <td className="py-4 px-6">
+                                <div className="flex items-center gap-1 text-sm">
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>viewCompanyDetails(company.id)}>View</button>
+                                <span className="text-gray-300">|</span>
+                                <button className="text-green-600 hover:text-green-800 cursor-pointer" onClick={()=>alterStatus(1, company.id)}>Approve</button>
+                                <span className="text-gray-300">|</span>
+                                <button className="text-red-600 hover:text-red-800 cursor-pointer" onClick={()=>alterStatus(0, company.id)}>Reject</button>
+                                </div>
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
+                    <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                    disabled={page==1? true:false}
+                    onClick={()=>getPaginatedCompanies(page-1)}
+                    >‹</button>
+                    { pageLimit &&  
+                        Array.from({length: pageLimit}, (_, i) => i+1)
+                        .filter(p=>{
+                            console.log(p)
+                            if(p==1) return p<=3
+                            if(p==pageLimit) return p>=pageLimit-2
+                            return p>=page-1 && p<=page+1
+                        })
+                        .map(p=>
+                            <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedCompanies(p)}>{p}</button>
+                        )
+                    }
+                    <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                    disabled={page==pageLimit? true:false}
+                    onClick={()=>getPaginatedCompanies(page+1)}
+                    >›</button>
+                    </div>
+                </div>
+            )}
+
             </div>
         </div>
     )

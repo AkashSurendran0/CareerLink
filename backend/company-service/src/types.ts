@@ -6,5 +6,8 @@ export const TYPES = {
     IGetCompanyDetails:"IGetCompanyDetails",
     IEditCompany:"IEditCompany",
     IGetAllCompanies:"IGetAllCompanies",
-    IAlterCompanyStatus:"IAlterCompanyStatus"
+    IAlterCompanyStatus:"IAlterCompanyStatus",
+    ICheckCompanyDetails:"ICheckCompanyDetails",
+    IAlterCompanyRegistrationStatus:"IAlterCompanyRegistrationStatus",
+    IReapplyCompany:"IReapplyCompany"
 }

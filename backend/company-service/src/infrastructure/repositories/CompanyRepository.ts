@@ -18,9 +18,9 @@ type Details = {
 @injectable()
 export class CompanyRepository implements ICompanyRepository {
     
-    async addCompany(userId:string, details:Details): Promise<Company> {
+    async addCompany(user:string, details:Details): Promise<Company> {
         const newCompany=await CompanyModel.create({
-            registeredBy:userId,
+            registeredBy:user,
             logo:details.logo,
             name:details.companyName,
             companySize:details.companySize,
@@ -43,20 +43,20 @@ export class CompanyRepository implements ICompanyRepository {
             companyData!.location,
             companyData!.aboutCompany,
             companyData!.approved,
-            companyData!.suspended,
             companyData!.rejected,
+            companyData!.suspended,
             companyData!.createdAt
         )
     }
 
-    async checkCompany (userId:string): Promise<{success:boolean}> {
-        const company=await CompanyModel.findOne({where: {registeredBy:userId}})
+    async checkCompany (user:string): Promise<{success:boolean}> {
+        const company=await CompanyModel.findOne({where: {registeredBy:user}})
         if(company) return {success:true}
         return {success:false}
     }
 
-    async getCompanyDetails (userId:string): Promise<Company> {
-        const companyDetails=await CompanyModel.findOne({where: {registeredBy:userId}, raw:true})
+    async getCompanyDetails (user:string): Promise<Company> {
+        const companyDetails=await CompanyModel.findOne({where: {registeredBy:user}, raw:true})
         return new Company (
             companyDetails!.id,
             companyDetails!.registeredBy,
@@ -69,8 +69,8 @@ export class CompanyRepository implements ICompanyRepository {
             companyDetails!.location,
             companyDetails!.aboutCompany,
             companyDetails!.approved,
-            companyDetails!.suspended,
             companyDetails!.rejected,
+            companyDetails!.suspended,
             companyDetails!.createdAt
         )
     }
@@ -85,6 +85,7 @@ export class CompanyRepository implements ICompanyRepository {
 
     async findById (id:string):Promise<Company | null> {
         const company=await CompanyModel.findByPk(id, {raw:true})
+        console.log(company)
         if(!company) return null
         return new Company (
             company!.id,
@@ -98,14 +99,13 @@ export class CompanyRepository implements ICompanyRepository {
             company!.location,
             company!.aboutCompany,
             company!.approved,
-            company!.suspended,
             company!.rejected,
+            company!.suspended,
             company!.createdAt
         )
     }
 
     async changeCompanyStatus (company:Company): Promise<Company> {
-        console.log(company, 55)
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             {suspended:!company.suspended},
             {
@@ -113,7 +113,6 @@ export class CompanyRepository implements ICompanyRepository {
                 returning:true
             }
         )
-        console.log(updatedCompanies, 66)
         const updatedCompany=updatedCompanies[0]!.get({plain:true});
         return new Company (
             updatedCompany!.id,
@@ -127,8 +126,55 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
             updatedCompany!.approved,
-            updatedCompany!.suspended,
             updatedCompany!.rejected,
+            updatedCompany!.suspended,
+            updatedCompany!.createdAt
+        )
+    }
+
+    async approveCompany(id: string): Promise<{ success: boolean; }> {
+        await CompanyModel.update(
+            {approved: true},
+            {
+                where:{id:id}
+            }
+        )
+        return {success : true}
+    }
+
+    async rejectCompany(id: string): Promise<{ success: boolean; }> {
+        await CompanyModel.update(
+            {rejected: true},
+            {
+                where:{id:id}
+            }
+        )
+        return {success:true}
+    }
+
+    async changeRejectedStatus(user: string): Promise<Company> {
+        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
+            {rejected:false},
+            {
+                where:{registeredBy:user},
+                returning:true
+            }
+        )
+        const updatedCompany=updatedCompanies[0]!.get({plain:true});
+        return new Company (
+            updatedCompany!.id,
+            updatedCompany!.registeredBy,
+            updatedCompany!.logo,
+            updatedCompany!.name,
+            updatedCompany!.companySize,
+            updatedCompany!.foundedYear,
+            updatedCompany!.industry,
+            updatedCompany!.websiteURL,
+            updatedCompany!.location,
+            updatedCompany!.aboutCompany,
+            updatedCompany!.approved,
+            updatedCompany!.rejected,
+            updatedCompany!.suspended,
             updatedCompany!.createdAt
         )
     }

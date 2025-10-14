@@ -25,10 +25,10 @@ router.get(
 router.get(
     "/google/callback",
     passport.authenticate("google", {failureRedirect:"/login"}),
-    (req, res)=>{
+    async (req, res)=>{
         const user=req.user;
-        const accessToken=createAccessToken(user!.id, user!.email);
-        const refreshToken=createRefreshToken(user!.id, user!.email);
+        const accessToken=await createAccessToken(user!.id, user!.email);
+        const refreshToken=await createRefreshToken(user!.id, user!.email);
         res.cookie("token", accessToken, {
           httpOnly: true,
           secure: false,

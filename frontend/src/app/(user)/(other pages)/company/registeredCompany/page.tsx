@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import CompanyBlockedPage from "@/components/companyBlocked"
-import { getCompanyInfo } from "@/services/userService"
+import { getCompanyInfo, reapplyCompany } from "@/services/userService"
 
 type Company = {
     id:string,
@@ -49,12 +49,16 @@ export default function CompanyProfilePage() {
         router.push('/company/editCompany')
     }
 
+    const handleReapply = async () => {
+        setLoading(true)
+        const result=await reapplyCompany()
+        setCompanyDetails(result.company)
+        setLoading(false)
+    }
+
     return (
 
         <>
-            {/* {companyDetails && companyDetails.suspended? (
-                <CompanyBlockedPage/>
-            ):( */}
             {companyDetails && companyDetails.approved? 
                 companyDetails.suspended? (
                     <CompanyBlockedPage/>
@@ -171,16 +175,10 @@ export default function CompanyProfilePage() {
                     </main>
                 ) : companyDetails && companyDetails.rejected? (
                 <main className="min-h-dvh bg-background text-foreground">
-                    {/* Simple navbar placeholder to keep this page self-contained */}
-                    <header className="border-b border-border">
-                        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-                        <div className="font-semibold">CareerLink</div>
-                        </div>
-                    </header>
 
                     <section className="mx-auto max-w-3xl px-4 py-12">
                         <div
-                        className="rounded-xl border border-border bg-card/50 backdrop-blur p-6 md:p-8"
+                        className="rounded-xl bg-white border border-border bg-card/50 backdrop-blur p-6 md:p-8"
                         role="alert"
                         aria-live="polite"
                         >
@@ -198,23 +196,13 @@ export default function CompanyProfilePage() {
                             <div className="flex-1">
                             <h1 className="text-balance text-xl md:text-2xl font-semibold">Company Request Rejected</h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Your submission didn’t meet our verification criteria. Please review the notes below, make the required
+                                Your submission didn’t meet our verification criteria. Please make the required
                                 changes, and reapply.
                             </p>
 
-                            {/* Reason box */}
-                            <div className="mt-6 rounded-lg border border-red-200 bg-red-50/60 p-4 text-sm">
-                                <div className="font-medium text-red-700">Reason provided by admin</div>
-                                <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700/90">
-                                <li>Company website could not be verified.</li>
-                                <li>Headquarters location requires a valid city/state format.</li>
-                                <li>Please upload a clear company logo (min 200×200).</li>
-                                </ul>
-                            </div>
-
                             <div className="mt-6 grid gap-3 sm:flex sm:items-center">
                                 <button
-                                // onClick={handleReapply}
+                                onClick={handleReapply}
                                 className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                 >
                                 Reapply
@@ -246,7 +234,7 @@ export default function CompanyProfilePage() {
                 <main className="min-h-dvh mt-10 bg-background text-foreground">
 
                     <section className="mx-auto max-w-2xl px-4 py-12">
-                        <div className="rounded-xl border border-border bg-card/50 backdrop-blur p-6 md:p-8">
+                        <div className="rounded-xl bg-white border border-border bg-card/50 backdrop-blur p-6 md:p-8">
                         <div className="flex items-start gap-4">
                             <div
                             aria-hidden="true"
