@@ -9,7 +9,7 @@ export interface ISendResetOtp {
 }
 
 export interface IGoogleLogin {
-    googleSignin(email:string, googleId:string, username:string) : Promise<string>
+    googleSignin(email:string, googleId:string, username:string) : Promise<UserDTO>
 }
 
 export interface ILoginUser {

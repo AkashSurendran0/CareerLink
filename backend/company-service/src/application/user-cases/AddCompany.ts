@@ -23,8 +23,8 @@ export class AddCompany implements IAddCompany {
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
-    async addCompany (userId:string, details:Details): Promise<{success:boolean}> {
-        const result=await this._companyRepository.addCompany(userId, details)
+    async addCompany (user:string, details:Details): Promise<{success:boolean}> {
+        const result=await this._companyRepository.addCompany(user, details)
         await elasticClient.index({
             index:'companies',
             id:result.id.toString(),
@@ -32,8 +32,11 @@ export class AddCompany implements IAddCompany {
                 id:result.id,
                 logo:result.logo,
                 name:result.name,
+                registeredBy:result.registeredBy,
                 createdAt:result.createdAt,
-                suspended:result.suspended
+                suspended:result.suspended,
+                approved:result.approved,
+                rejected:result.rejected
             }
         })
         return {success:true}

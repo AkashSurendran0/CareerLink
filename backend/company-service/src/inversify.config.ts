@@ -8,6 +8,9 @@ import { GetCompanyDetails } from "./application/user-cases/GetCompanyDetails";
 import { EditCompany } from "./application/user-cases/EditCompany";
 import { GetAllCompanies } from "./application/user-cases/GetAllCompanies";
 import { AlterCompanyStatus } from "./application/user-cases/AlterCompanyStatus";
+import { CheckCompanyDetails } from "./application/user-cases/CheckCompanyDetails";
+import { AlterCompanyRegistrationStatus } from "./application/user-cases/AlterCompanyRegistrationStatus";
+import { ReapplyCompany } from "./application/user-cases/ReapplyCompany";
 
 const container=new Container()
 
@@ -19,6 +22,9 @@ container.bind(TYPES.IGetCompanyDetails).to(GetCompanyDetails).inSingletonScope(
 container.bind(TYPES.IEditCompany).to(EditCompany).inSingletonScope()
 container.bind(TYPES.IGetAllCompanies).to(GetAllCompanies).inSingletonScope()
 container.bind(TYPES.IAlterCompanyStatus).to(AlterCompanyStatus).inSingletonScope()
+container.bind(TYPES.ICheckCompanyDetails).to(CheckCompanyDetails).inSingletonScope()
+container.bind(TYPES.IAlterCompanyRegistrationStatus).to(AlterCompanyRegistrationStatus).inSingletonScope()
+container.bind(TYPES.IReapplyCompany).to(ReapplyCompany).inSingletonScope()
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 

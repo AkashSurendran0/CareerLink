@@ -10,6 +10,8 @@ export class Company {
         public websiteURL:string,
         public location:string,
         public aboutCompany:string,
+        public approved:boolean,
+        public rejected:boolean,
         public suspended:boolean,
         public createdAt:Date
     ){}

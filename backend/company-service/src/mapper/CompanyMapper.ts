@@ -6,14 +6,17 @@ export class CompanyMapper {
             id:company.id,
             logo:company.logo,
             name:company.name,
+            registeredBy:company.registeredBy,
             companySize:company.companySize,
             foundedYear:company.foundedYear,
             industry:company.industry,
             websiteURL:company.websiteURL,
             location:company.location,
             aboutCompany:company.aboutCompany,
+            approved:company.approved,
+            suspended:company.suspended,
+            rejected:company.rejected,
             createdAt:company.createdAt,
-            suspended:company.suspended
         }
     }
 }

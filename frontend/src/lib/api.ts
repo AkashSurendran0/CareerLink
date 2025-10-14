@@ -14,29 +14,10 @@ api.interceptors.request.use(
         )
 
         if(!isOpenRoute) {
-            const token=localStorage.getItem('token')
-            if(token){
-                config.headers.Authorization=`Bearer ${token}`
-            }else{
-                window.location.href='http://localhost:3000/sessionOver'
-                return Promise.reject(new Error("No token, redirecting to login"));
-            }   
+            config.withCredentials=true 
         }
 
         return config
-    },
-    (error)=>Promise.reject(error)
-)
-
-api.interceptors.response.use(
-    (response)=>{
-        const newToken=response.headers["access-token"] || response.data?.accessToken
-
-        if(newToken){
-            localStorage.setItem('token', newToken)
-        }
-
-        return response
     },
     (error)=>Promise.reject(error)
 )

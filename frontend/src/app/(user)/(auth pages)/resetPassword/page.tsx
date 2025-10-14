@@ -182,9 +182,8 @@ function ForgotPassword() {
 
         setLoading(true)
 
-        const result=await changePassword(changePassForm)
+        await changePassword(changePassForm)
 
-        localStorage.setItem('token', result.token.token)
         router.push('/feed')
     }
 

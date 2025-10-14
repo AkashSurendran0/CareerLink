@@ -33,14 +33,14 @@ export class UserController {
             if(result.success){
                 res.cookie("token", result.token, {
                     httpOnly: true,
-                    secure: true,
-                    sameSite: "strict",
+                    secure: false,
+                    sameSite: "lax",
                     maxAge: 60 * 60 * 1000,
                 });
                 res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
-                    secure: true,
-                    sameSite: "strict",
+                    secure: false,
+                    sameSite: "lax",
                     maxAge: 7 * 24 * 60 * 60 * 1000,
                 });
             }
@@ -56,14 +56,14 @@ export class UserController {
             const token=await this._signupUser.createUser(username, email, password);
             res.cookie("token", token.token, {
                 httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                secure: false,
+                sameSite: "lax",
                 maxAge: 60 * 60 * 1000,
             });
             res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                secure: false,
+                sameSite: "lax",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
             res.json({token});
@@ -88,14 +88,14 @@ export class UserController {
             const token=await this._changePass.changePass(email, password);
             res.cookie("token", token.token, {
                 httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                secure: false,
+                sameSite: "lax",
                 maxAge: 60 * 60 * 1000,
             });
             res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                secure: false,
+                sameSite: "lax",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
             res.json({token});
