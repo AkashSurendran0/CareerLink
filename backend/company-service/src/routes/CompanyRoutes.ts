@@ -17,5 +17,6 @@ router.patch('/alterCompanyStatus', companyController.changeCompanyStatus)
 router.get('/checkCompanyDetails', companyController.checkCompanyDetails)
 router.patch('/alterCompanyRegistrationStatus', companyController.alterCompanyRegistrationStatus)
 router.patch('/reapplyCompany', companyController.reapplyCompany)
+router.delete('/deleteCompany', companyController.deleteCompany)
 
 export default router;

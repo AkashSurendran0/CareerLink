@@ -48,3 +48,7 @@ export interface IAlterCompanyRegistrationStatus {
 export interface IReapplyCompany {
     reapplyCompany (user:string): Promise<CompanyDTO>
 }
+
+export interface IDeleteCompany {
+    deleteCompany (user):Promise<{success:boolean}>
+}

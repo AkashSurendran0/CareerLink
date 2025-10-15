@@ -96,3 +96,9 @@ export const reapplyCompany = async () => {
     const res=await api.patch('company/v1/reapplyCompany')
     return res.data
 }
+
+export const deleteCompany = async (id:string) => {
+    const res=await api.delete(`company/v1/deleteCompany?id=${id}`)
+    console.log('blahh', res.data)
+    return res.data
+}
