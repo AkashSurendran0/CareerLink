@@ -97,7 +97,7 @@ function UserManagement() {
     const alterStatus = async (code:number, id:string) => {
         const result=await axios.patch(`http://localhost:5000/company/v1/alterCompanyRegistrationStatus?code=${code}&id=${id}`)
         if(result.data.result.success){
-            setAllCompanyTable(true)
+            window.location.reload()
         }
     }
     return (

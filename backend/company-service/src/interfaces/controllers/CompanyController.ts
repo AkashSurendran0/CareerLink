@@ -69,7 +69,7 @@ export class CompanyController {
 
     editCompany = async  (req:Request, res:Response):Promise<void> => {
         try {
-            const userId=req.headers["user-id"] as string
+            const user=req.headers["user-email"] as string
             let imageUrl:string | undefined
             if(req.file){
                 imageUrl=await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1])
@@ -79,7 +79,7 @@ export class CompanyController {
             if(imageUrl){
                 details.logo=imageUrl
             }
-            await this._editCompany.editCompany(userId, details)
+            await this._editCompany.editCompany(user, details)
             res.json({success:true})
         } catch (error: any) {
             res.status(400).json({message:error.message});

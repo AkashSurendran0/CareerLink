@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import { useLoading } from "@/app/(user)/template"
 import {useRouter} from "next/navigation"
-import { editCompany, getCompanyDetails } from "@/services/userService"
+import { editCompany, getCompanyInfo } from "@/services/userService"
 
 export default function CompanyRegistrationPage() {
     const setLoading=useLoading()
@@ -27,12 +27,12 @@ export default function CompanyRegistrationPage() {
     const [errors, setErrors]=useState<Partial<Record<"name" | "logo" | "industry" | "companySize" | "foundedYear" | "websiteURL" | "location" | "aboutCompany", string>>>({})
   
     useEffect(()=>{
-        async function getCompanyDetails () {
-            const result=await getCompanyDetails()
+        async function getDetails () {
+            const result=await getCompanyInfo()
             setCompanyDetails({...result.result})
         }
 
-        getCompanyDetails()
+        getDetails()
     }, [])
 
     const clearErrors = () => {

@@ -63,6 +63,11 @@ export default function CompanyProfilePage() {
         }
     }
 
+    const handleEdit = () => {
+        setLoading(true)
+        router.push('/company/editCompany')
+    }
+
     return (
 
         <>
@@ -215,16 +220,16 @@ export default function CompanyProfilePage() {
                                 Reapply
                                 </button>
                                 <button
-                                // onClick={handleEdit}
+                                onClick={handleEdit}
                                 className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md border border-border px-4 text-sm font-medium hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 >
                                 Edit Changes
                                 </button>
                                 <button
-                                // onClick={handleSupport}
-                                className=" cursor-pointer inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                onClick={handleDelete}
+                                className="text-white cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-red-600 px-4 text-sm font-medium hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 >
-                                Contact Support
+                                Delete Request
                                 </button>
                             </div>
 
