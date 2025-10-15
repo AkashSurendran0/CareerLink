@@ -50,5 +50,5 @@ export interface IReapplyCompany {
 }
 
 export interface IDeleteCompany {
-    deleteCompany (user):Promise<{success:boolean}>
+    deleteCompany (user:string):Promise<{success:boolean}>
 }

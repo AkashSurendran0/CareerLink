@@ -3,6 +3,7 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import { elasticClient } from "../../utils/ElasticClient";
 
 type Education = {
     degree: string;
@@ -36,6 +37,13 @@ export class EditUserDetails implements IEditUserDetails {
 
     async editUserDetails (details:Details, id:string): Promise<{success:boolean}> {
         await this._userRepository.editUserName(id, details.username);
+        await elasticClient.update({
+            index:"users",
+            id:id,
+            doc:{
+                username:details.username
+            }
+        });
         const updationDetails = {
             profilePicture: details.profilePicture,
             gender: details.gender,

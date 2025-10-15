@@ -16,7 +16,7 @@ export interface ICompanyRepository {
     addCompany(userId:string, details:Details): Promise<Company>
     checkCompany (userId:string): Promise<{success:boolean}>
     getCompanyDetails (userId:string): Promise<Company>
-    editCompany (userId:string, details:Details): Promise<{success:boolean}>
+    editCompany (user:string, details:Details): Promise<Company>
     findById (id:string):Promise<Company | null>
     changeCompanyStatus (company:Company): Promise<Company>
     approveCompany (id:string): Promise<{success:boolean}>

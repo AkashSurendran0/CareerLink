@@ -75,12 +75,31 @@ export class CompanyRepository implements ICompanyRepository {
         )
     }
 
-    async editCompany (userId:string, details:Details): Promise<{success:boolean}> {
-        await CompanyModel.update(
+    async editCompany (user:string, details:Details): Promise<Company> {
+        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             details,
-            {where:{registeredBy:userId}}            
+            {
+                where:{registeredBy:user},
+                returning:true
+            },          
         )
-        return {success:true}
+        const updatedCompany=updatedCompanies[0]!.get({plain:true});
+        return new Company (
+            updatedCompany!.id,
+            updatedCompany!.registeredBy,
+            updatedCompany!.logo,
+            updatedCompany!.name,
+            updatedCompany!.companySize,
+            updatedCompany!.foundedYear,
+            updatedCompany!.industry,
+            updatedCompany!.websiteURL,
+            updatedCompany!.location,
+            updatedCompany!.aboutCompany,
+            updatedCompany!.approved,
+            updatedCompany!.rejected,
+            updatedCompany!.suspended,
+            updatedCompany!.createdAt
+        )
     }
 
     async findById (id:string):Promise<Company | null> {
