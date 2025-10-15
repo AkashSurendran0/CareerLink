@@ -8,7 +8,7 @@ const container=new Container()
 
 container.bind(TYPES.IAdminRepository).to(AdminRepository).inSingletonScope()
 
-container.bind<AdminLogin>(TYPES.AdminLogin).to(AdminLogin)
+container.bind(TYPES.IAdminLogin).to(AdminLogin).inSingletonScope()
 
 container.bind<AdminController>(TYPES.AdminController).to(AdminController)
 

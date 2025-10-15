@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { AdminRepository } from "../../infrastructure/database/AdminRepository";
-import { AdminLogin } from "../../application/use-cases/AdminLogin";
+import { IAdminLogin } from "../../domain/use-cases/IAdminLogin";
 import {injectable, inject} from 'inversify'
 import { TYPES } from "../../types";
 
 @injectable()
 export class AdminController {
 
-    constructor(@inject(TYPES.AdminLogin) private _adminLogin:AdminLogin){}
+    constructor(@inject(TYPES.IAdminLogin) private _adminLogin:IAdminLogin){}
 
     adminLoginCase = async (req:Request, res:Response):Promise<void> => {
         try {

@@ -179,4 +179,11 @@ export class CompanyRepository implements ICompanyRepository {
         )
     }
 
+    async deleteCompany(id: string): Promise<{ success: boolean; }> {
+        await CompanyModel.destroy({
+            where:{id:id}
+        })
+        return {success:true}
+    }
+
 }

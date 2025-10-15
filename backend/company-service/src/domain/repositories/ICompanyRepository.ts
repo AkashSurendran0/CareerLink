@@ -22,4 +22,5 @@ export interface ICompanyRepository {
     approveCompany (id:string): Promise<{success:boolean}>
     rejectCompany (id:string): Promise<{success:boolean}>
     changeRejectedStatus(user:string): Promise<Company>
+    deleteCompany(id:string): Promise<{success:boolean}>
 }

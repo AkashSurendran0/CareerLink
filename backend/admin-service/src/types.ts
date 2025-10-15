@@ -1,5 +1,5 @@
 export const TYPES = {
-    AdminLogin:"AdminLogin",
+    IAdminLogin:"IAdminLogin",
     IAdminRepository:"IAdminRepository",
     AdminController:"AdminController"
 }

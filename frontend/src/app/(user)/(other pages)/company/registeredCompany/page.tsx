@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import CompanyBlockedPage from "@/components/companyBlocked"
-import { getCompanyInfo, reapplyCompany } from "@/services/userService"
+import { deleteCompany, getCompanyInfo, reapplyCompany } from "@/services/userService"
 
 type Company = {
     id:string,
@@ -31,7 +31,6 @@ export default function CompanyProfilePage() {
     useEffect(()=>{
         async function getCompanyDetails () {
             const result=await getCompanyInfo()
-            console.log('1', result)
             setCompanyDetails(result.result)
         }
 
@@ -54,6 +53,14 @@ export default function CompanyProfilePage() {
         const result=await reapplyCompany()
         setCompanyDetails(result.company)
         setLoading(false)
+    }
+
+    const handleDelete = async () => {
+        setLoading(true)
+        const result=await deleteCompany(companyDetails!.id)
+        if(result.result.success){
+            router.push('/company/registrationPage')
+        }
     }
 
     return (
@@ -254,7 +261,7 @@ export default function CompanyProfilePage() {
 
                             <div className="mt-6 grid gap-3 sm:flex sm:items-center">
                                 <button
-                                // onClick={handleDelete}
+                                onClick={handleDelete}
                                 className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-red-600 px-4 text-sm font-medium text-white hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                                 >
                                 Delete Request

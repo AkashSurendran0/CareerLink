@@ -11,6 +11,7 @@ import { IAlterCompanyStatus } from "../../domain/use-cases/ICompanyUserCase";
 import { ICheckCompanyDetails } from "../../domain/use-cases/ICompanyUserCase";
 import { IAlterCompanyRegistrationStatus } from "../../domain/use-cases/ICompanyUserCase";
 import { IReapplyCompany } from "../../domain/use-cases/ICompanyUserCase";
+import { IDeleteCompany } from "../../domain/use-cases/ICompanyUserCase";
 
 injectable()
 export class CompanyController {
@@ -24,7 +25,8 @@ export class CompanyController {
         @inject(TYPES.IAlterCompanyStatus) private _alterCompanyStatus:IAlterCompanyStatus,
         @inject(TYPES.ICheckCompanyDetails) private _checkCompanyDetails:ICheckCompanyDetails,
         @inject(TYPES.IAlterCompanyRegistrationStatus) private _alterCompanyRegistrationStatus:IAlterCompanyRegistrationStatus,
-        @inject(TYPES.IReapplyCompany) private _reapplyCompany:IReapplyCompany
+        @inject(TYPES.IReapplyCompany) private _reapplyCompany:IReapplyCompany,
+        @inject(TYPES.IDeleteCompany) private _deleteCompany:IDeleteCompany
     ){}
 
     addCompany = async (req:Request, res:Response): Promise<void> => {
@@ -132,6 +134,16 @@ export class CompanyController {
             const user=req.headers['user-email'] as string
             const company=await this._reapplyCompany.reapplyCompany(user)
             res.json({company})
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    deleteCompany = async (req:Request, res:Response) => {
+        try {
+            const {id}=req.query
+            const result=await this._deleteCompany.deleteCompany(id)
+            res.json({result})
         } catch (error: any) {
             res.status(400).json({message:error.message});
         }
