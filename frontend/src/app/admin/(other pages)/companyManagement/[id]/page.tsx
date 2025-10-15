@@ -1,10 +1,10 @@
 "use client";
 
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { alterCompanyRegistrationStatus, checkCompanyDetails } from '@/services/adminService';
 
 type Company = {
     id:string,
@@ -37,13 +37,13 @@ function CompanyDetails({params}: Props) {
     }, [])
 
     const getCompanyInfo = async () => {
-        const result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${id}`)
-        setCompanyDetails(result.data.company)
+        const result=await checkCompanyDetails(id)
+        setCompanyDetails(result.company)
     }
 
     const alterStatus = async (code:number) => {
-        const result=await axios.patch(`http://localhost:5000/company/v1/alterCompanyRegistrationStatus?code=${code}&id=${id}`)
-        if(result.data.result.success){
+        const result=await alterCompanyRegistrationStatus(code, id)
+        if(result.result.success){
             router.push('/admin/companyManagement')
         }
     }   

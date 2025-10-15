@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import axios from 'axios'
 import {LoaderIcon} from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { alterCompanyRegistrationStatus, changeCompanyStatus, getCompanies } from '@/services/adminService'
 
 
 type Company = {
@@ -32,14 +32,13 @@ function UserManagement() {
     
     useEffect(()=>{
         const fetchCompanies= async () => {
-            const result=await axios.get(`http://localhost:5000/company/v1/getCompanies?page=${STARTING_PAGE}&limit=${LIMIT}&query=${query}`)
-            if(result.data.companies.result.length<LIMIT){
+            const result=await getCompanies(STARTING_PAGE, LIMIT, query)
+            if(result.companies.result.length<LIMIT){
                 setPageLimit(1)
             }else{
-                setPageLimit(result.data.companies.pageLimit)
+                setPageLimit(result.companies.pageLimit)
             }
-            console.log('result', result.data.companies.result)
-            setCompanies(result.data.companies.result)
+            setCompanies(result.companies.result)
         }
         fetchCompanies()
 
@@ -55,19 +54,19 @@ function UserManagement() {
     }
         
     const fetchCompany = async (v:string) => {
-        const result=await axios.get(`http://localhost:5000/company/v1/getCompanies?page=${STARTING_PAGE}&limit=${LIMIT}&query=${v}`)
-        if(result.data.companies.result.length<LIMIT){
+        const result=await getCompanies(STARTING_PAGE, LIMIT, v)
+        if(result.companies.result.length<LIMIT){
             setPageLimit(1)
         }else{
-            setPageLimit(result.data.companies.pageLimit) 
+            setPageLimit(result.companies.pageLimit) 
         }
         setPage(1)
-        setCompanies(result.data.companies.result)
+        setCompanies(result.companies.result)
     }
 
     const getPaginatedCompanies = async (i: number) =>{
-        const result=await axios.get(`http://localhost:5000/company/v1/getCompanies?page=${i}&limit=${LIMIT}&query=${query}`)
-        setCompanies(result.data.companies.result)
+        const result=await getCompanies(i, LIMIT, query)
+        setCompanies(result.companies.result)
         setPage(i)
     }
 
@@ -77,10 +76,8 @@ function UserManagement() {
         const company={    
             id:id
         }
-        const result=await axios.patch('http://localhost:5000/company/v1/alterCompanyStatus', company)
-        const updatedCompany=result.data.companies
-        console.log(updatedCompany, 'aaaaaaa')
-        console.log(companies)
+        const result=await changeCompanyStatus(company)
+        const updatedCompany=result.companies
         setCompanies((prev)=>
             prev.map(u=>
                 u.id==updatedCompany.id? updatedCompany:u
@@ -95,8 +92,8 @@ function UserManagement() {
     }
 
     const alterStatus = async (code:number, id:string) => {
-        const result=await axios.patch(`http://localhost:5000/company/v1/alterCompanyRegistrationStatus?code=${code}&id=${id}`)
-        if(result.data.result.success){
+        const result=await alterCompanyRegistrationStatus(code, id)
+        if(result.result.success){
             window.location.reload()
         }
     }

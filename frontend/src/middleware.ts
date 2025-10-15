@@ -1,14 +1,46 @@
 import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify, SignJWT } from "jose";
 const secret=new TextEncoder().encode(process.env.JWT_SECRET)
+const adminSecret=new TextEncoder().encode(process.env.JWT_ADMIN_SECRET)
 
 export async function middleware(req: NextRequest, res:NextResponse) {
   const token = req.cookies.get("token")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value
   const adminToken = req.cookies.get("adminToken")?.value;
+  const adminRefreshToken = req.cookies.get("adminRefreshToken")?.value;
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/admin")) {
+    
+    if(!adminToken && adminRefreshToken){
+      try {
+        const {payload}=await jwtVerify(adminRefreshToken, adminSecret)
+        const newToken=await new SignJWT({
+          id:payload.id,
+          email:payload.email
+        })
+        .setProtectedHeader({alg:'HS256'})
+        .setExpirationTime('1h')
+        .sign(secret)
+    
+        const response = NextResponse.next()
+        response.cookies.set({
+          name: 'adminToken',
+          value: newToken,
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 60 * 60, // 1 hour
+          path: '/',
+        })
+    
+        return response
+      } catch (error: any) {
+        console.log('Token refresh failed', error)
+        return NextResponse.redirect(new URL('/sessionOver', req.url))
+      }
+    }
+
     if (!adminToken && !pathname.startsWith("/admin/login")) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
@@ -16,6 +48,7 @@ export async function middleware(req: NextRequest, res:NextResponse) {
     if (adminToken && pathname.startsWith("/admin/login")) {
       return NextResponse.redirect(new URL("/admin/userManagement", req.url));
     }
+
 
     return NextResponse.next();
   }
