@@ -1,15 +1,15 @@
 import { IAdminLogin } from "../../domain/use-cases/IAdminLogin";
 import { IAdminRepository } from "../../domain/repositories/IAdminRepository";
-import jwt from 'jsonwebtoken'
 import {injectable, inject} from 'inversify'
 import { TYPES } from "../../types";
+import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
 
 @injectable()
 export class AdminLogin implements IAdminLogin {
 
     constructor(@inject(TYPES.IAdminRepository) private _adminRepository:IAdminRepository){}
 
-    async findAdmin(email: string, password: string): Promise<{ success: boolean; message: string; } | { success: true; token: string; }> {
+    async findAdmin(email: string, password: string): Promise<{ success: true; accessToken: string; refreshToken: string; } | { success: boolean; message: string; }> {
         console.log('reacheddddd')
         const admin=await this._adminRepository.findAdmin(email, password)
         if(!admin){
@@ -18,14 +18,12 @@ export class AdminLogin implements IAdminLogin {
                 message: 'Invalid Credentials'
             }
         }
-        const token=jwt.sign(
-            {id:admin.id, email:email},
-            'jwt_secret',
-            {expiresIn: '1h'}
-        )
+        const accessToken=await createAccessToken(admin.id, email)
+        const refreshToken=await createRefreshToken(admin.id, email)
         return {
             success: true,
-            token: token
+            accessToken: accessToken,
+            refreshToken: refreshToken
         }
     }
 

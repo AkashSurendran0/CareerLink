@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { adminLogin } from "@/services/adminService";
 
 function Login() {
     const router=useRouter()
@@ -26,7 +26,7 @@ function Login() {
         })
     }
 
-    const adminLogin = async () =>{
+    const verifyAdminLogin = async () =>{
         resetErrors()
 
         if(!loginDetails.email){
@@ -43,8 +43,8 @@ function Login() {
             return
         }
 
-        const result=await axios.post('http://localhost:5000/admin/v1/login', loginDetails, {withCredentials:true})
-        if(!result.data.result.success){
+        const result=await adminLogin(loginDetails)
+        if(!result.result.success){
             return enqueueSnackbar(result.data.result.message, {variant:'error'})
         }
 
@@ -95,7 +95,7 @@ function Login() {
                         <p className="text-red-500 text-sm">{loginErrors.password}</p>
                     )}
 
-                    <button className="w-full h-12 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer" onClick={adminLogin}>
+                    <button className="w-full h-12 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer" onClick={verifyAdminLogin}>
                         Login
                     </button>
                     </div>

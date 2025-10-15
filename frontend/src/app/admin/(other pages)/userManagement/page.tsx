@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import axios from 'axios'
 import {LoaderIcon} from 'lucide-react'
+import { changeUserStatus, getUsers } from '@/services/adminService'
 
 
 type User = {
@@ -27,13 +27,13 @@ function UserManagement() {
     
     useEffect(()=>{
         const fetchUsers= async () => {
-            const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${query}`)
-            if(result.data.users.result.length<LIMIT){
+            const result=await getUsers(STARTING_PAGE, LIMIT, query)
+            if(result.users.result.length<LIMIT){
                 setPageLimit(1)
             }else{
-                setPageLimit(result.data.users.pageLimit)
+                setPageLimit(result.users.pageLimit)
             }
-            setUsers(result.data.users.result)
+            setUsers(result.users.result)
         }
         fetchUsers()
 
@@ -49,20 +49,20 @@ function UserManagement() {
     }
         
     const fetchUser = async (v:string) => {
-        const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${STARTING_PAGE}&limit=${LIMIT}&query=${v}`)
-        console.log(result.data.users.result)
-        if(result.data.users.result.length<LIMIT){
+        const result=await getUsers(STARTING_PAGE, LIMIT, v)
+        console.log(result.users.result)
+        if(result.users.result.length<LIMIT){
             setPageLimit(1)
         }else{
-            setPageLimit(result.data.users.pageLimit) 
+            setPageLimit(result.users.pageLimit) 
         }
         setPage(1)
-        setUsers(result.data.users.result)
+        setUsers(result.users.result)
     }
 
     const getPaginatedUsers = async (i: number) =>{
-        const result=await axios.get(`http://localhost:5000/user/v1/getUsers?page=${i}&limit=${LIMIT}&query=${query}`)
-        setUsers(result.data.users.result)
+        const result=await getUsers(i, LIMIT, query)
+        setUsers(result.users.result)
         setPage(i)
     }
 
@@ -73,8 +73,8 @@ function UserManagement() {
         const user={    
             id:id
         }
-        const result=await axios.patch('http://localhost:5000/user/v1/alterUserStatus', user)
-        const updatedUser=result.data.users
+        const result=await changeUserStatus(user)
+        const updatedUser=result.users
         console.log(updatedUser)
         setUsers((prev)=>
             prev.map(u=>

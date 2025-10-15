@@ -1,3 +1,3 @@
 export interface IAdminLogin {
-    findAdmin (email:string, password:string): Promise<{success:boolean, message:string} | {success:true, token:string}>
+    findAdmin (email:string, password:string): Promise<{success:true, accessToken: string; refreshToken: string; } | {success:boolean, message:string}>
 }

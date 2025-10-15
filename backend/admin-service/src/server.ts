@@ -1,6 +1,9 @@
 import express from 'express'
 import AdminRouter from './routes/AdminRoute'
 import { connectDB } from './infrastructure/database/Sequelize'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app=express()
 connectDB()
