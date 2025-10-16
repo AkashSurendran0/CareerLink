@@ -3,17 +3,19 @@ import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
+import { RabbitMqService } from "../../utils/Rabbitmq";
 
+const rabbitMq=new RabbitMqService()
 @injectable()
 export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistrationStatus {
 
     constructor(
-        @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
+        @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository,
     ){}
 
     async alterCompanyRegistrationStatus(code:number, id:string):Promise<{success:boolean} | null> {
         if(code==1){
-            const result=await this._companyRepository.approveCompany(id)
+            const company=await this._companyRepository.approveCompany(id)
             await elasticClient.update({
                 index:'companies',
                 id:id,
@@ -21,9 +23,15 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
                     approved:true
                 }
             })
-            return result
+            await rabbitMq.publishEvent("company.events", "company.approved", {
+                companyId:company.id,
+                companyName:company.name,
+                registeredBy:company.registeredBy,
+                action:'approved'
+            })
+            return {success:true}
         }else if(code==0){
-            const result=await this._companyRepository.rejectCompany(id)
+            const company=await this._companyRepository.rejectCompany(id)
             await elasticClient.update({
                 index:'companies',
                 id:id,
@@ -31,7 +39,13 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
                     rejected:true
                 }
             })
-            return result
+            await rabbitMq.publishEvent("company.events", "company.rejected", {
+                companyId:company.id,
+                companyName:company.name,
+                registeredBy:company.registeredBy,
+                action:'rejected'
+            })
+            return {success:true}
         }
         return null
     }

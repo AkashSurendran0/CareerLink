@@ -151,24 +151,58 @@ export class CompanyRepository implements ICompanyRepository {
         )
     }
 
-    async approveCompany(id: string): Promise<{ success: boolean; }> {
-        await CompanyModel.update(
+    async approveCompany(id: string): Promise<Company> {
+        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             {approved: true},
             {
-                where:{id:id}
+                where:{id:id},
+                returning:true
             }
         )
-        return {success : true}
+        const updatedCompany=updatedCompanies[0]!.get({plain:true});
+        return new Company (
+            updatedCompany!.id,
+            updatedCompany!.registeredBy,
+            updatedCompany!.logo,
+            updatedCompany!.name,
+            updatedCompany!.companySize,
+            updatedCompany!.foundedYear,
+            updatedCompany!.industry,
+            updatedCompany!.websiteURL,
+            updatedCompany!.location,
+            updatedCompany!.aboutCompany,
+            updatedCompany!.approved,
+            updatedCompany!.rejected,
+            updatedCompany!.suspended,
+            updatedCompany!.createdAt
+        )
     }
 
-    async rejectCompany(id: string): Promise<{ success: boolean; }> {
-        await CompanyModel.update(
+    async rejectCompany(id: string): Promise<Company> {
+        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             {rejected: true},
             {
-                where:{id:id}
+                where:{id:id},
+                returning:true
             }
         )
-        return {success:true}
+        const updatedCompany=updatedCompanies[0]!.get({plain:true});
+        return new Company (
+            updatedCompany!.id,
+            updatedCompany!.registeredBy,
+            updatedCompany!.logo,
+            updatedCompany!.name,
+            updatedCompany!.companySize,
+            updatedCompany!.foundedYear,
+            updatedCompany!.industry,
+            updatedCompany!.websiteURL,
+            updatedCompany!.location,
+            updatedCompany!.aboutCompany,
+            updatedCompany!.approved,
+            updatedCompany!.rejected,
+            updatedCompany!.suspended,
+            updatedCompany!.createdAt
+        )
     }
 
     async changeRejectedStatus(user: string): Promise<Company> {

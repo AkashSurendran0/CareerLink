@@ -56,6 +56,18 @@
             "options": {"cwd": "backend/company-service"}
         },
         {
+            "label": "watch notification-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/notification-service"}
+        },
+        {
+            "label": "run notification-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/notification-service"}
+        },
+        {
             "label": "Start all services",
             "dependsOn":[
                 "run frontend",
@@ -67,6 +79,8 @@
                 "run admin-service",
                 "watch company-service",
                 "run company-service",
+                "watch notification-service",
+                "run notification-service",
             ],
             "dependsOrder": "parallel"
         }
