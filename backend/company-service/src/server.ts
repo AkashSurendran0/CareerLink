@@ -2,13 +2,16 @@ import express from "express";
 import { connectDB } from "./infrastructure/database/Sequelize";
 import V1CompanyRouter from './routes/CompanyRoutes'
 import dotenv from 'dotenv'
+import { RabbitMqService } from "./utils/Rabbitmq";
 
 dotenv.config()
 const app=express()
+const rabbitMq=new RabbitMqService()
 
 app.use(express.json())
 
 connectDB()
+rabbitMq.connect()
 
 app.use("/v1", V1CompanyRouter)
 
