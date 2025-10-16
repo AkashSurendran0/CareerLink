@@ -1,8 +1,7 @@
-import { RabbitMqService } from "./RabbitMq";
+import { rabbitmqService } from "./RabbitMq";
 
 
 (async ()=>{
-    const rabbitMq=new RabbitMqService()
-    await rabbitMq.connect()
-    await rabbitMq.consumeNotification()
+    await rabbitmqService.connect()
+    await rabbitmqService.consumeNotification()
 })()

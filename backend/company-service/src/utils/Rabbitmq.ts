@@ -1,6 +1,6 @@
 import amqp, {Channel, ChannelModel} from 'amqplib';
 
-export class RabbitMqService {
+class RabbitMqService {
     private connection: ChannelModel | null=null
     private channel: Channel | null=null
 
@@ -10,25 +10,34 @@ export class RabbitMqService {
 
     public async connect(): Promise<void> {
         try {
+            if(this.connection) return
             this.connection=await amqp.connect(this.url)
             this.channel=await this.connection.createChannel()
             console.log('RabbitMq connected')
         } catch (error) {
             console.log('RabbitMq conneciton failed', error)
             throw error
-        }
+        } 
     }
 
     public async publishEvent (exchange:string, routingKey:string, message:any): Promise<void> {
-        if(!this.channel) throw new Error('Rabbitmq channel not initialized')
-        await this.channel.assertExchange(exchange, "topic", {durable:true})
-
-        this.channel.publish(
-            exchange, 
-            routingKey,
-            Buffer.from(JSON.stringify(message))
-        )
-
-        console.log(`Published event ${routingKey}`)
+        console.log(1)
+        try {
+            if(!this.channel) throw new Error('Rabbitmq channel not initialized')
+            console.log(2.5, this.channel)
+            await this.channel.assertExchange(exchange, "topic", {durable:true})
+            console.log(2)
+            this.channel.publish(
+                exchange, 
+                routingKey,
+                Buffer.from(JSON.stringify(message))
+            )
+            console.log(3)
+            console.log(`Published event ${routingKey}`)
+        } catch (error) {
+            console.log('connection error', error)
+        }
     }
 }
+
+export const rabbitmqService = new RabbitMqService()
