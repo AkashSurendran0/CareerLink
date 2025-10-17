@@ -8,7 +8,7 @@ import multer from "multer";
 import dotenv from "dotenv";
 import { createAccessToken, createRefreshToken } from "../utils/SetToken";
 
-dotenv.config();
+dotenv.config();  
 const router=Router();
 const userController=container.get<UserController>(TYPES.UserController);
 const userDetailsController=container.get<UserDetailsController>(TYPES.UserDetailsController);

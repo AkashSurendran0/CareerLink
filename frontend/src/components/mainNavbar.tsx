@@ -85,7 +85,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                   onClick={() => setNotificationOpen(!notificationOpen)}
                   aria-label="Notifications"
                 >
-                  <span className="text-lg">🔔</span>
+                  <span className="cursor-pointer text-lg">🔔</span>
                   {unreadCount > 0 && (
                     <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
                       {unreadCount}
@@ -94,7 +94,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                 </button>
 
                 {notificationOpen && (
-                  <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 flex flex-col max-h-96">
+                  <div className="absolute right-0 mt-2 w-82 bg-white rounded-lg shadow-lg border border-gray-200 z-50 flex flex-col max-h-96">
                     <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                       <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
                       <span className="text-xs text-gray-500">{notifications.length} total</span>
@@ -105,7 +105,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                         visibleNotifications.map((notification) => (
                           <div
                             key={notification.id}
-                            className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
+                            className={`cursor-pointer px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
                               !notification.read ? "bg-blue-50" : ""
                             }`}
                           >
@@ -121,7 +121,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                                 {!notification.read && (
                                   <button
                                     onClick={() => markAsRead(notification.id)}
-                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded hover:bg-blue-100"
+                                    className="cursor-pointer text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded hover:bg-blue-100"
                                     title="Mark as read"
                                   >
                                     ✓
@@ -129,7 +129,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                                 )}
                                 <button
                                   onClick={() => deleteNotification(notification.id)}
-                                  className="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-100"
+                                  className="cursor-pointer text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-100"
                                   title="Delete notification"
                                 >
                                   ✕
