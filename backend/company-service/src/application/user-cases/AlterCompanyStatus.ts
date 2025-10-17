@@ -15,9 +15,7 @@ export class AlterCompanyStatus implements IAlterCompanyStatus {
 
     async changeCompanyStatus (id:string):Promise<CompanyDTO> { 
         const company=await this._companyRepository.findById(id)
-        console.log('conpamu', company)
         const updatedCompany=await this._companyRepository.changeCompanyStatus(company)
-        console.log('suseee',updatedCompany.suspended)
         await elasticClient.update({
             index:'companies',
             id:updatedCompany.id.toString(),
@@ -25,7 +23,6 @@ export class AlterCompanyStatus implements IAlterCompanyStatus {
                 suspended:updatedCompany.suspended
             }
         })
-        console.log(3)
         await elasticClient.indices.refresh({index:'companies'})
         return CompanyMapper.toDTO(updatedCompany)
     }

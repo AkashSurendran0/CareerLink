@@ -1,9 +1,15 @@
 import amqp, {Channel, ChannelModel, ConsumeMessage} from 'amqplib'
+import { Mailer } from './utils/MailHelper'
 
-export class RabbitMqService {
+class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
     private readonly exchange=["company.events"]
+    private mailer:Mailer
+
+    constructor(){
+        this.mailer=new Mailer()
+    }
 
     public async connect(): Promise<void> {
         try {
@@ -43,9 +49,36 @@ export class RabbitMqService {
         try{
             switch(data.action){
                 case "approved":
+                    await this.mailer.sendMail(data.registeredBy, 'Your company has been approved on CareerLink! 🎉', 
+                        `Hello ${data.companyName} team,
+
+We’re excited to let you know that your company registration on CareerLink has been approved!
+
+You can now log in to your account and start exploring our platform — post job openings, connect with candidates, and manage your hiring process seamlessly.
+
+Welcome aboard!
+
+Best regards,  
+The CareerLink Team
+`
+                    )
                     break;
 
                 case "rejected":
+                    await this.mailer.sendMail(data.registeredBy, 'Update on your CareerLink company registration ', 
+                        `Hello ${data.companyName} team,
+Thank you for registering your company with CareerLink.  
+After reviewing your application, we regret to inform you that it was not approved at this time.
+
+This could be due to missing or unverifiable information.  
+You can review your submission and reapply with updated details.
+
+If you believe this decision was made in error, please contact our support team.
+
+Best regards,  
+The CareerLink Team
+`
+                    )
                     break
 
                 default:
@@ -59,3 +92,5 @@ export class RabbitMqService {
         }
     } 
 }
+
+export const rabbitmqService = new RabbitMqService()

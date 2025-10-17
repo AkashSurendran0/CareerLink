@@ -3,9 +3,8 @@ import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
-import { RabbitMqService } from "../../utils/Rabbitmq";
+import { rabbitmqService } from "../../utils/Rabbitmq";
 
-const rabbitMq=new RabbitMqService()
 @injectable()
 export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistrationStatus {
 
@@ -23,7 +22,7 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
                     approved:true
                 }
             })
-            await rabbitMq.publishEvent("company.events", "company.approved", {
+            await rabbitmqService.publishEvent("company.events", "company.approved", {
                 companyId:company.id,
                 companyName:company.name,
                 registeredBy:company.registeredBy,
@@ -39,7 +38,7 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
                     rejected:true
                 }
             })
-            await rabbitMq.publishEvent("company.events", "company.rejected", {
+            await rabbitmqService.publishEvent("company.events", "company.rejected", {
                 companyId:company.id,
                 companyName:company.name,
                 registeredBy:company.registeredBy,

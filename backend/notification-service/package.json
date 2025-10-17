@@ -14,10 +14,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "amqplib": "^0.10.9"
+    "amqplib": "^0.10.9",
+    "nodemailer": "^7.0.9"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7",
+    "@types/nodemailer": "^7.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
