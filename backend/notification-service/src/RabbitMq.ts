@@ -1,15 +1,19 @@
 import amqp, {Channel, ChannelModel, ConsumeMessage} from 'amqplib'
 import { Mailer } from './utils/MailHelper'
+import { AddNotification } from './services/AddNotification'
+import { inject, injectable } from 'inversify'
+import { TYPES } from './types'
 
-class RabbitMqService {
+@injectable()
+export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
     private readonly exchange=["company.events"]
-    private mailer:Mailer
 
-    constructor(){
-        this.mailer=new Mailer()
-    }
+    constructor(
+        @inject(TYPES.Mailer) private _mailer:Mailer,
+        @inject(TYPES.AddNotification) private _addNotification:AddNotification
+    ){}
 
     public async connect(): Promise<void> {
         try {
@@ -49,7 +53,8 @@ class RabbitMqService {
         try{
             switch(data.action){
                 case "approved":
-                    await this.mailer.sendMail(data.registeredBy, 'Your company has been approved on CareerLink! 🎉', 
+                    await this._addNotification.saveNotification(data.registeredBy, 'Your Company has been approved 🎉', '/company/registeredCompany')
+                    await this._mailer.sendMail(data.registeredBy, 'Your company has been approved on CareerLink! 🎉', 
                         `Hello ${data.companyName} team,
 
 We’re excited to let you know that your company registration on CareerLink has been approved!
@@ -65,7 +70,8 @@ The CareerLink Team
                     break;
 
                 case "rejected":
-                    await this.mailer.sendMail(data.registeredBy, 'Update on your CareerLink company registration ', 
+                    await this._addNotification.saveNotification(data.registeredBy, 'Update on your company registration', '/company/registeredCompany')
+                    await this._mailer.sendMail(data.registeredBy, 'Update on your CareerLink company registration ', 
                         `Hello ${data.companyName} team,
 Thank you for registering your company with CareerLink.  
 After reviewing your application, we regret to inform you that it was not approved at this time.
@@ -93,4 +99,3 @@ The CareerLink Team
     } 
 }
 
-export const rabbitmqService = new RabbitMqService()

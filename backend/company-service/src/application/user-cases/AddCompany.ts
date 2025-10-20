@@ -12,7 +12,7 @@ type Details = {
     foundedYear:number,
     industry:string,
     websiteURL:string | null,
-    location:string,
+    location:string, 
     aboutCompany:string
 }
 
