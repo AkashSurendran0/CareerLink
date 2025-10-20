@@ -8,7 +8,8 @@ export class GatewayService {
         this._routes={
             '/user':'http://localhost:5001',
             '/admin':'http://localhost:5002',
-            '/company':'http://localhost:5003'
+            '/company':'http://localhost:5003',
+            '/notification':'http://localhost:5004'
         }
     }
 

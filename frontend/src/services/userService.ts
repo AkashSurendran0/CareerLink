@@ -99,6 +99,14 @@ export const reapplyCompany = async () => {
 
 export const deleteCompany = async (id:string) => {
     const res=await api.delete(`company/v1/deleteCompany?id=${id}`)
-    console.log('blahh', res.data)
     return res.data
+}
+
+export const getAllNotifications = async () => {
+    const res=await api.get('notification/v1/getNotifications')
+    return res.data
+}
+
+export const markAllNotificationsRead = async () => {
+    const res=await api.patch('notification/v1/markAllRead')
 }

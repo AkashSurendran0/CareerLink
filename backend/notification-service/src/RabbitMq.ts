@@ -2,7 +2,7 @@ import amqp, {Channel, ChannelModel, ConsumeMessage} from 'amqplib'
 import { Mailer } from './utils/MailHelper'
 import { AddNotification } from './services/AddNotification'
 import { inject, injectable } from 'inversify'
-import { TYPES } from './TYPES'
+import { TYPES } from './types'
 
 @injectable()
 export class RabbitMqService {

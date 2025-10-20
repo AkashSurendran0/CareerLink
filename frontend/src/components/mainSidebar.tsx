@@ -24,7 +24,6 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
   async function getCompanyInfo () {
     const result=await getCompanyRegistrationInfo()
-    console.log('result',result)
     if(result.result.success){
       setTab({label:'Your Company', value:'/company/registeredCompany'})
     }else{

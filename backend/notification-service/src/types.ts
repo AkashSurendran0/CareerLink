@@ -3,5 +3,7 @@ export const TYPES = {
     AddNotification:'AddNotification',
     Mailer:'Mailer',
     RabbitMqService:'RabbitMqService',
-    NotificationRepository:'NotificationRepository'
+    NotificationRepository:'NotificationRepository',
+    GetAllNotifications:'GetAllNotifications',
+    MarkAllRead:'MarkAllRead'
 }

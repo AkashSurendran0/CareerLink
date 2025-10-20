@@ -8,8 +8,13 @@ export class NotificationRepository {
             content,
             routeTo
         }
-        await NotificationModel.insertOne(data)
-        return {success:true}
+        const noti=await NotificationModel.insertOne(data)
+        return noti
+    }
+
+    async getAllNotifications(user:string) {
+        const notification=await NotificationModel.find({user:user})
+        return notification
     }
 
 }

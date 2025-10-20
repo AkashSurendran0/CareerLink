@@ -1,5 +1,7 @@
 "use client"
 
+import socket from "@/lib/socket"
+import { getAllNotifications } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
 
 interface NavbarProps {
@@ -8,24 +10,20 @@ interface NavbarProps {
 
 interface Notification {
   id: number
-  message: string
-  timestamp: string
-  read: boolean
+  content: string,
+  isRead: boolean,
+  createdAt: Date
 }
 
 function MainNavbar({ setSidebarOpen }: NavbarProps) {
   const [notificationOpen, setNotificationOpen] = useState(false)
   const notificationRef = useRef<HTMLDivElement>(null)
-
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: 1, message: "Your profile has been updated", timestamp: "2 hours ago", read: false },
-    { id: 2, message: "New job recommendation for you", timestamp: "5 hours ago", read: false },
-    { id: 3, message: "Your application was reviewed", timestamp: "1 day ago", read: true },
-    { id: 4, message: "Company profile verified", timestamp: "2 days ago", read: false },
-    { id: 5, message: "New message from recruiter", timestamp: "3 days ago", read: true },
-  ])
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [userEmail, setUserEmail] = useState<string>()
 
   useEffect(() => {
+    getNotifications()
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setNotificationOpen(false)
@@ -36,25 +34,63 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+  useEffect(()=>{
+    const fetchUserId=async()=>{
+      try {
+        const res=await fetch('/api/me')
+        const data=await res.json()
+        console.log(data)
+        setUserEmail(data.userEmail)
+      } catch (error) {
+        console.log('Failed to fetch userid', error)
+      }
+    }
 
-  const markAsRead = (id: number) => {
-    setNotifications(notifications.map((n) => (n.id === id ? { ...n, read: true } : n)))
+    fetchUserId()
+  }, [])
+
+  useEffect(()=>{
+    console.log('userid', userEmail)
+    if(!userEmail) return
+
+    socket.emit('join', userEmail)
+    socket.on('notification', (data)=>{
+      console.log('data', data)
+      setNotifications([data, ...notifications])
+      setUnreadCount(unreadCount+1)
+    })
+
+    return()=>{
+      socket.off('notification')
+    }
+  }, [userEmail])
+
+  const getNotifications = async () => {
+    const result=await getAllNotifications()
+    setNotifications(result.notifications)
+    const unreadCount=result.notifications.filter((noti)=>!noti.isRead).length
+    setUnreadCount(unreadCount)
   }
 
-  const deleteNotification = (id: number) => {
-    setNotifications(notifications.filter((n) => n.id !== id))
-  }
+  // const unreadCount = notifications.filter((n) => !n.read).length
+
+  // const markAsRead = (id: number) => {
+  //   setNotifications(notifications.map((n) => (n.id === id ? { ...n, read: true } : n)))
+  // }
+
+  // const deleteNotification = (id: number) => {
+  //   setNotifications(notifications.filter((n) => n.id !== id))
+  // }
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })))
+    setNotifications(notifications!.map((n) => ({ ...n, isRead: true })))
+     
   }
 
-  const deleteAll = () => {
-    setNotifications([])
-  }
+  // const deleteAll = () => {
+  //   setNotifications([])
+  // }
 
-  const visibleNotifications = notifications
 
   return (
     <>
@@ -97,30 +133,30 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                   <div className="absolute right-0 mt-2 w-82 bg-white rounded-lg shadow-lg border border-gray-200 z-50 flex flex-col max-h-96">
                     <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                       <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
-                      <span className="text-xs text-gray-500">{notifications.length} total</span>
+                      <span className="text-xs text-gray-500">{notifications!.length} total</span>
                     </div>
 
                     <div className="overflow-y-auto flex-1 max-h-64">
-                      {visibleNotifications.length > 0 ? (
-                        visibleNotifications.map((notification) => (
+                      {notifications!.length > 0 ? (
+                        notifications!.map((notification) => (
                           <div
                             key={notification.id}
                             className={`cursor-pointer px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
-                              !notification.read ? "bg-blue-50" : ""
+                              !notification.isRead ? "bg-blue-50" : ""
                             }`}
                           >
                             <div className="flex items-start gap-3">
-                              {!notification.read && (
+                              {!notification.isRead && (
                                 <div className="h-2 w-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
                               )}
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm text-gray-900">{notification.message}</p>
-                                <p className="text-xs text-gray-500 mt-1">{notification.timestamp}</p>
+                                <p className="text-sm text-gray-900">{notification.content}</p>
+                                <p className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleDateString()}</p>
                               </div>
                               <div className="flex gap-2 flex-shrink-0">
-                                {!notification.read && (
+                                {!notification.isRead && (
                                   <button
-                                    onClick={() => markAsRead(notification.id)}
+                                    // onClick={() => markAsRead(notification.id)}
                                     className="cursor-pointer text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded hover:bg-blue-100"
                                     title="Mark as read"
                                   >
@@ -128,7 +164,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                                   </button>
                                 )}
                                 <button
-                                  onClick={() => deleteNotification(notification.id)}
+                                  // onClick={() => deleteNotification(notification.id)}
                                   className="cursor-pointer text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-100"
                                   title="Delete notification"
                                 >
@@ -151,7 +187,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                         Mark All as Read
                       </button>
                       <button
-                        onClick={deleteAll}
+                        // onClick={deleteAll}
                         className="flex-1 text-sm text-red-600 hover:text-red-700 font-medium px-3 py-2 rounded hover:bg-red-50 border border-red-200"
                       >
                         Delete All
