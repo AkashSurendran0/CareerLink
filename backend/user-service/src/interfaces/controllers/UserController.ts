@@ -10,6 +10,10 @@ import { ICheckUserBlock } from "../../domain/use-cases/IUserUseCase";
 import { IVerifyOTP } from "../../domain/use-cases/IUserUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
+import dotenv from "dotenv";
+import { STATUS_CODES } from "../../utils/StatusCodes";
+
+dotenv.config();
 
 @injectable()
 export class UserController {
@@ -35,18 +39,18 @@ export class UserController {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
-                    maxAge: 60 * 60 * 1000,
+                    maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
                 res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    maxAge: Number(process.env.MAX_AGE_1_WEEK),
                 });
             }
             res.json({result});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     };
 
@@ -58,17 +62,17 @@ export class UserController {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
-                maxAge: 60 * 60 * 1000,
+                maxAge: Number(process.env.MAX_AGE_1_HOUR),
             });
             res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
+                maxAge: Number(process.env.MAX_AGE_1_WEEK),
             });
             res.json({token});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.UNAUTHORIZED).json({message:error.message});
         }
     };
 
@@ -78,7 +82,7 @@ export class UserController {
             const result=await this._sendOTP.mailOtp(email);
             res.json({result});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 
@@ -90,17 +94,17 @@ export class UserController {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
-                maxAge: 60 * 60 * 1000,
+                maxAge: Number(process.env.MAX_AGE_1_HOUR),
             });
             res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
+                maxAge: Number(process.env.MAX_AGE_1_WEEK),
             });
             res.json({token});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 
@@ -110,7 +114,7 @@ export class UserController {
             const otp=await this._sendResetOtp.mailOtp(email);
             res.json({otp});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 
@@ -122,7 +126,7 @@ export class UserController {
             const users=await this._getUsers.getUsers(pageNum, limitNum, query);
             res.json({users});
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     };
 
@@ -132,7 +136,7 @@ export class UserController {
             const users=await this._alterUserStatus.changeUserStatus(user.id);
             res.json({users});
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 
@@ -143,7 +147,7 @@ export class UserController {
             const result=await this._checkUserBlock.checkUserBlock(userId);
             res.json({result});
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 
@@ -153,7 +157,7 @@ export class UserController {
             const result=await this._verifyOtp.verifyOtp(email);
             res.json({result});
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     };
 

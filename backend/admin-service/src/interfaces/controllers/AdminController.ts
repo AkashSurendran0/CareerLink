@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
-import { AdminRepository } from "../../infrastructure/database/AdminRepository";
 import { IAdminLogin } from "../../domain/use-cases/IAdminLogin";
 import {injectable, inject} from 'inversify'
 import { TYPES } from "../../types";
+import { STATUS_CODES } from "../../utils/StatusCodes";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 @injectable()
 export class AdminController {
@@ -20,18 +23,18 @@ export class AdminController {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
-                    maxAge: 60 * 60 * 1000,
+                    maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 })
                 res.cookie("adminRefreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    maxAge: Number(process.env.MAX_AGE_1_WEEK),
                 })
             }
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message})
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message})
         }
     }
 
