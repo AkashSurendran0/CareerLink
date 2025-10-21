@@ -130,7 +130,7 @@ export class CompanyRepository implements ICompanyRepository {
             {
                 where:{id:company.id},
                 returning:true
-            }
+            }   
         )
         const updatedCompany=updatedCompanies[0]!.get({plain:true});
         return new Company (
