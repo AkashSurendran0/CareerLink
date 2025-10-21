@@ -109,4 +109,20 @@ export const getAllNotifications = async () => {
 
 export const markAllNotificationsRead = async () => {
     const res=await api.patch('notification/v1/markAllRead')
+    return res.data
+}
+
+export const deleteAllNotifications = async () => {
+    const res=await api.delete('notification/v1/deleteAll')
+    return res.data
+}
+
+export const deleteOneNotification = async (id:string) => {
+    const res=await api.delete(`notification/v1/deleteOne?id=${id}`)
+    return res.data
+}
+
+export const markOneRead = async (id:string) => {
+    const res=await api.patch(`notification/v1/readOne?id=${id}`)
+    return res.data
 }

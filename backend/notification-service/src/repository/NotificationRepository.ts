@@ -17,4 +17,34 @@ export class NotificationRepository {
         return notification
     }
 
+    async deleteAllNotifications(user:string) {
+        await NotificationModel.deleteMany({user:user})
+        return {success:true}
+    }
+
+    async deleteOneNotification(id:string) {
+        await NotificationModel.deleteOne({_id:id})
+        return {success:true}
+    }
+
+    async markOneAsRead (id:string) {
+        await NotificationModel.updateOne(
+            {_id:id},
+            {$set:{
+                isRead:true
+            }}
+        )
+        return {success:true}
+    }
+
+    async markAllRead (user:string) {
+        await NotificationModel.updateMany(
+            {user:user},
+            {$set:{
+                isRead:true
+            }}
+        )
+        return {success:true}
+    }
+
 }

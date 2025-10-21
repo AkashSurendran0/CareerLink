@@ -1,16 +1,16 @@
 import { injectable, inject } from "inversify";
-import { NotificationRepository } from "../repository/NotificationRepository";
 import { TYPES } from "../types";
+import { NotificationRepository } from "../repository/NotificationRepository";
 
 @injectable()
-export class MarkAllRead {
+export class MarkOneRead {
 
     constructor(
         @inject(TYPES.NotificationRepository) private _notificationRepository:NotificationRepository
     ){}
 
-    async markAllRead (user:string) {
-        const result=await this._notificationRepository.markAllRead(user)
+    async markOneRead (id:string) {
+        const result=await this._notificationRepository.markOneAsRead(id)
         return result
     }
 

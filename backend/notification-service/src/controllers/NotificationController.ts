@@ -3,13 +3,19 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
 import { GetAllNotifications } from "../services/GetAllNotifications";
 import { MarkAllRead } from "../services/MarkAllRead";
+import { DeleteAllNotifications } from "../services/DeleteAllNotifications";
+import { DeleteOne } from "../services/DeleteOne";
+import { MarkOneRead } from "../services/MarkOneRead";
 
 @injectable()
 export class NotificationController {
 
     constructor(
         @inject(TYPES.GetAllNotifications) private _getAllNotifications:GetAllNotifications,
-        @inject(TYPES.MarkAllRead) private _markAllRead:MarkAllRead
+        @inject(TYPES.MarkAllRead) private _markAllRead:MarkAllRead,
+        @inject(TYPES.DeleteAllNotifications) private _deleteAllNotifications:DeleteAllNotifications,
+        @inject(TYPES.DeleteOne) private _deleteOne:DeleteOne,
+        @inject(TYPES.MarkOneRead) private _markOneRead:MarkOneRead
     ){}
 
     getAllNotifications = async (req:Request, res:Response) => {
@@ -25,8 +31,38 @@ export class NotificationController {
     markAllRead = async (req:Request, res:Response) => {
         try {
             const user=req.headers['user-email'] as string
-            await this._markAllRead.markAllRead(user)
-            console.log()
+            const result=await this._markAllRead.markAllRead(user)
+            res.json({result})
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    deleteAll = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-email'] as string
+            const result=await this._deleteAllNotifications.deleteAllNotifications(user)
+            res.json({result}) 
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    deleteOne = async (req:Request, res:Response) => {
+        try {
+            const {id}=req.query
+            const result=await this._deleteOne.deleteOne(id)
+            res.json({result}) 
+        } catch (error: any) {
+            res.status(400).json({message:error.message});
+        }
+    }
+
+    readOne = async (req:Request, res:Response) => {
+        try {
+            const {id}=req.query
+            const result=await this._markOneRead.markOneRead(id)
+            res.json({result}) 
         } catch (error: any) {
             res.status(400).json({message:error.message});
         }

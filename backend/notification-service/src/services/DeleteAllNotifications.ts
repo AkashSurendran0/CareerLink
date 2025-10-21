@@ -3,14 +3,14 @@ import { NotificationRepository } from "../repository/NotificationRepository";
 import { TYPES } from "../types";
 
 @injectable()
-export class MarkAllRead {
+export class DeleteAllNotifications {
 
     constructor(
         @inject(TYPES.NotificationRepository) private _notificationRepository:NotificationRepository
     ){}
 
-    async markAllRead (user:string) {
-        const result=await this._notificationRepository.markAllRead(user)
+    async deleteAllNotifications (user:string) {
+        const result=await this._notificationRepository.deleteAllNotifications(user)
         return result
     }
 
