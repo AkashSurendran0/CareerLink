@@ -12,6 +12,7 @@ import { ICheckCompanyDetails } from "../../domain/use-cases/ICompanyUserCase";
 import { IAlterCompanyRegistrationStatus } from "../../domain/use-cases/ICompanyUserCase";
 import { IReapplyCompany } from "../../domain/use-cases/ICompanyUserCase";
 import { IDeleteCompany } from "../../domain/use-cases/ICompanyUserCase";
+import { STATUS_CODES } from "../../utils/StatusCodes";
 
 injectable()
 export class CompanyController {
@@ -43,7 +44,7 @@ export class CompanyController {
             await this._addCompany.addCompany(user, details)
             res.json({success:true})
         } catch (error: any) {  
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message:error.message});
         }
     }
 
@@ -53,7 +54,7 @@ export class CompanyController {
             const result=await this._checkCompanyRegistrationInfo.checkCompanyRegistrationInfo(user)
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     }
 
@@ -63,7 +64,7 @@ export class CompanyController {
             const result=await this._getCompanyDetails.getCompanyDetails(user)
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     }
 
@@ -82,7 +83,7 @@ export class CompanyController {
             await this._editCompany.editCompany(user, details)
             res.json({success:true})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -94,7 +95,7 @@ export class CompanyController {
             const companies=await this._getAllCompanies.getAllCompanies(pageNum, limitNum, query)
             res.json({companies})
         } catch (error:any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     }
 
@@ -104,7 +105,7 @@ export class CompanyController {
             const companies=await this._alterCompanyStatus.changeCompanyStatus(company.id)
             res.json({companies})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -114,7 +115,7 @@ export class CompanyController {
             const company=await this._checkCompanyDetails.getCompanyInfo(id)
             res.json({company})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -125,7 +126,7 @@ export class CompanyController {
             const result=await this._alterCompanyRegistrationStatus.alterCompanyRegistrationStatus(num, id)
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -135,7 +136,7 @@ export class CompanyController {
             const company=await this._reapplyCompany.reapplyCompany(user)
             res.json({company})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -145,7 +146,7 @@ export class CompanyController {
             const result=await this._deleteCompany.deleteCompany(id)
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 

@@ -6,6 +6,7 @@ import { MarkAllRead } from "../services/MarkAllRead";
 import { DeleteAllNotifications } from "../services/DeleteAllNotifications";
 import { DeleteOne } from "../services/DeleteOne";
 import { MarkOneRead } from "../services/MarkOneRead";
+import { STATUS_CODES } from "../utils/StatusCodes";
 
 @injectable()
 export class NotificationController {
@@ -24,7 +25,7 @@ export class NotificationController {
             const notifications=await this._getAllNotifications.getAllNotifications(user)
             res.json({notifications})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
         }
     }
 
@@ -34,7 +35,7 @@ export class NotificationController {
             const result=await this._markAllRead.markAllRead(user)
             res.json({result})
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -44,7 +45,7 @@ export class NotificationController {
             const result=await this._deleteAllNotifications.deleteAllNotifications(user)
             res.json({result}) 
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -54,7 +55,7 @@ export class NotificationController {
             const result=await this._deleteOne.deleteOne(id)
             res.json({result}) 
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
@@ -64,7 +65,7 @@ export class NotificationController {
             const result=await this._markOneRead.markOneRead(id)
             res.json({result}) 
         } catch (error: any) {
-            res.status(400).json({message:error.message});
+            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
         }
     }
 
