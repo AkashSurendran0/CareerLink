@@ -1,7 +1,7 @@
 "use client"
 
 import socket from "@/lib/socket"
-import { getAllNotifications } from "@/services/userService"
+import { deleteAllNotifications, deleteOneNotification, getAllNotifications, markAllNotificationsRead, markOneRead } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
 
 interface NavbarProps {
@@ -9,7 +9,7 @@ interface NavbarProps {
 }
 
 interface Notification {
-  id: number
+  _id: string
   content: string,
   isRead: boolean,
   createdAt: Date
@@ -67,6 +67,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const getNotifications = async () => {
     const result=await getAllNotifications()
+    console.log('noti', result.notifications)
     setNotifications(result.notifications)
     const unreadCount=result.notifications.filter((noti)=>!noti.isRead).length
     setUnreadCount(unreadCount)
@@ -74,22 +75,30 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   // const unreadCount = notifications.filter((n) => !n.read).length
 
-  // const markAsRead = (id: number) => {
-  //   setNotifications(notifications.map((n) => (n.id === id ? { ...n, read: true } : n)))
-  // }
-
-  // const deleteNotification = (id: number) => {
-  //   setNotifications(notifications.filter((n) => n.id !== id))
-  // }
-
-  const markAllAsRead = () => {
-    setNotifications(notifications!.map((n) => ({ ...n, isRead: true })))
-     
+  const markAsRead = async (id: string) => {
+    setNotifications(notifications.map((n) => (n._id === id ? { ...n, isRead: true } : n)))
+    setUnreadCount(unreadCount-1)
+    await markOneRead(id)
   }
 
-  // const deleteAll = () => {
-  //   setNotifications([])
-  // }
+  const deleteNotification = async (id: string) => {
+    console.log(id)
+    setNotifications(notifications.filter((n) => n._id !== id))
+    setUnreadCount(unreadCount-1)
+    await deleteOneNotification(id)
+  }
+
+  const markAllAsRead =async () => {
+    setNotifications(notifications!.map((n) => ({ ...n, isRead: true })))
+    setUnreadCount(0)
+    await markAllNotificationsRead()
+  }
+
+  const deleteAll = async () => {
+    setNotifications([])
+    setUnreadCount(0)
+    await deleteAllNotifications()
+  }
 
 
   return (
@@ -140,7 +149,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                       {notifications!.length > 0 ? (
                         notifications!.map((notification) => (
                           <div
-                            key={notification.id}
+                            key={notification._id}
                             className={`cursor-pointer px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
                               !notification.isRead ? "bg-blue-50" : ""
                             }`}
@@ -156,7 +165,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                               <div className="flex gap-2 flex-shrink-0">
                                 {!notification.isRead && (
                                   <button
-                                    // onClick={() => markAsRead(notification.id)}
+                                    onClick={() => markAsRead(notification._id)}
                                     className="cursor-pointer text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded hover:bg-blue-100"
                                     title="Mark as read"
                                   >
@@ -164,7 +173,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                                   </button>
                                 )}
                                 <button
-                                  // onClick={() => deleteNotification(notification.id)}
+                                  onClick={() => deleteNotification(notification._id)}
                                   className="cursor-pointer text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-100"
                                   title="Delete notification"
                                 >
@@ -182,13 +191,13 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                     <div className="p-3 border-t border-gray-200 flex gap-2">
                       <button
                         onClick={markAllAsRead}
-                        className="flex-1 text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-2 rounded hover:bg-blue-50 border border-blue-200"
+                        className="cursor-pointer flex-1 text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-2 rounded hover:bg-blue-50 border border-blue-200"
                       >
                         Mark All as Read
                       </button>
                       <button
-                        // onClick={deleteAll}
-                        className="flex-1 text-sm text-red-600 hover:text-red-700 font-medium px-3 py-2 rounded hover:bg-red-50 border border-red-200"
+                        onClick={deleteAll}
+                        className="cursor-pointer flex-1 text-sm text-red-600 hover:text-red-700 font-medium px-3 py-2 rounded hover:bg-red-50 border border-red-200"
                       >
                         Delete All
                       </button>

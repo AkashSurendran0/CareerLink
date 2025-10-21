@@ -5,5 +5,8 @@ export const TYPES = {
     RabbitMqService:'RabbitMqService',
     NotificationRepository:'NotificationRepository',
     GetAllNotifications:'GetAllNotifications',
-    MarkAllRead:'MarkAllRead'
+    MarkAllRead:'MarkAllRead',
+    DeleteAllNotifications:'DeleteAllNotifications',
+    DeleteOne:'DeleteOne',
+    MarkOneRead:'MarkOneRead'
 }
