@@ -33,8 +33,12 @@ export class AdminController {
                 })
             }
             res.json({result})
-        } catch (error: any) {
-            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
