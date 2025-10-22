@@ -1,15 +1,18 @@
 import {createProxyMiddleware} from 'http-proxy-middleware'
 import { RequestHandler } from 'express'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export class GatewayService {
     private _routes:{[key:string]:string}
 
     constructor(){
         this._routes={
-            '/user':'http://localhost:5001',
-            '/admin':'http://localhost:5002',
-            '/company':'http://localhost:5003',
-            '/notification':'http://localhost:5004'
+            '/user':`${process.env.USER_SERVICE_ROUTE}`,
+            '/admin':`${process.env.ADMIN_SERVICE_ROUTE}`,
+            '/company':`${process.env.COMPANY_SERVICE_ROUTE}`,
+            '/notification':`${process.env.NOTIFICATION_SERVICE_ROUTE}`
         }
     }
 
