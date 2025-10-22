@@ -5,6 +5,7 @@ import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import { uploadImageToS3 } from "../../config/upload";
+import { STATUS_CODES } from "../../utils/StatusCodes";
 
 
 @injectable()
@@ -22,8 +23,12 @@ export class UserDetailsController {
             const userEmail=req.headers["user-email"] as string;
             await this._addUserDetails.addUserDetails(details, userEmail);
             res.json({success:true});
-        } catch (error: any) {
-            res.status(400).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -32,8 +37,12 @@ export class UserDetailsController {
             const userEmail=req.headers["user-email"] as string;
             const userDetails=await this._getUserDetails.getUserDetails(userEmail);
             res.json({userDetails}); 
-        } catch (error: any) {
-            res.status(400).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -50,8 +59,12 @@ export class UserDetailsController {
             }
             await this._editUserDetails.editUserDetails(details, userId);
             res.json({success:true});
-        } catch (error: any) {
-            res.status(400).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 

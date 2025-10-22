@@ -49,8 +49,12 @@ export class UserController {
                 });
             }
             res.json({result});
-        } catch (error:any) {
-            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -71,8 +75,12 @@ export class UserController {
                 maxAge: Number(process.env.MAX_AGE_1_WEEK),
             });
             res.json({token});
-        } catch (error:any) {
-            res.status(STATUS_CODES.UNAUTHORIZED).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -81,8 +89,12 @@ export class UserController {
             const {email}=req.body;
             const result=await this._sendOTP.mailOtp(email);
             res.json({result});
-        } catch (error:any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -103,8 +115,12 @@ export class UserController {
                 maxAge: Number(process.env.MAX_AGE_1_WEEK),
             });
             res.json({token});
-        } catch (error:any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -113,8 +129,12 @@ export class UserController {
             const {email}=req.body;
             const otp=await this._sendResetOtp.mailOtp(email);
             res.json({otp});
-        } catch (error:any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -125,8 +145,12 @@ export class UserController {
             const limitNum=parseInt(limit as string, 5) || 5;
             const users=await this._getUsers.getUsers(pageNum, limitNum, query);
             res.json({users});
-        } catch (error:any) {
-            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -135,8 +159,12 @@ export class UserController {
             const user=req.body;
             const users=await this._alterUserStatus.changeUserStatus(user.id);
             res.json({users});
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -147,7 +175,11 @@ export class UserController {
             const result=await this._checkUserBlock.checkUserBlock(userId);
             res.json({result});
         } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 
@@ -156,8 +188,12 @@ export class UserController {
             const {email}=req.query;
             const result=await this._verifyOtp.verifyOtp(email);
             res.json({result});
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     };
 

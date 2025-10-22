@@ -24,8 +24,12 @@ export class NotificationController {
             const user=req.headers['user-email'] as string
             const notifications=await this._getAllNotifications.getAllNotifications(user)
             res.json({notifications})
-        } catch (error: any) {
-            res.status(STATUS_CODES.NOT_FOUND).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
@@ -34,8 +38,12 @@ export class NotificationController {
             const user=req.headers['user-email'] as string
             const result=await this._markAllRead.markAllRead(user)
             res.json({result})
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
@@ -44,8 +52,12 @@ export class NotificationController {
             const user=req.headers['user-email'] as string
             const result=await this._deleteAllNotifications.deleteAllNotifications(user)
             res.json({result}) 
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
@@ -54,8 +66,12 @@ export class NotificationController {
             const {id}=req.query
             const result=await this._deleteOne.deleteOne(id)
             res.json({result}) 
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
@@ -64,8 +80,12 @@ export class NotificationController {
             const {id}=req.query
             const result=await this._markOneRead.markOneRead(id)
             res.json({result}) 
-        } catch (error: any) {
-            res.status(STATUS_CODES.BAD_REQUEST).json({message:error.message});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 
