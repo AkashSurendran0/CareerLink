@@ -8,7 +8,7 @@ import { IGetAllCompanies } from "../../domain/use-cases/ICompanyUserCase";
 @injectable()
 export class GetAllCompanies implements IGetAllCompanies {
 
-    constructor(
+    constructor( 
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository
     ){}
 
