@@ -86,7 +86,7 @@ If you believe this decision was made in error, please contact our support team.
 Best regards,  
 The CareerLink Team
 `
-                    )
+                    ) 
                     break
 
                 case "blocked":
@@ -100,7 +100,7 @@ During this period:
 - You will not be able to access your company dashboard or perform account-related operations.
 - Any active sessions will be automatically logged out.
 
-If you believe this action was taken in error, please reach out to our support team with your company ID ([Company ID]) for review.
+If you believe this action was taken in error, please reach out to our support team for review.
 
 Thank you for your understanding and cooperation.
 

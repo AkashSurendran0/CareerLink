@@ -156,7 +156,7 @@ function Signup() {
             return
         }
 
-        if (!/^[A-Za-z]{3,}$/.test(signupForm.username)) {
+        if (!/^[A-Za-z ]{3,}$/.test(signupForm.username)) {
             setErrors({username:'Please enter a valid Username'})
             return
         }

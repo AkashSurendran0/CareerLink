@@ -33,11 +33,12 @@ function UserManagement() {
     useEffect(()=>{
         const fetchCompanies= async () => {
             const result=await getCompanies(STARTING_PAGE, LIMIT, query)
+            console.log('companies', result)
             if(result.companies.result.length<LIMIT){
                 setPageLimit(1)
             }else{
                 setPageLimit(result.companies.pageLimit)
-            }
+            } 
             setCompanies(result.companies.result)
         }
         fetchCompanies()
@@ -168,6 +169,7 @@ function UserManagement() {
                             <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Logo</th>
                             <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Name</th>
                             <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Date Joined</th>
+                            <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Registered By</th>
                             <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Status</th>
                             <th className="text-left py-3 px-6 text-sm font-medium text-gray-700">Actions</th>
                         </tr>
@@ -188,6 +190,7 @@ function UserManagement() {
                             </td>
                             <td className="py-4 px-6 text-sm text-gray-600">{company.name}</td>
                             <td className="py-4 px-6 text-sm text-gray-600">{new Date(company.createdAt).toLocaleDateString()}</td>
+                            <td className="py-4 px-6 text-sm text-gray-600">{company.registeredBy}</td>
                             <td className="py-4 px-6">
                                 <span
                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
