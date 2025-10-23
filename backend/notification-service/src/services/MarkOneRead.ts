@@ -1,16 +1,19 @@
 import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
-import { NotificationRepository } from "../repository/NotificationRepository";
+import { INotificationRepository } from "../domain/repository/INotificationRepository";
+import { IMarkOneRead } from "../domain/services/INotificationServices";
 
 @injectable()
-export class MarkOneRead {
+export class MarkOneRead implements IMarkOneRead {
 
     constructor(
-        @inject(TYPES.NotificationRepository) private _notificationRepository:NotificationRepository
+        @inject(TYPES.INotificationRepository) private _notificationRepository:INotificationRepository
     ){}
 
-    async markOneRead (id:string) {
+    async markOneRead (id:string): Promise<{success:boolean}> {
+        console.log(11)
         const result=await this._notificationRepository.markOneAsRead(id)
+        console.log(22)
         return result
     }
 

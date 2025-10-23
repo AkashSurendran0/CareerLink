@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify, SignJWT } from "jose";
 const secret=new TextEncoder().encode(process.env.JWT_SECRET)
 const adminSecret=new TextEncoder().encode(process.env.JWT_ADMIN_SECRET)
+const MAX_AGE_1_HOUR = Number(process.env.NEXT_PUBLIC_MAX_AGE_1_HOUR);
 
 export async function middleware(req: NextRequest, res:NextResponse) {
   const token = req.cookies.get("token")?.value;

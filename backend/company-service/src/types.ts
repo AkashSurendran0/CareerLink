@@ -10,5 +10,5 @@ export const TYPES = {
     ICheckCompanyDetails:"ICheckCompanyDetails",
     IAlterCompanyRegistrationStatus:"IAlterCompanyRegistrationStatus",
     IReapplyCompany:"IReapplyCompany",
-    IDeleteCompany:"IDeleteCompany"
+    IDeleteCompany:"IDeleteCompany",
 }

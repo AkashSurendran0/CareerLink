@@ -1,12 +1,12 @@
 export const TYPES = {
     NotificationController:'NotificationController',
-    AddNotification:'AddNotification',
+    IAddNotification:'IAddNotification',
     Mailer:'Mailer',
     RabbitMqService:'RabbitMqService',
-    NotificationRepository:'NotificationRepository',
-    GetAllNotifications:'GetAllNotifications',
-    MarkAllRead:'MarkAllRead',
-    DeleteAllNotifications:'DeleteAllNotifications',
-    DeleteOne:'DeleteOne',
-    MarkOneRead:'MarkOneRead'
+    INotificationRepository:'INotificationRepository',
+    IGetAllNotifications:'IGetAllNotifications',
+    IMarkAllRead:'IMarkAllRead',
+    IDeleteAllNotifications:'IDeleteAllNotifications',
+    IDeleteOne:'IDeleteOne',
+    IMarkOneRead:'IMarkOneRead'
 }

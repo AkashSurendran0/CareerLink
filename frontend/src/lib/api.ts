@@ -25,7 +25,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        window.location.href='/error'
+        console.log(error)
     }
 );
 

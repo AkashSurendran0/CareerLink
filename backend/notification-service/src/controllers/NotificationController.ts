@@ -1,35 +1,36 @@
 import { Request, Response } from "express"
 import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
-import { GetAllNotifications } from "../services/GetAllNotifications";
-import { MarkAllRead } from "../services/MarkAllRead";
-import { DeleteAllNotifications } from "../services/DeleteAllNotifications";
-import { DeleteOne } from "../services/DeleteOne";
-import { MarkOneRead } from "../services/MarkOneRead";
+import { IGetAllNotifications } from "../domain/services/INotificationServices";
+import { IMarkAllRead } from "../domain/services/INotificationServices";
+import { IDeleteAllNotifications } from "../domain/services/INotificationServices";
+import { IDeleteOne } from "../domain/services/INotificationServices";
+import { IMarkOneRead } from "../domain/services/INotificationServices";
 import { STATUS_CODES } from "../utils/StatusCodes";
 
 @injectable()
 export class NotificationController {
 
-    constructor(
-        @inject(TYPES.GetAllNotifications) private _getAllNotifications:GetAllNotifications,
-        @inject(TYPES.MarkAllRead) private _markAllRead:MarkAllRead,
-        @inject(TYPES.DeleteAllNotifications) private _deleteAllNotifications:DeleteAllNotifications,
-        @inject(TYPES.DeleteOne) private _deleteOne:DeleteOne,
-        @inject(TYPES.MarkOneRead) private _markOneRead:MarkOneRead
+    constructor(    
+        @inject(TYPES.IGetAllNotifications) private _getAllNotifications:IGetAllNotifications,
+        @inject(TYPES.IMarkAllRead) private _markAllRead:IMarkAllRead,
+        @inject(TYPES.IDeleteAllNotifications) private _deleteAllNotifications:IDeleteAllNotifications,
+        @inject(TYPES.IDeleteOne) private _deleteOne:IDeleteOne,
+        @inject(TYPES.IMarkOneRead) private _markOneRead:IMarkOneRead
     ){}
 
     getAllNotifications = async (req:Request, res:Response) => {
         try {
             const user=req.headers['user-email'] as string
             const notifications=await this._getAllNotifications.getAllNotifications(user)
-            res.json({notifications})
+            res.json({notifications}) 
         } catch (error: unknown) {
             if (error instanceof Error) {
+                console.log('error', error)
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
-            }
+            } 
         }
     }
 
@@ -77,8 +78,11 @@ export class NotificationController {
 
     readOne = async (req:Request, res:Response) => {
         try {
+            console.log(1)
             const {id}=req.query
+            console.log(2, id)
             const result=await this._markOneRead.markOneRead(id)
+            console.log(3)
             res.json({result}) 
         } catch (error: unknown) {
             if (error instanceof Error) {
