@@ -103,14 +103,30 @@ export class CompanyController {
         }
     }
 
-    getAllCompanies = async (req:Request, res:Response): Promise<void> => {
+    getApprovedCompanies = async (req:Request, res:Response): Promise<void> => {
         try {
             const {page, limit, query}=req.query;
             const pageNum=parseInt(page as string, 10) || 1;
             const limitNum=parseInt(limit as string, 5) || 5;
-            const companies=await this._getAllCompanies.getAllCompanies(pageNum, limitNum, query)
+            const companies=await this._getAllCompanies.getApprovedCompanies(pageNum, limitNum, query)
             res.json({companies})
         } catch (error:unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getPendingCompanies = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {page, limit, query}=req.query;
+            const pageNum=parseInt(page as string, 10) || 1;
+            const limitNum=parseInt(limit as string, 5) || 5;
+            const companies=await this._getAllCompanies.getPendingCompanies(pageNum, limitNum, query)
+            res.json({companies})
+        } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {

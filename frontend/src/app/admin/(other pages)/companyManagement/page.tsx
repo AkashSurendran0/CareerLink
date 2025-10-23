@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import {LoaderIcon} from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { acceptCompany, changeCompanyStatus, getCompanies } from '@/services/adminService'
+import { acceptCompany, changeCompanyStatus, getApprovedCompanies, getPendingCompanies } from '@/services/adminService'
 import CancellationReasonModal from '@/reusable-components/cancellationReasonModal'
 
 
@@ -23,7 +23,9 @@ function UserManagement() {
     const router=useRouter()
     const [allCompanyTable, setAllCompanyTable]=useState(true)
     const [companies, setCompanies]=useState<Company[]>([])
+    const [pendingCompanies, setPendingCompanies]=useState<Company[]>([])
     const [pageLimit, setPageLimit]=useState(0)
+    const [pendingPageLimit, setPendingPageLimit]=useState(0)
     const [page, setPage]=useState(1)
     const [loadingCompanyId, setLoadingCompanyId]=useState<string | null>()
     const [query, setQuery]=useState('')
@@ -35,8 +37,7 @@ function UserManagement() {
     
     useEffect(()=>{
         const fetchCompanies= async () => {
-            const result=await getCompanies(STARTING_PAGE, LIMIT, query)
-            console.log('companies', result)
+            const result=await getApprovedCompanies(STARTING_PAGE, LIMIT, query)
             if(result.companies.result.length<LIMIT){
                 setPageLimit(1)
             }else{
@@ -48,6 +49,20 @@ function UserManagement() {
 
     }, [])
 
+    const listPendingCompanies = async () => {
+        console.log('1')
+        setAllCompanyTable(false)
+        console.log('2')
+        const result=await getPendingCompanies(STARTING_PAGE, LIMIT, query)
+        console.log('compi', result)
+        if(result.companies.result.length<LIMIT){
+            setPendingPageLimit(1)
+        }else{
+            setPendingPageLimit(result.companies.pageLimit)
+        } 
+        setPendingCompanies(result.companies.result)
+    }
+
     const searchCompanies = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const val=e.target.value
         setQuery(val) 
@@ -56,9 +71,18 @@ function UserManagement() {
             fetchCompany(val)
         }, 1500);  
     }
+
+    const searchPendingCompanies = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val=e.target.value
+        setQuery(val) 
+        if(debouncer.current) clearTimeout(debouncer.current)
+        debouncer.current=setTimeout(() => {
+            fetchPendingCompany(val)
+        }, 1500);
+    }
         
     const fetchCompany = async (v:string) => {
-        const result=await getCompanies(STARTING_PAGE, LIMIT, v)
+        const result=await getApprovedCompanies(STARTING_PAGE, LIMIT, v)
         if(result.companies.result.length<LIMIT){
             setPageLimit(1)
         }else{
@@ -68,9 +92,26 @@ function UserManagement() {
         setCompanies(result.companies.result)
     }
 
+    const fetchPendingCompany = async (v:string) => {
+        const result=await getPendingCompanies(STARTING_PAGE, LIMIT, v)
+        if(result.companies.result.length<LIMIT){
+            setPendingPageLimit(1)
+        }else{
+            setPendingPageLimit(result.companies.pageLimit) 
+        }
+        setPage(1)
+        setPendingCompanies(result.companies.result)
+    }
+
     const getPaginatedCompanies = async (i: number) =>{
-        const result=await getCompanies(i, LIMIT, query)
+        const result=await getApprovedCompanies(i, LIMIT, query)
         setCompanies(result.companies.result)
+        setPage(i)
+    }
+
+    const getPendingPaginatedCompanies = async (i:number) => {
+        const result=await getPendingCompanies(i, LIMIT, query)
+        setPendingCompanies(result.companies.result)
         setPage(i)
     }
 
@@ -135,13 +176,23 @@ function UserManagement() {
             <div className="mb-6">
                 <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
-                <input
-                    type="text"
-                    placeholder="Search companies by name"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={query}
-                    onChange={searchCompanies}
-                />
+                {allCompanyTable? (
+                    <input
+                        type="text"
+                        placeholder="Search companies by name"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        value={query}
+                        onChange={searchCompanies}
+                    />
+                ) : (
+                    <input
+                        type="text"
+                        placeholder="Search companies by name"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        value={query}
+                        onChange={searchPendingCompanies}
+                    />
+                )}
                 </div>
             </div>
 
@@ -158,7 +209,7 @@ function UserManagement() {
                 </button>
                 <button 
                 className={`cursor-pointer rounded-md px-3 py-1.5 ${allCompanyTable? 'border hover:bg-gray-200':'bg-black text-white'}`}
-                onClick={()=>setAllCompanyTable(false)}
+                onClick={listPendingCompanies}
                 >
                 Pending approvals
                 </button>
@@ -192,7 +243,7 @@ function UserManagement() {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                        {companies.filter((company)=>company.approved).map((company) => (
+                        {companies.map((company) => (
                             <tr key={company.id} className="hover:bg-gray-50">
                             <td className="py-4 px-6">
                                 <div className="flex items-center gap-3">
@@ -275,7 +326,7 @@ function UserManagement() {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                        {companies.filter((company)=>!company.approved).filter((company)=>!company.rejected).map((company) => (
+                        {pendingCompanies.map((company) => (
                             <tr key={company.id} className="hover:bg-gray-50">
                             <td className="py-4 px-6">
                                 <div className="flex items-center gap-3">
@@ -309,23 +360,23 @@ function UserManagement() {
                     <div className="flex items-center justify-center gap-2 py-4 border-t border-gray-200">
                     <button className={`px-3 py-1 ${page==1? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
                     disabled={page==1? true:false}
-                    onClick={()=>getPaginatedCompanies(page-1)}
+                    onClick={()=>getPendingPaginatedCompanies(page-1)}
                     >‹</button>
-                    { pageLimit &&  
-                        Array.from({length: pageLimit}, (_, i) => i+1)
+                    { pendingPageLimit &&  
+                        Array.from({length: pendingPageLimit}, (_, i) => i+1)
                         .filter(p=>{
                             console.log(p)
                             if(p==1) return p<=3
-                            if(p==pageLimit) return p>=pageLimit-2
+                            if(p==pendingPageLimit) return p>=pendingPageLimit-2
                             return p>=page-1 && p<=page+1
                         })
                         .map(p=>
-                            <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPaginatedCompanies(p)}>{p}</button>
+                            <button key={p} className={`px-3 py-1 text-gray-600 rounded ${page==p? 'bg-blue-400':'cursor-pointer hover:bg-gray-100'}`} onClick={()=>getPendingPaginatedCompanies(p)}>{p}</button>
                         )
                     }
-                    <button className={`px-3 py-1 ${page==pageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
-                    disabled={page==pageLimit? true:false}
-                    onClick={()=>getPaginatedCompanies(page+1)}
+                    <button className={`px-3 py-1 ${page==pendingPageLimit? 'text-gray-400':'text-gray-600 hover:bg-gray-100 cursor-pointer'} rounded`}
+                    disabled={page==pendingPageLimit? true:false}
+                    onClick={()=>getPendingPaginatedCompanies(page+1)}
                     >›</button>
                     </div>
                 </div>

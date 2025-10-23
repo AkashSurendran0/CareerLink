@@ -14,8 +14,13 @@ export const adminLogin = async (loginDetails: LoginDetails) =>{
     return res.data
 }
 
-export const getCompanies = async (start:number, limit:number, query:string) => {
-    const res=await api.get(`/company/v1/getCompanies?page=${start}&limit=${limit}&query=${query}`)
+export const getApprovedCompanies = async (start:number, limit:number, query:string) => {
+    const res=await api.get(`/company/v1/getApprovedCompanies?page=${start}&limit=${limit}&query=${query}`)
+    return res.data
+}
+
+export const getPendingCompanies = async (start:number, limit:number, query:string) => {
+    const res=await api.get(`/company/v1/getPendingCompanies?page=${start}&limit=${limit}&query=${query}`)
     return res.data
 }
 
