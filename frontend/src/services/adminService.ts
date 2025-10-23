@@ -24,8 +24,13 @@ export const changeCompanyStatus = async (company: ID) => {
     return res.data
 }
 
-export const alterCompanyRegistrationStatus = async (code:number, id:string) => {
-    const res=await api.patch(`/company/v1/alterCompanyRegistrationStatus?code=${code}&id=${id}`)
+export const rejectCompany = async (id:string, reasons:string[]) => {
+    const res=await api.patch(`/company/v1/rejectCompany?&id=${id}`, reasons)
+    return res.data
+}
+
+export const acceptCompany = async (id:string) => {
+    const res=await api.patch(`/company/v1/acceptCompany?&id=${id}`)
     return res.data
 }
 

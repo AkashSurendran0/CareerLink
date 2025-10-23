@@ -277,6 +277,7 @@ export default function CompanyRegistrationPage() {
                         <option>Education</option>
                         <option>Retail</option>
                         <option>Manufacturing</option>
+                        <option>Entertainment</option>
                     </select>
                     {errors.industry && (
                         <p className="text-red-500 text-sm">{errors.industry}</p>

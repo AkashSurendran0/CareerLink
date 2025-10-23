@@ -13,5 +13,6 @@ export interface CompanyDTO {
     suspended:boolean,
     rejected:boolean,
     createdAt:Date,
+    rejectReasons:string[]
 }
     

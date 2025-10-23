@@ -14,7 +14,8 @@ export class CompanyModel extends Model {
     public aboutCompany!:string;
     public approved!:boolean;
     public rejected!:boolean;
-    public suspended!:boolean;
+    public suspended!:boolean; 
+    public rejectReasons!:string[];
 
     public readonly createdAt!:Date
 }
@@ -72,8 +73,12 @@ CompanyModel.init(
         },
         suspended:{
             type:DataTypes.BOOLEAN,
-            defaultValue:false
-        }
+            defaultValue:false 
+        },
+        rejectReasons:{
+            type:DataTypes.ARRAY(DataTypes.STRING),
+            allowNull:true
+        },
     },
     {
         sequelize,

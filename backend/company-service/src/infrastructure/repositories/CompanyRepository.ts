@@ -71,7 +71,8 @@ export class CompanyRepository implements ICompanyRepository {
             companyDetails!.approved,
             companyDetails!.rejected,
             companyDetails!.suspended,
-            companyDetails!.createdAt
+            companyDetails!.createdAt,
+            companyDetails!.rejectReasons   
         )
     }
 
@@ -153,10 +154,13 @@ export class CompanyRepository implements ICompanyRepository {
 
     async approveCompany(id: string): Promise<Company> {
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
-            {approved: true},
+            {
+                approved: true,
+                rejectReasons: ['']
+            },
             {
                 where:{id:id},
-                returning:true
+                returning:true,
             }
         )
         const updatedCompany=updatedCompanies[0]!.get({plain:true});
@@ -178,9 +182,12 @@ export class CompanyRepository implements ICompanyRepository {
         )
     }
 
-    async rejectCompany(id: string): Promise<Company> {
+    async rejectCompany(id: string, reason: string[]): Promise<Company> {
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
-            {rejected: true},
+            {
+                rejected: true,
+                rejectReasons: reason
+            },
             {
                 where:{id:id},
                 returning:true
@@ -207,7 +214,10 @@ export class CompanyRepository implements ICompanyRepository {
 
     async changeRejectedStatus(user: string): Promise<Company> {
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
-            {rejected:false},
+            {
+                rejected:false,
+                rejectReasons:null
+            },
             {
                 where:{registeredBy:user},
                 returning:true
