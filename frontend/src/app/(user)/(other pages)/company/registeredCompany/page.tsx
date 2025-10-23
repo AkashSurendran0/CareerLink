@@ -215,7 +215,7 @@ export default function CompanyProfilePage() {
                             <div className="mt-6 rounded-lg border border-red-200 bg-red-50/60 p-4 text-sm">
                                 <div className="font-medium text-red-700">Reason provided by admin</div>
                                 <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700/90">
-                                {companyDetails.rejectReasons.map((reason)=>(
+                                {companyDetails.rejectReasons?.map((reason)=>(
                                     <li>{reason}</li>
                                 ))}
                                 </ul>

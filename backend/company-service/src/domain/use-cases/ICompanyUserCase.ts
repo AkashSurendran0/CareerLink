@@ -30,7 +30,8 @@ export interface IEditCompany {
 }
 
 export interface IGetAllCompanies {
-    getAllCompanies (page:number, limit:number, query:string | undefined):Promise<{result: {id:string, logo:string, name:string, createdAt:Date, suspended:boolean}[], pageLimit:number}>
+    getApprovedCompanies (page:number, limit:number, query:string | undefined):Promise<{result: {id:string, logo:string, name:string, createdAt:Date, suspended:boolean}[], pageLimit:number}>
+    getPendingCompanies (page:number, limit:number, query:string | undefined):Promise<{result: {id:string, logo:string, name:string, createdAt:Date, suspended:boolean}[], pageLimit:number}>
 }
 
 export interface IGetCompanyDetails {

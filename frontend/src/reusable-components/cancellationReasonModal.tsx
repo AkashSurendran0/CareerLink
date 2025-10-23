@@ -2,8 +2,11 @@
 
 import { rejectCompany } from '@/services/adminService';
 import React, {useState} from 'react'
+import { useRouter, usePathname } from 'next/navigation';
 
 function CancellationReasonModal({id, removeCancelBox}) {
+    const router=useRouter()
+    const pathname=usePathname()
     const [reasons, setReasons] = useState([""])
     const [error, setError]=useState('')
 
@@ -15,6 +18,7 @@ function CancellationReasonModal({id, removeCancelBox}) {
 
     const handleAddReason = () => {
         setReasons([...reasons, ""])
+        console.log(pathname)
     }
 
     const handleRemoveReason = (index: number) => {
@@ -29,7 +33,11 @@ function CancellationReasonModal({id, removeCancelBox}) {
         const finalReasons=reasons.filter((reason)=>reason.trim()!='')
         const result=await rejectCompany(id, finalReasons)
         if(result.result.success){
-            window.location.reload()
+            if(pathname=='/admin/companyManagement'){
+                window.location.reload()
+            }else{
+                router.push('/admin/companyManagement')
+            }
         }
     }
 
