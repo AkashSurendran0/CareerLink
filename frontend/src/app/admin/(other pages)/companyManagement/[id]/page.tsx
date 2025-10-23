@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { alterCompanyRegistrationStatus, checkCompanyDetails } from '@/services/adminService';
+import { acceptCompany, checkCompanyDetails } from '@/services/adminService';
+import CancellationReasonModal from '@/reusable-components/cancellationReasonModal';
 
 type Company = {
     id:string,
@@ -31,6 +32,7 @@ function CompanyDetails({params}: Props) {
     const router=useRouter()
     const {id}=params
     const [companyDetails, setCompanyDetails]=useState<Company>()
+    const [cancel, setCancel]=useState(false)
 
     useEffect(()=>{
         getCompanyInfo()
@@ -41,15 +43,26 @@ function CompanyDetails({params}: Props) {
         setCompanyDetails(result.company)
     }
 
-    const alterStatus = async (code:number) => {
-        const result=await alterCompanyRegistrationStatus(code, id)
+    const alterStatus = async () => {
+        const result=await acceptCompany(id)
         if(result.result.success){
             router.push('/admin/companyManagement')
         }
     }   
 
-    return (
-        <div className='flex-1'>
+    const rejectCompany = () => {
+        setCancel(true)
+    }
+
+    const removeCancelBox = () => {
+        setCancel(false)
+    }
+
+    return ( 
+        <div className='flex-1'> 
+            {cancel && (
+                <CancellationReasonModal id={id} removeCancelBox={removeCancelBox}/>
+            )}
             <div className="bg-white border-b border-gray-200 px-8 py-6">
             <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                 <div>
@@ -83,8 +96,8 @@ function CompanyDetails({params}: Props) {
                     </div>
                     </div>
                     <div className="flex gap-2">
-                    <button className="cursor-pointer hover:bg-blue-700 rounded-md bg-blue-600 text-white px-3 py-1.5 text-sm hover:bg-muted" onClick={()=>alterStatus(1)}>Approve</button>
-                    <button className="cursor-pointer hover:bg-red-700 rounded-md bg-red-600 text-white px-3 py-1.5 text-sm hover:bg-muted" onClick={()=>alterStatus(0)}>Reject</button>
+                    <button className="cursor-pointer hover:bg-blue-700 rounded-md bg-blue-600 text-white px-3 py-1.5 text-sm hover:bg-muted" onClick={alterStatus}>Approve</button>
+                    <button className="cursor-pointer hover:bg-red-700 rounded-md bg-red-600 text-white px-3 py-1.5 text-sm hover:bg-muted" onClick={rejectCompany}>Reject</button>
                     </div>
                 </div>
 

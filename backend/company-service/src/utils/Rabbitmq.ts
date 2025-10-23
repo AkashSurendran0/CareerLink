@@ -24,9 +24,7 @@ class RabbitMqService {
         console.log(1)
         try {
             if(!this.channel) throw new Error('Rabbitmq channel not initialized')
-            console.log(2.5, this.channel)
             await this.channel.assertExchange(exchange, "topic", {durable:true})
-            console.log(2)
             this.channel.publish(
                 exchange, 
                 routingKey,

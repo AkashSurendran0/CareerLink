@@ -156,7 +156,7 @@ export class CompanyRepository implements ICompanyRepository {
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             {
                 approved: true,
-                rejectReasons: ['']
+                rejectReasons: null
             },
             {
                 where:{id:id},
@@ -216,7 +216,7 @@ export class CompanyRepository implements ICompanyRepository {
         const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
             {
                 rejected:false,
-                rejectReasons:null
+                rejectReasons:null 
             },
             {
                 where:{registeredBy:user},
