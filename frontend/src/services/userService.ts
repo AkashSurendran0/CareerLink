@@ -104,6 +104,7 @@ export const deleteCompany = async (id:string) => {
 
 export const getAllNotifications = async () => {
     const res=await api.get('notification/v1/getNotifications')
+    console.log('noti', res.data)
     return res.data
 }
 
@@ -126,3 +127,4 @@ export const markOneRead = async (id:string) => {
     const res=await api.patch(`notification/v1/readOne?id=${id}`)
     return res.data
 }
+

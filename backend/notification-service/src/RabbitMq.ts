@@ -1,6 +1,6 @@
 import amqp, {Channel, ChannelModel, ConsumeMessage} from 'amqplib'
 import { Mailer } from './utils/MailHelper'
-import { AddNotification } from './services/AddNotification'
+import { IAddNotification } from './domain/services/INotificationServices'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
 
@@ -12,7 +12,7 @@ export class RabbitMqService {
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
-        @inject(TYPES.AddNotification) private _addNotification:AddNotification
+        @inject(TYPES.IAddNotification) private _addNotification:IAddNotification
     ){}
 
     public async connect(): Promise<void> {

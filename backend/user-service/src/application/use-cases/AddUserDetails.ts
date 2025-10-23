@@ -11,7 +11,7 @@ type details={
     aboutMe:string,
     experience:string,
     skills:string,
-    education:string,
+    education:string, 
     linkedinLink:string,
     githubLink:string
 }

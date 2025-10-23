@@ -1,15 +1,16 @@
 import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
-import { NotificationRepository } from "../repository/NotificationRepository";
+import { INotificationRepository } from "../domain/repository/INotificationRepository";
+import { IDeleteOne } from "../domain/services/INotificationServices";
 
 @injectable()
-export class DeleteOne {
+export class DeleteOne implements IDeleteOne {
 
     constructor(
-        @inject(TYPES.NotificationRepository) private _notificationRepository:NotificationRepository
+        @inject(TYPES.INotificationRepository) private _notificationRepository:INotificationRepository
     ){}
 
-    async deleteOne (id:string) {
+    async deleteOne (id:string): Promise<{success:boolean}> {
         const result=await this._notificationRepository.deleteOneNotification(id)
         return result
     }
