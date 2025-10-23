@@ -17,6 +17,7 @@ export class CompanyMapper {
             suspended:company.suspended,
             rejected:company.rejected,
             createdAt:company.createdAt,
+            rejectReasons:company.rejectReasons
         }
     }
 }

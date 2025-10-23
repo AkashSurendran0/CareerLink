@@ -19,7 +19,8 @@ type Company = {
     aboutCompany:string,
     approved:boolean,
     rejected:boolean,
-    suspended:boolean
+    suspended:boolean,
+    rejectReasons:string[]
 }
 
 export default function CompanyProfilePage() {
@@ -211,6 +212,14 @@ export default function CompanyProfilePage() {
                                 Your submission didn’t meet our verification criteria. Please make the required
                                 changes, and reapply.
                             </p>
+                            <div className="mt-6 rounded-lg border border-red-200 bg-red-50/60 p-4 text-sm">
+                                <div className="font-medium text-red-700">Reason provided by admin</div>
+                                <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700/90">
+                                {companyDetails.rejectReasons.map((reason)=>(
+                                    <li>{reason}</li>
+                                ))}
+                                </ul>
+                            </div>
 
                             <div className="mt-6 grid gap-3 sm:flex sm:items-center">
                                 <button

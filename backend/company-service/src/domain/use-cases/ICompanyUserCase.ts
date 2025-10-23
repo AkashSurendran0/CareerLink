@@ -42,7 +42,8 @@ export interface ICheckCompanyDetails {
 }
 
 export interface IAlterCompanyRegistrationStatus {
-    alterCompanyRegistrationStatus(code:number, id:string):Promise<{success:boolean} | null>
+    rejectCompany(id:string, reason:string[]):Promise<{success:boolean}>
+    acceptCompany(id:string):Promise<{success:boolean}>
 }
 
 export interface IReapplyCompany {

@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import {LoaderIcon} from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { alterCompanyRegistrationStatus, changeCompanyStatus, getCompanies } from '@/services/adminService'
+import { acceptCompany, changeCompanyStatus, getCompanies } from '@/services/adminService'
+import CancellationReasonModal from '@/reusable-components/cancellationReasonModal'
 
 
 type Company = {
@@ -26,6 +27,8 @@ function UserManagement() {
     const [page, setPage]=useState(1)
     const [loadingCompanyId, setLoadingCompanyId]=useState<string | null>()
     const [query, setQuery]=useState('')
+    const [cancel, setCancel]=useState(false)
+    const [rejectId, setRejectId]=useState('')
     const STARTING_PAGE=1
     const LIMIT=3
     const debouncer=useRef<NodeJS.Timeout | null>(null)
@@ -92,14 +95,28 @@ function UserManagement() {
         router.push(`/admin/companyManagement/${id}`)
     }
 
-    const alterStatus = async (code:number, id:string) => {
-        const result=await alterCompanyRegistrationStatus(code, id)
+    const alterStatus = async (id:string) => {
+        const result=await acceptCompany(id)
         if(result.result.success){
             window.location.reload()
         }
     }
+
+    const rejectCompany = (id:string) => {
+        setRejectId(id)
+        setCancel(true)
+    }
+
+    const removeCancelBox = () => {
+        setRejectId('')
+        setCancel(false)
+    }
+
     return (
         <div className="flex-1">
+            {cancel && (
+                <CancellationReasonModal id={rejectId} removeCancelBox={removeCancelBox}/>
+            )}
             <div className="bg-white border-b border-gray-200 px-8 py-6">
             <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                 <div>
@@ -278,9 +295,9 @@ function UserManagement() {
                                 <div className="flex items-center gap-1 text-sm">
                                 <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>viewCompanyDetails(company.id)}>View</button>
                                 <span className="text-gray-300">|</span>
-                                <button className="text-green-600 hover:text-green-800 cursor-pointer" onClick={()=>alterStatus(1, company.id)}>Approve</button>
+                                <button className="text-green-600 hover:text-green-800 cursor-pointer" onClick={()=>alterStatus(company.id)}>Approve</button>
                                 <span className="text-gray-300">|</span>
-                                <button className="text-red-600 hover:text-red-800 cursor-pointer" onClick={()=>alterStatus(0, company.id)}>Reject</button>
+                                <button className="text-red-600 hover:text-red-800 cursor-pointer" onClick={()=>rejectCompany(company.id)}>Reject</button>
                                 </div>
                             </td>
                             </tr>

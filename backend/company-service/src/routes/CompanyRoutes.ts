@@ -15,7 +15,8 @@ router.post('/editCompany', upload.single("logo"), companyController.editCompany
 router.get('/getCompanies', companyController.getAllCompanies)
 router.patch('/alterCompanyStatus', companyController.changeCompanyStatus)
 router.get('/checkCompanyDetails', companyController.checkCompanyDetails)
-router.patch('/alterCompanyRegistrationStatus', companyController.alterCompanyRegistrationStatus)
+router.patch('/rejectCompany', companyController.rejectCompany)
+router.patch('/acceptCompany', companyController.acceptCompany)
 router.patch('/reapplyCompany', companyController.reapplyCompany)
 router.delete('/deleteCompany', companyController.deleteCompany)
 

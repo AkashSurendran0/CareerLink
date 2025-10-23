@@ -13,6 +13,8 @@ export class Company {
         public approved:boolean,
         public rejected:boolean,
         public suspended:boolean,
-        public createdAt:Date
+        public createdAt:Date,
+        
+        public rejectReasons?:string[],
     ){}
 }

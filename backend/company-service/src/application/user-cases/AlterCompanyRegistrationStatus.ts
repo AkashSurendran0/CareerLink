@@ -12,25 +12,8 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
         @inject(TYPES.ICompanyRepository) private _companyRepository:ICompanyRepository,
     ){}
 
-    async alterCompanyRegistrationStatus(code:number, id:string):Promise<{success:boolean} | null> {
-        if(code==1){
-            const company=await this._companyRepository.approveCompany(id)
-            await elasticClient.update({
-                index:'companies',
-                id:id,
-                doc:{
-                    approved:true
-                }
-            })
-            await rabbitmqService.publishEvent("company.events", "company.approved", {
-                companyId:company.id,
-                companyName:company.name,
-                registeredBy:company.registeredBy,
-                action:'approved'
-            })
-            return {success:true}
-        }else if(code==0){
-            const company=await this._companyRepository.rejectCompany(id)
+    async rejectCompany(id:string, reason:string[]):Promise<{success:boolean}> {
+            const company=await this._companyRepository.rejectCompany(id, reason)
             await elasticClient.update({
                 index:'companies',
                 id:id,
@@ -45,8 +28,24 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
                 action:'rejected'
             })
             return {success:true}
-        }
-        return null
+    }
+
+    async acceptCompany(id:string):Promise<{success:boolean}> {
+        const company=await this._companyRepository.approveCompany(id)
+        await elasticClient.update({
+            index:'companies',
+            id:id,
+            doc:{
+                approved:true
+            }
+        })
+        await rabbitmqService.publishEvent("company.events", "company.approved", {
+            companyId:company.id,
+            companyName:company.name,
+            registeredBy:company.registeredBy,
+            action:'approved'
+        })
+        return {success:true}
     }
 
 }

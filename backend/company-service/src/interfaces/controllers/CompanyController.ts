@@ -147,11 +147,25 @@ export class CompanyController {
         }
     }
 
-    alterCompanyRegistrationStatus = async (req:Request, res:Response): Promise<void> => {
+    rejectCompany = async (req:Request, res:Response): Promise<void> => {
         try {
-            const {code, id}=req.query
-            const num=parseInt(code as string)
-            const result=await this._alterCompanyRegistrationStatus.alterCompanyRegistrationStatus(num, id)
+            const reason=req.body
+            const {id}=req.query
+            const result=await this._alterCompanyRegistrationStatus.rejectCompany(id, reason)
+            res.json({result}) 
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    acceptCompany = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {id}=req.query
+            const result=await this._alterCompanyRegistrationStatus.acceptCompany(id)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
