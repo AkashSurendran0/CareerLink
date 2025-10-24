@@ -1,21 +1,18 @@
 import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify, SignJWT } from "jose";
 const secret=new TextEncoder().encode(process.env.JWT_SECRET)
-const adminSecret=new TextEncoder().encode(process.env.JWT_ADMIN_SECRET)
 const MAX_AGE_1_HOUR = Number(process.env.NEXT_PUBLIC_MAX_AGE_1_HOUR);
 
 export async function middleware(req: NextRequest, res:NextResponse) {
   const token = req.cookies.get("token")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value
-  const adminToken = req.cookies.get("adminToken")?.value;
-  const adminRefreshToken = req.cookies.get("adminRefreshToken")?.value;
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/admin")) {
     
-    if(!adminToken && adminRefreshToken){
+    if(!token && refreshToken){
       try {
-        const {payload}=await jwtVerify(adminRefreshToken, adminSecret)
+        const {payload}=await jwtVerify(refreshToken, secret)
         const newToken=await new SignJWT({
           id:payload.id,
           email:payload.email
@@ -42,11 +39,11 @@ export async function middleware(req: NextRequest, res:NextResponse) {
       }
     }
 
-    if (!adminToken && !pathname.startsWith("/admin/login")) {
+    if (!token && !pathname.startsWith("/admin/login")) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
 
-    if (adminToken && pathname.startsWith("/admin/login")) {
+    if (token && pathname.startsWith("/admin/login")) {
       return NextResponse.redirect(new URL("/admin/userManagement", req.url));
     }
 
