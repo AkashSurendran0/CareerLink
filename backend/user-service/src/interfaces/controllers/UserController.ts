@@ -140,10 +140,14 @@ export class UserController {
 
     getPageUsers = async (req:Request, res:Response): Promise<void> => {
         try {
+            console.log(1)
             const {page, limit, query}=req.query;
+            console.log(2)
             const pageNum=parseInt(page as string, 10) || 1;
             const limitNum=parseInt(limit as string, 5) || 5;
+            console.log(3)
             const users=await this._getUsers.getUsers(pageNum, limitNum, query);
+            console.log(4)
             res.json({users});
         } catch (error:unknown) {
             if (error instanceof Error) {

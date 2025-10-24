@@ -19,13 +19,13 @@ export class AdminController {
             const result=await this._adminLogin.findAdmin(email, password)
             console.log(result)
             if(result.success){
-                res.cookie("adminToken", result.accessToken, {
+                res.cookie("token", result.accessToken, {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 })
-                res.cookie("adminRefreshToken", result.refreshToken, {
+                res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
