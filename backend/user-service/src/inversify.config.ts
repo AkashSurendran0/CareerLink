@@ -36,7 +36,7 @@ container.bind(TYPES.IGetAllUsers).to(GetAllUsers).inSingletonScope();
 container.bind(TYPES.IGoogleLogin).to(GoogleLogin).inSingletonScope();
 container.bind(TYPES.ISendOTP).to(SendOTP).inSingletonScope();
 container.bind(TYPES.ISendResetOtp).to(SendResetOTP).inSingletonScope();
-container.bind(TYPES.Mailer).to(Mailer).inSingletonScope();
+container.bind(TYPES.Mailer).to(Mailer).inSingletonScope(); 
 container.bind(TYPES.IVerifyOTP).to(VerifyOTP).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);

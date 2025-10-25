@@ -128,3 +128,7 @@ export const markOneRead = async (id:string) => {
     return res.data
 }
 
+export const addJob = async (jobDetails) => {
+    const res=await api.post('job/v1/addJob', jobDetails)
+    return res.data
+}
