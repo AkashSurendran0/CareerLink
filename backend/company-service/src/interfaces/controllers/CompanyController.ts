@@ -68,8 +68,11 @@ export class CompanyController {
 
     getCompanyInfo = async (req:Request, res:Response):Promise<void> => {
         try {
+            console.log('reached')
             const user=req.headers["user-email"] as string
+            console.log(user)
             const result=await this._getCompanyDetails.getCompanyDetails(user)
+            console.log('result', result)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

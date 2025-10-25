@@ -12,7 +12,8 @@ export class GatewayService {
             '/user':`${process.env.USER_SERVICE_ROUTE}`,
             '/admin':`${process.env.ADMIN_SERVICE_ROUTE}`,
             '/company':`${process.env.COMPANY_SERVICE_ROUTE}`,
-            '/notification':`${process.env.NOTIFICATION_SERVICE_ROUTE}`
+            '/notification':`${process.env.NOTIFICATION_SERVICE_ROUTE}`,
+            '/job':`${process.env.JOB_SERVICE_ROUTE}`,
         }
     }
 
