@@ -1,26 +1,30 @@
 "use client"
 
-import { addJob } from "@/services/userService"
+import { editJob, getJobDetails } from "@/services/userService"
 import Image from "next/image"
 import type React from "react"
 import { useLoading } from "@/app/(user)/template"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+
+type Form = {
+    _id:string,
+    company:string,
+    jobTitle: string,
+    department: string,
+    jobType: string,
+    location: string,
+    jobDescription: string,
+    experienceLevel: string,
+    deadline: Date,
+}
 
 export default function CreateJobPage() {
     const router=useRouter()
     const setLoading=useLoading()
-    const [formData, setFormData] = useState({
-        jobTitle: "",
-        department: "",
-        jobType: "",
-        location: "",
-        jobDescription: "",
-        experienceLevel: "",
-        applicationDeadline: undefined,
-    })
+    const [formData, setFormData] = useState<Form>()
 
-    const [errors, setErrors]=useState<Partial<Record<"benefits" | "responsibilities" | "qualifications" | "jobTitle" | "department" | "jobType" | "location" | "jobDescription" | "experienceLevel" | "applicationDeadline", string>>>({})
+    const [errors, setErrors]=useState<Partial<Record<"benefits" | "responsibilities" | "qualifications" | "jobTitle" | "department" | "jobType" | "location" | "jobDescription" | "experienceLevel" | "deadline", string>>>({})
     
     const clearErrors = () => {
         setErrors({
@@ -33,13 +37,27 @@ export default function CreateJobPage() {
             location:'',
             jobDescription:'',
             experienceLevel:'',
-            applicationDeadline:''
+            deadline:''
         })
     }
 
     const [qualifications, setQualifications] = useState([""])
     const [responsibilities, setResponsibilities] = useState([""])
     const [benefits, setBenefits] = useState([""])
+
+    useEffect(()=>{
+        const getDetails = async () => {
+            const id=localStorage.getItem('editId')
+            const details=await getJobDetails(id!)
+            const formattedDeadline = new Date(details.details.deadline).toISOString().split('T')[0];
+            setFormData({...details.details, deadline:formattedDeadline})
+            setQualifications([...details.details.qualifications])
+            setResponsibilities([...details.details.responsibilities])
+            setBenefits([...details.details.benefits])
+        }
+
+        getDetails()
+    }, [])
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -64,47 +82,47 @@ export default function CreateJobPage() {
         e.preventDefault()
         clearErrors()
         
-        if(!formData.jobTitle){
+        if(!formData!.jobTitle){
             setErrors({jobTitle:'Please enter a job title'})
             return
         }
 
-        if(formData.jobTitle.length<3){
+        if(formData!.jobTitle.length<3){
             setErrors({jobTitle:'Please enter a valid title'})
             return
         }
 
-        if(!formData.department){
+        if(!formData!.department){
             setErrors({department:'Please enter a department'})
             return
         }
 
-        if(formData.department.length<3){
+        if(formData!.department.length<3){
             setErrors({department:'Please enter a valid department'})
             return
         }
 
-        if(!formData.jobType){
+        if(!formData!.jobType){
             setErrors({jobType:'Please select a job type'})
             return
         }
 
-        if(!formData.location){
+        if(!formData!.location){
             setErrors({location:'Please enter a location'})
             return
         }
 
-        if(formData.location.length<3){
+        if(formData!.location.length<3){
             setErrors({location:'Enter a valid location'})
             return
         }
 
-        if(!formData.jobDescription){
+        if(!formData!.jobDescription){
             setErrors({jobDescription:'Please enter a job description'})
             return
         }
 
-        if(formData.jobDescription.trim().length<50){
+        if(formData!.jobDescription.trim().length<50){
             setErrors({jobDescription:'Description must be of 50 words'})
             return
         }
@@ -119,18 +137,18 @@ export default function CreateJobPage() {
             return
         }
 
-        if(!formData.experienceLevel){
+        if(!formData!.experienceLevel){
             setErrors({experienceLevel:'Please select an experience level'})
             return
         }
 
-        if(!formData.applicationDeadline){
-            setErrors({applicationDeadline:'Please select a deadline'})
+        if(!formData!.deadline){
+            setErrors({deadline:'Please select a deadline'})
             return
         }
 
-        if(new Date(formData.applicationDeadline) <= new Date(Date.now())){
-            setErrors({applicationDeadline:'Please enter a valid deadline'})
+        if(new Date(formData!.deadline) <= new Date(Date.now())){
+            setErrors({deadline:'Please enter a valid deadline'})
             return
         }
 
@@ -147,9 +165,10 @@ export default function CreateJobPage() {
             finalBenefits
         }
 
-        const result=await addJob(jobDetails)
+        const result=await editJob(jobDetails)
         console.log(result)
         if(result.result.success){
+            localStorage.removeItem('editId')
             router.push('/company/registeredCompany/jobsPosted')
         }
     }
@@ -159,7 +178,7 @@ export default function CreateJobPage() {
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-auto">
             <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Create a new job</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit job description</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Basic Information Section */}
@@ -186,7 +205,7 @@ export default function CreateJobPage() {
                         <input
                         type="text"
                         name="jobTitle"
-                        value={formData.jobTitle}
+                        value={formData && formData.jobTitle}
                         onChange={handleInputChange}
                         placeholder="e.g., Software Engineer"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -201,7 +220,7 @@ export default function CreateJobPage() {
                         <input
                         type="text"
                         name="department"
-                        value={formData.department}
+                        value={formData && formData.department}
                         onChange={handleInputChange}
                         placeholder="e.g., Engineering"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -215,7 +234,7 @@ export default function CreateJobPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
                         <select
                         name="jobType"
-                        value={formData.jobType}
+                        value={formData && formData.jobType}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
@@ -235,7 +254,7 @@ export default function CreateJobPage() {
                         <input
                         type="text"
                         name="location"
-                        value={formData.location}
+                        value={formData && formData.location}
                         onChange={handleInputChange}
                         placeholder="e.g., Remote, New York"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -271,7 +290,7 @@ export default function CreateJobPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
                     <textarea
                         name="jobDescription"
-                        value={formData.jobDescription}
+                        value={formData && formData.jobDescription}
                         onChange={handleInputChange}
                         placeholder="Enter job description..."
                         rows={6}
@@ -407,7 +426,7 @@ export default function CreateJobPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
                         <select
                         name="experienceLevel"
-                        value={formData.experienceLevel}
+                        value={formData && formData.experienceLevel}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
@@ -447,13 +466,13 @@ export default function CreateJobPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Application Deadline</label>
                     <input
                         type="date"
-                        name="applicationDeadline"
-                        value={formData.applicationDeadline}
+                        name="deadline"
+                        value={formData && formData.deadline}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    {errors.applicationDeadline && (
-                        <p className="text-red-500 text-sm">{errors.applicationDeadline}</p>
+                    {errors.deadline && (
+                        <p className="text-red-500 text-sm">{errors.deadline}</p>
                     )}
                     </div>
                 </div>
@@ -470,7 +489,7 @@ export default function CreateJobPage() {
                     type="submit"
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                     >
-                    Post Job
+                    Save Changes
                     </button>
                 </div>
                 </form>

@@ -1,62 +1,39 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
+import { getAllCompanyJob } from "@/services/userService"
+
+type Job = {
+    _id:string,
+    jobTitle:string,
+    open:boolean,
+    createdAt:Date,
+    applicants:number | null,
+    jobType:string
+}
 
 export default function CompanyJobsPage() {
     const setLoading=useLoading()
     const router=useRouter()
+    const [jobs, setJobs]=useState<Job[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 3
 
-    const jobs = [
-        {
-        id: 1,
-        title: "Senior Software Engineer",
-        status: "Open",
-        postedDate: "2023-08-15",
-        applicants: 50,
-        type: "Full-time",
-        },
-        {
-        id: 2,
-        title: "Product Manager",
-        status: "Open",
-        postedDate: "2023-09-20",
-        applicants: 35,
-        type: "Full-time",
-        },
-        {
-        id: 3,
-        title: "UX/UI Designer",
-        status: "Closed",
-        postedDate: "2023-07-25",
-        applicants: 75,
-        type: "Full-time",
-        },
-        {
-        id: 4,
-        title: "Data Analyst",
-        status: "Open",
-        postedDate: "2023-09-01",
-        applicants: 20,
-        type: "Part-time",
-        },
-        {
-        id: 5,
-        title: "Marketing Specialist",
-        status: "Closed",
-        postedDate: "2023-06-10",
-        applicants: 60,
-        type: "Full-time",
-        },
-    ]
+    useEffect(()=>{
+        const fetchJobs=async ()=>{
+            const result=await getAllCompanyJob()
+            setJobs(result.result)
+        }
+
+        fetchJobs()
+    }, [])
 
     const filteredJobs = jobs.filter((job) => {
-        const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesSearch = job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesStatus = statusFilter === "all" || job.status.toLowerCase() === statusFilter.toLowerCase()
         return matchesSearch && matchesStatus
     })
@@ -78,6 +55,11 @@ export default function CompanyJobsPage() {
     const goToPostNewJobPage = () => {
         setLoading(true)
         router.push('/company/postNewJob')
+    }
+
+    const goToEditPage = (id:string) => {
+        localStorage.setItem('editId', id)
+        router.push('/company/editJobPost')
     }
 
     return (
@@ -156,29 +138,29 @@ export default function CompanyJobsPage() {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 ">
-                    {paginatedJobs.map((job) => (
-                    <tr key={job.id} className="hover:bg-gray-50 bg-white">
+                    {jobs && jobs.map((job) => (
+                    <tr key={job._id} className="hover:bg-gray-50 bg-white">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {job.title}
+                        {job.jobTitle}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            job.status === "Open" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                            job.open? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                             }`}
                         >
-                            {job.status}
+                            {job.open? 'Open' : 'Closed'}
                         </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.postedDate}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.applicants}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.type}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{new Date(job.createdAt).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.applicants?? 0}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.jobType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">
-                            <button className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                            <button className="text-blue-600 hover:text-blue-800 font-medium" onClick={()=>goToEditPage(job._id)}>Edit</button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 font-medium">
-                            {job.status === "Open" ? "Close" : "Delete"}
+                            {job.open? "Close" : "Delete"}
                             </button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 font-medium">View</button>
@@ -191,38 +173,38 @@ export default function CompanyJobsPage() {
             </div>
             {/* Jobs Cards - Mobile */}
             <div className="md:hidden space-y-4">
-                {paginatedJobs.map((job) => (
-                <div key={job.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                `{jobs && jobs.map((job) => (
+                <div key={job._id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                     <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-bold text-gray-900">{job.title}</h3>
+                    <h3 className="font-bold text-gray-900">{job.jobTitle}</h3>
                     <span
                         className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${
-                        job.status === "Open" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                        job.open? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                         }`}
                     >
-                        {job.status}
+                        {job.open? 'Open' : 'Closed'}
                     </span>
                     </div>
                     <div className="space-y-2 text-sm text-gray-600 mb-4">
                     <p>
-                        <span className="font-medium">Posted:</span> {job.postedDate}
+                        <span className="font-medium">Posted:</span> {new Date(job.createdAt).toLocaleDateString()}
                     </p>
                     <p>
-                        <span className="font-medium">Applicants:</span> {job.applicants}
+                        <span className="font-medium">Applicants:</span> {job.applicants?? 0}
                     </p>
                     <p>
-                        <span className="font-medium">Type:</span> {job.type}
+                        <span className="font-medium">Type:</span> {job.jobType}
                     </p>
                     </div>
                     <div className="flex gap-2 flex-wrap">
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</button>
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        {job.status === "Open" ? "Close" : "Delete"}
+                        {job.open? "Close" : "Delete"}
                     </button>
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">View</button>
                     </div>
                 </div>
-                ))}
+                ))}`
             </div>
             {filteredJobs.length > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white rounded-lg shadow-sm p-4">

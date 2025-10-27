@@ -1,7 +1,8 @@
 export class Job {
     constructor(
-        public id:string,
+        public _id:string,
         public company:string,
+        public open:boolean,
         public jobTitle:string,
         public department:string,
         public jobType:string,
@@ -11,8 +12,7 @@ export class Job {
         public responsibilities:string[],
         public benefits:string[],
         public experienceLevel:string,
-        public education:string,
-        public deadLine:Date,
+        public deadline:Date,
         public createdAt:Date
     ){}
 }
