@@ -2,6 +2,7 @@ import mongoose, {Document, Schema, Model} from "mongoose";
 
 export interface IJobDetails extends Document {
     company:string,
+    open:boolean,
     jobTitle:string,
     department:string,
     jobType:string,
@@ -11,7 +12,6 @@ export interface IJobDetails extends Document {
     responsibilities:string[],
     benefits:string[],
     experienceLevel:string,
-    education:string,
     deadline:Date
 }
 
@@ -20,6 +20,10 @@ const jobSchema: Schema<IJobDetails> = new Schema (
         company:{
             type:String,
             required:true
+        },
+        open:{
+            type:Boolean,
+            requried:true
         },
         jobTitle:{
             type:String,

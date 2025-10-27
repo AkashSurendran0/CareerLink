@@ -1,4 +1,4 @@
-import { Job } from "../enitity/Job"
+import { JobDTO } from "../../dto/JobDTO"
 
 type JobDetails = {
     jobTitle:string,
@@ -15,4 +15,8 @@ type JobDetails = {
 
 export interface IAddJob {
     addJob(jobDetails:JobDetails, id:string): Promise<{success:boolean}>
+}
+
+export interface IGetAllJobs {
+    getAllJobs(id:string): Promise<JobDTO[]>
 }

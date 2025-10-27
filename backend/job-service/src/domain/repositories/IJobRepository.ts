@@ -1,3 +1,5 @@
+import { Job } from "../enitity/Job"
+
 type JobDetails = {
     jobTitle:string,
     department:string,
@@ -14,5 +16,6 @@ type JobDetails = {
 export interface IJobRepository {
 
     addJob(jobDetails: JobDetails, id:string):Promise<{success:boolean}>
+    getAllJobs(id:string): Promise<Job[]>
 
 }
