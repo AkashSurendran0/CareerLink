@@ -15,7 +15,7 @@ export class JobMapper {
             responsibilities:job.responsibilities,
             benefits:job.benefits,
             experienceLevel:job.experienceLevel,
-            deadline:job.deadLine,
+            deadline:job.deadline,
             createdAt:job.createdAt
         }
     }

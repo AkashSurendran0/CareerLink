@@ -12,7 +12,7 @@ export class Job {
         public responsibilities:string[],
         public benefits:string[],
         public experienceLevel:string,
-        public deadLine:Date,
+        public deadline:Date,
         public createdAt:Date
     ){}
 }

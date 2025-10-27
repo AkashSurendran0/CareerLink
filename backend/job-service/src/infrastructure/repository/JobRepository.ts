@@ -51,10 +51,40 @@ export class JobRepository implements IJobRepository {
                 job.responsibilities,
                 job.benefits,
                 job.experienceLevel,
-                job.deadLine,
+                job.deadline,
                 job.createdAt
             )
         )
+    }
+
+    async findDetails(id: string): Promise<Job> {
+        const job=await JobModel.findOne({_id:id})
+        return new Job(
+            job!._id,
+            job!.company,
+            job!.open,
+            job!.jobTitle,
+            job!.department,
+            job!.jobType,
+            job!.location,
+            job!.jobDescription,
+            job!.qualifications,
+            job!.responsibilities,
+            job!.benefits,
+            job!.experienceLevel,
+            job!.deadline,
+            job!.createdAt
+        )
+    }
+
+    async editJob(jobDetails: any): Promise<{ success: boolean; }> {
+        await JobModel.updateOne(
+            {_id:jobDetails._id},
+            {
+                $set:jobDetails
+            }
+        )
+        return {success:true}
     }
 
 }

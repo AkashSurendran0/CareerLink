@@ -20,3 +20,11 @@ export interface IAddJob {
 export interface IGetAllJobs {
     getAllJobs(id:string): Promise<JobDTO[]>
 }
+
+export interface IGetJobDetails {
+    getDetails(id:string): Promise<JobDTO>
+}
+
+export interface IEditJob {
+    editJob(jobDetails): Promise<{success:boolean}>
+}

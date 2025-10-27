@@ -17,5 +17,7 @@ export interface IJobRepository {
 
     addJob(jobDetails: JobDetails, id:string):Promise<{success:boolean}>
     getAllJobs(id:string): Promise<Job[]>
+    findDetails(id:string): Promise<Job>
+    editJob(jobDetails): Promise<{success:boolean}>
 
 }

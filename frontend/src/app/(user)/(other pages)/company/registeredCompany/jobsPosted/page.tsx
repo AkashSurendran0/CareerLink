@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
-import axios from "axios"
 import { getAllCompanyJob } from "@/services/userService"
 
 type Job = {
@@ -23,49 +22,6 @@ export default function CompanyJobsPage() {
     const [statusFilter, setStatusFilter] = useState("all")
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 3
-
-    // const jobs = [
-    //     {
-    //     id: 1,
-    //     title: "Senior Software Engineer",
-    //     status: "Open",
-    //     postedDate: "2023-08-15",
-    //     applicants: 50,
-    //     type: "Full-time",
-    //     },
-    //     {
-    //     id: 2,
-    //     title: "Product Manager",
-    //     status: "Open",
-    //     postedDate: "2023-09-20",
-    //     applicants: 35,
-    //     type: "Full-time",
-    //     },
-    //     {
-    //     id: 3,
-    //     title: "UX/UI Designer",
-    //     status: "Closed",
-    //     postedDate: "2023-07-25",
-    //     applicants: 75,
-    //     type: "Full-time",
-    //     },
-    //     {
-    //     id: 4,
-    //     title: "Data Analyst",
-    //     status: "Open",
-    //     postedDate: "2023-09-01",
-    //     applicants: 20,
-    //     type: "Part-time",
-    //     },
-    //     {
-    //     id: 5,
-    //     title: "Marketing Specialist",
-    //     status: "Closed",
-    //     postedDate: "2023-06-10",
-    //     applicants: 60,
-    //     type: "Full-time",
-    //     },
-    // ]
 
     useEffect(()=>{
         const fetchJobs=async ()=>{
@@ -99,6 +55,11 @@ export default function CompanyJobsPage() {
     const goToPostNewJobPage = () => {
         setLoading(true)
         router.push('/company/postNewJob')
+    }
+
+    const goToEditPage = (id:string) => {
+        localStorage.setItem('editId', id)
+        router.push('/company/editJobPost')
     }
 
     return (
@@ -196,7 +157,7 @@ export default function CompanyJobsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.jobType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">
-                            <button className="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                            <button className="text-blue-600 hover:text-blue-800 font-medium" onClick={()=>goToEditPage(job._id)}>Edit</button>
                             <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 font-medium">
                             {job.open? "Close" : "Delete"}

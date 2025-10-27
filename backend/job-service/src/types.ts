@@ -2,5 +2,7 @@ export const TYPES = {
     JobController:'JobController',
     IAddJob:'IAddJob',
     IJobRepository:'IJobRepository',
-    IGetAllJobs:'IGetAllJobs'
+    IGetAllJobs:'IGetAllJobs',
+    IGetJobDetails:'IGetJobDetails',
+    IEditJob:'IEditJob'
 }

@@ -137,3 +137,13 @@ export const getAllCompanyJob = async () => {
     const res=await api.get('job/v1/getAllJobs')
     return res.data
 }
+
+export const getJobDetails = async (id:string) => {
+    const res=await api.get(`job/v1/getJobDetails?id=${id}`)
+    return res.data
+}
+
+export const editJob = async (jobDetails) => {
+    const res=await api.patch('job/v1/editJob', jobDetails)
+    return res.data
+}
