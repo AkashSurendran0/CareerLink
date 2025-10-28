@@ -67,11 +67,16 @@ export default function CompanyJobsPage() {
     const closeJobApplication = async (id:string) => {
         setStatusLoading(true)
         const result=await closeJob(id)
-        console.log('result', result)
         if(result.result.success){
             setJobs(jobs.map((job)=> job._id==id? {...job, open:false} : job ))
             setStatusLoading(false)
         }
+    }
+
+    const goToJobDetailsPage = (id:string) => {
+        setLoading(true)
+        localStorage.setItem('jobId', id)
+        router.push('/company/jobApplication')
     }
 
     return (
@@ -175,7 +180,7 @@ export default function CompanyJobsPage() {
                                 {statusLoading? <LoaderIcon className="animate-spin text-blue-500"/> : job.open? "Close" : "Delete"}
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">View</button>
+                            <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer" onClick={()=>goToJobDetailsPage(job._id)}>View</button>
                         </div>
                         </td>
                     </tr>
@@ -210,8 +215,8 @@ export default function CompanyJobsPage() {
                     </div>
                     <div className="flex gap-2 flex-wrap">
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={()=>goToEditPage(job._id)}>Edit</button>
-                    <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        {job.open? "Close" : "Delete"}
+                    <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={()=>closeJobApplication(job._id)}>
+                        {statusLoading? <LoaderIcon className="animate-spin text-blue-500"/> : job.open? "Close" : "Delete"}
                     </button>
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">View</button>
                     </div>
