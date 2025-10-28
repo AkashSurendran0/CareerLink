@@ -6,6 +6,7 @@ import { JobRepository } from "./infrastructure/repository/JobRepository";
 import { GetAllJobs } from "./application/use-case/GetAllJobs";
 import { GetJobDetails } from "./application/use-case/GetJobDetails";
 import { EditJob } from "./application/use-case/EditJob";
+import { CloseJobApplication } from "./application/use-case/CloseJobApplication";
 
 const container=new Container()
 
@@ -15,6 +16,7 @@ container.bind(TYPES.IAddJob).to(AddJob).inSingletonScope()
 container.bind(TYPES.IGetAllJobs).to(GetAllJobs).inSingletonScope()
 container.bind(TYPES.IGetJobDetails).to(GetJobDetails).inSingletonScope()
 container.bind(TYPES.IEditJob).to(EditJob).inSingletonScope()
+container.bind(TYPES.ICloseJobApplication).to(CloseJobApplication).inSingletonScope()
 
 container.bind<JobController>(TYPES.JobController).to(JobController)
 

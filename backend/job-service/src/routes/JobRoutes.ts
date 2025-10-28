@@ -10,5 +10,6 @@ router.post('/addJob', jobController.addJob)
 router.get('/getAllJobs', jobController.getAllJobs)
 router.get('/getJobDetails', jobController.getJobDetails)
 router.patch('/editJob', jobController.editJob)
+router.patch('/closeJob', jobController.closeJobApplication)
 
 export default router

@@ -87,4 +87,14 @@ export class JobRepository implements IJobRepository {
         return {success:true}
     }
 
+    async closeJob(id: string): Promise<{ success: boolean; }> {
+        await JobModel.updateOne(
+            {_id: id},
+            {
+                $set: {open:false}
+            }
+        )
+        return {success:true}
+    }
+
 }

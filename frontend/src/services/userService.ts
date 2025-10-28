@@ -147,3 +147,8 @@ export const editJob = async (jobDetails) => {
     const res=await api.patch('job/v1/editJob', jobDetails)
     return res.data
 }
+
+export const closeJob = async (id:string) => {
+    const res=await api.patch(`job/v1/closeJob?id=${id}`)
+    return res.data
+}
