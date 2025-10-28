@@ -20,5 +20,6 @@ export interface IJobRepository {
     findDetails(id:string): Promise<Job>
     editJob(jobDetails): Promise<{success:boolean}>
     closeJob(id:string): Promise<{success:boolean}>
+    getAvailableJobs():Promise<Job[]>
 
 }

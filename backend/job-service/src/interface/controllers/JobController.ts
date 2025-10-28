@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, ICloseJobApplication, IEditJob, IGetJobDetails } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { IGetAllJobs } from "../../domain/use-cases/IJobUseCase"
 
@@ -14,7 +14,8 @@ export class JobController {
         @inject(TYPES.IGetAllJobs) private _getAllJobs:IGetAllJobs,
         @inject(TYPES.IGetJobDetails) private _getJobDetails:IGetJobDetails,
         @inject(TYPES.IEditJob) private _editJob:IEditJob,
-        @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication
+        @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication,
+        @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -93,6 +94,28 @@ export class JobController {
             const companyId=String(id)
             const result=await this._closeJobApplication.closeJob(companyId)
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getAvailableJobs = async (req:Request, res:Response) => {
+        try {
+            const jobs=await this._getAvailableJobs.getAvailableJobs()
+            const filledJobs=await Promise.all(
+                jobs.map(async job=>{
+                    const result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job.company}`)
+                    return {
+                        ...job,
+                        company:result.data.company
+                    }
+                })
+            )
+            res.json({jobs:filledJobs})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

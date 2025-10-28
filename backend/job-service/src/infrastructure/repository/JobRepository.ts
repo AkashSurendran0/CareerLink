@@ -97,4 +97,26 @@ export class JobRepository implements IJobRepository {
         return {success:true}
     }
 
+    async getAvailableJobs(): Promise<Job[]> {
+        const jobs=await JobModel.find()
+        return jobs.map(job=>
+            new Job (
+                job._id,
+                job.company,
+                job.open,
+                job.jobTitle,
+                job.department,
+                job.jobType,
+                job.location,
+                job.jobDescription,
+                job.qualifications,
+                job.responsibilities,
+                job.benefits,
+                job.experienceLevel,
+                job.deadline,
+                job.createdAt
+            )
+        )
+    }
+
 }

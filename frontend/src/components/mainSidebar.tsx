@@ -34,7 +34,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const sidebarItems = [
     { icon: "🏠", label: "Feeds", value:"/feed" },
     { icon: "👥", label: "Meet People", value:"" },
-    { icon: "💼", label: "Hiring", value:"" },
+    { icon: "💼", label: "Hiring", value:"/hiring" },
     { icon: "💬", label: "Chats", value:"" },
     { icon: "👤", label: "Your Profile", value:"/profile/user" },
     { icon: "🏢", label: `${tab.label}`, value:`${tab.value}` },

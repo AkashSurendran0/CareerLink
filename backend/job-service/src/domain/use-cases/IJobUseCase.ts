@@ -32,3 +32,7 @@ export interface IEditJob {
 export interface ICloseJobApplication {
     closeJob(id:string): Promise<{success:boolean}>
 }
+
+export interface IGetAvailableJobs {
+    getAvailableJobs(): Promise<JobDTO[]>
+}
