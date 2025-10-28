@@ -152,3 +152,8 @@ export const closeJob = async (id:string) => {
     const res=await api.patch(`job/v1/closeJob?id=${id}`)
     return res.data
 }
+
+export const getAllJobs = async () => {
+    const res=await api.get('job/v1/getAvailableJobs')
+    return res.data
+}
