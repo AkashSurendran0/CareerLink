@@ -26,5 +26,9 @@ export interface IGetJobDetails {
 }
 
 export interface IEditJob {
-    editJob(jobDetails): Promise<{success:boolean}>
+    editJob(jobDetails: any): Promise<{success:boolean}>
+}
+
+export interface ICloseJobApplication {
+    closeJob(id:string): Promise<{success:boolean}>
 }

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
-import { getAllCompanyJob } from "@/services/userService"
+import { closeJob, getAllCompanyJob } from "@/services/userService"
+import {LoaderIcon} from 'lucide-react'
 
 type Job = {
     _id:string,
@@ -17,6 +18,7 @@ type Job = {
 export default function CompanyJobsPage() {
     const setLoading=useLoading()
     const router=useRouter()
+    const [statusLoading, setStatusLoading]=useState(false)
     const [jobs, setJobs]=useState<Job[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -60,6 +62,16 @@ export default function CompanyJobsPage() {
     const goToEditPage = (id:string) => {
         localStorage.setItem('editId', id)
         router.push('/company/editJobPost')
+    }
+
+    const closeJobApplication = async (id:string) => {
+        setStatusLoading(true)
+        const result=await closeJob(id)
+        console.log('result', result)
+        if(result.result.success){
+            setJobs(jobs.map((job)=> job._id==id? {...job, open:false} : job ))
+            setStatusLoading(false)
+        }
     }
 
     return (
@@ -157,13 +169,13 @@ export default function CompanyJobsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.jobType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">
-                            <button className="text-blue-600 hover:text-blue-800 font-medium" onClick={()=>goToEditPage(job._id)}>Edit</button>
+                            <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer" onClick={()=>goToEditPage(job._id)}>Edit</button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 font-medium">
-                            {job.open? "Close" : "Delete"}
+                            <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer" onClick={()=>closeJobApplication(job._id)}>
+                                {statusLoading? <LoaderIcon className="animate-spin text-blue-500"/> : job.open? "Close" : "Delete"}
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 font-medium">View</button>
+                            <button className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">View</button>
                         </div>
                         </td>
                     </tr>
@@ -197,7 +209,7 @@ export default function CompanyJobsPage() {
                     </p>
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                    <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</button>
+                    <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={()=>goToEditPage(job._id)}>Edit</button>
                     <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
                         {job.open? "Close" : "Delete"}
                     </button>

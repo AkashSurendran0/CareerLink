@@ -4,5 +4,6 @@ export const TYPES = {
     IJobRepository:'IJobRepository',
     IGetAllJobs:'IGetAllJobs',
     IGetJobDetails:'IGetJobDetails',
-    IEditJob:'IEditJob'
+    IEditJob:'IEditJob',
+    ICloseJobApplication:'ICloseJobApplication'
 }

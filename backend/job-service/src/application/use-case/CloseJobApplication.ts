@@ -1,17 +1,18 @@
 import { inject, injectable } from "inversify";
-import { IEditJob } from "../../domain/use-cases/IJobUseCase";
+import { ICloseJobApplication } from "../../domain/use-cases/IJobUseCase";
 import { TYPES } from "../../types";
 import { IJobRepository } from "../../domain/repositories/IJobRepository";
 
 @injectable()
-export class EditJob implements IEditJob {
+export class CloseJobApplication implements ICloseJobApplication {
 
     constructor(
         @inject(TYPES.IJobRepository) private _jobRepository:IJobRepository
     ){}
 
-    async editJob(jobDetails: any): Promise<{ success: boolean; }> {
-        const result=await this._jobRepository.editJob(jobDetails)
+    async closeJob(id: string): Promise<{ success: boolean; }> {
+        console.log('here', id)
+        const result=await this._jobRepository.closeJob(id)
         return result
     }
 
