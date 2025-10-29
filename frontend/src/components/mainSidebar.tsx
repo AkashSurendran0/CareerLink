@@ -39,7 +39,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     { icon: "👤", label: "Your Profile", value:"/profile/user" },
     { icon: "🏢", label: `${tab.label}`, value:`${tab.value}` },
     { icon: "📄", label: "Generate A Cover Letter", value:"" },
-    { icon: "📋", label: "Generate A Resume", value:"" },
+    { icon: "📋", label: "Generate A Resume", value:"/createResume" },
     { icon: "⚙️", label: "Settings", value:"" },
   ];
 
