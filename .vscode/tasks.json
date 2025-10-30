@@ -80,6 +80,18 @@
             "options": {"cwd": "backend/job-service"}
         },
         {
+            "label": "watch resume-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/resume-service"}
+        },
+        {
+            "label": "run resume-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/resume-service"}
+        },
+        {
             "label": "Start all services",
             "dependsOn":[
                 "run frontend",
@@ -95,6 +107,8 @@
                 "run notification-service",
                 "watch job-service",
                 "run job-service",
+                "watch resume-service",
+                "run resume-service",
             ],
             "dependsOrder": "parallel"
         }
