@@ -12,7 +12,7 @@ import { redisClient } from "../../utils/RedisClient";
 import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
 
 @injectable()
-export class SignupUser implements ISignupUser {
+export class SignupUser implements ISignupUser { 
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
@@ -27,23 +27,25 @@ export class SignupUser implements ISignupUser {
             false
         );
         const newuser=await this._userRepository.create(user);
-        try {
-            await elasticClient.index({
-                index:"users",
-                id:newuser.id.toString(),
-                document:{
-                    id:newuser.id,
-                    username:newuser.username,
-                    email:newuser.email,
-                    createdAt:newuser.createdAt,
-                    suspended:newuser.suspended
-                }
-            });
-
-            await elasticClient.indices.refresh({ index: "users" });
-        } catch (error:any) {
-            console.log("Cant insert into elasticsearch", error);
-        }
+        (async () => {
+            try {
+                await elasticClient.index({
+                    index:"users",
+                    id:newuser.id.toString(),
+                    document:{
+                        id:newuser.id,
+                        username:newuser.username,
+                        email:newuser.email,
+                        createdAt:newuser.createdAt,
+                        suspended:newuser.suspended
+                    }
+                });
+    
+                await elasticClient.indices.refresh({ index: "users" });
+            } catch (error:any) {
+                console.log("Cant insert into elasticsearch", error);
+            }
+        })()
 
         const token=await createAccessToken(newuser.id, email);
         const refreshToken=await createRefreshToken(newuser.id, email);

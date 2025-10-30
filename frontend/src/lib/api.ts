@@ -23,10 +23,25 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
-        console.log(error)
+        if (error.response) {
+        console.error("📡 Response Error:", {
+            status: error.response.status,
+            data: error.response.data,
+            url: error.config?.url,
+        });
+        } else if (error.request) {
+        console.error("🌐 Network Error:", error.message);
+        } else {
+        console.error("⚙️ Request Setup Error:", error.message);
+        }
+
+        return Promise.reject(error);
     }
 );
+
 
 export default api
