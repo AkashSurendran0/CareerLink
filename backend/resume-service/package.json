@@ -1,0 +1,33 @@
+{
+  "name": "resume-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon dist/server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "watch": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.5",
+    "@types/html-pdf-node": "^1.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "html-pdf-node": "^1.0.8",
+    "inversify": "^7.10.4",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.10",
+    "openai": "^6.7.0"
+  }
+}

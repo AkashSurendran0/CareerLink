@@ -1,8 +1,11 @@
 "use client"
 
+import { createResume } from "@/services/userService"
 import { useState } from "react"
+import { useLoading } from "../../template"
 
 export default function ResumeBuilder() {
+    const setLoading=useLoading()
 
     // Personal Information
     const [fullName, setFullName] = useState("")
@@ -90,7 +93,7 @@ export default function ResumeBuilder() {
     }
 
 
-    const handleBuildResume = () => {
+    const handleBuildResume = async () => {
         clearError()
 
         if(!fullName){
@@ -137,28 +140,21 @@ export default function ResumeBuilder() {
             setErrors({summary:'Summary must be minimum 20 words'})
             return
         }
-        console.log(1)
         const allEducationEmpty=educations.every(
             (edu)=>!edu.degree && !edu.institute && !edu.passingYear
         )
-        console.log(2)
         if(allEducationEmpty){
             setErrors({educations:'At least one education entry required'})
             return
         }
-        console.log(3)
         for(const edu of educations){
             const isAnyFilled=!!(edu.degree || edu.institute || edu.passingYear)
             const isAllFilled=!!(edu.degree && edu.institute && edu.passingYear)
-            console.log(isAnyFilled)
-            console.log(isAllFilled)
-            console.log(isAnyFilled && !isAllFilled)
             if(isAnyFilled && !isAllFilled){
                 setErrors({educations:'Please fill the remaining fields'})
                 return
             }
         }
-        console.log(4)
         for(const exp of experiences){
             const isAnyFilled=!!(exp.company || exp.position || exp.span)
             const isAllFilled=!!(exp.company && exp.position && exp.span)
@@ -214,26 +210,17 @@ export default function ResumeBuilder() {
             finalInterests
         }
 
-        console.log('data', data)
-    }
+        setLoading(true)
+        const result=await createResume(data)
+        console.log('resume',result)
 
-    // const handleBuildResume = () => {
-    //     console.log("Building resume with data:", {
-    //         fullName,
-    //         email,
-    //         phone,
-    //         location,
-    //         linkedinUrl,
-    //         summary,
-    //         educations,
-    //         experiences,
-    //         skills,
-    //         projects,
-    //         certifications,
-    //         languages,
-    //         interests,
-    //     })
-    // }
+        const pdfBlob=new Blob([Uint8Array.from(atob(result.pdf), c=>c.charCodeAt(0))], {
+            type:'application/pdf'
+        })
+        const pdfUrl=URL.createObjectURL(pdfBlob)
+        console.log('url',pdfUrl)
+        window.open(pdfUrl, "_blank")
+    }
 
     return (
 

@@ -157,3 +157,8 @@ export const getAllJobs = async () => {
     const res=await api.get('job/v1/getAvailableJobs')
     return res.data
 }
+
+export const createResume = async (data:any) => {
+    const res=await api.post('resume/v1/createResume', data)
+    return res.data
+}

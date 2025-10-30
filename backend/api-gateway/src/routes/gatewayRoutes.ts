@@ -10,5 +10,6 @@ route.use('/admin', authMiddleware, gatewayController.getPath('/admin'))
 route.use('/company', authMiddleware, gatewayController.getPath('/company'))
 route.use('/notification', authMiddleware, gatewayController.getPath('/notification'))
 route.use('/job', authMiddleware, gatewayController.getPath('/job'))
+route.use('/resume', authMiddleware, gatewayController.getPath('/resume'))
 
 export default route
