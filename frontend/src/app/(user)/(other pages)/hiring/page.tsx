@@ -4,8 +4,10 @@ import { getAllJobs } from "@/services/userService"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useLoading } from "../../template"
 
 export default function JobApplications() {
+  const setLoading=useLoading()
   const router=useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -36,6 +38,7 @@ export default function JobApplications() {
   }
 
   const goToIndividualApplicationPage = (id:string) => {
+    setLoading(true)
     router.push(`/hiring/application/${id}`)
   }
 
