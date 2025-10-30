@@ -50,7 +50,6 @@ export class RabbitMqService {
         if(!msg) return 
 
         const data=JSON.parse(msg.content.toString())
-        console.log('Recieved:', data)
 
         try{
             switch(data.action){

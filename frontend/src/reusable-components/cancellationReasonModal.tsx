@@ -18,7 +18,6 @@ function CancellationReasonModal({id, removeCancelBox}) {
 
     const handleAddReason = () => {
         setReasons([...reasons, ""])
-        console.log(pathname)
     }
 
     const handleRemoveReason = (index: number) => {

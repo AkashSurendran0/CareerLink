@@ -23,7 +23,6 @@ export class NotificationRepository implements INotificationRepository {
 
     async getAllNotifications(user:string) {
         const notification=await NotificationModel.find({user:user})
-        console.log('noti', notification)
         return notification.map((noti: any)=>
             new Notification(
                 noti._id,
@@ -47,14 +46,12 @@ export class NotificationRepository implements INotificationRepository {
     }
 
     async markOneAsRead (id:string): Promise<{success:boolean}> {
-        console.log(55)
         await NotificationModel.updateOne(
             {_id:id},
             {$set:{
                 isRead:true
             }}
         )
-        console.log(66)
         return {success:true}
     }
 

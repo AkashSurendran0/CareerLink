@@ -26,7 +26,6 @@ export class NotificationController {
             res.json({notifications}) 
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -78,11 +77,8 @@ export class NotificationController {
 
     readOne = async (req:Request, res:Response) => {
         try {
-            console.log(1)
             const {id}=req.query
-            console.log(2, id)
             const result=await this._markOneRead.markOneRead(id)
-            console.log(3)
             res.json({result}) 
         } catch (error: unknown) {
             if (error instanceof Error) {

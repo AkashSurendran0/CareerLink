@@ -21,7 +21,6 @@ type details={
 export class UserDetailsRepository implements IUserDetailsRepository {
     
     async addUserDetails(id:string, details:details):Promise<UserDetailsEntity> {
-        console.log("here babyyy");
         const data={
             user:id,
             ...details

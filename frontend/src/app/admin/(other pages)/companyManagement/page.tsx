@@ -50,11 +50,8 @@ function UserManagement() {
     }, [])
 
     const listPendingCompanies = async () => {
-        console.log('1')
         setAllCompanyTable(false)
-        console.log('2')
         const result=await getPendingCompanies(STARTING_PAGE, LIMIT, query)
-        console.log('compi', result)
         if(result.companies.result.length<LIMIT){
             setPendingPageLimit(1)
         }else{
@@ -297,7 +294,6 @@ function UserManagement() {
                     { pageLimit &&  
                         Array.from({length: pageLimit}, (_, i) => i+1)
                         .filter(p=>{
-                            console.log(p)
                             if(p==1) return p<=3
                             if(p==pageLimit) return p>=pageLimit-2
                             return p>=page-1 && p<=page+1
@@ -365,7 +361,6 @@ function UserManagement() {
                     { pendingPageLimit &&  
                         Array.from({length: pendingPageLimit}, (_, i) => i+1)
                         .filter(p=>{
-                            console.log(p)
                             if(p==1) return p<=3
                             if(p==pendingPageLimit) return p>=pendingPageLimit-2
                             return p>=page-1 && p<=page+1

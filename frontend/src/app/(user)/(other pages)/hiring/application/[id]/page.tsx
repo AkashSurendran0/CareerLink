@@ -25,9 +25,7 @@ export default function JobDetailsPage({params}:Props) {
         const {id}=params
         const fetchDetails = async () => {
             const job=await getJobDetails(id)
-            console.log('job', job)
             const company=await checkCompanyDetails(job.details.company)
-            console.log('company', company)
             setJobDetails(job.details)
             setCompanyDetails(company.company)
         }

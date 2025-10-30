@@ -119,7 +119,6 @@ function ForgotPassword() {
 
 
     const sendOTP = async () =>{
-        console.log(changePassForm)
 
         if (!changePassForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             setErrors({email:'Please enter a valid email address'})

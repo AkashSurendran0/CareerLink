@@ -9,7 +9,6 @@ export class CheckUserBlock implements ICheckUserBlock {
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) {}
 
     async checkUserBlock (id:string): Promise<{success:boolean} | null> {
-        console.log("heeeeeeeee");
         const user=await this._userRepository.findById(id);
         if(!user) return null;
         return {

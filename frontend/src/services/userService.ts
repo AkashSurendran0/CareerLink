@@ -104,7 +104,6 @@ export const deleteCompany = async (id:string) => {
 
 export const getAllNotifications = async () => {
     const res=await api.get('notification/v1/getNotifications')
-    console.log('noti', res.data)
     return res.data
 }
 

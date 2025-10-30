@@ -21,7 +21,6 @@ class RabbitMqService {
     }
 
     public async publishEvent (exchange:string, routingKey:string, message:any): Promise<void> {
-        console.log(1)
         try {
             if(!this.channel) throw new Error('Rabbitmq channel not initialized')
             await this.channel.assertExchange(exchange, "topic", {durable:true})
@@ -30,7 +29,6 @@ class RabbitMqService {
                 routingKey,
                 Buffer.from(JSON.stringify(message))
             )
-            console.log(3)
             console.log(`Published event ${routingKey}`)
         } catch (error) {
             console.log('connection error', error)
