@@ -130,7 +130,6 @@ export class UserRepository implements IUserRepository {
 
     async findById(id: string): Promise<User | null> {
         const user=await UserModel.findByPk(id, {raw:true});
-        console.log(user);
         if(!user) return null;
         return new User (
             user.id.toString(), 

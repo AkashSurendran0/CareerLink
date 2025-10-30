@@ -47,7 +47,6 @@ export default function CreateJobPage() {
     }
     
     const handleArrayChange = (index: number, value: string, setter: React.Dispatch<React.SetStateAction<string[]>>, fullValue:string[]) => {
-        console.log(index, value, setter)
         setter(fullValue.map((val, ind)=>ind==index? value : val))
     }
 
@@ -148,7 +147,6 @@ export default function CreateJobPage() {
         }
 
         const result=await addJob(jobDetails)
-        console.log(result)
         if(result.result.success){
             router.push('/company/registeredCompany/jobsPosted')
         }

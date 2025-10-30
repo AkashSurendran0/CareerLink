@@ -3,8 +3,10 @@
 import { createResume } from "@/services/userService"
 import { useState } from "react"
 import { useLoading } from "../../template"
+import { useRouter } from "next/navigation"
 
 export default function ResumeBuilder() {
+    const router=useRouter()
     const setLoading=useLoading()
 
     // Personal Information
@@ -212,14 +214,11 @@ export default function ResumeBuilder() {
 
         setLoading(true)
         const result=await createResume(data)
-        console.log('resume',result)
 
-        const pdfBlob=new Blob([Uint8Array.from(atob(result.pdf), c=>c.charCodeAt(0))], {
-            type:'application/pdf'
-        })
-        const pdfUrl=URL.createObjectURL(pdfBlob)
-        console.log('url',pdfUrl)
-        window.open(pdfUrl, "_blank")
+        sessionStorage.setItem('resumePdf', result.pdf)
+        sessionStorage.setItem('resumeHtml', result.html)
+
+        router.push('/createResume/resumePreview')
     }
 
     return (

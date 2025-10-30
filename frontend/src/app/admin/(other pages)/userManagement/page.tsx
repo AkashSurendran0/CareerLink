@@ -50,7 +50,6 @@ function UserManagement() {
         
     const fetchUser = async (v:string) => {
         const result=await getUsers(STARTING_PAGE, LIMIT, v)
-        console.log(result.users.result)
         if(result.users.result.length<LIMIT){
             setPageLimit(1)
         }else{
@@ -68,21 +67,18 @@ function UserManagement() {
 
     const alterUserStatus = async (id:string) => {
         setLoadingUserId(id)
-        console.log(users)
 
         const user={    
             id:id
         }
         const result=await changeUserStatus(user)
         const updatedUser=result.users
-        console.log(updatedUser)
         setUsers((prev)=>
             prev.map(u=>
                 u.id==updatedUser.id? updatedUser:u
             )
         )
         setLoadingUserId(null)
-        console.log(users)
 
     }   
 
@@ -204,7 +200,6 @@ function UserManagement() {
                 { pageLimit &&  
                     Array.from({length: pageLimit}, (_, i) => i+1)
                     .filter(p=>{
-                        console.log(p)
                         if(p==1) return p<=3
                         if(p==pageLimit) return p>=pageLimit-2
                         return p>=page-1 && p<=page+1

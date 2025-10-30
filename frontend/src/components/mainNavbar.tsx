@@ -39,7 +39,6 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
       try {
         const res=await fetch('/api/me')
         const data=await res.json()
-        console.log(data)
         setUserEmail(data.userEmail)
       } catch (error) {
         console.log('Failed to fetch userid', error)
@@ -50,12 +49,10 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }, [])
 
   useEffect(()=>{
-    console.log('userid', userEmail)
     if(!userEmail) return
 
     socket.emit('join', userEmail)
     socket.on('notification', (data)=>{
-      console.log('data', data)
       setNotifications([data, ...notifications])
       setUnreadCount(unreadCount+1)
     })
@@ -67,7 +64,6 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const getNotifications = async () => {
     const result=await getAllNotifications()
-    console.log('noti', result.notifications)
     setNotifications(result.notifications)
     const unreadCount=result.notifications.filter((noti)=>!noti.isRead).length
     setUnreadCount(unreadCount)
@@ -82,7 +78,6 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }
 
   const deleteNotification = async (id: string) => {
-    console.log(id)
     setNotifications(notifications.filter((n) => n._id !== id))
     setUnreadCount(unreadCount-1)
     await deleteOneNotification(id)

@@ -10,7 +10,6 @@ export class AdminLogin implements IAdminLogin {
     constructor(@inject(TYPES.IAdminRepository) private _adminRepository:IAdminRepository){}
 
     async findAdmin(email: string, password: string): Promise<{ success: true; accessToken: string; refreshToken: string; } | { success: boolean; message: string; }> {
-        console.log('reacheddddd')
         const admin=await this._adminRepository.findAdmin(email, password)
         if(!admin){
             return {

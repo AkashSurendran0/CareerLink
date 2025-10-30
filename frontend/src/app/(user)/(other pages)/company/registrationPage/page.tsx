@@ -100,19 +100,16 @@ export default function CompanyRegistrationPage() {
         }
 
         if(companyDetails.foundedYear<1850 || companyDetails.foundedYear>2025){
-            console.log(3)
             setErrors({foundedYear:'Please enter a valid year'})
             return
         }
 
         const websiteRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/;
         if (companyDetails.websiteUrl && !websiteRegex.test(companyDetails.websiteUrl)) {
-            console.log(1)
             setErrors({websiteUrl:'Please enter a valid url'});
         }
 
         if(!companyDetails.location){
-            console.log(2)
             setErrors({location:'Please enter a location'})
             return
         }

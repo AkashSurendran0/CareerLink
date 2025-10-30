@@ -109,7 +109,6 @@ export async function middleware(req: NextRequest, res:NextResponse) {
     !pathname.startsWith("/resetPassword")
   ) {
     try {
-      console.log(token)
       const res = await fetch("http://localhost:5000/user/v1/check", {
         method: "GET",
         credentials: 'include',
@@ -123,7 +122,6 @@ export async function middleware(req: NextRequest, res:NextResponse) {
       }
 
       const data = await res.json();
-      console.log('aaaaaaaa', data)
       if (data.result.success) {
         return NextResponse.redirect(new URL("/blocked", req.url));
       }

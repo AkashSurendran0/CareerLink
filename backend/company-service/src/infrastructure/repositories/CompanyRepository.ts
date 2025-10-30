@@ -105,7 +105,6 @@ export class CompanyRepository implements ICompanyRepository {
 
     async findById (id:string):Promise<Company | null> {
         const company=await CompanyModel.findByPk(id, {raw:true})
-        console.log(company)
         if(!company) return null
         return new Company (
             company!.id,

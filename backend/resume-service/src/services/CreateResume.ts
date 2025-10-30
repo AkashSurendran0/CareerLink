@@ -9,7 +9,6 @@ dotenv.config()
 export class CreateResume implements ICreateResume {
 
     async createResume(data: any): Promise<any> {
-        console.log(data)
         const {
             fullName,
             email,
@@ -85,7 +84,7 @@ ${finalExperiences.map(
 
 Projects:
 ${finalProjects.map(
-  (p) => `${p.title} - ${p.description}`
+  (p) => `${p.name} - ${p.description}`
 ).join("\n")}
 
 Languages:

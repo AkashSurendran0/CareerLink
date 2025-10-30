@@ -108,7 +108,6 @@ export default function ProfileForm() {
   const setUserDetails = async () =>{
     clearErrors()
 
-    console.log('firstr',detailsForm)
 
     if (!detailsForm.gender) {
       return setErrors({gender : "Please select your gender"})

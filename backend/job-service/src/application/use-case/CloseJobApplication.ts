@@ -11,7 +11,6 @@ export class CloseJobApplication implements ICloseJobApplication {
     ){}
 
     async closeJob(id: string): Promise<{ success: boolean; }> {
-        console.log('here', id)
         const result=await this._jobRepository.closeJob(id)
         return result
     }

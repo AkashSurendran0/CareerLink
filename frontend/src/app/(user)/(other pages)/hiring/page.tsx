@@ -15,7 +15,6 @@ export default function JobApplications() {
   useEffect(()=>{
     const getJobs = async () => {
       const result=await getAllJobs()
-      console.log(result)
       setJobs(result.jobs)
     }
 

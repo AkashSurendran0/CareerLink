@@ -14,10 +14,8 @@ export class AdminController {
 
     adminLoginCase = async (req:Request, res:Response):Promise<void> => {
         try {
-            console.log('reacheddd')
             const {email, password}=req.body
             const result=await this._adminLogin.findAdmin(email, password)
-            console.log(result)
             if(result.success){
                 res.cookie("token", result.accessToken, {
                     httpOnly: true,
