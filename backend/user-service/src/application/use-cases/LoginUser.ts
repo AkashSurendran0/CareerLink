@@ -25,6 +25,12 @@ export class LoginUser implements ILoginUser {
                 message: "User entry restricted"
             };
         }
+        if(!user.password){
+            return {
+                success:false,
+                message:"Credentials doesnt exists for this user"
+            };
+        }
         const isMatch=await bcrypt.compare(password, user.password);
         if(!isMatch){
             return {
