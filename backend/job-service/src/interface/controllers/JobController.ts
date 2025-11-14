@@ -48,7 +48,10 @@ export class JobController {
                 }
             })
             const id=company.data.result.id
-            const result=await this._getAllJobs.getAllJobs(id)
+            const {start, limit, query, filter}=req.query
+            const numStart=Number(start)
+            const numLimit=Number(limit)
+            const result=await this._getAllJobs.getAllJobs(id, numStart, numLimit, query, filter)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

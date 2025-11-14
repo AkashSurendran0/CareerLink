@@ -18,7 +18,7 @@ export interface IAddJob {
 }
 
 export interface IGetAllJobs {
-    getAllJobs(id:string): Promise<JobDTO[]>
+    getAllJobs(id:string, start:number, limit:number, query:string | undefined, filter:string): Promise<{jobs:JobDTO[], limit:number, count:number}>
 }
 
 export interface IGetJobDetails {

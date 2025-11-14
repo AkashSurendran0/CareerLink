@@ -23,16 +23,42 @@ export default function CompanyJobsPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [currentPage, setCurrentPage] = useState(1)
+    const [pageLimit, setPageLimit] = useState(0)
+    const [query, setQuery] = useState('')
+    const [totalCount, setTotalCount] = useState(0)
+    const [page, setPage] = useState(1)
+    const [filter, setFilter] = useState('all')
     const itemsPerPage = 3
+    const STARTING_PAGE = 1
+    const LIMIT = 1
 
     useEffect(()=>{
         const fetchJobs=async ()=>{
-            const result=await getAllCompanyJob()
-            setJobs(result.result)
+            const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, query, filter)
+            setPageLimit(result.result.limit)
+            setJobs(result.result.jobs)
+            setTotalCount(result.result.count)
         }
 
         fetchJobs()
     }, [])
+
+    const getPaginatedCompanies = async (i:number) => {
+        const result=await getAllCompanyJob(i, LIMIT, query, filter)
+        setPage(i)
+        setPageLimit(result.result.limit)
+        setJobs(result.result.jobs)
+        setTotalCount(result.result.count)
+    }
+
+    const queryStatus = async (i:string) => {
+        setFilter(i)
+        const result=await getAllCompanyJob(page, LIMIT, query, filter)
+        setPageLimit(result.result.limit)
+        setJobs(result.result.jobs)
+        setTotalCount(result.result.count)
+
+    }
 
     const filteredJobs = jobs.filter((job) => {
         const matchesSearch = job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,7 +66,7 @@ export default function CompanyJobsPage() {
         return matchesSearch && matchesStatus
     })
 
-    const totalPages = Math.ceil(filteredJobs.length / itemsPerPage)
+    // const totalPages = Math.ceil(filteredJobs.length / itemsPerPage)
     const startIndex = (currentPage - 1) * itemsPerPage
     const paginatedJobs = filteredJobs.slice(startIndex, startIndex + itemsPerPage)
 
@@ -116,9 +142,10 @@ export default function CompanyJobsPage() {
                         {["all", "open", "closed"].map((status) => (
                             <button
                             key={status}
-                            onClick={() => handleFilterChange(status)}
+                            disabled={filter==status}
+                            onClick={() => queryStatus(status)}
                             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-                                statusFilter === status
+                                filter === status
                                 ? "bg-blue-600 text-white"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                             }`}
@@ -223,37 +250,37 @@ export default function CompanyJobsPage() {
                 </div>
                 ))}`
             </div>
-            {filteredJobs.length > 0 && (
+            {jobs && jobs.length > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white rounded-lg shadow-sm p-4">
                 <div className="text-sm text-gray-600">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredJobs.length)} of{" "}
-                    {filteredJobs.length} jobs
+                    Showing {(page*LIMIT)-(LIMIT-1)} to {page*LIMIT} of{" "}
+                    {totalCount} jobs
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-center">
                     <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                    onClick={() => getPaginatedCompanies(page-1)}
+                    disabled={page === 1}
+                    className="cursor-pointer px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
                     >
                     Previous
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    {Array.from({ length: pageLimit }, (_, i) => i + 1).map((current) => (
                     <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
-                        currentPage === page
+                        key={current}
+                        onClick={() => getPaginatedCompanies(current)}
+                        className={`cursor-pointer px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        page === current
                             ? "bg-blue-600 text-white"
                             : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                         }`}
                     >
-                        {page}
+                        {current}
                     </button>
                     ))}
                     <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                    onClick={() => getPaginatedCompanies(page+1)}
+                    disabled={page==pageLimit}
+                    className="cursor-pointer px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
                     >
                     Next
                     </button>

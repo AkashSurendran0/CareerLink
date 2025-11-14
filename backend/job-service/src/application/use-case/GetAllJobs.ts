@@ -12,10 +12,13 @@ export class GetAllJobs implements IGetAllJobs {
         @inject(TYPES.IJobRepository) private _jobRepository:IJobRepository
     ){}
 
-    async getAllJobs(id: string): Promise<JobDTO[]> {
-        const jobs=await this._jobRepository.getAllJobs(id)
-        const result=await jobs.map(job=>JobMapper.toDTO(job))
-        return result
+    async getAllJobs(id: string, start:number, limit:number, query:string | undefined, filter:string): Promise<{jobs:JobDTO[], limit:number, count:number}> {
+        const jobs=await this._jobRepository.getAllJobs(id, filter)
+        const jobCount=jobs.length
+        const pageLimit=Math.ceil(jobCount/limit)
+        const resultJobs=await this._jobRepository.getQueryJobs(id, start, limit, query, filter)
+        const result=await resultJobs.map(job=>JobMapper.toDTO(job))
+        return {jobs:result, limit:pageLimit, count:jobCount}
     }
 
 }

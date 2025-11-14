@@ -132,8 +132,8 @@ export const addJob = async (jobDetails) => {
     return res.data
 }
 
-export const getAllCompanyJob = async () => {
-    const res=await api.get('job/v1/getAllJobs')
+export const getAllCompanyJob = async (startingPage:number, limit:number, query:string, filter:string) => {
+    const res=await api.get(`job/v1/getAllJobs?start=${startingPage}&limit=${limit}&query=${query}&filter=${filter}`)
     return res.data
 }
 
