@@ -1,6 +1,8 @@
 import express from 'express'
 import ResumeRoutes from './routes/ResumeRoutes'
+import { dbConnect } from './config/connectDb'
 
+dbConnect()
 const app=express()
 app.use(express.json())
 
