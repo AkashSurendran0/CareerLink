@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useLoading } from "@/app/(user)/template"
+import { enqueueSnackbar } from "notistack"
+import { saveResume } from "@/services/userService"
 
 export default function ResumePreview() {
+    const setLoading=useLoading()
     const router=useRouter()
     const [previewHtml, setHtml]=useState()
     const [downloadPdf, setPdf]=useState()
@@ -27,8 +31,21 @@ export default function ResumePreview() {
         console.log("Edit details clicked")
     }
 
-    const handleSaveToProfile = () => {
+    const handleSaveToProfile = async () => {
+        setLoading(true)
         console.log("Save to profile clicked")
+        const pdf=sessionStorage.getItem('resumePdf')
+        if(!pdf) return enqueueSnackbar('Pdf not available', {variant:'error'})
+        const blob=new Blob(
+            [Uint8Array.from(atob(pdf), c=>c.charCodeAt(0))],
+            {type:'application/pdf'}
+        )
+        if(!blob) return enqueueSnackbar('Something went wrong', {variant:'error'})
+        const data={
+            blob:blob
+        }
+        const result=await saveResume(data)
+        
     }
 
     const handleDownloadPDF = () => {

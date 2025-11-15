@@ -34,5 +34,5 @@ export interface ICloseJobApplication {
 }
 
 export interface IGetAvailableJobs {
-    getAvailableJobs(): Promise<JobDTO[]>
+    getAvailableJobs(query:string): Promise<JobDTO[]>
 }

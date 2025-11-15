@@ -20,7 +20,7 @@ export interface IJobRepository {
     findDetails(id:string): Promise<Job>
     editJob(jobDetails): Promise<{success:boolean}>
     closeJob(id:string): Promise<{success:boolean}>
-    getAvailableJobs():Promise<Job[]>
+    getAvailableJobs(query:string):Promise<Job[]>
     getQueryJobs(id:string, start:number, limit:number, query:string|undefined, filter:string):Promise<Job[]>
 
 }

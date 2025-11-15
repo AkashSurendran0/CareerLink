@@ -2,7 +2,7 @@
 
 import { getAllJobs } from "@/services/userService"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
 
@@ -12,11 +12,13 @@ export default function JobApplications() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [jobs, setJobs]=useState<any>([])
+  const [query, setQuery] = useState('')
+  const debouncer=useRef<NodeJS.Timeout | null>(null)
   const itemsPerPage = 3
 
   useEffect(()=>{
     const getJobs = async () => {
-      const result=await getAllJobs()
+      const result=await getAllJobs(query)
       setJobs(result.jobs)
     }
 
@@ -33,8 +35,16 @@ export default function JobApplications() {
   // const paginatedApplications = filteredApplications.slice(startIndex, startIndex + itemsPerPage)
 
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value)
-    setCurrentPage(1)
+    setQuery(e.target.value)
+    if(debouncer.current) clearTimeout(debouncer.current)
+    debouncer.current=setTimeout(() => {
+      fetchBySearch(e.target.value)
+    }, 1500);
+  }
+
+  const fetchBySearch = async (query:string) => {
+    const result=await getAllJobs(query)
+    setJobs(result.jobs)
   }
 
   const goToIndividualApplicationPage = (id:string) => {
@@ -50,8 +60,8 @@ export default function JobApplications() {
               <div className="mb-6">
                 <input
                   type="text"
-                  placeholder="Search by company name..."
-                  value={searchQuery}
+                  placeholder="Search by position..."
+                  value={query}
                   onChange={handleSearch}
                   className="bg-white w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />

@@ -104,8 +104,18 @@ export class JobRepository implements IJobRepository {
         return {success:true}
     }
 
-    async getAvailableJobs(): Promise<Job[]> {
-        const jobs=await JobModel.find()
+    async getAvailableJobs(query:string): Promise<Job[]> {
+        let jobs
+        if(query){
+            jobs=await JobModel.find({
+                open:true,
+                jobTitle:{$regex: new RegExp(query, 'i')}
+            })
+        }else{
+            jobs=await JobModel.find({
+                open:true,
+            })
+        }
         return jobs.map(job=>
             new Job (
                 job._id,

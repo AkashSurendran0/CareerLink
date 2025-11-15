@@ -20,16 +20,12 @@ export default function CompanyJobsPage() {
     const router=useRouter()
     const [statusLoading, setStatusLoading]=useState(false)
     const [jobs, setJobs]=useState<Job[]>([])
-    const [searchQuery, setSearchQuery] = useState("")
-    const [statusFilter, setStatusFilter] = useState("all")
-    const [currentPage, setCurrentPage] = useState(1)
     const [pageLimit, setPageLimit] = useState(0)
     const [query, setQuery] = useState('')
     const [totalCount, setTotalCount] = useState(0)
     const [page, setPage] = useState(1)
     const [filter, setFilter] = useState('all')
     const debouncer=useRef<NodeJS.Timeout | null>(null)
-    const itemsPerPage = 3
     const STARTING_PAGE = 1
     const LIMIT = 2
 
