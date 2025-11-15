@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import { closeJob, getAllCompanyJob } from "@/services/userService"
@@ -28,9 +28,10 @@ export default function CompanyJobsPage() {
     const [totalCount, setTotalCount] = useState(0)
     const [page, setPage] = useState(1)
     const [filter, setFilter] = useState('all')
+    const debouncer=useRef<NodeJS.Timeout | null>(null)
     const itemsPerPage = 3
     const STARTING_PAGE = 1
-    const LIMIT = 1
+    const LIMIT = 2
 
     useEffect(()=>{
         const fetchJobs=async ()=>{
@@ -53,31 +54,26 @@ export default function CompanyJobsPage() {
 
     const queryStatus = async (i:string) => {
         setFilter(i)
-        const result=await getAllCompanyJob(page, LIMIT, query, filter)
+        const result=await getAllCompanyJob(page, LIMIT, query, i)
         setPageLimit(result.result.limit)
         setJobs(result.result.jobs)
         setTotalCount(result.result.count)
 
     }
 
-    const filteredJobs = jobs.filter((job) => {
-        const matchesSearch = job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesStatus = statusFilter === "all" || job.status.toLowerCase() === statusFilter.toLowerCase()
-        return matchesSearch && matchesStatus
-    })
-
-    // const totalPages = Math.ceil(filteredJobs.length / itemsPerPage)
-    const startIndex = (currentPage - 1) * itemsPerPage
-    const paginatedJobs = filteredJobs.slice(startIndex, startIndex + itemsPerPage)
-
-    const handleFilterChange = (newFilter) => {
-        setStatusFilter(newFilter)
-        setCurrentPage(1)
+    const handleSearch = async (e) => {
+        setQuery(e.target.value)
+        if(debouncer.current) clearTimeout(debouncer.current)
+        debouncer.current=setTimeout(() => {
+            fetchWithSearch(e.target.value)
+        }, 1500);
     }
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value)
-        setCurrentPage(1)
+    const fetchWithSearch = async (char:string) => {
+        const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, char, filter)
+        setPageLimit(result.result.limit)
+        setJobs(result.result.jobs)
+        setTotalCount(result.result.count)
     }
 
     const goToPostNewJobPage = () => {
@@ -129,8 +125,8 @@ export default function CompanyJobsPage() {
                         <input
                             type="text"
                             placeholder="Search jobs by title"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
+                            value={query}
+                            onChange={handleSearch}
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                         </div>
