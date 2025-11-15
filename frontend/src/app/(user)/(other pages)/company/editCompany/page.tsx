@@ -151,7 +151,6 @@ export default function CompanyRegistrationPage() {
         }
 
         const result=await editCompany(formData)
-        setLoading(false)
         if(result.success){
             router.push('/company/registeredCompany')
         }

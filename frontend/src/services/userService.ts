@@ -152,12 +152,17 @@ export const closeJob = async (id:string) => {
     return res.data
 }
 
-export const getAllJobs = async () => {
-    const res=await api.get('job/v1/getAvailableJobs')
+export const getAllJobs = async (query:string) => {
+    const res=await api.get(`job/v1/getAvailableJobs?query=${query}`)
     return res.data
 }
 
 export const createResume = async (data:any) => {
     const res=await api.post('resume/v1/createResume', data)
+    return res.data
+}
+
+export const saveResume = async (data:any) => {
+    const res=await api.post('resume/v1/saveResume', data)
     return res.data
 }

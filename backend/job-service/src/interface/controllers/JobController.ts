@@ -108,7 +108,8 @@ export class JobController {
 
     getAvailableJobs = async (req:Request, res:Response) => {
         try {
-            const jobs=await this._getAvailableJobs.getAvailableJobs()
+            const {query}=req.query
+            const jobs=await this._getAvailableJobs.getAvailableJobs(query)
             const filledJobs=await Promise.all(
                 jobs.map(async job=>{
                     const result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job.company}`)
