@@ -128,22 +128,22 @@ export class JobRepository implements IJobRepository {
 
     async getQueryJobs(id: string, start: number, limit: number, query: string | undefined, filter:string): Promise<Job[]> {
         let jobs
-        console.log(filter)
+        console.log(query)
         if(query){
             if(filter=='all'){
                 jobs=await JobModel.aggregate([
                     {$match:{
                         company:`${id}`,
-                        jobTitle:{$regex:/^query/i}
+                        jobTitle:{$regex: new RegExp(query, 'i')}
                     }},
                     {$skip:(start-1)*limit},
                     {$limit:limit}
                 ])
-            }else if(filter=='open'){
+            }else if(filter=='open'){ 
                 jobs=await JobModel.aggregate([
                     {$match:{
                         company:`${id}`,
-                        jobTitle:{$regex:/^query/i},
+                        jobTitle:{$regex: new RegExp(query, 'i')},
                         open:true
                     }},
                     {$skip:(start-1)*limit},
@@ -153,7 +153,7 @@ export class JobRepository implements IJobRepository {
                 jobs=await JobModel.aggregate([
                     {$match:{
                         company:`${id}`,
-                        jobTitle:{$regex:/^query/i},
+                        jobTitle:{$regex: new RegExp(query, 'i')},
                         open:false
                     }},
                     {$skip:(start-1)*limit},
