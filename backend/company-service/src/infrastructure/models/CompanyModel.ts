@@ -9,13 +9,13 @@ export class CompanyModel extends Model {
     public companySize!:number;
     public foundedYear!:number;
     public industry!:string;
-    public websiteURL!:string;
+    public websiteURL!:string | null;
     public location!:string;
     public aboutCompany!:string;
     public approved!:boolean;
     public rejected!:boolean;
     public suspended!:boolean; 
-    public rejectReasons!:string[];
+    public rejectReasons!:string[] | null;
 
     public readonly createdAt!:Date
 }

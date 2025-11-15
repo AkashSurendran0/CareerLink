@@ -12,6 +12,7 @@ type Details = {
     industry:string,
     websiteURL:string | null,
     location:string,
+    rejectReasons:string[] | null | string,
     aboutCompany:string
 }
 
@@ -77,30 +78,48 @@ export class CompanyRepository implements ICompanyRepository {
     }
 
     async editCompany (user:string, details:Details): Promise<Company> {
-        const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
-            details,
-            {
-                where:{registeredBy:user},
-                returning:true
-            },          
-        )
-        const updatedCompany=updatedCompanies[0]!.get({plain:true});
-        return new Company (
-            updatedCompany!.id,
-            updatedCompany!.registeredBy,
-            updatedCompany!.logo,
-            updatedCompany!.name,
-            updatedCompany!.companySize,
-            updatedCompany!.foundedYear,
-            updatedCompany!.industry,
-            updatedCompany!.websiteURL,
-            updatedCompany!.location,
-            updatedCompany!.aboutCompany,
-            updatedCompany!.approved,
-            updatedCompany!.rejected,
-            updatedCompany!.suspended,
-            updatedCompany!.createdAt
-        )
+        try {
+            
+            console.log(3)
+            console.log(user, details)
+            if (details.rejectReasons !== undefined) {
+                if (details.rejectReasons === "null") {
+                    details.rejectReasons = null;
+                }
+                else if (typeof details.rejectReasons === "string") {
+                    details.rejectReasons = [details.rejectReasons];
+                }
+                else if (typeof details.rejectReasons === "object" && !Array.isArray(details.rejectReasons)) {
+                }
+            }
+            const [rowsUpdated, updatedCompanies]=await CompanyModel.update(
+                details,
+                {
+                    where:{registeredBy:user},
+                    returning:true
+                },          
+            )
+            const updatedCompany=updatedCompanies[0]!.get({plain:true});
+            console.log(updatedCompany)
+            return new Company (
+                updatedCompany!.id,
+                updatedCompany!.registeredBy,
+                updatedCompany!.logo,
+                updatedCompany!.name,
+                updatedCompany!.companySize,
+                updatedCompany!.foundedYear,
+                updatedCompany!.industry,
+                updatedCompany!.websiteURL,
+                updatedCompany!.location,
+                updatedCompany!.aboutCompany,
+                updatedCompany!.approved,
+                updatedCompany!.rejected,
+                updatedCompany!.suspended,
+                updatedCompany!.createdAt
+            )
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     async findById (id:string):Promise<Company | null> {

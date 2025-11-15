@@ -24,7 +24,9 @@ export class EditCompany implements IEditCompany {
     ){}
 
     async editCompany (user:string, details:Details): Promise<{success:boolean}> {
+        console.log(2)
         const company=await this._companyRepository.editCompany(user, details)
+        console.log(company)
         if(company.rejected){
             await this._companyRepository.changeRejectedStatus(user)
             await elasticClient.update({
@@ -35,6 +37,7 @@ export class EditCompany implements IEditCompany {
                 }
             })
         }
+        console.log(4)
         await elasticClient.update({
             index:'companies',
             id:company.id,
@@ -43,6 +46,7 @@ export class EditCompany implements IEditCompany {
                 name:company.name,
             }
         })
+        console.log(5)
         return {success:true}
     }
 

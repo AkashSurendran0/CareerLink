@@ -82,6 +82,7 @@ export class CompanyController {
 
     editCompany = async  (req:Request, res:Response):Promise<void> => {
         try {
+            console.log(1)
             const user=req.headers["user-email"] as string
             let imageUrl:string | undefined
             if(req.file){
