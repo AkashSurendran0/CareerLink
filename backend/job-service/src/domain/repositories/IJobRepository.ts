@@ -16,10 +16,11 @@ type JobDetails = {
 export interface IJobRepository {
 
     addJob(jobDetails: JobDetails, id:string):Promise<{success:boolean}>
-    getAllJobs(id:string): Promise<Job[]>
+    getAllJobs(id:string, filter:string): Promise<Job[]>
     findDetails(id:string): Promise<Job>
     editJob(jobDetails): Promise<{success:boolean}>
     closeJob(id:string): Promise<{success:boolean}>
     getAvailableJobs():Promise<Job[]>
+    getQueryJobs(id:string, start:number, limit:number, query:string|undefined, filter:string):Promise<Job[]>
 
 }

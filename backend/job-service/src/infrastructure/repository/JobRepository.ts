@@ -35,12 +35,19 @@ export class JobRepository implements IJobRepository {
         return {success:true}
     }
 
-    async getAllJobs(id: string): Promise<Job[]> {
-        const jobs=await JobModel.find({company:id})
+    async getAllJobs(id: string, filter:string): Promise<Job[]> {
+        let jobs
+        if(filter=='all'){
+            jobs=await JobModel.find({company:id})
+        }else if(filter=='open'){
+            jobs=await JobModel.find({company:id, open:true})
+        }else{
+            jobs=await JobModel.find({company:id, open:false})
+        }
         return jobs.map((job:any)=>
             new Job(
                 job._id,
-                job.company,
+                job.company,    
                 job.open,
                 job.jobTitle,
                 job.department,
@@ -99,6 +106,89 @@ export class JobRepository implements IJobRepository {
 
     async getAvailableJobs(): Promise<Job[]> {
         const jobs=await JobModel.find()
+        return jobs.map(job=>
+            new Job (
+                job._id,
+                job.company,
+                job.open,
+                job.jobTitle,
+                job.department,
+                job.jobType,
+                job.location,
+                job.jobDescription,
+                job.qualifications,
+                job.responsibilities,
+                job.benefits,
+                job.experienceLevel,
+                job.deadline,
+                job.createdAt
+            )
+        )
+    }
+
+    async getQueryJobs(id: string, start: number, limit: number, query: string | undefined, filter:string): Promise<Job[]> {
+        let jobs
+        console.log(filter)
+        if(query){
+            if(filter=='all'){
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                        jobTitle:{$regex:/^query/i}
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }else if(filter=='open'){
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                        jobTitle:{$regex:/^query/i},
+                        open:true
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }else{
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                        jobTitle:{$regex:/^query/i},
+                        open:false
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }
+        }else{
+            if(filter=='all'){
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }else if(filter=='open'){
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                        open:true
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }else{
+                jobs=await JobModel.aggregate([
+                    {$match:{
+                        company:`${id}`,
+                        open:false
+                    }},
+                    {$skip:(start-1)*limit},
+                    {$limit:limit}
+                ])
+            }
+        }
         return jobs.map(job=>
             new Job (
                 job._id,

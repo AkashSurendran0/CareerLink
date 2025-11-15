@@ -103,7 +103,7 @@ export default function ResumeBuilder() {
             return
         }
 
-        if(!/^[A-Za-z]{3,}(?: [A-Za-z]{3,})?$/.test(fullName)){
+        if(!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(fullName.trim())){
             setErrors({fullName:'Please enter a valid name'})
             return
         }
