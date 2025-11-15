@@ -33,18 +33,22 @@ export default function ResumePreview() {
 
     const handleSaveToProfile = async () => {
         setLoading(true)
-        console.log("Save to profile clicked")
         const pdf=sessionStorage.getItem('resumePdf')
         if(!pdf) return enqueueSnackbar('Pdf not available', {variant:'error'})
-        const blob=new Blob(
-            [Uint8Array.from(atob(pdf), c=>c.charCodeAt(0))],
-            {type:'application/pdf'}
-        )
-        if(!blob) return enqueueSnackbar('Something went wrong', {variant:'error'})
-        const data={
-            blob:blob
+        const byteCharacters=atob(pdf)
+        const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
+        const byteArray=new Uint8Array(byteNumbers)
+        const pdfBlob=new Blob([byteArray], {type: 'application/pdf'})
+        if(!pdfBlob) return enqueueSnackbar('Something went wrong', {variant:'error'})
+        const formData=new FormData()
+        formData.append('resume', pdfBlob, 'resume.pdf')
+
+        const result=await saveResume(formData)
+        if(result.result.success){
+            sessionStorage.removeItem('resumePdf')
+            sessionStorage.removeItem('resumeHtml')
+            router.push('/feed')
         }
-        const result=await saveResume(data)
         
     }
 

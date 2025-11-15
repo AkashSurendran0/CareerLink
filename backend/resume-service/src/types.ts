@@ -1,4 +1,6 @@
 export const TYPES = {
     ResumeController:'ResumeController',
-    ICreateResume:'ICreateResume'
+    ICreateResume:'ICreateResume',
+    IUploadResume:'IUploadResume',
+    IResumeRepository:'IResumeRepository'
 }
