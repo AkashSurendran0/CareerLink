@@ -1,7 +1,13 @@
+import { ResumeDto } from "../../dto/ResumeDto"
+
 export interface ICreateResume {
     createResume(data:any):Promise<any>
 }
 
 export interface IUploadResume {
-    uploadResume(url:string, user:string): Promise<{success:boolean}>
+    uploadResume(url:string, user:string, name:string): Promise<{success:boolean}>
+}
+
+export interface IGetAllUserResumes{
+    getAllResumes(id:string): Promise<{success:boolean, resume:ResumeDto} | {success:false}>
 }

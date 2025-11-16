@@ -11,6 +11,15 @@ export default function ResumePreview() {
     const router=useRouter()
     const [previewHtml, setHtml]=useState()
     const [downloadPdf, setPdf]=useState()
+    const [isOpen, setIsOpen]=useState(false)
+    const [filename, setFilename]=useState('')
+
+    const [error, setError]=useState<Partial<Record<"filename", string>>>({})
+    const resetErrors= () =>{
+        setError({
+            filename:'',
+        })
+    }
 
     useEffect(()=>{
         const pdf=sessionStorage.getItem('resumePdf')
@@ -32,6 +41,17 @@ export default function ResumePreview() {
     }
 
     const handleSaveToProfile = async () => {
+        resetErrors()
+        if(!filename){
+            setError({filename:'Please enter a name for your resume'})
+            return
+        }
+
+        if(filename.length<=3){
+            setError({filename:'Name must be more than 3 characters'})
+            return
+        }
+
         setLoading(true)
         const pdf=sessionStorage.getItem('resumePdf')
         if(!pdf) return enqueueSnackbar('Pdf not available', {variant:'error'})
@@ -42,13 +62,14 @@ export default function ResumePreview() {
         if(!pdfBlob) return enqueueSnackbar('Something went wrong', {variant:'error'})
         const formData=new FormData()
         formData.append('resume', pdfBlob, 'resume.pdf')
+        formData.append('resumeName', filename)
 
         const result=await saveResume(formData)
         if(result.result.success){
             sessionStorage.removeItem('resumePdf')
             sessionStorage.removeItem('resumeHtml')
-            router.push('/feed')
-        }
+            router.push('/profile/user/myResumes')
+        }   
         
     }
 
@@ -66,6 +87,44 @@ export default function ResumePreview() {
 
     return (
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {isOpen && (
+                <div
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                >
+                {/* Modal Box */}
+                <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 mx-4">
+                    <h2 className="text-xl font-semibold mb-4">Save As</h2>
+
+                    <input
+                    type="text"
+                    value={filename}
+                    onChange={(e) => setFilename(e.target.value)}
+                    placeholder="Enter file name..."
+                    className="w-full border rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-blue-300"
+                    />
+                    {error.filename && (
+                        <p className="text-red-500 text-sm">{error.filename}</p>
+                    )}
+
+                    {/* Buttons */}
+                    <div className="flex justify-end space-x-3">
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="cursor-pointer px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        onClick={handleSaveToProfile}
+                        className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Save
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )}
             {/* Header Section */}
             <div className="mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Resume Preview</h1>
@@ -94,7 +153,7 @@ export default function ResumePreview() {
             </button>
 
             <button
-                onClick={handleSaveToProfile}
+                onClick={()=>setIsOpen(true)}
                 className="cursor-pointer w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
                 <span>💾</span>

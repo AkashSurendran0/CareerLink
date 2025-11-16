@@ -162,11 +162,16 @@ export const createResume = async (data:any) => {
     return res.data
 }
 
-    export const saveResume = async (data:any) => {
-        const res=await api.post('resume/v1/saveResume', data, {
-            headers:{
-                'Content-Type':'multipart/form-data'
-            }
-        })
-        return res.data
-    }
+export const saveResume = async (data:any) => {
+    const res=await api.post('resume/v1/saveResume', data, {
+        headers:{
+            'Content-Type':'multipart/form-data'
+        }
+    })
+    return res.data
+}
+
+export const getAllUserResumes = async () => {
+    const res=await api.get('resume/v1/getAllUserResumes')
+    return res.data
+}
