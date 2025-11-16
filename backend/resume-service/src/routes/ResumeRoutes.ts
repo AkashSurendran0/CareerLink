@@ -10,5 +10,6 @@ const upload=multer()
 
 router.post('/createResume', resumeController.createResume)
 router.post('/saveResume', upload.single('resume'), resumeController.saveResume)
+router.get('/getAllUserResumes', resumeController.getAllUserResumes)
 
 export default router

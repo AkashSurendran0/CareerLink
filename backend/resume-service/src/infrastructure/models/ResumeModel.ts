@@ -3,6 +3,7 @@ import mongoose, {Document, Schema, Model} from "mongoose";
 export interface IResume extends Document{
     user:string,
     resumes:[{
+        name:string,
         url:string,
         createdAt:Date
     }],
@@ -16,6 +17,10 @@ const resumeSchema: Schema<IResume>=new Schema(
         },
         resumes:[
             {
+                name:{
+                    type:String,
+                    required:true
+                },
                 url:{
                     type:String,
                     required:true
