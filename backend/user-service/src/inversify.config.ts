@@ -9,7 +9,7 @@ import { AlterUserStatus } from "./application/use-cases/AlterUserStatus";
 import { ChangePass } from "./application/use-cases/ChangePass";
 import { CheckUserBlock } from "./application/use-cases/CheckUserBlock";
 import { EditUserDetails } from "./application/use-cases/EditUserDetails";
-import { GetUserDetails } from "./application/use-cases/GetUserDetails";
+import { GetUserDetails } from "./application/use-cases/GetUserDetails"; 
 import { GetAllUsers } from "./application/use-cases/GetUsers";
 import { GoogleLogin } from "./application/use-cases/GoogleLogin";
 import { UserController } from "./interfaces/controllers/UserController";

@@ -42,7 +42,7 @@ export default function UserLayout({
     const [userDetails, setUserDetails] = useState<Details>()
 
     const tabs = [
-        { href:'/profile/user/user', label:'About' },
+        { href:'/profile/user', label:'About' },
         { href:'/profile/user/myPosts', label:'Posts' },
         { href:'/profile/user/JobsApplied', label:'Jobs Applied' },
         { href:'/profile/user/githubActivity', label:'Github Activity' },
@@ -115,7 +115,7 @@ export default function UserLayout({
                 {tabs.map((tab, ind) => (
                     <button 
                     key={ind}
-                    onClick={() => activeTab == tab.label? null:setTab(tab)}
+                    onClick={() => setTab(tab)}
                     className={`cursor-pointer py-4 px-1 border-b-2 font-medium text-sm ${
                         activeTab === tab.label
                         ? "border-blue-500 text-blue-600"

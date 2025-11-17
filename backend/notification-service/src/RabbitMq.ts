@@ -8,7 +8,7 @@ import { TYPES } from './types'
 export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
-    private readonly exchange=["company.events"]
+    private readonly exchange=["company.events"] 
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,

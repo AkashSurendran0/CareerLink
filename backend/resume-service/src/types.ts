@@ -3,5 +3,6 @@ export const TYPES = {
     ICreateResume:'ICreateResume',
     IUploadResume:'IUploadResume',
     IResumeRepository:'IResumeRepository',
-    IGetAllUserResumes:'IGetAllUserResumes'
+    IGetAllUserResumes:'IGetAllUserResumes',
+    ICreateCoverLetter:'ICreateCoverLetter'
 }

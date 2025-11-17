@@ -175,3 +175,8 @@ export const getAllUserResumes = async () => {
     const res=await api.get('resume/v1/getAllUserResumes')
     return res.data
 }
+
+export const createCoverLetter = async (data:any) => {
+    const res=await api.post('resume/v1/createCoverLetter', data)
+    return res.data
+}
