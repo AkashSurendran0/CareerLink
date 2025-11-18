@@ -17,6 +17,7 @@ export default function ResumePreview() {
 
         setLetter(letter)
 
+        return () => sessionStorage.removeItem('coverLetter')
     }, [])  
 
     const handleEditDetails = () => {
@@ -24,7 +25,10 @@ export default function ResumePreview() {
     }
 
     const copyToSystem = async () => { 
-        
+        navigator.clipboard.writeText(coverLetter)
+        .then(()=>{
+            enqueueSnackbar('Copied Successfully!', {variant:"success"})
+        })
     }
 
     const handleCancel = () => {
