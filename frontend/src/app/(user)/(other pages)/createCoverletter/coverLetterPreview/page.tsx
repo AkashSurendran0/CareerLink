@@ -17,7 +17,7 @@ export default function ResumePreview() {
 
         setLetter(letter)
 
-        return () => sessionStorage.removeItem('coverLetter')
+        // return () => sessionStorage.removeItem('coverLetter')
     }, [])  
 
     const handleEditDetails = () => {

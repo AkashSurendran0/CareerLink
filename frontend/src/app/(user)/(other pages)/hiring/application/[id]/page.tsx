@@ -1,10 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getJobDetails } from "@/services/userService"
+import { applyJobWithUrl, getAllUserResumes, getJobDetails } from "@/services/userService"
 import Image from "next/image"
 import { checkCompanyDetails } from "@/services/adminService"
+import { useLoading } from "@/app/(user)/template"
+import { enqueueSnackbar } from "notistack"
 
 interface Props {
     params:{
@@ -14,12 +16,17 @@ interface Props {
 
 export default function JobDetailsPage({params}:Props) {
     const router=useRouter()
+    const setLoading=useLoading()
     const [jobDetails, setJobDetails]=useState<any>(null)
     const [companyDetails, setCompanyDetails]=useState<any>(null)
-    const [sidebarOpen, setSidebarOpen] = useState(false)
     const [resumeFile, setResumeFile] = useState<File | null>(null)
-    const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null)
-    
+    const [coverLetter, setCoverLetter]=useState('')
+    const [resumeUrl, setResumeUrl]=useState<File | null | string>(null)
+    const [openOptions, setOpenOptions]=useState(false)
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [openSavedResumes, setOpenSavedResumes]=useState(false)
+    const [resumes, setResumes]=useState()
+    const [resumeName, setResumeName]=useState<string | null>()
     
     useEffect(()=>{
         const {id}=params
@@ -33,26 +40,170 @@ export default function JobDetailsPage({params}:Props) {
         fetchDetails()
     }, [])
 
-    const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            setResumeFile(e.target.files[0])
+    const handleFileSelect = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const onSelectFromSaved = async () => {
+        setLoading(true)
+        const result=await getAllUserResumes()
+        if(result.resumes.success){
+            console.log(result)
+            setLoading(false)
+            setOpenOptions(false)
+            setOpenSavedResumes(true)
+            setResumes(result.resumes.resume)
         }
     }
 
-    const handleCoverLetterUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            setCoverLetterFile(e.target.files[0])
-        }
+    const closeResumeBox = () => {
+        setOpenSavedResumes(false)
     }
 
-    const handleSubmitApplication = () => {
-        console.log("Application submitted with resume:", resumeFile, "and cover letter:", coverLetterFile)
+    const previewResume = (e, url) => {
+        e.stopPropagation()
+        window.open(url)
+    }
+
+    const setUrl = (url, name) => {
+        setResumeUrl(url)
+        setResumeName(name)
+        setOpenSavedResumes(false)
+    }
+
+    const clearResume = () => {
+        setResumeName(null)
+        if(resumeUrl) setResumeUrl(null)
+        if(resumeFile) setResumeFile(null)
+    }
+
+    const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file=e.target.files?.[0]
+        if(file!.type != 'application/pdf'){
+            enqueueSnackbar('Please select a valid pdf', {variant:'error'})
+            return
+        }
+
+        setResumeName(file!.name)
+        setResumeFile(file!)
+        setOpenOptions(false)
+        console.log(file)
+    }
+
+    const handleSubmitApplication = async () => {
+        if(!resumeFile && !resumeUrl){
+            enqueueSnackbar('A resume is required', {variant:'error'})
+            return
+        }
+        if(!coverLetter){
+            enqueueSnackbar('Cover letter is required', {variant:'error'})
+            return
+        }
+        if(coverLetter.trim().length<20){
+            enqueueSnackbar('Cover letter must be minimum 20 characters', {variant:'error'})
+            return  
+        }
+
+        setLoading(true)
+        if(resumeUrl){
+            const {id}=params
+            const data = {
+                id,
+                resumeUrl,
+                coverLetter
+            }        
+            const result=await applyJobWithUrl(data)   
+            console.log(result)
+        }else{
+            
+        }
     }
 
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
+                    {openOptions && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div
+                                className="absolute inset-0 bg-black/50"
+                                onClick={()=>setOpenOptions(false)}
+                            />
+
+                            <div className="relative bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-sm z-10">
+                                <h2 className="text-xl font-semibold text-center mb-4">
+                                Select an Option
+                                </h2>
+
+                                <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={handleFileSelect}
+                                    className="cursor-pointer w-full py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                                >
+                                    Select From Files
+                                </button>
+
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    onChange={handlePdfChange}
+                                />
+
+                                <button
+                                    onClick={onSelectFromSaved}
+                                    className="cursor-pointer w-full py-2 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition"
+                                >
+                                    Select From Saved
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {openSavedResumes && resumes && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div
+                                className="absolute inset-0 bg-black/50"
+                                onClick={closeResumeBox}
+                            />
+
+                            <div className="relative bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-md z-10">
+                                <h2 className="text-xl font-semibold text-center mb-4">
+                                Saved Resumes
+                                </h2>
+
+                                <div className="flex flex-col gap-4 max-h-80 overflow-y-auto pr-1">
+                                {resumes.resumes.length === 0 ? (
+                                    <p className="text-gray-500 text-center">No saved resumes found.</p>
+                                ) : (
+                                    resumes.resumes.map((resume) => (
+                                    <div
+                                        key={resume._id}
+                                        onClick={()=>setUrl(resume.url, resume.name)}
+                                        className="cursor-pointer border rounded-lg p-3 flex justify-between items-center"
+                                    >
+                                        <div>
+                                        <p className="font-medium">{resume.name}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Created: {new Date(resume.createdAt).toLocaleDateString()}
+                                        </p>
+                                        </div>
+
+                                        <button
+                                        onClick={(e) => previewResume(e,resume.url)}
+                                        className="cursor-pointer px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
+                                        >
+                                        Preview
+                                        </button>
+                                    </div>
+                                    ))
+                                )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {/* Job Header */}
                     <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -92,10 +243,10 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Responsibilities</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.responsibilities.map(responsibility=>(
-                            <li className="flex gap-3">
-                            <span className="text-gray-400">•</span>
-                            <span>{responsibility}</span>
+                        {jobDetails.responsibilities.map((responsibility, ind)=>(
+                            <li className="flex gap-3" key={ind}>
+                                <span className="text-gray-400">•</span>
+                                <span>{responsibility}</span>
                             </li>
                         ))}
                     </ul>
@@ -105,10 +256,10 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Requirements/Skills</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.qualifications.map(qualification=>(
-                            <li className="flex gap-3">
-                            <span className="text-gray-400">•</span>
-                            <span>{qualification}</span>
+                        {jobDetails.qualifications.map((qualification, ind)=>(
+                            <li className="flex gap-3" key={ind}>
+                                <span className="text-gray-400">•</span>
+                                <span>{qualification}</span>
                             </li>
                         ))}
                     </ul>
@@ -118,8 +269,8 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Benefits</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.benefits?.map(benefit=>(    
-                            <li className="flex gap-3">
+                        {jobDetails.benefits?.map((benefit, ind)=>(    
+                            <li className="flex gap-3" key={ind}>
                             <span className="text-gray-400">•</span>
                             <span>{benefit}</span>
                             </li>
@@ -133,33 +284,45 @@ export default function JobDetailsPage({params}:Props) {
 
                     {/* Add Resume */}
                     <div className="mb-8">
-                        <h4 className="font-semibold text-gray-900 mb-4">Add Resume</h4>
-                        <div className="space-y-3">
-                        <div>
-                            <label htmlFor="resume-upload" className="block">
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
-                                <input
-                                id="resume-upload"
-                                type="file"
-                                accept=".pdf,.doc,.docx"
-                                onChange={handleResumeUpload}
-                                className="hidden"
-                                />
-                                <button
-                                type="button"
-                                onClick={() => document.getElementById("resume-upload")?.click()}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md inline-block"
-                                >
-                                Upload
+                        {resumeName? (
+                            <>
+                                <div className="space-y-3">
+                                <div>
+                                    <span><b>Selected Resume</b> : {resumeName} 
+                                        <button 
+                                        className="bg-red-500 hover:bg-red-600 cursor-pointer ml-2 py-1 px-3 text-white rounded-md"
+                                        onClick={clearResume}
+                                        >
+                                            Clear
+                                        </button>
+                                    </span>
+                                </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h4 className="font-semibold text-gray-900 mb-4">Add Resume</h4>
+                                <div className="space-y-3">
+                                <div>
+                                    <label htmlFor="resume-upload" className="block">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                                        <button
+                                        type="button"
+                                        onClick={() => setOpenOptions(true)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md inline-block"
+                                        >
+                                        Upload
+                                        </button>
+                                        {resumeFile && <p className="text-sm text-gray-600 mt-2">{resumeFile.name}</p>}
+                                    </div>
+                                    </label>
+                                </div>
+                                <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
+                                    Generate Tailored Resume
                                 </button>
-                                {resumeFile && <p className="text-sm text-gray-600 mt-2">{resumeFile.name}</p>}
-                            </div>
-                            </label>
-                        </div>
-                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
-                            Generate Tailored Resume
-                        </button>
-                        </div>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Add Cover Letter */}
@@ -168,28 +331,21 @@ export default function JobDetailsPage({params}:Props) {
                         <div className="space-y-3">
                         <div>
                             <label htmlFor="cover-letter-upload" className="block">
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
-                                <input
+                            <div className="text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                                <textarea 
                                 id="cover-letter-upload"
-                                type="file"
-                                accept=".pdf,.doc,.docx"
-                                onChange={handleCoverLetterUpload}
-                                className="hidden"
+                                value={coverLetter}
+                                onChange={(e)=>setCoverLetter(e.target.value)}
+                                className="w-full h-30 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2"
                                 />
-                                <button
-                                type="button"
-                                onClick={() => document.getElementById("cover-letter-upload")?.click()}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md inline-block"
-                                >
-                                Upload
-                                </button>
-                                {coverLetterFile && <p className="text-sm text-gray-600 mt-2">{coverLetterFile.name}</p>}
                             </div>
                             </label>
                         </div>
-                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
-                            Generate Tailored Cover Letter
-                        </button>
+                        {!coverLetter && (
+                            <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
+                                Generate Tailored Cover Letter
+                            </button>
+                        )}
                         </div>
                     </div>
                     </section>

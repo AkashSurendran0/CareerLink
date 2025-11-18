@@ -42,19 +42,45 @@ export class CreateResume implements ICreateResume {
                                 text:
                                 `
 You are an expert resume writer and HTML designer.
-Return only **complete HTML** markup. Do not include markdown, code fences, or any explanations.
-Using the following structured information, generate a modern, visually appealing HTML resume with inline CSS styling.
+Return only the final HTML markup — no markdown, no code fences, and no explanations.
+Using the structured data provided, generate a modern, ATS-friendly HTML resume with inline CSS.
 
-Requirements:
-- Include sections only if they contain data: Summary, Education, Skills, Certifications, Experience, Projects, Languages, Interests.
-- Use semantic HTML tags (<section>, <h2>, <ul>, <li>, <p>, etc.) for structure.
-- Add inline CSS styling for a clean and professional look.
-- Ensure proper spacing, margins, and section separation for easy readability.
-- Use a neutral color palette (black, gray, blue highlights).
-- Use clear fonts (e.g., Arial, Helvetica, sans-serif).
-- Make section headings stand out with subtle borders or highlights.
-- Keep the design ATS-friendly (no tables, no images).
-- Do not add fake or placeholder information — only use the provided data.
+Rules & Requirements:
+
+1. Include sections only if they contain data:
+- Summary
+- Education
+- Skills
+- Certifications
+- Experience
+- Projects
+- Languages
+- Interests
+
+2. Styling Requirements (inline CSS only):
+- Use a clean, modern, minimal layout
+- Neutral color palette: black/gray with subtle blue highlights
+- Professional fonts: Arial, Helvetica, sans-serif
+- Clear spacing between sections
+- Section titles must be visually distinct (bold + underline or border-bottom)
+- No images, no tables, no complex layouts (ensure ATS compatibility)
+
+3. HTML Structure Rules:
+- Use semantic tags: <section>, <h2>, <p>, <ul>, <li>, etc.
+- Wrap the entire resume in a single main container <div> with proper margins
+- Make the design readable on both PDF and browser exports
+
+4. Content Rules:
+- Use only the provided data — never invent information
+- Preserve user wording but fix spelling/grammar professionally
+- Display items in clean bullet lists where appropriate
+- Skip empty or null fields entirely
+
+5. Output Rules:
+- Return only the complete HTML document
+- No markdown
+- No backticks
+- No additional commentary
 
 Here is the user data:
 Name: ${fullName}

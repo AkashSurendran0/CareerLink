@@ -31,7 +31,9 @@ function MyResumes() {
                                 Created: {new Date(resume.createdAt).toLocaleDateString()}
                                 </p>
                             </div>
-                            <button className="self-start md:self-auto flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md transition-colors whitespace-nowrap">
+                            <button 
+                            onClick={()=>window.open(resume.url)}
+                            className="cursor-pointer self-start md:self-auto flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md transition-colors whitespace-nowrap">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path
                                     strokeLinecap="round"

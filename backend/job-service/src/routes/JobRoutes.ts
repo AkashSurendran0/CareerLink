@@ -12,5 +12,6 @@ router.get('/getJobDetails', jobController.getJobDetails)
 router.patch('/editJob', jobController.editJob)
 router.patch('/closeJob', jobController.closeJobApplication)
 router.get('/getAvailableJobs', jobController.getAvailableJobs)
+router.post('/applyJobWithUrl', jobController.applyJobWithUrl)
 
 export default router
