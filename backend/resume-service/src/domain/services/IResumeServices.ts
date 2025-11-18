@@ -11,3 +11,7 @@ export interface IUploadResume {
 export interface IGetAllUserResumes{
     getAllResumes(id:string): Promise<{success:boolean, resume:ResumeDto} | {success:false}>
 }
+
+export interface ICreateCoverLetter{
+    createCoverLetter(data:any) : Promise<any>
+}
