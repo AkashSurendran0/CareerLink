@@ -180,3 +180,8 @@ export const createCoverLetter = async (data:any) => {
     const res=await api.post('resume/v1/createCoverLetter', data)
     return res.data
 }
+
+export const applyJobWithUrl = async (data:any) => {
+    const res=await api.post('job/v1/applyJobWithUrl', data)
+    return res.data
+}

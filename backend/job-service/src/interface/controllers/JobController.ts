@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJobWithUrl, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { IGetAllJobs } from "../../domain/use-cases/IJobUseCase"
 
@@ -15,7 +15,8 @@ export class JobController {
         @inject(TYPES.IGetJobDetails) private _getJobDetails:IGetJobDetails,
         @inject(TYPES.IEditJob) private _editJob:IEditJob,
         @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication,
-        @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs
+        @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs,
+        @inject(TYPES.IApplyJobWithUrl) private _applyJobWithUrl:IApplyJobWithUrl
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -120,6 +121,21 @@ export class JobController {
                 })
             )
             res.json({jobs:filledJobs})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    applyJobWithUrl = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-id'] as string
+            const data=req.body
+            const result=await this._applyJobWithUrl.applyJob(data, user)
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

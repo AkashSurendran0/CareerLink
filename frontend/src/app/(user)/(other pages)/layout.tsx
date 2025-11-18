@@ -15,7 +15,8 @@ function MainLayout({
     return (
         <SnackbarProvider
             maxSnack={3} 
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            autoHideDuration={3000}
         >
         <div className="min-h-screen bg-gray-50 flex">
             <MainSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>

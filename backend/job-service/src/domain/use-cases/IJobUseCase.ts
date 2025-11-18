@@ -36,3 +36,7 @@ export interface ICloseJobApplication {
 export interface IGetAvailableJobs {
     getAvailableJobs(query:string): Promise<JobDTO[]>
 }
+
+export interface IApplyJobWithUrl {
+    applyJob(data:any, user:string): Promise<{success:boolean}>
+}

@@ -8,14 +8,17 @@ import { ResumeItem } from "../../domain/entity/Resume";
 export class ResumeRepository implements IResumeRepository{
 
     async addResume (url:string, user:string, name:string) : Promise<{success:boolean}> {
-        await ResumeModel.insertOne(
+        await ResumeModel.updateOne(
+            {user},
             {
-                user,
-                resumes:{
-                    name,
-                    url
+                $push:{
+                    resumes:{
+                        name,
+                        url
+                    }
                 }
-            }
+            },
+            {upsert:true}
         )
         return {success:true}
     }
