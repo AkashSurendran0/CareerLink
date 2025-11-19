@@ -7,6 +7,6 @@ export const TYPES = {
     IEditJob:'IEditJob',
     ICloseJobApplication:'ICloseJobApplication',
     IGetAvailableJobs:'IGetAvailableJobs',
-    IApplyJobWithUrl:'IApplyJobWithUrl',
+    IApplyJob:'IApplyJob',
     IJobApplicationsRepository:'IJobApplicationsRepository'
 }

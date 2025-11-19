@@ -2,9 +2,9 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, IApplyJobWithUrl, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
-import { IGetAllJobs } from "../../domain/use-cases/IJobUseCase"
+import { uploadResume } from "../../config/upload"
 
 @injectable()
 export class JobController {
@@ -16,7 +16,7 @@ export class JobController {
         @inject(TYPES.IEditJob) private _editJob:IEditJob,
         @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication,
         @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs,
-        @inject(TYPES.IApplyJobWithUrl) private _applyJobWithUrl:IApplyJobWithUrl
+        @inject(TYPES.IApplyJob) private _applyJob:IApplyJob
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -134,7 +134,29 @@ export class JobController {
         try {
             const user=req.headers['user-id'] as string
             const data=req.body
-            const result=await this._applyJobWithUrl.applyJob(data, user)
+            const result=await this._applyJob.applyJob(data, user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    applyJobWithFile = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-id'] as string
+            const buffer=req.file?.buffer
+            const {coverLetter, id}=req.body
+            const resumeUrl=await uploadResume(buffer!)
+            const data={
+                id,
+                resumeUrl,
+                coverLetter
+            }
+            const result=await this._applyJob.applyJob(data, user)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
