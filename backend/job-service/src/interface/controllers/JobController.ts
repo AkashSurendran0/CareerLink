@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { uploadResume } from "../../config/upload"
 
@@ -16,7 +16,8 @@ export class JobController {
         @inject(TYPES.IEditJob) private _editJob:IEditJob,
         @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication,
         @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs,
-        @inject(TYPES.IApplyJob) private _applyJob:IApplyJob
+        @inject(TYPES.IApplyJob) private _applyJob:IApplyJob,
+        @inject(TYPES.IGetUserAppliedJobs) private _getUserAppliedJobs:IGetUserAppliedJobs
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -158,6 +159,36 @@ export class JobController {
             }
             const result=await this._applyJob.applyJob(data, user)
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getUserAppliedJobs = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-id'] as string
+            let jobs=await this._getUserAppliedJobs.getJobs(user)
+            console.log(jobs)
+            if(jobs.success){
+                let companyDetails=new Set()
+                jobs.jobs.forEach(i=>{
+                    companyDetails.add(i.details.company)
+                })
+                for(let id of companyDetails){
+                    let result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${id}`)
+                    for(let i=0;i<jobs.jobs.length;i++){
+                        if(jobs.jobs[i].details.company==id){
+                            jobs.jobs[i].companyName=result.data.company.name
+                            jobs.jobs[i].companyLogo=result.data.company.logo
+                        }
+                    }
+                }
+            }   
+            res.json({jobs})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

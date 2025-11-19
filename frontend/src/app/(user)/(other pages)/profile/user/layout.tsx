@@ -44,7 +44,7 @@ export default function UserLayout({
     const tabs = [
         { href:'/profile/user', label:'About' },
         { href:'/profile/user/myPosts', label:'Posts' },
-        { href:'/profile/user/JobsApplied', label:'Jobs Applied' },
+        { href:'/profile/user/jobsApplied', label:'Jobs Applied' },
         { href:'/profile/user/githubActivity', label:'Github Activity' },
         { href:'/profile/user/myResumes', label:'My Resumes' },
     ];

@@ -6,7 +6,6 @@ import { JobApplicationModel } from "../model/JobApplicationModel";
 export class JobApplicationsRepository implements IJobApplicationsRepository {
 
     async addApplications(user:string, jobId:string, resume:string, coverLetter:string): Promise <{success:boolean}> {
-        console.log(user, jobId, resume, coverLetter)
         await JobApplicationModel.updateOne(
             {jobPost:jobId},
             {
@@ -21,6 +20,17 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
             {upsert:true}
         )
         return {success:true}
+    }
+
+    async getUserApplications(user: string): Promise<{ success: boolean; } | { success: boolean; jobs: any[]; }> {
+        const jobs=await JobApplicationModel.aggregate([
+            {$unwind: '$applicants'},
+            {$match:{
+                'applicants.user':user
+            }}
+        ])
+        if(!jobs) return {success:false}
+        return {success:true, jobs}
     }
 
 }

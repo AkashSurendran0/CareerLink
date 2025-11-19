@@ -1,4 +1,5 @@
 import { JobDTO } from "../../dto/JobDTO"
+import { JobApplicationDto } from "../../dto/JobApplicationDTO"
 
 type JobDetails = {
     jobTitle:string,
@@ -39,4 +40,8 @@ export interface IGetAvailableJobs {
 
 export interface IApplyJob {
     applyJob(data:any, user:string): Promise<{success:boolean}>
+}
+
+export interface IGetUserAppliedJobs {
+    getJobs(user:string): Promise<{success:boolean} | {success:boolean, jobs:any[]}>
 }

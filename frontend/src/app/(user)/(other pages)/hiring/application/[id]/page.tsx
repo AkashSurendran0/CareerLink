@@ -114,8 +114,8 @@ export default function JobDetailsPage({params}:Props) {
                 resumeUrl,
                 coverLetter
             }        
-            const result=await applyJobWithUrl(data)   
-            console.log(result)
+            await applyJobWithUrl(data)   
+            router.push('/profile/user/jobsApplied')
         }else{
             const {id}=params
             const formData=new FormData()
@@ -123,8 +123,8 @@ export default function JobDetailsPage({params}:Props) {
             formData.append('coverLetter', coverLetter)
             formData.append('id', id)
 
-            const result=await applyJobWithFile(formData)
-            console.log(result)
+            await applyJobWithFile(formData)
+            router.push('/profile/user/jobsApplied')
         }
     }
 
