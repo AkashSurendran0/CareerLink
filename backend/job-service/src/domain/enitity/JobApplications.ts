@@ -1,5 +1,6 @@
 export class Applications {
     constructor (
+        public _id:string,
         public user:string,
         public resume:string,
         public coverLetter:string,
@@ -10,6 +11,7 @@ export class Applications {
 
 export class JobApplications {
     constructor (
+        public _id:string,
         public jobPost:string,
         public applicants:Applications[]
     ) {}

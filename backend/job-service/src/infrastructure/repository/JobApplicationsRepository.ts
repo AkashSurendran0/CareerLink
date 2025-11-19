@@ -1,6 +1,8 @@
 import { injectable } from "inversify";
 import { IJobApplicationsRepository } from "../../domain/repositories/IJobApplicationsRepository";
 import { JobApplicationModel } from "../model/JobApplicationModel";
+import { Applications } from "../../domain/enitity/JobApplications";
+import { JobApplications } from "../../domain/enitity/JobApplications";
 
 @injectable()
 export class JobApplicationsRepository implements IJobApplicationsRepository {
@@ -31,6 +33,30 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
         ])
         if(!jobs) return {success:false}
         return {success:true, jobs}
+    }
+
+    async getCount(id: string): Promise<number> {
+        const stringId=String(id)
+        const docs=await JobApplicationModel.aggregate([
+            {$match:
+                {jobPost:stringId}
+            },
+            {$unwind: '$applicants'},
+        ])
+        return docs.length
+    }
+
+    async getJobApplicants(id: string): Promise<JobApplications | null> {
+        const result=await JobApplicationModel.findOne({jobPost:id})
+        if(!result) return null
+        const applications=result?.applicants.map(
+            r=>new Applications(r._id, r.user, r.resume, r.coverLetter, r.status, r.createdAt)
+        )
+        return new JobApplications (
+            result?._id,
+            result?.jobPost,
+            applications
+        )
     }
 
 }

@@ -11,7 +11,7 @@ type Job = {
     jobTitle:string,
     open:boolean,
     createdAt:Date,
-    applicants:number | null,
+    count:number | null,
     jobType:string
 }
 
@@ -32,6 +32,7 @@ export default function CompanyJobsPage() {
     useEffect(()=>{
         const fetchJobs=async ()=>{
             const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, query, filter)
+            console.log(result.result.jobs)
             setPageLimit(result.result.limit)
             setJobs(result.result.jobs)
             setTotalCount(result.result.count)
@@ -189,7 +190,7 @@ export default function CompanyJobsPage() {
                         </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{new Date(job.createdAt).toLocaleDateString()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.applicants?? 0}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.count?? 0}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{job.jobType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">

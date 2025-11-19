@@ -1,0 +1,21 @@
+import { inject, injectable } from "inversify";
+import { IGetJobApplicants } from "../../domain/use-cases/IJobUseCase";
+import { TYPES } from "../../types";
+import { IJobApplicationsRepository } from "../../domain/repositories/IJobApplicationsRepository";
+import { JobApplicationDto } from "../../dto/JobApplicationDTO";
+import { JobApplicationMapper } from "../../mapper/JobApplicationMapper";
+
+@injectable()
+export class GetJobApplicants implements IGetJobApplicants {
+
+    constructor(
+        @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository
+    ){}
+
+    async getApplicants(id: string): Promise<JobApplicationDto | null> {
+        let result=await this._jobApplicationRepository.getJobApplicants(id)
+        if(result) result=JobApplicationMapper.toDTO(result)
+        return result
+    }
+
+}
