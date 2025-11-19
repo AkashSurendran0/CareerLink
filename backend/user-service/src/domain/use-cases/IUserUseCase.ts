@@ -39,3 +39,7 @@ export interface IAlterUserStatus {
 export interface ICheckUserBlock {
     checkUserBlock (id:string): Promise<{success:boolean} | null>
 }
+
+export interface IGetUserNames {
+    getUserNames (id:string) : Promise<string>
+}

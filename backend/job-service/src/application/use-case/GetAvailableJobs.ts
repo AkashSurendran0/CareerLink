@@ -13,7 +13,7 @@ export class GetAvailableJobs implements IGetAvailableJobs {
     ){}
 
     async getAvailableJobs(query:string): Promise<JobDTO[]> {
-        const jobs=await this._jobRepository.getAvailableJobs(query)
+        let jobs=await this._jobRepository.getAvailableJobs(query)
         return jobs.map(job=>JobMapper.toDTO(job))
     }
 

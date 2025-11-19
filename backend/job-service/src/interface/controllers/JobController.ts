@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { uploadResume } from "../../config/upload"
 
@@ -17,7 +17,8 @@ export class JobController {
         @inject(TYPES.ICloseJobApplication) private _closeJobApplication:ICloseJobApplication,
         @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs,
         @inject(TYPES.IApplyJob) private _applyJob:IApplyJob,
-        @inject(TYPES.IGetUserAppliedJobs) private _getUserAppliedJobs:IGetUserAppliedJobs
+        @inject(TYPES.IGetUserAppliedJobs) private _getUserAppliedJobs:IGetUserAppliedJobs,
+        @inject(TYPES.IGetJobApplicants) private _getJobApplicants:IGetJobApplicants
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -172,7 +173,6 @@ export class JobController {
         try {
             const user=req.headers['user-id'] as string
             let jobs=await this._getUserAppliedJobs.getJobs(user)
-            console.log(jobs)
             if(jobs.success){
                 let companyDetails=new Set()
                 jobs.jobs.forEach(i=>{
@@ -189,6 +189,26 @@ export class JobController {
                 }
             }   
             res.json({jobs})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getJobApplicants = async (req:Request, res:Response) => {
+        try {
+            const {job}=req.query
+            let result=await this._getJobApplicants.getApplicants(job)
+            if(result){
+                for(let i=0;i<result.applicants.length;i++){
+                    const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.applicants[i].user}`)
+                    result.applicants[i]!.userName=user.data.result
+                }
+            }
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

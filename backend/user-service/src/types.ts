@@ -16,5 +16,6 @@ export const TYPES={
     UserController:"UserController",
     UserDetailsController:"UserDetailsController",
     Mailer:"Mailer",
-    IVerifyOTP:"IVerifyOTP"
+    IVerifyOTP:"IVerifyOTP",
+    IGetUserNames:"IGetUserNames"
 };

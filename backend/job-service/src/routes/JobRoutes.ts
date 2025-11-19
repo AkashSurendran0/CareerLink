@@ -17,5 +17,6 @@ router.get('/getAvailableJobs', jobController.getAvailableJobs)
 router.post('/applyJobWithUrl', jobController.applyJobWithUrl)
 router.post('/applyJobWithFile', upload.single('resume'), jobController.applyJobWithFile)
 router.get('/getUserAppliedJobs', jobController.getUserAppliedJobs)
+router.get('/getJobApplicants', jobController.getJobApplicants)
 
 export default router

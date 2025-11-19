@@ -45,3 +45,7 @@ export interface IApplyJob {
 export interface IGetUserAppliedJobs {
     getJobs(user:string): Promise<{success:boolean} | {success:boolean, jobs:any[]}>
 }
+
+export interface IGetJobApplicants {
+    getApplicants(id:string): Promise<JobApplicationDto | null>
+}

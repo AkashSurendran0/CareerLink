@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ILoginUser } from "../../domain/use-cases/IUserUseCase";
+import { IGetUserNames, ILoginUser } from "../../domain/use-cases/IUserUseCase";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
@@ -27,7 +27,8 @@ export class UserController {
         @inject(TYPES.IGetAllUsers) private _getUsers:IGetAllUsers,
         @inject(TYPES.IAlterUserStatus) private _alterUserStatus:IAlterUserStatus,
         @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
-        @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP
+        @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP,
+        @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -195,5 +196,19 @@ export class UserController {
             }
         }
     };
+
+    getUserDetails = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const {id}=req.query;
+            const result=await this._getUserNames.getUserNames(id);
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
 
 }

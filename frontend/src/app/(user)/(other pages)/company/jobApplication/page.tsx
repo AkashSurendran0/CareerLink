@@ -2,49 +2,62 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getCompanyInfo, getJobDetails } from "@/services/userService"
+import { getCompanyInfo, getJobApplicants, getJobDetails } from "@/services/userService"
 import Image from "next/image"
 
 export default function JobDetailsPage() {
     const router=useRouter()
     const [jobDetails, setJobDetails]=useState<any>(null)
     const [companyDetails, setCompanyDetails]=useState<any>(null)
-
-    const applicants = [
-        {
-        id: 1,
-        name: "Sophia Bennett",
-        date: "June 15, 2024",
-        },
-        {
-        id: 2,
-        name: "Ethan Carter",
-        date: "June 16, 2024",
-        },
-        {
-        id: 3,
-        name: "Olivia Davis",
-        date: "June 17, 2024",
-        },
-    ]
+    const [applicants, setApplicants]=useState()
+    const [showLetter, setShowLetter]=useState(false)
+    const [letter, setLetter]=useState('')
 
     useEffect(()=>{
         const fetchDetails = async () => {
             const id=localStorage.getItem('jobId')
             if(!id) return router.push('/company/registeredCompany/jobsPosted')
+            fetchApplicants(id)
             const job=await getJobDetails(id)
             const company=await getCompanyInfo()
             setJobDetails(job.details)
             setCompanyDetails(company.result)
         }
 
+        const fetchApplicants = async (id:string) => {
+            const result=await getJobApplicants(id)
+            setApplicants(result.result)
+        }
+
         fetchDetails()
     }, [])
+
+    const displayLetter = async (letter:string) => {
+        setLetter(letter)
+        setShowLetter(true)
+    }
+
+    const removeLetter = async () => {
+        setLetter('')
+        setShowLetter(false)
+    }
 
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
+                    {showLetter && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div
+                                className="absolute inset-0 bg-black/50"
+                                onClick={removeLetter}
+                            />
+
+                            <div className="whitespace-pre-line relative bg-white rounded-xl shadow-lg p-6 w-full z-10 mx-10">
+                                {letter}
+                            </div>
+                        </div>
+                    )}
                     {/* Job Header */}
                     <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -123,7 +136,7 @@ export default function JobDetailsPage() {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <h2 className="text-xl font-bold text-gray-900">Applicants</h2>
-                        <button className="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white">
+                        <button className="cursor-pointer inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white">
                         Find Best Match
                         </button>
                     </div>
@@ -139,27 +152,33 @@ export default function JobDetailsPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {applicants.map((applicant) => (
-                            <tr key={applicant.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                <td className="px-4 py-4 text-sm text-gray-900">{applicant.name}</td>
-                                <td className="px-4 py-4 text-sm text-gray-600">{applicant.date}</td>
+                            {applicants && applicants.applicants?.map((applicant) => (
+                            <tr key={applicant._id} className="border-b border-gray-100 hover:bg-gray-50">
+                                <td className="px-4 py-4 text-sm text-gray-900">{applicant.userName}</td>
+                                <td className="px-4 py-4 text-sm text-gray-600">{new Date(applicant.createdAt).toLocaleDateString()}</td>
                                 <td className="px-4 py-4 text-sm">
                                 <div className="flex flex-wrap gap-2">
-                                    <a href="#" className="text-blue-600 hover:underline">
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>window.open(applicant.resume)}
+                                    >
                                     View Resume
-                                    </a>
+                                    </button>
                                     <span className="text-gray-300">|</span>
-                                    <a href="#" className="text-blue-600 hover:underline">
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>displayLetter(applicant.coverLetter)}
+                                    >
                                     View Cover Letter
-                                    </a>
+                                    </button>
                                     <span className="text-gray-300">|</span>
-                                    <a href="#" className="text-blue-600 hover:underline">
+                                    <button className="cursor-pointer text-blue-600 hover:underline">
                                     Accept
-                                    </a>
+                                    </button>
                                     <span className="text-gray-300">|</span>
-                                    <a href="#" className="text-blue-600 hover:underline">
+                                    <button className="cursor-pointer text-blue-600 hover:underline">
                                     Reject
-                                    </a>
+                                    </button>
                                 </div>
                                 </td>
                             </tr>
@@ -170,26 +189,26 @@ export default function JobDetailsPage() {
 
                     {/* Cards - Mobile */}
                     <div className="sm:hidden space-y-4">
-                        {applicants.map((applicant) => (
+                        {applicants && applicants.applicants?.map((applicant) => (
                         <div key={applicant.id} className="border border-gray-200 rounded-lg p-4">
                             <h3 className="font-semibold text-gray-900">{applicant.name}</h3>
                             <p className="text-sm text-gray-600 mt-1">Applied: {applicant.date}</p>
                             <div className="mt-3 flex flex-wrap gap-2">
-                            <a href="#" className="text-blue-600 hover:underline text-sm">
+                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
                                 View Resume
-                            </a>
+                            </button>
                             <span className="text-gray-300">|</span>
-                            <a href="#" className="text-blue-600 hover:underline text-sm">
+                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
                                 View Cover Letter
-                            </a>
+                            </button>
                             <span className="text-gray-300">|</span>
-                            <a href="#" className="text-blue-600 hover:underline text-sm">
+                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
                                 Accept
-                            </a>
+                            </button>
                             <span className="text-gray-300">|</span>
-                            <a href="#" className="text-blue-600 hover:underline text-sm">
+                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
                                 Reject
-                            </a>
+                            </button>
                             </div>
                         </div>
                         ))}
