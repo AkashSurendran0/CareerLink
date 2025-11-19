@@ -16,5 +16,6 @@ router.patch('/closeJob', jobController.closeJobApplication)
 router.get('/getAvailableJobs', jobController.getAvailableJobs)
 router.post('/applyJobWithUrl', jobController.applyJobWithUrl)
 router.post('/applyJobWithFile', upload.single('resume'), jobController.applyJobWithFile)
+router.get('/getUserAppliedJobs', jobController.getUserAppliedJobs)
 
 export default router

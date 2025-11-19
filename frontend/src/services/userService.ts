@@ -194,3 +194,8 @@ export const applyJobWithFile = async (formData:any) => {
     })
     return res.data
 }
+
+export const getUserAppliedJobs = async () => {
+    const res=await api.get('job/v1/getUserAppliedJobs')
+    return res.data
+}

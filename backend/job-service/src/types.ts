@@ -8,5 +8,6 @@ export const TYPES = {
     ICloseJobApplication:'ICloseJobApplication',
     IGetAvailableJobs:'IGetAvailableJobs',
     IApplyJob:'IApplyJob',
-    IJobApplicationsRepository:'IJobApplicationsRepository'
+    IJobApplicationsRepository:'IJobApplicationsRepository',
+    IGetUserAppliedJobs:'IGetUserAppliedJobs'
 }

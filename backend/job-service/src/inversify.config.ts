@@ -10,6 +10,7 @@ import { CloseJobApplication } from "./application/use-case/CloseJobApplication"
 import { GetAvailableJobs } from "./application/use-case/GetAvailableJobs";
 import { ApplyJob } from "./application/use-case/ApplyJobWithUrl";
 import { JobApplicationsRepository } from "./infrastructure/repository/JobApplicationsRepository";
+import { GetUserAppliedJobs } from "./application/use-case/GetUserAppliedJobs";
 
 const container=new Container()
 
@@ -23,6 +24,7 @@ container.bind(TYPES.IEditJob).to(EditJob).inSingletonScope()
 container.bind(TYPES.ICloseJobApplication).to(CloseJobApplication).inSingletonScope()
 container.bind(TYPES.IGetAvailableJobs).to(GetAvailableJobs).inSingletonScope()
 container.bind(TYPES.IApplyJob).to(ApplyJob).inSingletonScope()
+container.bind(TYPES.IGetUserAppliedJobs).to(GetUserAppliedJobs).inSingletonScope()
 
 container.bind<JobController>(TYPES.JobController).to(JobController)
 
