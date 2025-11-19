@@ -185,3 +185,12 @@ export const applyJobWithUrl = async (data:any) => {
     const res=await api.post('job/v1/applyJobWithUrl', data)
     return res.data
 }
+
+export const applyJobWithFile = async (formData:any) => {
+    const res=await api.post('job/v1/applyJobWithFile', formData, {
+        headers:{
+            "Content-Type":'multipart/form-data'
+        }
+    })
+    return res.data
+}

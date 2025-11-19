@@ -1,10 +1,10 @@
 import { injectable, inject } from "inversify";
-import { IApplyJobWithUrl } from "../../domain/use-cases/IJobUseCase";
+import { IApplyJob } from "../../domain/use-cases/IJobUseCase";
 import { TYPES } from "../../types";
 import { IJobApplicationsRepository } from "../../domain/repositories/IJobApplicationsRepository";
 
 @injectable()
-export class ApplyJobWithUrl implements IApplyJobWithUrl {
+export class ApplyJob implements IApplyJob {
     
     constructor(
         @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository

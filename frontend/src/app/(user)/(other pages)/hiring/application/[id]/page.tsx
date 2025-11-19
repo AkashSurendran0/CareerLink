@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { applyJobWithUrl, getAllUserResumes, getJobDetails } from "@/services/userService"
+import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails } from "@/services/userService"
 import Image from "next/image"
 import { checkCompanyDetails } from "@/services/adminService"
 import { useLoading } from "@/app/(user)/template"
@@ -117,7 +117,14 @@ export default function JobDetailsPage({params}:Props) {
             const result=await applyJobWithUrl(data)   
             console.log(result)
         }else{
-            
+            const {id}=params
+            const formData=new FormData()
+            formData.append('resume', resumeFile)
+            formData.append('coverLetter', coverLetter)
+            formData.append('id', id)
+
+            const result=await applyJobWithFile(formData)
+            console.log(result)
         }
     }
 
