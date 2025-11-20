@@ -28,20 +28,30 @@ api.interceptors.response.use(
     },
     (error) => {
         if (error.response) {
-        console.error("📡 Response Error:", {
-            status: error.response.status,
-            data: error.response.data,
-            url: error.config?.url,
-        });
-        } else if (error.request) {
-        console.error("🌐 Network Error:", error.message);
-        } else {
-        console.error("⚙️ Request Setup Error:", error.message);
+            const status = error.response.status;
+            const data = error.response.data;
+            const url = error.config?.url;
+
+            console.error("📡 Response Error:", { status, data, url });
+
+            if (status === 440 || data?.message === "session_over") {
+                if (typeof window !== "undefined") {
+                    window.location.href = "http://localhost:3000/sessionOver";
+                }
+                return; 
+            }
+        } 
+        else if (error.request) {
+            console.error("🌐 Network Error:", error.message);
+        } 
+        else {
+            console.error("⚙️ Request Setup Error:", error.message);
         }
 
         return Promise.reject(error);
     }
 );
+
 
 
 export default api

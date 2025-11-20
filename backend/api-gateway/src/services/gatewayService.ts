@@ -15,6 +15,7 @@ export class GatewayService {
             '/notification':`${process.env.NOTIFICATION_SERVICE_ROUTE}`,
             '/job':`${process.env.JOB_SERVICE_ROUTE}`,
             '/resume':`${process.env.RESUME_SERVICE_ROUTE}`,
+            '/media':`${process.env.POST_SERVICE_ROUTE}`,
         }
     }
 

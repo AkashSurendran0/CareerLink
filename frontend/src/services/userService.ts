@@ -204,3 +204,32 @@ export const getJobApplicants = async (id:string) => {
     const res=await api.get(`job/v1/getJobApplicants?job=${id}`)
     return res.data
 }
+
+export const postContent = async (formData:any) => {
+    const res=await api.post('media/v1/postContent', formData, {
+        headers:{
+            "Content-Type":'multipart/form-data'
+        }
+    })
+    return res.data
+}
+
+export const getAllPosts = async (limit:number, shown:number) => {
+    const res=await api.get(`media/v1/getAllPosts?lim=${limit}&shown=${shown}`)
+    return res.data
+}
+
+export const alterPostLike = async (postId:string) => {
+    const res=await api.patch(`media/v1/alterPostLike?post=${postId}`)
+    return res.data
+}
+
+export const addComment = async (data:any) => {
+    const res=await api.patch('media/v1/addComment', data)
+    return res.data 
+}
+
+export const loadSinglePostDetails = async (id:string) => {
+    const res=await api.get(`media/v1/getSinglePostDetails?post=${id}`)
+    return res.data
+}

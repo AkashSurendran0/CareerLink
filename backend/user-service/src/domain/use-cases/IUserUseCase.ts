@@ -41,5 +41,6 @@ export interface ICheckUserBlock {
 }
 
 export interface IGetUserNames {
-    getUserNames (id:string) : Promise<string>
+    getUserNames (id:string) : Promise<any>
+    getUserNamesByEmail(email:string): Promise<any>
 }

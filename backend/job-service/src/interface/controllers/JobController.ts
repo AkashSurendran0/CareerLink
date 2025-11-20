@@ -205,7 +205,7 @@ export class JobController {
             if(result){
                 for(let i=0;i<result.applicants.length;i++){
                     const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.applicants[i].user}`)
-                    result.applicants[i]!.userName=user.data.result
+                    result.applicants[i]!.userName=user.data.result.result.username
                 }
             }
             res.json({result})
