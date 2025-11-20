@@ -26,4 +26,20 @@ export class PostRepository implements IPostRepository {
         )
     }
 
+    async getAllPosts(): Promise<Post[]> {
+        const allPosts=await PostModel.find().sort({createdAt:-1})
+        return allPosts.map(post=>
+            new Post (
+                post._id,
+                post.image,
+                post.text,
+                post.createdBy,
+                post.comments,
+                post.likes,
+                post.likedBy,
+                post.createdAt
+            )
+        )
+    }
+
 }

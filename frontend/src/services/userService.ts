@@ -213,3 +213,8 @@ export const postContent = async (formData:any) => {
     })
     return res.data
 }
+
+export const getAllPosts = async () => {
+    const res=await api.get('media/v1/getAllPosts')
+    return res.data
+}

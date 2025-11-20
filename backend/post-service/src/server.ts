@@ -14,5 +14,5 @@ app.use(express.json())
 app.use('/v1', PostRoutes)
 
 app.listen(5007, ()=>{
-    console.log('Job service running')
+    console.log('Post service running')
 })

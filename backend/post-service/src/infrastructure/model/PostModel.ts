@@ -16,12 +16,14 @@ export interface IPost extends Document {
 const postSchema: Schema<IPost>=new Schema(
     {
         image:{
-            type:String || null,
-            required:true,
+            type: String,
+            required: false,
+            default: null
         },
         text:{
-            type:String || null,
-            required:true
+            type: String,
+            required: false,
+            default: null
         },
         createdBy:{
             type:String,

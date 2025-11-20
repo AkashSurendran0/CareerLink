@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Heart, MessageCircle, ImageIcon, Smile, X } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 import { enqueueSnackbar } from 'notistack';
-import { postContent } from '@/services/userService';
+import { getAllPosts, postContent } from '@/services/userService';
 import { useLoading } from '../../template';
+import Image from 'next/image';
 
 export default function FeedsPage() {
   const setLoading=useLoading()
@@ -15,14 +16,21 @@ export default function FeedsPage() {
   const [file, setFile]=useState<File | null>()
   const fileRef=useRef(null)
   const [posts, setPosts] = useState([])
+  const [isLoading, setIsLoading]=useState(false)
 
   const [content, setContent] = useState('')
   const [newComment, setNewComment] = useState('')
 
   useEffect(()=>{
-    const getAllPosts = () => {
-      
+    const getPosts = async () => {
+      setIsLoading(true)
+      const result=await getAllPosts()
+      setPosts([...result.result])
+      setIsLoading(false)
+      console.log(result)
     }
+
+    getPosts()
   }, [])
 
   const handlePost = async () => {
@@ -31,6 +39,8 @@ export default function FeedsPage() {
     formData.append('image', file)
     formData.append('content', content)
     const result=await postContent(formData)
+    setContent('')
+    setFile(null)
     setLoading(false)
     setPosts([result.result, ...posts])
     console.log(result)
@@ -64,7 +74,27 @@ export default function FeedsPage() {
     setFile(image)
   }
 
+  const handleImageLoad = (postId: number, event: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = event.currentTarget
+    setImageDimensions((prev) => ({
+      ...prev,
+      [postId]: { width: img.naturalWidth, height: img.naturalHeight },
+    }))
+  }
+
   const selectedPost = posts.find(p => p.id === selectedPostId)
+
+  if (isLoading) {
+    return (
+          <main className="flex-1 overflow-auto flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <h2 className="text-xl font-semibold text-gray-900">Your Feed is Loading</h2>
+              <p className="text-gray-500 mt-2">Getting your latest posts...</p>
+            </div>
+          </main>
+    )
+  }
 
   return (
         <main className="flex-1 overflow-auto">
@@ -204,7 +234,7 @@ export default function FeedsPage() {
                     </div>
                     <button
                       onClick={handlePost}
-                      disabled={!content.trim()}
+                      disabled={!content.trim() && !file}
                       className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white px-6 py-2 rounded-lg font-medium text-sm transition"
                     >
                       Post
@@ -223,7 +253,7 @@ export default function FeedsPage() {
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <img src={post.avatar || "/placeholder.svg"} alt={post.createdBy} className="h-10 w-10 rounded-full object-cover" />
+                          <img src={post.pfp || "/placeholder.svg"} alt={post.createdBy} className="h-10 w-10 rounded-full object-cover" />
                           <div>
                             <h3 className="font-semibold text-gray-900 text-sm">{post.createdBy}</h3>
                             <p className="text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
@@ -231,37 +261,41 @@ export default function FeedsPage() {
                         </div>
                       </div>
 
-                      {post.content && (
-                        <p className="text-gray-800 text-sm mb-3 leading-relaxed">{post.content}</p>
+                      {post.text && (
+                        <p className="text-gray-800 text-sm mb-3 leading-relaxed">{post.text}</p>
                       )}
 
                       {post.image && (
-                        <div className="mb-4 -mx-4">
-                          <img src={post.image || "/placeholder.svg"} alt="Post content" className="w-full h-64 object-cover" />
-                        </div>
-                      )}
+                      <div className="mb-4 -mx-4">
+                        <Image
+                          width={300}
+                          height={300}
+                          src={post.image || "/placeholder.svg"}
+                          alt="Post content"
+                          onLoad={(e) => handleImageLoad(post.id, e)}
+                          className="w-full object-cover"
+                          style={{ aspectRatio: "auto" }}
+                        />
+                      </div>
+                    )}
 
                     <div className="border-t border-gray-200 px-4 py-2 bg-gray-50 flex items-center justify-between">
                       <div className="flex items-center space-x-2 flex-1">
-                        {post.engagedBy.map((user, idx) => (
-                          <img key={idx} src={user.avatar || "/placeholder.svg"} alt={user.name} className="h-6 w-6 rounded-full object-cover -ml-1" />
-                        ))}
-                        {post.engagedBy.length > 0 && (
-                          <span className="text-xs text-gray-600 ml-2">{post.engagedBy[0].name}</span>
-                        )}
                       </div>
                       <div className="flex items-center space-x-3">
                         <button 
-                          onClick={() => handleLike(post.id)}
+                          onClick={() => handleLike(post._id)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition"
                         >
-                          <Heart size={18} fill={likedPosts.has(post.id) ? '#EF4444' : 'none'} color={likedPosts.has(post.id) ? '#EF4444' : 'currentColor'} />
+                          <Heart size={18} fill={likedPosts.has(post._id) ? '#EF4444' : 'none'} color={likedPosts.has(post.id) ? '#EF4444' : 'currentColor'} />
+                          <div className='ml-1'>{post.likes}</div>
                         </button>
                         <button 
-                          onClick={() => setSelectedPostId(post.id)}
+                          onClick={() => setSelectedPostId(post._id)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition"
                         >
                           <MessageCircle size={18} />
+                          <div className='ml-1'>{post.comments.length}</div>
                         </button>
                       </div>
                     </div>
@@ -270,7 +304,41 @@ export default function FeedsPage() {
                 ))}
               </>
             ) : (
-              <h1>No post</h1>
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 mb-4">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                    />
+                  </svg>
+                </div>
+
+                <h2 className="text-lg font-semibold text-gray-700">
+                  No posts available
+                </h2>
+
+                <p className="text-sm text-gray-500 mt-1">
+                  Posts will appear here once they are created.
+                </p>
+              </div>
+            )}
+            {posts.length>0 && (
+              <div className="flex justify-center py-6">
+                <button
+                  // onClick={handleLoadMore}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-medium transition"
+                >
+                  Load More Posts
+                </button>
+              </div>
             )}
           </div>
         </div>

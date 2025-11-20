@@ -10,5 +10,6 @@ const upload=multer()
 const router=Router()
 
 router.post('/postContent', upload.single('image'), postController.postContent)
+router.get('/getAllPosts', postController.getAllPosts)
   
 export default router 
