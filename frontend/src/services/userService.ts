@@ -214,7 +214,12 @@ export const postContent = async (formData:any) => {
     return res.data
 }
 
-export const getAllPosts = async () => {
-    const res=await api.get('media/v1/getAllPosts')
+export const getAllPosts = async (limit:number, shown:number) => {
+    const res=await api.get(`media/v1/getAllPosts?lim=${limit}&shown=${shown}`)
+    return res.data
+}
+
+export const alterPostLike = async (postId:string) => {
+    const res=await api.patch(`media/v1/alterPostLike?post=${postId}`)
     return res.data
 }

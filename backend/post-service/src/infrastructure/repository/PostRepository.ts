@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Post } from "../../domain/entity/Post";
 import { IPostRepository } from "../../domain/repository/IPostRepository";
 import { PostModel } from "../model/PostModel";
@@ -26,9 +27,10 @@ export class PostRepository implements IPostRepository {
         )
     }
 
-    async getAllPosts(): Promise<Post[]> {
-        const allPosts=await PostModel.find().sort({createdAt:-1})
-        return allPosts.map(post=>
+    async getAllPosts(limit:number, shown:number): Promise<{count:number, post:Post[]}> {
+        const allPostCount=await PostModel.find().countDocuments()
+        const allPosts=await PostModel.find().skip(shown).limit(limit).sort({createdAt:-1})
+        const post= allPosts.map(post=>
             new Post (
                 post._id,
                 post.image,
@@ -40,6 +42,37 @@ export class PostRepository implements IPostRepository {
                 post.createdAt
             )
         )
+        return {count:allPostCount, post}
+    }
+
+    async alterPostLike(post: string, user: string): Promise<null> {
+        const findPost=await PostModel.findOne({_id:post})
+        if(findPost?.likedBy.includes(user)){
+            await PostModel.updateOne(
+                {_id:post},
+                {
+                    $pull:{
+                        likedBy:user
+                    },
+                    $inc:{
+                        likes:-1
+                    }
+                }
+            )
+        }else{
+            await PostModel.updateOne(
+                {_id:post},
+                {
+                    $push:{
+                        likedBy:user
+                    },
+                    $inc:{
+                        likes:1
+                    }
+                }
+            )
+        }
+        return null
     }
 
 }

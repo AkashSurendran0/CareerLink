@@ -5,5 +5,9 @@ export interface IPostContent {
 }
 
 export interface IGetAllPosts {
-    getAllPosts(): Promise<PostDto[]>
+    getAllPosts(limit:number, shown:number): Promise<{count:number, allPost:PostDto[]}>
+}
+
+export interface IAlterPostLike {
+    alterPostLike(post:string, user:string): Promise<void>
 }

@@ -11,7 +11,7 @@ export async function GET(){
 
     try {
         const decoded= jwt.verify(token, process.env.JWT_SECRET!)
-        return Response.json({userEmail:decoded.email})
+        return Response.json({userEmail:decoded.email, userId:decoded.id})
     } catch (error) {
         return Response.json({userEmail:null}, {status:401})
     }

@@ -11,5 +11,6 @@ const router=Router()
 
 router.post('/postContent', upload.single('image'), postController.postContent)
 router.get('/getAllPosts', postController.getAllPosts)
+router.patch('/alterPostLike', postController.alterPostLike)
   
 export default router 

@@ -4,34 +4,59 @@ import { useEffect, useRef, useState } from 'react'
 import { Heart, MessageCircle, ImageIcon, Smile, X } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 import { enqueueSnackbar } from 'notistack';
-import { getAllPosts, postContent } from '@/services/userService';
+import { alterPostLike, getAllPosts, postContent } from '@/services/userService';
 import { useLoading } from '../../template';
 import Image from 'next/image';
 
 export default function FeedsPage() {
   const setLoading=useLoading()
-  const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
+  const [selectedPost, setSelectedPost] = useState(null)
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set())
   const [emojiPicker, setEmojiPicker]=useState(false)
   const [file, setFile]=useState<File | null>()
   const fileRef=useRef(null)
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState()
   const [isLoading, setIsLoading]=useState(false)
-
+  const [finished, setFinished]=useState(false)
+  const [userId, setUserId]=useState()
   const [content, setContent] = useState('')
   const [newComment, setNewComment] = useState('')
+  const shownRef = useRef(0)
+  const LIMIT=2
 
   useEffect(()=>{
-    const getPosts = async () => {
-      setIsLoading(true)
-      const result=await getAllPosts()
-      setPosts([...result.result])
-      setIsLoading(false)
-      console.log(result)
-    }
-
     getPosts()
   }, [])
+  
+  const getPosts = async () => {
+    setIsLoading(true)
+    await fetchUserId()
+    const result=await getAllPosts(LIMIT, shownRef.current)
+    shownRef.current+=result.result.allPost.length
+    if(shownRef.current>=result.result.count) setFinished(true)
+    setPosts([...result.result.allPost])
+    setIsLoading(false)
+    console.log(result)
+  }
+
+  const fetchUserId=async()=>{
+    try {
+      const res=await fetch('/api/me')
+      const data=await res.json()
+      setUserId(data.userId)
+    } catch (error) {
+      console.log('Failed to fetch userid', error)
+    }
+  }
+  
+  const handleLoadMore = async () => {
+    setLoading(true)
+    const result=await getAllPosts(LIMIT, shownRef.current)
+    shownRef.current+=result.result.allPost.length
+    if(shownRef.current>=result.result.count) setFinished(true)
+    setPosts([...posts, ...result.result.allPost])
+    setLoading(false)
+  }
 
   const handlePost = async () => {
     setLoading(true)
@@ -43,17 +68,27 @@ export default function FeedsPage() {
     setFile(null)
     setLoading(false)
     setPosts([result.result, ...posts])
+    shownRef.current+=1
     console.log(result)
   }
 
-  const handleLike = (postId: number) => {
-    const newLikedPosts = new Set(likedPosts)
-    if (newLikedPosts.has(postId)) {
-      newLikedPosts.delete(postId)
-    } else {
-      newLikedPosts.add(postId)
-    }
-    setLikedPosts(newLikedPosts)
+  const handleLike = async (postId: string) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post._id !== postId) return post;
+
+        const alreadyLiked = post.likedBy.includes(userId);
+
+        return {
+          ...post,
+          likes: alreadyLiked ? post.likes - 1 : post.likes + 1,
+          likedBy: alreadyLiked
+            ? post.likedBy.filter((id) => id !== userId)
+            : [...post.likedBy, userId],
+        };
+      })
+    );
+    await alterPostLike(postId)
   }
 
   const handleAddComment = () => {
@@ -73,16 +108,6 @@ export default function FeedsPage() {
     }
     setFile(image)
   }
-
-  const handleImageLoad = (postId: number, event: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = event.currentTarget
-    setImageDimensions((prev) => ({
-      ...prev,
-      [postId]: { width: img.naturalWidth, height: img.naturalHeight },
-    }))
-  }
-
-  const selectedPost = posts.find(p => p.id === selectedPostId)
 
   if (isLoading) {
     return (
@@ -104,7 +129,7 @@ export default function FeedsPage() {
                 <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
                   {/* Close button */}
                   <button
-                    onClick={() => setSelectedPostId(null)}
+                    onClick={() => setSelectedPost(null)}
                     className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full transition"
                   >
                     <X size={24} className="text-gray-600" />
@@ -113,32 +138,34 @@ export default function FeedsPage() {
                   <div className="p-6">
                     {/* Post Header */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <img src={selectedPost.avatar || "/placeholder.svg"} alt={selectedPost.author} className="h-12 w-12 rounded-full object-cover" />
+                      <img src={selectedPost.pfp || "/placeholder.svg"} alt={selectedPost.userName} className="h-12 w-12 rounded-full object-cover" />
                       <div>
-                        <h3 className="font-semibold text-gray-900">{selectedPost.author}</h3>
-                        <p className="text-gray-500 text-sm">{selectedPost.timestamp}</p>
+                        <h3 className="font-semibold text-gray-900">{selectedPost.userName}</h3>
+                        <p className="text-gray-500 text-sm">{new Date(selectedPost.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
 
                     {/* Post Content */}
-                    <p className="text-gray-800 mb-4 leading-relaxed">{selectedPost.content}</p>
+                    {selectedPost.text && (
+                      <p className="text-gray-800 mb-4 leading-relaxed">{selectedPost.text}</p>
+                    )}
 
                     {/* Post Image */}
                     {selectedPost.image && (
                       <div className="mb-4 -mx-6">
-                        <img src={selectedPost.image || "/placeholder.svg"} alt="Post content" className="w-full h-96 object-cover" />
+                        <Image width={300} height={300} src={selectedPost.image || "/placeholder.svg"} alt="Post content" className="w-full h-96 object-cover" />
                       </div>
                     )}
 
                     {/* Engagement Stats */}
                     <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4 mb-4">
                       <div className="flex items-center space-x-1">
-                        <Heart size={16} className="text-red-500" />
+                        <Heart size={16} className={`text-red-500 ${selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
                         <span>{selectedPost.likes}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <MessageCircle size={16} className="text-blue-500" />
-                        <span>{selectedPost.comments}</span>
+                        <span>{selectedPost.comments.length}</span>
                       </div>
                     </div>
 
@@ -148,8 +175,8 @@ export default function FeedsPage() {
                       
                       {/* Comments List */}
                       <div className="space-y-4 max-h-64 overflow-y-auto">
-                        {selectedPost.commentsList.length > 0 ? (
-                          selectedPost.commentsList.map((comment) => (
+                        {selectedPost.comments.length > 0 ? (
+                          selectedPost.comments.map((comment) => (
                             <div key={comment.id} className="flex space-x-3">
                               <img src={comment.avatar || "/placeholder.svg"} alt={comment.author} className="h-10 w-10 rounded-full object-cover" />
                               <div className="flex-1">
@@ -194,13 +221,37 @@ export default function FeedsPage() {
               <div className="flex items-start space-x-4">
                 <img src="/professional-woman-avatar.png" alt="Your avatar" className="h-10 w-10 rounded-full object-cover" />
                 <div className="flex-1">
-                  <textarea
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="What's on your mind?"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 resize-none"
-                    rows={3}
-                  />
+                  <div className='flex'>
+                    <div className={`flex-1 transition-all duration-300 ${file ? "w-[65%]" : "w-full"}`}>
+                      <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="What's on your mind?"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                                  focus:outline-none focus:border-blue-500 resize-none"
+                        rows={3}
+                      />
+                    </div>
+                    {file && (
+                      <div className="relative ml-3 w-[35%] max-w-[120px]">
+                        <Image
+                        width={300}
+                        height={300}
+                          src={URL.createObjectURL(file)}
+                          alt="Preview"
+                          className="w-full h-20 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          onClick={() => setFile(null)}
+                          className="absolute -top-2 -right-2 bg-white border border-gray-300 
+                                    rounded-full w-6 h-6 flex items-center justify-center text-gray-600 
+                                    hover:bg-gray-100"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center space-x-2">
                       <input 
@@ -209,9 +260,11 @@ export default function FeedsPage() {
                       className='hidden'
                       onChange={handleFileChange}
                       />
-                      <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition">
-                        <ImageIcon size={20} onClick={openFiles}/>
-                      </button>
+                      {!file && (
+                        <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition">
+                          <ImageIcon size={20} onClick={openFiles}/>
+                        </button>
+                      )}
                       <div className='relative inline-block'>
                         <button 
                         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition"
@@ -223,10 +276,9 @@ export default function FeedsPage() {
                           <div className="absolute top-10 left-0 z-50 shadow-lg 
                             w-[100px] sm:w-[100px] md:w-[100px] ">
                             <EmojiPicker
-                              // onEmojiClick={(emojiData) => {
-                              //   setSelectedEmoji(emojiData.emoji);
-                              //   setShowPicker(false);
-                              // }}
+                              onEmojiClick={(emojiData) => {
+                                setContent(prev=>prev+emojiData.emoji)
+                              }}
                             />
                           </div>
                         )}
@@ -246,16 +298,16 @@ export default function FeedsPage() {
 
             {/* Posts Feed */}
             <div className="space-y-4">
-            {posts.length>0 ? (
+            {posts && posts.length>0 ? (
               <>
                 {posts.map((post) => (
                   <div key={post._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <img src={post.pfp || "/placeholder.svg"} alt={post.createdBy} className="h-10 w-10 rounded-full object-cover" />
+                          <img src={post.pfp || "/placeholder.svg"} alt={post.userName} className="h-10 w-10 rounded-full object-cover" />
                           <div>
-                            <h3 className="font-semibold text-gray-900 text-sm">{post.createdBy}</h3>
+                            <h3 className="font-semibold text-gray-900 text-sm">{post.userName}</h3>
                             <p className="text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
                           </div>
                         </div>
@@ -272,7 +324,6 @@ export default function FeedsPage() {
                           height={300}
                           src={post.image || "/placeholder.svg"}
                           alt="Post content"
-                          onLoad={(e) => handleImageLoad(post.id, e)}
                           className="w-full object-cover"
                           style={{ aspectRatio: "auto" }}
                         />
@@ -287,11 +338,11 @@ export default function FeedsPage() {
                           onClick={() => handleLike(post._id)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition"
                         >
-                          <Heart size={18} fill={likedPosts.has(post._id) ? '#EF4444' : 'none'} color={likedPosts.has(post.id) ? '#EF4444' : 'currentColor'} />
+                          <Heart size={18} fill={post.likedBy.includes(userId) ? '#EF4444' : 'none'} color={post.likedBy.includes(userId) ? '#EF4444' : 'currentColor'} />
                           <div className='ml-1'>{post.likes}</div>
                         </button>
                         <button 
-                          onClick={() => setSelectedPostId(post._id)}
+                          onClick={() => setSelectedPost(post)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition"
                         >
                           <MessageCircle size={18} />
@@ -330,11 +381,11 @@ export default function FeedsPage() {
                 </p>
               </div>
             )}
-            {posts.length>0 && (
+            {posts && !finished && (
               <div className="flex justify-center py-6">
                 <button
-                  // onClick={handleLoadMore}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-medium transition"
+                  onClick={handleLoadMore}
+                  className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-medium transition"
                 >
                   Load More Posts
                 </button>
