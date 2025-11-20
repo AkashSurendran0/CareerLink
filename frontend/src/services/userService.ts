@@ -223,3 +223,13 @@ export const alterPostLike = async (postId:string) => {
     const res=await api.patch(`media/v1/alterPostLike?post=${postId}`)
     return res.data
 }
+
+export const addComment = async (data:any) => {
+    const res=await api.patch('media/v1/addComment', data)
+    return res.data 
+}
+
+export const loadSinglePostDetails = async (id:string) => {
+    const res=await api.get(`media/v1/getSinglePostDetails?post=${id}`)
+    return res.data
+}

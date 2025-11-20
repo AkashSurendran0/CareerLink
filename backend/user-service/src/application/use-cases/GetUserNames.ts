@@ -12,9 +12,10 @@ export class GetUserNames implements IGetUserNames {
         @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository
     ){}
 
-    async getUserNames(id: string): Promise<string> {
+    async getUserNames(id: string): Promise<any> {
         const result=await this._userRepository.findById(id);
-        return result!.username;
+        const details=await this._userDetailsRepository.getUserDetails(result.id)
+        return {result, pfp:details?.profilePicture};
     }
 
     async getUserNamesByEmail(email:string): Promise<any> {

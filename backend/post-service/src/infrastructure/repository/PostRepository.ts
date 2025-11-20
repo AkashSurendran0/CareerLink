@@ -75,4 +75,41 @@ export class PostRepository implements IPostRepository {
         return null
     }
 
+    async addComment(data: { comment: string; post: string; }, user: string): Promise<Post> {
+        const post=await PostModel.findByIdAndUpdate(
+            data.post,
+            {$push:{
+                comments:{
+                    comment:data.comment,
+                    by:user
+                }
+            }},
+            {new:true}
+        )
+        return new Post (
+            post!._id,
+            post!.image,
+            post!.text,
+            post!.createdBy,
+            post!.comments,
+            post!.likes,
+            post!.likedBy,
+            post!.createdAt
+        )
+    }
+
+    async getById(id: string): Promise<Post> {
+        const post=await PostModel.findOne({_id:id})
+        return new Post (
+            post!._id,
+            post!.image,
+            post!.text,
+            post!.createdBy,
+            post!.comments,
+            post!.likes,
+            post!.likedBy,
+            post!.createdAt
+        )
+    }
+
 }

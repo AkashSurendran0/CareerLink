@@ -3,5 +3,7 @@ export const TYPES = {
     IPostContent:'IPostContent',
     IPostRepository:'IPostRepository',
     IGetAllPosts:'IGetAllPosts',
-    IAlterPostLike:'IAlterPostLike'
+    IAlterPostLike:'IAlterPostLike',
+    IAddComment:'IAddComment',
+    IGetSinglePostDetails:'IGetSinglePostDetails'
 }

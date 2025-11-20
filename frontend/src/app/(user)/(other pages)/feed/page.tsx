@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { Heart, MessageCircle, ImageIcon, Smile, X } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 import { enqueueSnackbar } from 'notistack';
-import { alterPostLike, getAllPosts, postContent } from '@/services/userService';
+import { addComment, alterPostLike, getAllPosts, loadSinglePostDetails, postContent } from '@/services/userService';
 import { useLoading } from '../../template';
 import Image from 'next/image';
 
 export default function FeedsPage() {
   const setLoading=useLoading()
   const [selectedPost, setSelectedPost] = useState(null)
+  const [singlePostUserDetails, setSinglePostUserDetails]=useState()
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set())
   const [emojiPicker, setEmojiPicker]=useState(false)
   const [file, setFile]=useState<File | null>()
@@ -91,8 +92,15 @@ export default function FeedsPage() {
     await alterPostLike(postId)
   }
 
-  const handleAddComment = () => {
-    
+  const handleAddComment = async (id:string) => {
+    setLoading(true)
+    const data = {
+      comment:newComment,
+      post:id
+    }
+    const result=await addComment(data)
+    setLoading(false)
+    console.log(result)
   }
 
   const openFiles = () => {
@@ -107,6 +115,15 @@ export default function FeedsPage() {
       return
     }
     setFile(image)
+  }
+
+  const loadSinglePost = async (post:any) => {
+    console.log(post)
+    setLoading(true)
+    setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
+    const result=await loadSinglePostDetails(post._id)
+    setLoading(false)
+    setSelectedPost(result.result)
   }
 
   if (isLoading) {
@@ -138,9 +155,9 @@ export default function FeedsPage() {
                   <div className="p-6">
                     {/* Post Header */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <img src={selectedPost.pfp || "/placeholder.svg"} alt={selectedPost.userName} className="h-12 w-12 rounded-full object-cover" />
+                      <img src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name} className="h-12 w-12 rounded-full object-cover" />
                       <div>
-                        <h3 className="font-semibold text-gray-900">{selectedPost.userName}</h3>
+                        <h3 className="font-semibold text-gray-900">{singlePostUserDetails.name}</h3>
                         <p className="text-gray-500 text-sm">{new Date(selectedPost.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
@@ -177,11 +194,11 @@ export default function FeedsPage() {
                       <div className="space-y-4 max-h-64 overflow-y-auto">
                         {selectedPost.comments.length > 0 ? (
                           selectedPost.comments.map((comment) => (
-                            <div key={comment.id} className="flex space-x-3">
-                              <img src={comment.avatar || "/placeholder.svg"} alt={comment.author} className="h-10 w-10 rounded-full object-cover" />
+                            <div key={comment._id} className="flex space-x-3">
+                              <img src={comment.pfp || "/placeholder.svg"} alt={comment.userName} className="h-10 w-10 rounded-full object-cover" />
                               <div className="flex-1">
-                                <p className="font-semibold text-sm text-gray-900">{comment.author} <span className="text-gray-500 font-normal text-xs">{comment.timestamp}</span></p>
-                                <p className="text-gray-700 text-sm mt-1">{comment.content}</p>
+                                <p className="font-semibold text-sm text-gray-900">{comment.userName} <span className="text-gray-500 font-normal text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span></p>
+                                <p className="text-gray-700 text-sm mt-1">{comment.comment}</p>
                               </div>
                             </div>
                           ))
@@ -198,12 +215,11 @@ export default function FeedsPage() {
                             type="text"
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                             placeholder="Write a comment..."
                             className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                           />
                           <button
-                            onClick={handleAddComment}
+                            onClick={()=>handleAddComment(selectedPost._id)}
                             disabled={!newComment.trim()}
                             className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg text-sm transition"
                           >
@@ -342,7 +358,7 @@ export default function FeedsPage() {
                           <div className='ml-1'>{post.likes}</div>
                         </button>
                         <button 
-                          onClick={() => setSelectedPost(post)}
+                          onClick={() => loadSinglePost(post)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-blue-500 transition"
                         >
                           <MessageCircle size={18} />

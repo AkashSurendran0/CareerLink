@@ -11,3 +11,11 @@ export interface IGetAllPosts {
 export interface IAlterPostLike {
     alterPostLike(post:string, user:string): Promise<void>
 }
+
+export interface IAddComment {
+    addComment(data:{comment:string, post:string}, user:string):Promise<PostDto>
+}
+
+export interface IGetSinglePostDetails {
+    getDetails(id:string): Promise<PostDto>
+}
