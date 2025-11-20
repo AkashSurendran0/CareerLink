@@ -53,6 +53,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
     socket.emit('join', userEmail)
     socket.on('notification', (data)=>{
+      console.log(data)
       setNotifications([data, ...notifications])
       setUnreadCount(unreadCount+1)
     })

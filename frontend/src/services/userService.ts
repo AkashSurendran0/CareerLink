@@ -204,3 +204,12 @@ export const getJobApplicants = async (id:string) => {
     const res=await api.get(`job/v1/getJobApplicants?job=${id}`)
     return res.data
 }
+
+export const postContent = async (formData:any) => {
+    const res=await api.post('media/v1/postContent', formData, {
+        headers:{
+            "Content-Type":'multipart/form-data'
+        }
+    })
+    return res.data
+}

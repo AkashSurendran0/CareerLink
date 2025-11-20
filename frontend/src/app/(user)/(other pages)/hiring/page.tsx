@@ -79,33 +79,54 @@ export default function JobApplications() {
                     {jobs.map((app) => (
                       <div key={app._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <div className="flex flex-col lg:flex-row gap-6">
+                          
                           {/* Left content */}
                           <div className="flex-1">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2 cursor-pointer" onClick={()=>goToIndividualApplicationPage(app._id)}>{app.jobTitle}</h2>
+                            <h2 
+                              className="text-2xl font-bold text-gray-900 mb-2 cursor-pointer" 
+                              onClick={() => goToIndividualApplicationPage(app._id)}
+                            >
+                              {app.jobTitle}
+                            </h2>
+
                             <p className="text-blue-600 text-sm mb-4">
                               {app.company.name} - {app.location}
                             </p>
-                            <p className="text-gray-700 text-sm leading-relaxed mb-6">{app.jobDescription.split(' ').slice(0, 40).join(' ')+' ....'}</p>
+
+                            <p className="text-gray-700 text-sm leading-relaxed mb-6">
+                              {app.jobDescription.split(" ").slice(0, 40).join(" ") + " ...."}
+                            </p>
+
                             <button className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md text-sm transition-colors">
                               Apply
                             </button>
                           </div>
 
                           {/* Right logo card */}
-                          <div className="flex-shrink-0">
+                          <div className="flex-shrink-0 flex justify-center lg:block">
                             <div
-                              className={`rounded-lg p-8 h-32 w-full lg:w-48 md:w-20 flex items-center justify-center`}
+                              className="
+                                rounded-lg 
+                                p-4 
+                                w-28 h-28 
+                                sm:w-32 sm:h-32 
+                                lg:w-40 lg:h-40 
+                                flex items-center justify-center
+                              "
                             >
                               <Image
                                 src={app.company.logo}
-                                height={200}
-                                width={200}
+                                width={120}
+                                height={120}
                                 alt="Company Logo"
+                                className="object-contain w-full h-full"
                               />
                             </div>
                           </div>
+
                         </div>
                       </div>
+
                     ))}
                   </div>
 

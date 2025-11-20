@@ -10,7 +10,7 @@ import http from 'http'
 const app=express()
 const server=http.createServer(app)
 initSocket(server)
-dbConnect();
+dbConnect(); 
 
 const rabbitmqService = container.get<RabbitMqService>(TYPES.RabbitMqService);
 (async ()=>{
