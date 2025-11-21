@@ -19,3 +19,11 @@ export interface IAddComment {
 export interface IGetSinglePostDetails {
     getDetails(id:string): Promise<PostDto>
 }
+
+export interface IGetAllUserPosts { 
+    getAllPosts(user:string): Promise<PostDto[]>
+}
+
+export interface IDeletePost {
+    deletePost(id:string): Promise<any>
+}

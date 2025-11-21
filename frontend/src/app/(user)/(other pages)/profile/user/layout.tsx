@@ -109,8 +109,8 @@ export default function UserLayout({
             </div>
 
             {/* Tab Navigation */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div className="border-b border-gray-200">
+            <div className="mb-6">
+            <div className="border-b border-gray-200 bg-white rounded-lg shadow-sm">
                 <nav className="flex space-x-8 px-6">
                 {tabs.map((tab, ind) => (
                     <button 

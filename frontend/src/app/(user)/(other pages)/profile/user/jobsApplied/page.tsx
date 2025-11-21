@@ -33,10 +33,10 @@ function JobsApplied() {
     return (
         <div>
             <div className="space-y-6">
-                {jobs ? (
+                {jobs && jobs.length>0 ? (
                     <>
                         {jobs.map((job) => (
-                            <div key={job._id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
+                            <div key={job._id} className="mt-3 bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="md:col-span-2">
                                     <div className="mb-4">

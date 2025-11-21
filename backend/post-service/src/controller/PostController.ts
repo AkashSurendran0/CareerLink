@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IAddComment, IAlterPostLike, IGetAllPosts, IGetSinglePostDetails, IPostContent } from "../domain/use-cases/IPostUseCase";
+import { IAddComment, IAlterPostLike, IDeletePost, IGetAllPosts, IGetAllUserPosts, IGetSinglePostDetails, IPostContent } from "../domain/use-cases/IPostUseCase";
 import { uploadPost } from "../config/upload";
 import axios from "axios";
 
@@ -14,7 +14,9 @@ export class PostController {
         @inject(TYPES.IGetAllPosts) private _getAllPosts:IGetAllPosts,
         @inject(TYPES.IAlterPostLike) private _alterPostLike:IAlterPostLike,
         @inject(TYPES.IAddComment) private _addComment:IAddComment,
-        @inject(TYPES.IGetSinglePostDetails) private _getSinglePostDetails:IGetSinglePostDetails
+        @inject(TYPES.IGetSinglePostDetails) private _getSinglePostDetails:IGetSinglePostDetails,
+        @inject(TYPES.IGetAllUserPosts) private _getAllUserPosts:IGetAllUserPosts,
+        @inject(TYPES.IDeletePost) private _deletePost:IDeletePost
     ){}
 
     postContent = async (req:Request, res:Response): Promise<void> => {
@@ -104,6 +106,36 @@ export class PostController {
                 result.comments[i].pfp=user.data.result.pfp?? null
             }
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getAllUserPosts = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-email'] as string
+            const result=await this._getAllUserPosts.getAllPosts(user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    deletePost = async (req:Request, res:Response) => {
+        try {
+            const {id}=req.query
+            await this._deletePost.deletePost(id)
+            res.json({success:true})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.log('error', error)

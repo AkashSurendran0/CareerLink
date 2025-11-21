@@ -23,7 +23,7 @@ function MyResumes() {
             <div className="space-y-4">
                 {allResumes ? (
                     allResumes.resumes.map(resume => (
-                        <div key={resume._id} className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-sm transition-shadow">
+                        <div key={resume._id} className="bg-white rounded-lg p-4 mt-3 md:p-6 border border-gray-200 hover:shadow-sm transition-shadow">
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div className="flex-1">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{resume.name}</h3>

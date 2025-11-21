@@ -6,4 +6,6 @@ export interface IPostRepository {
     alterPostLike(post:string, user:string): Promise<null>
     addComment(data: { comment: string; post: string; }, user: string): Promise<Post>
     getById(id:string): Promise<Post>
+    getAllUserPosts(user:string): Promise<Post[]>
+    deletePost(id:string): Promise<any>
 }
