@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react'
-import { Heart, MessageCircle, ImageIcon, Smile, X } from 'lucide-react'
+import { Heart, MessageCircle, ImageIcon, Smile, X, User } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 import { enqueueSnackbar } from 'notistack';
 import { addComment, alterPostLike, getAllPosts, loadSinglePostDetails, postContent } from '@/services/userService';
@@ -12,7 +12,6 @@ export default function FeedsPage() {
   const setLoading=useLoading()
   const [selectedPost, setSelectedPost] = useState(null)
   const [singlePostUserDetails, setSinglePostUserDetails]=useState()
-  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set())
   const [emojiPicker, setEmojiPicker]=useState(false)
   const [file, setFile]=useState<File | null>()
   const fileRef=useRef(null)
@@ -155,7 +154,11 @@ export default function FeedsPage() {
                   <div className="p-6">
                     {/* Post Header */}
                     <div className="flex items-center space-x-3 mb-4">
-                      <img src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name} className="h-12 w-12 rounded-full object-cover" />
+                      {singlePostUserDetails!.pfp? (
+                        <Image width={300} height={300} src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name} className="h-12 w-12 rounded-full object-cover" />
+                      ) : (
+                        <User className="h-10 w-10 rounded-full object-cover"/>
+                      )}
                       <div>
                         <h3 className="font-semibold text-gray-900">{singlePostUserDetails.name}</h3>
                         <p className="text-gray-500 text-sm">{new Date(selectedPost.createdAt).toLocaleDateString()}</p>
@@ -192,10 +195,14 @@ export default function FeedsPage() {
                       
                       {/* Comments List */}
                       <div className="space-y-4 max-h-64 overflow-y-auto">
-                        {selectedPost.comments.length > 0 ? (
-                          selectedPost.comments.map((comment) => (
+                        {selectedPost.comments?.length > 0 ? (
+                          selectedPost.comments?.map((comment) => (
                             <div key={comment._id} className="flex space-x-3">
-                              <img src={comment.pfp || "/placeholder.svg"} alt={comment.userName} className="h-10 w-10 rounded-full object-cover" />
+                              {comment.pfp? (
+                                <Image width={300} height={300} src={comment.pfp || "/placeholder.svg"} alt={comment.userName} className="h-10 w-10 rounded-full object-cover" />
+                              ) : (
+                                <User className="h-10 w-10 rounded-full object-cover"/>
+                              )}
                               <div className="flex-1">
                                 <p className="font-semibold text-sm text-gray-900">{comment.userName} <span className="text-gray-500 font-normal text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span></p>
                                 <p className="text-gray-700 text-sm mt-1">{comment.comment}</p>
@@ -209,7 +216,7 @@ export default function FeedsPage() {
 
                       {/* Add Comment */}
                       <div className="border-t border-gray-200 pt-4 flex space-x-3">
-                        <img src="/professional-woman-avatar.png" alt="Your avatar" className="h-10 w-10 rounded-full object-cover" />
+                        <Image width={300} height={300} src="/professional-woman-avatar.png" alt="Your avatar" className="h-10 w-10 rounded-full object-cover" />
                         <div className="flex-1 flex items-end space-x-2">
                           <input
                             type="text"
@@ -235,7 +242,8 @@ export default function FeedsPage() {
             {/* Post Creation Box */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
               <div className="flex items-start space-x-4">
-                <img src="/professional-woman-avatar.png" alt="Your avatar" className="h-10 w-10 rounded-full object-cover" />
+                {/* <Image width={300} height={300} src="/professional-woman-avatar.png" alt="Your avatar" className="h-10 w-10 rounded-full object-cover" /> */}
+                <User className="h-10 w-10 rounded-full object-cover"/>
                 <div className="flex-1">
                   <div className='flex'>
                     <div className={`flex-1 transition-all duration-300 ${file ? "w-[65%]" : "w-full"}`}>
@@ -321,7 +329,11 @@ export default function FeedsPage() {
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <img src={post.pfp || "/placeholder.svg"} alt={post.userName} className="h-10 w-10 rounded-full object-cover" />
+                          {post.pfp? (
+                            <Image src={post.pfp} width={300} height={300} alt={post.userName} className="h-10 w-10 rounded-full object-cover" />
+                          ) : (
+                            <User className="h-10 w-10 rounded-full object-cover"/>
+                          )}
                           <div>
                             <h3 className="font-semibold text-gray-900 text-sm">{post.userName}</h3>
                             <p className="text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
