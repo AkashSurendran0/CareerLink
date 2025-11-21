@@ -97,9 +97,11 @@ export default function FeedsPage() {
       comment:newComment,
       post:id
     }
-    const result=await addComment(data)
+    await addComment(data)
+    const post=await loadSinglePostDetails(id)
+    setNewComment('')
+    setSelectedPost(post.result)
     setLoading(false)
-    console.log(result)
   }
 
   const openFiles = () => {

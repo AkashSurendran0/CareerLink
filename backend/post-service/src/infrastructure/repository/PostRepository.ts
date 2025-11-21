@@ -112,4 +112,25 @@ export class PostRepository implements IPostRepository {
         )
     }
 
+    async getAllUserPosts(user: string): Promise<Post[]> {
+        const posts=await PostModel.find({createdBy:user})
+        return posts.map(post=>
+            new Post (
+                post!._id,
+                post!.image,
+                post!.text,
+                post!.createdBy,
+                post!.comments,
+                post!.likes,
+                post!.likedBy,
+                post!.createdAt
+            )
+        )
+    }
+
+    async deletePost(id: string): Promise<any> {
+        await PostModel.findByIdAndDelete(id)
+        return
+    }
+
 }

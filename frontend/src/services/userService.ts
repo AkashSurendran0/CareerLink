@@ -233,3 +233,13 @@ export const loadSinglePostDetails = async (id:string) => {
     const res=await api.get(`media/v1/getSinglePostDetails?post=${id}`)
     return res.data
 }
+
+export const getAllUserPosts = async () => {
+    const res=await api.get('media/v1/getAllUserPosts')
+    return res.data
+}
+
+export const deleteUserPost = async (id:string) => {
+    const res=await api.delete(`media/v1/deletePost?id=${id}`)
+    return res.data
+}

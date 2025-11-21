@@ -5,5 +5,7 @@ export const TYPES = {
     IGetAllPosts:'IGetAllPosts',
     IAlterPostLike:'IAlterPostLike',
     IAddComment:'IAddComment',
-    IGetSinglePostDetails:'IGetSinglePostDetails'
+    IGetSinglePostDetails:'IGetSinglePostDetails',
+    IGetAllUserPosts:'IGetAllUserPosts',
+    IDeletePost:'IDeletePost'
 }
