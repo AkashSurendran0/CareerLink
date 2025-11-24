@@ -24,4 +24,9 @@ export class GetUserNames implements IGetUserNames {
         return {result, pfp:details?.profilePicture};
     }
 
+    async getUserInfo (email:string): Promise<any> {
+        const result=await this._userRepository.findByEmail(email)
+        return result
+    }
+
 }

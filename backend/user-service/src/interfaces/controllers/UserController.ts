@@ -225,4 +225,18 @@ export class UserController {
         }
     }
 
+    getUserInfo = async (req:Request, res:Response) => {
+        try {
+            const {user}=req.query
+            const result=await this._getUserNames.getUserInfo(user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
 }

@@ -59,6 +59,10 @@ const userDetailsSchema: Schema<IUserDetails> = new Schema (
             }
         }],
         experience:[{
+            position:{
+                type:String,
+                required:false
+            },
             company:{
                 type:String,
                 required:false

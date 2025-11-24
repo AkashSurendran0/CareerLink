@@ -24,6 +24,7 @@ export default function EditProfile() {
         proficiency:'',
         aboutMe:'',
         experience:[{
+            position:'',
             company:'',
             experience:''
         }],
@@ -85,7 +86,7 @@ export default function EditProfile() {
         setExperienceFields([...experienceFields, {id:newId, company:'', experience:''}])
         setDetailsForm(prev=>({
         ...prev, 
-        experience:[...prev.experience, {company:'',experience:''}]
+        experience:[...prev.experience, {position:'', company:'',experience:''}]
         }))
 
     }
@@ -109,7 +110,7 @@ export default function EditProfile() {
         })
     }
 
-    const updateExperienceField = (id: number, fieldName:'company'|'experience', value: string) => {
+    const updateExperienceField = (id: number, fieldName:'position'|'company'|'experience', value: string) => {
         setExperienceFields(experienceFields.map((field) => (field.id === id ? { ...field, [fieldName]:value } : field)))
         setDetailsForm(prev=>{
         const updatedExperience=prev.experience.map((exp, ind)=>
@@ -192,7 +193,7 @@ export default function EditProfile() {
         setLoading(true)
 
         const filteredEdu=detailsForm.education.filter(edu=>edu.degree.trim() && edu.university.trim() && edu.passingYear.trim())
-        const filteredExp=detailsForm.experience.filter(exp=>exp.company.trim() && exp.experience.trim())
+        const filteredExp=detailsForm.experience.filter(exp=>exp.position.trim() && exp.company.trim() && exp.experience.trim())
         const filteredSkills=detailsForm.skills.filter(skill=>skill.trim())
         const updatedForm={
         ...detailsForm,
@@ -407,6 +408,13 @@ export default function EditProfile() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Experience (years)</label>
                     {detailsForm.experience && detailsForm.experience.map((exp, ind)=>(
                         <div key={ind+1} className="flex mb-2 gap-3">
+                            <input
+                                type="text"
+                                value={exp.position}
+                                onChange={(e) => updateExperienceField(ind+1, 'position', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Company"
+                            />
                             <input
                                 type="text"
                                 value={exp.company}

@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { ICreateCoverLetter } from "../domain/services/IResumeServices";
 import dotenv from 'dotenv'
+import {GoogleGenerativeAI} from '@google/generative-ai'
 
 dotenv.config()
 
@@ -21,20 +22,13 @@ export class CreateCoverLetter implements ICreateCoverLetter {
         }=data
 
         try {
-            const response=await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent",
-            {
-                method:'POST',
-                headers:{
-                    "Content-type":"application/json",
-                    "x-goog-api-key":process.env.GEMINI_AI_API!
-                },
-                body: JSON.stringify({
-                    contents:[
-                        {
-                            parts:[{
-                                text:
-                                `
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_AI_API);
+      
+            const model = genAI.getGenerativeModel({ 
+                    model: "gemini-2.5-pro",
+            });
+
+            const prompt = `
 You are an expert cover-letter writer and a professional language editor.
 Your job is to generate a polished, professional cover letter with corrected spelling and normalized technical terms, while strictly following the user-provided data.
 
@@ -82,25 +76,14 @@ Why interested in the company: ${finalInterests.join(", ")}
 Generate a polished, compelling cover letter using only the information above.
 
 `
-                            }]
-                        }
-                    ],
-                    generationConfig:{
-                        temperature:0.4,
-                        maxOutputTokens:5000
-                    }
-                })
-            }
-        )
-
-        const data=await response.json()
-        let content=data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "<p>Error generating cover letter</p>";
+        const result = await model.generateContent(prompt);
+        const content= result.response.text(); 
 
         return {content}
 
         } catch (error) {
-            
+            console.log('Error generating cover letter with gemini', error)
+            throw error
         }
     }
 

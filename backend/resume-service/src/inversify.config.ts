@@ -6,6 +6,7 @@ import { UploadResume } from "./services/UploadResume";
 import { ResumeRepository } from "./infrastructure/respository/ResumeRespository";
 import { GetAllUserResumes } from "./services/GetAllUserResumes";
 import { CreateCoverLetter } from "./services/CreateCoverLetter";
+import { CreateTailoredResume } from "./services/CreateTailoredResume";
 
 const container=new Container()
 
@@ -15,6 +16,7 @@ container.bind(TYPES.ICreateResume).to(CreateResume).inSingletonScope()
 container.bind(TYPES.IUploadResume).to(UploadResume).inSingletonScope()
 container.bind(TYPES.IGetAllUserResumes).to(GetAllUserResumes).inSingletonScope()
 container.bind(TYPES.ICreateCoverLetter).to(CreateCoverLetter).inSingletonScope()
+container.bind(TYPES.ICreateTailoredResume).to(CreateTailoredResume).inSingletonScope()
 
 container.bind(TYPES.ResumeController).to(ResumeController).inSingletonScope()
 

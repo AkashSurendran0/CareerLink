@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails } from "@/services/userService"
+import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails, getTailoredResume } from "@/services/userService"
 import Image from "next/image"
 import { checkCompanyDetails } from "@/services/adminService"
 import { useLoading } from "@/app/(user)/template"
 import { enqueueSnackbar } from "notistack"
+import ConfirmModal from "@/reusable-components/confirmModal"
 
 interface Props {
     params:{
@@ -27,6 +28,10 @@ export default function JobDetailsPage({params}:Props) {
     const [openSavedResumes, setOpenSavedResumes]=useState(false)
     const [resumes, setResumes]=useState()
     const [resumeName, setResumeName]=useState<string | null>()
+    const [tailoredResumeConfirmation, setTailoredResumeConfirmation]=useState(false)
+    const [tailoredCoverLetterConfirmation, setTailoredCoverLetterConfirmation]=useState(false)
+    const [tailoredResume, setTailoredResume]=useState({html:'', pdf:''})
+    const [openResumePreview, setOpenResumePreview]=useState(false)
     
     useEffect(()=>{
         const {id}=params
@@ -128,10 +133,82 @@ export default function JobDetailsPage({params}:Props) {
         }
     }
 
+    const closeResumeConfirmation = () => {
+        setTailoredResumeConfirmation(false)
+    }
+
+    const createTailoredResume = async () => {
+        setLoading(true)
+        setTailoredResumeConfirmation(false)
+        const {id}=params
+        const result=await getTailoredResume(id)
+        if(result.result.success){
+            console.log(result)
+            setTailoredResume({html:result.result.html, pdf:result.result.pdf})
+            setOpenResumePreview(true)
+            setLoading(false)
+        }else{
+            setLoading(false)
+            enqueueSnackbar(result.result.message, {variant:'error'})
+        }
+    }
+
+    const handleKeepResume = () => {
+        setOpenResumePreview(false)
+        setResumeName(`Tailored Resume Created At ${Date.now()}`)
+    }
+
+    const removeResume = () => {
+        setOpenResumePreview(false)
+        setTailoredResume({html:'', pdf:''})
+    }
+
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
+                    {openResumePreview && (
+                        <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                        >
+                        <div
+                            className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
+                            {tailoredResume.html ? (
+                                <div
+                                className="prose max-w-none"
+                                dangerouslySetInnerHTML={{ __html: tailoredResume.html }}
+                                />
+                            ) : (
+                                <p className="text-center text-gray-500">Loading resume...</p>
+                            )}
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                            <button
+                                onClick={removeResume}
+                                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleKeepResume}
+                                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                            >
+                                Keep Resume
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    )}
+
+                    {tailoredResumeConfirmation && (
+                        <ConfirmModal onClose={closeResumeConfirmation} title="Confirm your action" message="Do you want to create a tailored resume for this application ?" onConfirm={createTailoredResume}/>
+                    )}
                     {openOptions && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
                             <div
@@ -324,7 +401,10 @@ export default function JobDetailsPage({params}:Props) {
                                     </div>
                                     </label>
                                 </div>
-                                <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
+                                <button 
+                                className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md"
+                                onClick={()=>setTailoredResumeConfirmation(true)}
+                                >
                                     Generate Tailored Resume
                                 </button>
                                 </div>

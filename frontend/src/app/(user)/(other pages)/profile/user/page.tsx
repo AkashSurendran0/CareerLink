@@ -10,6 +10,7 @@ type Education = {
 };
 
 type Experience = {
+    position:string;
     company: string;
     experience: string;
 };
@@ -102,9 +103,12 @@ export default function ProfileDashboard() {
                                             </div>
                                             <div>
                                                 <h3 className="font-semibold text-gray-900">
-                                                {exp.company}
+                                                {exp.position}
                                                 </h3>
                                                 <p className="text-gray-600">{exp.experience} Years of Experience</p>
+                                                <p className="text-gray-500">
+                                                    {exp.company}
+                                                </p>
                                             </div>
                                             </div>
                                         </div>
