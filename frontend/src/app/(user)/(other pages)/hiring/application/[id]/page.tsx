@@ -153,28 +153,29 @@ export default function JobDetailsPage({params}:Props) {
         }
     }
 
+    const handleKeepResume = () => {
+        setOpenResumePreview(false)
+        setResumeName(`Tailored Resume Created At ${Date.now()}`)
+    }
+
+    const removeResume = () => {
+        setOpenResumePreview(false)
+        setTailoredResume({html:'', pdf:''})
+    }
+
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
                     {openResumePreview && (
                         <div
-                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-                            onClick={() => setTailoredResume(null)} // close when clicking outside
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
                         >
-                            <div
-                            className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 overflow-y-auto"
-                            onClick={(e) => e.stopPropagation()} // prevent close when clicking inside
-                            >
-                            <div className="flex justify-end mb-2">
-                                <button
-                                className="text-gray-500 hover:text-black text-xl"
-                                onClick={() => setTailoredResume(null)}
-                                >
-                                ✕
-                                </button>
-                            </div>
-
+                        <div
+                            className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
                             {tailoredResume.html ? (
                                 <div
                                 className="prose max-w-none"
@@ -184,7 +185,25 @@ export default function JobDetailsPage({params}:Props) {
                                 <p className="text-center text-gray-500">Loading resume...</p>
                             )}
                             </div>
+
+                            <div className="flex justify-end gap-3">
+                            <button
+                                onClick={removeResume}
+                                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleKeepResume}
+                                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                            >
+                                Keep Resume
+                            </button>
+                            </div>
                         </div>
+                    </div>
+
                     )}
 
                     {tailoredResumeConfirmation && (
