@@ -243,3 +243,8 @@ export const deleteUserPost = async (id:string) => {
     const res=await api.delete(`media/v1/deletePost?id=${id}`)
     return res.data
 }
+
+export const getTailoredResume = async (id:string) => {
+    const res=await api.post(`resume/v1/getTailoredResume?job=${id}`)
+    return res.data
+}

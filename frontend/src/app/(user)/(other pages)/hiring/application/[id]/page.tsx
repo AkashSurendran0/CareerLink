@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails } from "@/services/userService"
+import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails, getTailoredResume } from "@/services/userService"
 import Image from "next/image"
 import { checkCompanyDetails } from "@/services/adminService"
 import { useLoading } from "@/app/(user)/template"
 import { enqueueSnackbar } from "notistack"
+import ConfirmModal from "@/reusable-components/confirmModal"
 
 interface Props {
     params:{
@@ -27,6 +28,10 @@ export default function JobDetailsPage({params}:Props) {
     const [openSavedResumes, setOpenSavedResumes]=useState(false)
     const [resumes, setResumes]=useState()
     const [resumeName, setResumeName]=useState<string | null>()
+    const [tailoredResumeConfirmation, setTailoredResumeConfirmation]=useState(false)
+    const [tailoredCoverLetterConfirmation, setTailoredCoverLetterConfirmation]=useState(false)
+    const [tailoredResume, setTailoredResume]=useState({html:'', pdf:''})
+    const [openResumePreview, setOpenResumePreview]=useState(false)
     
     useEffect(()=>{
         const {id}=params
@@ -128,10 +133,63 @@ export default function JobDetailsPage({params}:Props) {
         }
     }
 
+    const closeResumeConfirmation = () => {
+        setTailoredResumeConfirmation(false)
+    }
+
+    const createTailoredResume = async () => {
+        setLoading(true)
+        setTailoredResumeConfirmation(false)
+        const {id}=params
+        const result=await getTailoredResume(id)
+        if(result.result.success){
+            console.log(result)
+            setTailoredResume({html:result.result.html, pdf:result.result.pdf})
+            setOpenResumePreview(true)
+            setLoading(false)
+        }else{
+            setLoading(false)
+            enqueueSnackbar(result.result.message, {variant:'error'})
+        }
+    }
+
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
+                    {openResumePreview && (
+                        <div
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                            onClick={() => setTailoredResume(null)} // close when clicking outside
+                        >
+                            <div
+                            className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()} // prevent close when clicking inside
+                            >
+                            <div className="flex justify-end mb-2">
+                                <button
+                                className="text-gray-500 hover:text-black text-xl"
+                                onClick={() => setTailoredResume(null)}
+                                >
+                                ✕
+                                </button>
+                            </div>
+
+                            {tailoredResume.html ? (
+                                <div
+                                className="prose max-w-none"
+                                dangerouslySetInnerHTML={{ __html: tailoredResume.html }}
+                                />
+                            ) : (
+                                <p className="text-center text-gray-500">Loading resume...</p>
+                            )}
+                            </div>
+                        </div>
+                    )}
+
+                    {tailoredResumeConfirmation && (
+                        <ConfirmModal onClose={closeResumeConfirmation} title="Confirm your action" message="Do you want to create a tailored resume for this application ?" onConfirm={createTailoredResume}/>
+                    )}
                     {openOptions && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
                             <div
@@ -324,7 +382,10 @@ export default function JobDetailsPage({params}:Props) {
                                     </div>
                                     </label>
                                 </div>
-                                <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
+                                <button 
+                                className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md"
+                                onClick={()=>setTailoredResumeConfirmation(true)}
+                                >
                                     Generate Tailored Resume
                                 </button>
                                 </div>

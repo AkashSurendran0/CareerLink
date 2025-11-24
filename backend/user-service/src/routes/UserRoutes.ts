@@ -54,6 +54,7 @@ router.patch("/alterUserStatus", userController.changeUserStatus);
 router.get("/check", userController.checkBlock);
 router.get("/getOTP", userController.verifyOTP);
 router.get("/getDetailsByQuery", userController.getUserDetails);
-router.get("/getDetailsByEmail", userController.getUserDetailsByEmail)
+router.get("/getDetailsByEmail", userController.getUserDetailsByEmail);
+router.get("/getUserInfo", userController.getUserInfo)
 
 export default router;

@@ -10,13 +10,14 @@ export default function ProfileForm() {
   const router=useRouter()
   const [skillsFields, setSkillsFields] = useState([{ id: 1, value: "" }])
   const [educationFields, setEducationFields] = useState([{ id: 1, degree:"", university:"", passingYear:"" }])
-  const [experienceFields, setExperienceFields] = useState([{ id: 1, company:'', experience:'' }])
+  const [experienceFields, setExperienceFields] = useState([{ id: 1, position:'', company:'', experience:'' }])
   const [detailsForm, setDetailsForm]=useState({
     gender:'',
     location:'',
     proficiency:'',
     aboutMe:'',
     experience:[{
+      position:'',
       company:'',
       experience:''
     }],
@@ -64,10 +65,10 @@ export default function ProfileForm() {
 
   const addExperienceField = () => {
     const newId = experienceFields.length + 1
-    setExperienceFields([...experienceFields, {id:newId, company:'', experience:''}])
+    setExperienceFields([...experienceFields, {id:newId, position:'', company:'', experience:''}])
     setDetailsForm(prev=>({
       ...prev, 
-      experience:[...prev.experience, {company:'',experience:''}]
+      experience:[...prev.experience, {position:'', company:'',experience:''}]
     }))
 
   }
@@ -91,7 +92,7 @@ export default function ProfileForm() {
     })
   }
 
-  const updateExperienceField = (id: number, fieldName:'company'|'experience', value: string) => {
+  const updateExperienceField = (id: number, fieldName:'position'|'company'|'experience', value: string) => {
     setExperienceFields(experienceFields.map((field) => (field.id === id ? { ...field, [fieldName]:value } : field)))
     setDetailsForm(prev=>{
       const updatedExperience=prev.experience.map((exp, ind)=>
@@ -149,7 +150,7 @@ export default function ProfileForm() {
     setLoading(true)
 
     const filteredEdu=detailsForm.education.filter(edu=>edu.degree.trim() && edu.university.trim() && edu.passingYear.trim())
-    const filteredExp=detailsForm.experience.filter(exp=>exp.company.trim() && exp.experience.trim())
+    const filteredExp=detailsForm.experience.filter(exp=>exp.position.trim() && exp.company.trim() && exp.experience.trim())
     const filteredSkills=detailsForm.skills.filter(skill=>skill.trim())
     const updatedForm={
       ...detailsForm,
@@ -277,6 +278,14 @@ export default function ProfileForm() {
                   <div className="space-y-2">
                     {experienceFields.map((field) => (
                       <div key={field.id} className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Position"
+                          name="position"
+                          value={field.position}
+                          onChange={(e) => updateExperienceField(field.id, 'position', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
                         <input
                           type="text"
                           placeholder="Company"

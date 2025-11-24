@@ -4,5 +4,6 @@ export const TYPES = {
     IUploadResume:'IUploadResume',
     IResumeRepository:'IResumeRepository',
     IGetAllUserResumes:'IGetAllUserResumes',
-    ICreateCoverLetter:'ICreateCoverLetter'
+    ICreateCoverLetter:'ICreateCoverLetter',
+    ICreateTailoredResume:'ICreateTailoredResume'
 }

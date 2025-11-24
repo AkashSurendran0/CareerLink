@@ -1,4 +1,4 @@
-import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
+    import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import {inject, injectable} from "inversify";

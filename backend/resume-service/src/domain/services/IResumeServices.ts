@@ -15,3 +15,7 @@ export interface IGetAllUserResumes{
 export interface ICreateCoverLetter{
     createCoverLetter(data:any) : Promise<any>
 }
+
+export interface ICreateTailoredResume {
+    createTailoredResume(job:any, details:any, user:any): Promise<any>
+}

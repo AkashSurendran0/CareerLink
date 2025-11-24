@@ -2,6 +2,7 @@ import { ICreateResume } from "../domain/services/IResumeServices";
 import { injectable, inject } from "inversify";
 import dotenv from 'dotenv'
 import pdf from 'html-pdf-node'
+import {GoogleGenerativeAI} from '@google/generative-ai'
 
 dotenv.config()
 
@@ -9,6 +10,7 @@ dotenv.config()
 export class CreateResume implements ICreateResume {
 
     async createResume(data: any): Promise<any> {
+        
         const {
             fullName,
             email,
@@ -27,62 +29,58 @@ export class CreateResume implements ICreateResume {
 
     try {
 
-        const response=await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent",
-            {
-                method:'POST',
-                headers:{
-                    "Content-type":"application/json",
-                    "x-goog-api-key":process.env.GEMINI_AI_API!
-                },
-                body: JSON.stringify({
-                    contents:[
-                        {
-                            parts:[{
-                                text:
-                                `
-You are an expert resume writer and HTML designer.
-Return only the final HTML markup — no markdown, no code fences, and no explanations.
-Using the structured data provided, generate a modern, ATS-friendly HTML resume with inline CSS.
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_AI_API);
+      
+        const model = genAI.getGenerativeModel({ 
+                model: "gemini-2.5-pro",
+        });
 
-Rules & Requirements:
+        const prompt = `
+You are an expert ATS resume writer and professional HTML designer.
 
-1. Include sections only if they contain data:
-- Summary
-- Education
-- Skills
-- Certifications
-- Experience
-- Projects
-- Languages
-- Interests
+Your job is to generate a fully ATS-friendly resume in clean HTML.
 
-2. Styling Requirements (inline CSS only):
-- Use a clean, modern, minimal layout
-- Neutral color palette: black/gray with subtle blue highlights
-- Professional fonts: Arial, Helvetica, sans-serif
-- Clear spacing between sections
-- Section titles must be visually distinct (bold + underline or border-bottom)
-- No images, no tables, no complex layouts (ensure ATS compatibility)
+STRICT OUTPUT RULES:
+- Return ONLY the final HTML (no markdown, no backticks, no explanations)
+- Use ONLY inline CSS (no <style> tags, no external CSS)
+- Use semantic HTML tags: <main>, <section>, <h1>, <h2>, <p>, <ul>, <li>
+- Use professional fonts: Arial, Helvetica, sans-serif
+- Layout must be single-column and ATS-compliant
+- No tables, no images, no icons, no columns, no graphics, no text boxes
+- Do NOT use colors except black or dark gray
+- Section headings must be clear and simple (e.g., "Experience", "Skills")
+- Only include sections that contain real data
+- Keep formatting simple so ATS systems can parse easily
 
-3. HTML Structure Rules:
-- Use semantic tags: <section>, <h2>, <p>, <ul>, <li>, etc.
-- Wrap the entire resume in a single main container <div> with proper margins
-- Make the design readable on both PDF and browser exports
+ATS-FRIENDLY CONTENT RULES:
+- Use clear bullet points for achievements
+- Preserve the user’s wording but correct grammar and clarity
+- Do NOT fabricate any new information
+- Each experience entry must include: title, company, dates, and bullet points
+- Skills must be returned as a clean list (comma-separated or <ul>)
+- Projects should include name, description, and technologies used
+- Ensure that all text is directly readable (no nested div complexity)
+- Avoid decorative characters, emojis, or fancy symbols
 
-4. Content Rules:
-- Use only the provided data — never invent information
-- Preserve user wording but fix spelling/grammar professionally
-- Display items in clean bullet lists where appropriate
-- Skip empty or null fields entirely
+OUTPUT STRUCTURE:
+- Wrap everything inside a single <main> container with proper margins
+- Recommended order:
+  1. Header (Name + Contact info)
+  2. Summary
+  3. Skills
+  4. Experience
+  5. Education
+  6. Projects
+  7. Certifications
+  8. Languages
+  9. Interests
 
-5. Output Rules:
-- Return only the complete HTML document
-- No markdown
-- No backticks
-- No additional commentary
+Your final output must be a clean, minimal, fully ATS-optimized HTML resume.
 
-Here is the user data:
+====================
+USER DATA
+====================
+
 Name: ${fullName}
 Email: ${email}
 Phone: ${phone}
@@ -93,9 +91,9 @@ Summary:
 ${summary}
 
 Education:
-${finalEducation.map(
-  (e) => `${e.degree} - ${e.institute} (${e.passingYear})`
-).join("\n")}
+${finalEducation
+  .map((e) => `${e.degree} - ${e.institute} (${e.passingYear})`)
+  .join("\n")}
 
 Skills:
 ${finalSkills.join(", ")}
@@ -104,41 +102,34 @@ Certifications:
 ${finalCertifications.join(", ")}
 
 Experience:
-${finalExperiences.map(
-  (ex) => `${ex.position} at ${ex.company} (${ex.span})`
-).join("\n")}
+${finalExperiences
+  .map((ex) => `${ex.position} at ${ex.company} (${ex.span})`)
+  .join("\n")}
 
 Projects:
-${finalProjects.map(
-  (p) => `${p.name} - ${p.description}`
-).join("\n")}
+${finalProjects
+  .map((p) => `${p.name} - ${p.description}`)
+  .join("\n")}
 
 Languages:
 ${finalLanguages.join(", ")}
 
 Interests:
 ${finalInterests.join(", ")}
-`
-                            }]
-                        }
-                    ],
-                    generationConfig:{
-                        temperature:0.4,
-                        maxOutputTokens:5000
-                    }
-                })
-            }
-        )
+`;
 
-        const data=await response.json()
-        let html=data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "<p>Error generating resume</p>";
-        html=html.replace(/```html|```/g, "").trim();
+        const result = await model.generateContent(prompt);
+        const htmlOutput = result.response.text(); 
 
-        const file={content:html}
-        const pdfBuffer=await pdf.generatePdf(file, {format:"A4"})
+        const cleanHTML = htmlOutput.replace(/```html|```/g, "").trim();
 
-        return {pdf:pdfBuffer, html:html}
+        const file = { content: cleanHTML };
+        const pdfBuffer = await pdf.generatePdf(file, { format: "A4" });
+
+        return {
+            pdf: pdfBuffer,
+            html: cleanHTML,
+        };
     } catch (error: any) {
         console.log('Error generating resume with gemini', error)
         throw error
