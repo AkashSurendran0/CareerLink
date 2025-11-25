@@ -214,7 +214,6 @@ export default function ResumeBuilder() {
 
         setLoading(true)
         const result=await createResume(data)
-
         sessionStorage.setItem('resumePdf', result.pdf)
         sessionStorage.setItem('resumeHtml', result.html)
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails, getTailoredResume } from "@/services/userService"
+import { applyJobWithFile, applyJobWithUrl, getAllUserResumes, getJobDetails, getTailoredCoverLetter, getTailoredResume } from "@/services/userService"
 import Image from "next/image"
 import { checkCompanyDetails } from "@/services/adminService"
 import { useLoading } from "@/app/(user)/template"
@@ -32,6 +32,7 @@ export default function JobDetailsPage({params}:Props) {
     const [tailoredCoverLetterConfirmation, setTailoredCoverLetterConfirmation]=useState(false)
     const [tailoredResume, setTailoredResume]=useState({html:'', pdf:''})
     const [openResumePreview, setOpenResumePreview]=useState(false)
+    const [openCoverLetterPreview, setOpenCoverLetterPreview]=useState(false)
     
     useEffect(()=>{
         const {id}=params
@@ -98,7 +99,7 @@ export default function JobDetailsPage({params}:Props) {
     }
 
     const handleSubmitApplication = async () => {
-        if(!resumeFile && !resumeUrl){
+        if(!resumeFile && !resumeUrl && !tailoredResume.html && !tailoredResume.pdf){
             enqueueSnackbar('A resume is required', {variant:'error'})
             return
         }
@@ -121,10 +122,25 @@ export default function JobDetailsPage({params}:Props) {
             }        
             await applyJobWithUrl(data)   
             router.push('/profile/user/jobsApplied')
-        }else{
+        }else if(resumeFile){
             const {id}=params
             const formData=new FormData()
             formData.append('resume', resumeFile)
+            formData.append('coverLetter', coverLetter)
+            formData.append('id', id)
+
+            await applyJobWithFile(formData)
+            router.push('/profile/user/jobsApplied')
+        }else{
+            const {id}=params
+            // return console.log(tailoredResume.pdf)
+            // const byteCharacters=atob(tailoredResume.pdf.data)
+            // const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
+            const byteArray=new Uint8Array(tailoredResume.pdf.data)
+            const pdfBlob=new Blob([byteArray], {type: 'application/pdf'})
+            if(!pdfBlob) return enqueueSnackbar('Something went wrong', {variant:'error'})
+            const formData=new FormData()
+            formData.append('resume', pdfBlob, 'resume.pdf')
             formData.append('coverLetter', coverLetter)
             formData.append('id', id)
 
@@ -137,15 +153,33 @@ export default function JobDetailsPage({params}:Props) {
         setTailoredResumeConfirmation(false)
     }
 
+    const closeCoverLetterConfirmation = () => {
+        setTailoredCoverLetterConfirmation(false)
+    }
+
     const createTailoredResume = async () => {
         setLoading(true)
         setTailoredResumeConfirmation(false)
         const {id}=params
         const result=await getTailoredResume(id)
         if(result.result.success){
-            console.log(result)
             setTailoredResume({html:result.result.html, pdf:result.result.pdf})
             setOpenResumePreview(true)
+            setLoading(false)
+        }else{
+            setLoading(false)
+            enqueueSnackbar(result.result.message, {variant:'error'})
+        }
+    }
+
+    const createTailoredCoverLetter = async () => {
+        setLoading(true)
+        setTailoredCoverLetterConfirmation(false)
+        const {id}=params
+        const result=await getTailoredCoverLetter(id)
+        if(result.result.success){
+            setOpenCoverLetterPreview(true)
+            setCoverLetter(result.result.content)
             setLoading(false)
         }else{
             setLoading(false)
@@ -163,51 +197,101 @@ export default function JobDetailsPage({params}:Props) {
         setTailoredResume({html:'', pdf:''})
     }
 
+    const removeCoverLetter = () => {
+        setOpenCoverLetterPreview(false)
+        setCoverLetter('')
+    }
+
+    const handleKeepCoverLetter = () => {
+        setOpenCoverLetterPreview(false)
+    }
+
     return (
         <>
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
+                    {openCoverLetterPreview && (
+                        <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                        >
+                            <div
+                                className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
+                                {coverLetter ? (
+                                    <div
+                                    className="prose max-w-none whitespace-pre-line"
+                                    >
+                                        {coverLetter}    
+                                    </div>
+                                ) : (
+                                    <p className="text-center text-gray-500">Loading cover letter...</p>
+                                )}
+                                </div>
+
+                                <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={removeCoverLetter}
+                                    className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleKeepCoverLetter}
+                                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                                >
+                                    Keep Cover Letter
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {openResumePreview && (
                         <div
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
                         >
-                        <div
-                            className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
-                            {tailoredResume.html ? (
-                                <div
-                                className="prose max-w-none"
-                                dangerouslySetInnerHTML={{ __html: tailoredResume.html }}
-                                />
-                            ) : (
-                                <p className="text-center text-gray-500">Loading resume...</p>
-                            )}
-                            </div>
-
-                            <div className="flex justify-end gap-3">
-                            <button
-                                onClick={removeResume}
-                                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                            <div
+                                className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                Cancel
-                            </button>
+                                <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
+                                {tailoredResume.html ? (
+                                    <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{ __html: tailoredResume.html }}
+                                    />
+                                ) : (
+                                    <p className="text-center text-gray-500">Loading resume...</p>
+                                )}
+                                </div>
 
-                            <button
-                                onClick={handleKeepResume}
-                                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-                            >
-                                Keep Resume
-                            </button>
+                                <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={removeResume}
+                                    className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleKeepResume}
+                                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                                >
+                                    Keep Resume
+                                </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
                     )}
 
                     {tailoredResumeConfirmation && (
                         <ConfirmModal onClose={closeResumeConfirmation} title="Confirm your action" message="Do you want to create a tailored resume for this application ?" onConfirm={createTailoredResume}/>
+                    )}
+                    {tailoredCoverLetterConfirmation && (
+                        <ConfirmModal onClose={closeCoverLetterConfirmation} title="Confirm your action" message="Do you want to create a tailored cover letter for this application ?" onConfirm={createTailoredCoverLetter}/>
                     )}
                     {openOptions && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -429,7 +513,10 @@ export default function JobDetailsPage({params}:Props) {
                             </label>
                         </div>
                         {!coverLetter && (
-                            <button className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md">
+                            <button 
+                            className="cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md"
+                            onClick={()=>setTailoredCoverLetterConfirmation(true)}
+                            >
                                 Generate Tailored Cover Letter
                             </button>
                         )}

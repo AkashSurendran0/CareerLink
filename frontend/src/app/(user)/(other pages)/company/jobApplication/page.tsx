@@ -47,16 +47,37 @@ export default function JobDetailsPage() {
             {jobDetails && companyDetails && (
                 <main className="mx-5 flex-1 py-6">
                     {showLetter && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                        onClick={removeLetter}
+                        >
                             <div
-                                className="absolute inset-0 bg-black/50"
-                                onClick={removeLetter}
-                            />
-
-                            <div className="whitespace-pre-line relative bg-white rounded-xl shadow-lg p-6 w-full z-10 mx-10">
-                                {letter}
+                                className="bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] p-6 flex flex-col overflow-hidden"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="border border-gray-200 rounded-md p-4 overflow-y-auto max-h-[70vh] mb-4">
+                                {letter ? (
+                                    <div
+                                    className="prose max-w-none whitespace-pre-line"
+                                    >
+                                        {letter}    
+                                    </div>
+                                ) : (
+                                    <p className="text-center text-gray-500">Loading cover letter...</p>
+                                )}
+                                </div>
                             </div>
                         </div>
+                        // <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        //     <div
+                        //         className="absolute inset-0 bg-black/50"
+                        //         onClick={removeLetter}
+                        //     />
+
+                        //     <div className="whitespace-pre-line relative bg-white rounded-xl shadow-lg p-6 w-full z-10 mx-10">
+                        //         {letter}
+                        //     </div>
+                        // </div>
                     )}
                     {/* Job Header */}
                     <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">

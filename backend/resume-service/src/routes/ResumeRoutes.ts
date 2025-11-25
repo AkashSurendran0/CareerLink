@@ -13,5 +13,6 @@ router.post('/saveResume', upload.single('resume'), resumeController.saveResume)
 router.get('/getAllUserResumes', resumeController.getAllUserResumes)
 router.post('/createCoverLetter', resumeController.createCoverLetter)
 router.post('/getTailoredResume', resumeController.getTailoredResume)
+router.post('/getTailoredCoverLetter', resumeController.getTailoredCoverLetter)
 
 export default router

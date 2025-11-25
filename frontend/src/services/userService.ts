@@ -248,3 +248,8 @@ export const getTailoredResume = async (id:string) => {
     const res=await api.post(`resume/v1/getTailoredResume?job=${id}`)
     return res.data
 }
+
+export const getTailoredCoverLetter = async (id:string) => {
+    const res=await api.post(`resume/v1/getTailoredCoverLetter?job=${id}`)
+    return res.data
+}

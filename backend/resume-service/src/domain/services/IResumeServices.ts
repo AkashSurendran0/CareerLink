@@ -19,3 +19,7 @@ export interface ICreateCoverLetter{
 export interface ICreateTailoredResume {
     createTailoredResume(job:any, details:any, user:any): Promise<any>
 }
+
+export interface ICreateTailoredCoverLetter {
+    createTailoredCoverLetter(job:any, details:any, user:any): Promise<any>
+}

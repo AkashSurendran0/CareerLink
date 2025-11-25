@@ -1,7 +1,7 @@
 import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../types";
-import { ICreateCoverLetter, ICreateResume, ICreateTailoredResume, IGetAllUserResumes, IUploadResume } from "../domain/services/IResumeServices";
+import { ICreateCoverLetter, ICreateResume, ICreateTailoredCoverLetter, ICreateTailoredResume, IGetAllUserResumes, IUploadResume } from "../domain/services/IResumeServices";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { uploadResume } from "../config/upload";
 import axios from "axios";
@@ -14,7 +14,8 @@ export class ResumeController {
         @inject(TYPES.IUploadResume) private _uploadResume:IUploadResume,
         @inject(TYPES.IGetAllUserResumes) private _getAllUserResumes:IGetAllUserResumes,
         @inject(TYPES.ICreateCoverLetter) private _createCoverLetter:ICreateCoverLetter,
-        @inject(TYPES.ICreateTailoredResume) private _createTailoredResume:ICreateTailoredResume
+        @inject(TYPES.ICreateTailoredResume) private _createTailoredResume:ICreateTailoredResume,
+        @inject(TYPES.ICreateTailoredCoverLetter) private _createTailoredCoverLetter:ICreateTailoredCoverLetter
     ){}
 
     createResume = async (req:Request, res:Response): Promise<void> => {
@@ -101,6 +102,34 @@ export class ResumeController {
                 return
             } 
             const result=await this._createTailoredResume.createTailoredResume(jobDetails.data.details, details.data.userDetails, userDetails.data.result)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getTailoredCoverLetter = async (req:Request, res:Response) => {
+        try {
+            const {job}=req.query
+            const email=req.headers['user-email'] as string
+            const token=req.cookies?.token
+            const jobDetails=await axios.get(`http://localhost:5000/job/v1/getJobDetails?id=${job}`)
+            const userDetails=await axios.get(`http://localhost:5000/user/v1/getUserInfo?user=${email}`)
+            const details=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
+                headers:{
+                    Cookie:`token=${token}`
+                }
+            })
+            if(!details.data || !details || !details.data.userDetails){
+                res.json({success:false, message:'User doesnt have sufficient details'})
+                return 
+            } 
+            const result=await this._createTailoredCoverLetter.createTailoredCoverLetter(jobDetails.data.details, details.data.userDetails, userDetails.data.result)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
