@@ -55,12 +55,17 @@ export default function JobDetailsPage({params}:Props) {
     const onSelectFromSaved = async () => {
         setLoading(true)
         const result=await getAllUserResumes()
+        console.log(result)
         if(result.resumes.success){
             console.log(result)
             setLoading(false)
             setOpenOptions(false)
             setOpenSavedResumes(true)
             setResumes(result.resumes.resume)
+        }else{
+            setLoading(false)
+            setOpenOptions(false)
+            setOpenSavedResumes(true)
         }
     }
 
@@ -330,7 +335,7 @@ export default function JobDetailsPage({params}:Props) {
                             </div>
                         </div>
                     )}
-                    {openSavedResumes && resumes && (
+                    {openSavedResumes && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
                             <div
                                 className="absolute inset-0 bg-black/50"
@@ -343,7 +348,7 @@ export default function JobDetailsPage({params}:Props) {
                                 </h2>
 
                                 <div className="flex flex-col gap-4 max-h-80 overflow-y-auto pr-1">
-                                {resumes.resumes.length === 0 ? (
+                                {!resumes || resumes.resumes.length === 0 ? (
                                     <p className="text-gray-500 text-center">No saved resumes found.</p>
                                 ) : (
                                     resumes.resumes.map((resume) => (
