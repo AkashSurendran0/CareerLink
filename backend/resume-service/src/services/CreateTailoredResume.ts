@@ -11,7 +11,6 @@ export class CreateTailoredResume implements ICreateTailoredResume {
 
     async createTailoredResume(job: any, details: any, user:any): Promise<any> {
         try {
-            console.log(job, details, user)
             const genAI = new GoogleGenerativeAI(process.env.GEMINI_AI_API);
             const model = genAI.getGenerativeModel({ 
                 model: "gemini-2.5-pro",
@@ -108,7 +107,7 @@ No additional text.
     
             const file = { content: cleanHTML };
             const pdfBuffer = await pdf.generatePdf(file, { format: "A4" });
-    
+     
             return {
                 success:true,
                 pdf: pdfBuffer,
