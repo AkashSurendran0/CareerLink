@@ -65,6 +65,15 @@ LinkedIn: ${details.linkedinLink}
 GitHub: ${details.githubLink}
 
 ====================================================
+HALLUCINATION / EMPTY FIELD RULES (CRITICAL)
+
+- Do NOT invent or infer any skills, experience, education, projects, dates, or certifications that are not present in the input data.
+- If a field is empty, missing, or contains only empty strings, omit that section entirely from the resume.
+- Treat arrays that contain only empty strings or null values as empty (i.e., omit).
+- Do not populate a Skills section with generic or assumed skills if the user provided none.
+- If the entire user profile contains no usable data (no name, no email, and no content), return a minimal HTML document with a header showing available core info (if any) and a single paragraph: "No resume data provided."
+
+====================================================
 TAILORING RULES
 
 - Prioritize job-required skills FIRST in the skills section (reorder, do not invent).
