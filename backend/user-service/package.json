@@ -18,6 +18,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.896.0",
     "@elastic/elasticsearch": "^9.1.1",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^17.2.2",

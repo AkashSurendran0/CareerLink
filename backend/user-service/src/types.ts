@@ -17,5 +17,6 @@ export const TYPES={
     UserDetailsController:"UserDetailsController",
     Mailer:"Mailer",
     IVerifyOTP:"IVerifyOTP",
-    IGetUserNames:"IGetUserNames"
+    IGetUserNames:"IGetUserNames",
+    IGetGithubDetails:"IGetGithubDetails"
 };

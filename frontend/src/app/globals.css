@@ -13,3 +13,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.react-calendar-heatmap .color-empty {
+  fill: #ebedf0;
+}
+
+/* Dynamic colors based on backend color */
+.react-calendar-heatmap .custom-ebedf0 { fill: #ebedf0; }
+.react-calendar-heatmap .custom-9be9a8 { fill: #9be9a8; }
+.react-calendar-heatmap .custom-40c463 { fill: #40c463; }
+.react-calendar-heatmap .custom-30a14e { fill: #30a14e; }
+.react-calendar-heatmap .custom-216e39 { fill: #216e39; }
+
+/* Add as many colors as GitHub returns */
+

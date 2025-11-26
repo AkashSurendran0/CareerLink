@@ -10,7 +10,7 @@ import { MarkAllRead } from "./services/MarkAllRead";
 import { DeleteAllNotifications } from "./services/DeleteAllNotifications";
 import { DeleteOne } from "./services/DeleteOne";
 import { MarkOneRead } from "./services/MarkOneRead";
-
+ 
 const container=new Container()
 
 container.bind(TYPES.INotificationRepository).to(NotificationRepository).inSingletonScope()

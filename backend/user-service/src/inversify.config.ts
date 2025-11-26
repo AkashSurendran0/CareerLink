@@ -19,6 +19,7 @@ import { SendResetOTP } from "./application/use-cases/ChangePass";
 import { Mailer } from "./utils/MailHelper";
 import { VerifyOTP } from "./application/use-cases/VerifyOTP";
 import { GetUserNames } from "./application/use-cases/GetUserNames";
+import { GetGithubDetails } from "./application/use-cases/GetGithubDetails";
 
 const container = new Container();
 
@@ -40,6 +41,7 @@ container.bind(TYPES.ISendResetOtp).to(SendResetOTP).inSingletonScope();
 container.bind(TYPES.Mailer).to(Mailer).inSingletonScope(); 
 container.bind(TYPES.IVerifyOTP).to(VerifyOTP).inSingletonScope();
 container.bind(TYPES.IGetUserNames).to(GetUserNames).inSingletonScope();
+container.bind(TYPES.IGetGithubDetails).to(GetGithubDetails).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);

@@ -28,7 +28,7 @@ export class UserController {
         @inject(TYPES.IAlterUserStatus) private _alterUserStatus:IAlterUserStatus,
         @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
         @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP,
-        @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames
+        @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames,
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
