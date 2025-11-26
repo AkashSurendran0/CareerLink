@@ -46,3 +46,8 @@ export interface IEditUserDetails {
 export interface IGetUserDetails {
     getUserDetails(email:string): Promise<Details | null>
 }
+
+export interface IGetGithubDetails {
+    getGithubDetails(user:string): Promise<any>
+    getGithubRepoDetails(user:string): Promise<any>
+}

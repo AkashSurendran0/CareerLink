@@ -253,3 +253,13 @@ export const getTailoredCoverLetter = async (id:string) => {
     const res=await api.post(`resume/v1/getTailoredCoverLetter?job=${id}`)
     return res.data
 }
+
+export const getGithubData = async (username:string) => {
+    const res=await api.get(`user/v1/getGithubData?user=${username}`)
+    return res.data
+}
+
+export const getGithubActivity = async (username:string) => {
+    const res=await api.get(`user/v1/getGithubActivity?user=${username}`)
+    return res.data
+}

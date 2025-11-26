@@ -10,6 +10,6 @@ app.use(cookieParser())
 
 app.use('/v1', ResumeRoutes)
 
-app.listen(5006, ()=>{
+app.listen(5006, ()=>{ 
     console.log('Resume service is running')
 })

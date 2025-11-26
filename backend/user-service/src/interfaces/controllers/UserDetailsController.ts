@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IAddUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
+import { IAddUserDetails, IGetGithubDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import {inject, injectable} from "inversify";
@@ -15,6 +15,7 @@ export class UserDetailsController {
         @inject(TYPES.IAddUserDetails) private _addUserDetails:IAddUserDetails,
         @inject(TYPES.IGetUserDetails) private _getUserDetails:IGetUserDetails,
         @inject(TYPES.IEditUserDetails) private _editUserDetails:IEditUserDetails,
+        @inject(TYPES.IGetGithubDetails) private _getGithubDetails:IGetGithubDetails
     ){}
 
     insertUserDetails = async (req:Request, res:Response): Promise<void> => {
@@ -67,5 +68,33 @@ export class UserDetailsController {
             }
         }
     };
+
+    getGithubData = async (req:Request, res:Response) => {
+        try {
+            const {user}=req.query
+            const result=await this._getGithubDetails.getGithubDetails(user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getGithubActivity = async (req:Request, res:Response) => {
+        try {
+            const {user}=req.query
+            const result=await this._getGithubDetails.getGithubRepoDetails(user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
 
 }

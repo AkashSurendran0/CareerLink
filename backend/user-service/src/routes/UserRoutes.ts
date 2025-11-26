@@ -55,6 +55,8 @@ router.get("/check", userController.checkBlock);
 router.get("/getOTP", userController.verifyOTP);
 router.get("/getDetailsByQuery", userController.getUserDetails);
 router.get("/getDetailsByEmail", userController.getUserDetailsByEmail);
-router.get("/getUserInfo", userController.getUserInfo)
+router.get("/getUserInfo", userController.getUserInfo);
+router.get("/getGithubData", userDetailsController.getGithubData)
+router.get("/getGithubActivity", userDetailsController.getGithubActivity)
 
 export default router;
