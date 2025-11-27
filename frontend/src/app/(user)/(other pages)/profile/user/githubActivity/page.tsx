@@ -52,6 +52,7 @@ function GitHubActivity() {
 
     const getRepos = async (username:string) => {
         const result=await getUserRepos(repoPage, username, REPO_LIMIT)
+        console.log(result)
         if(result.result.success){
             setRepoPage(prev=>prev+1)
             setUserRepo([...result.result.data])
