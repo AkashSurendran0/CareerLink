@@ -1,10 +1,10 @@
 'use client'
 
-import { getGithubActivity, getGithubData, getUserDetails } from '@/services/userService'
+import { getGithubActivity, getGithubData, getUserDetails, getUserRepos } from '@/services/userService'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
-import CalendarHeatmap from 'react-calendar-heatmap'
 import Heatmap from '@/components/heatMap'
+import {Eye, Star, GitFork, LoaderIcon} from 'lucide-react'
 
 function GitHubActivity() {
     const [loading, setLoading]=useState(true)
@@ -13,6 +13,9 @@ function GitHubActivity() {
     const [userName, setUsername]=useState('')
     const [heatMap, setHeatMap]=useState()
     const [validHeatmap, setValidHeatmap]=useState(true)
+    const [repoPage, setRepoPage]=useState(0)
+    const [userRepo, setUserRepo]=useState([])
+    const REPO_LIMIT=3
 
     useEffect(()=>{
         getDetails()
@@ -29,6 +32,7 @@ function GitHubActivity() {
             const details=await getGithubData(username)
             if(details.result.success){
                 getActivityDetails(username)
+                getRepos(username)
                 setGithubDetails(details.result.details)
                 setUsername(username)
             }else{
@@ -44,40 +48,57 @@ function GitHubActivity() {
         }else{
             setValidHeatmap(false)
         }
-        console.log('details', details)
     }
 
-     const githubStats = [
+    const getRepos = async (username:string) => {
+        const result=await getUserRepos(repoPage, username, REPO_LIMIT)
+        if(result.result.success){
+            setRepoPage(prev=>prev+1)
+            setUserRepo([...result.result.data])
+        }
+    }
+
+    const handleLoadMore = async () => {
+        const result=await getUserRepos(repoPage, userName, REPO_LIMIT)
+        if(result.result.success){
+            setRepoPage(prev=>prev+1)
+            setUserRepo([...userRepo, ...result.result.data])
+        }
+    }
+
+    const githubStats = [
         { label: "Followers", field:'followers'},
         { label: "Following", field:'following'},
         { label: "Stars", field:'totalStars'},
         { label: "Repositories", field:'repos'},
     ]
 
-    const contributionHeatmap = Array.from({ length: 7 }, () =>
-        Array.from({ length: 26 }, () => Math.floor(Math.random() * 5)),
-    )
-
     const topRepositories = [
-        {
-        id: 1,
-        title: "Project Alpha",
-        description: "A full-stack web application for project management.",
-        image: "/images/attachments-gen-images-public-innovate-solutions-logo.jpg",
-        },
-        {
-        id: 2,
-        title: "Data Insights Dashboard",
-        description: "Interactive dashboard for visualizing data insights.",
-        image: "/images/attachments-gen-images-public-requirements-illustration-with-building-and-plants.jpg",
-        },
-        {
-        id: 3,
-        title: "Mobile App UI Kit",
-        description: "A collection of UI components for mobile app development.",
-        image: "/images/attachments-gen-images-public-decorative-brush-pen-and-plants.jpg",
-        },
-    ]
+    {
+      id: 1,
+      title: "Project Alpha",
+      description: "A full-stack web application for project management.",
+      stars: 324,
+      forks: 89,
+      watchers: 156,
+    },
+    {
+      id: 2,
+      title: "Data Insights Dashboard",
+      description: "Interactive dashboard for visualizing data insights.",
+      stars: 512,
+      forks: 142,
+      watchers: 298,
+    },
+    {
+      id: 3,
+      title: "Mobile App UI Kit",
+      description: "A collection of UI components for mobile app development.",
+      stars: 687,
+      forks: 203,
+      watchers: 421,
+    },
+  ]
 
     const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"]
 
@@ -151,27 +172,57 @@ function GitHubActivity() {
 
                                 {/* Top Repositories */}
                             <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Repositories</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {topRepositories.map((repo) => (
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">User Repositories</h3>
+                            {userRepo.length>0 ? (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                {userRepo.map((repo)=> (
+                                                    <div
+                                                        key={repo.id}
+                                                        className="cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+                                                        onClick={()=>window.open(repo.url)}
+                                                    >
+                                                        <div className="p-4">
+                                                            <h4 className="font-semibold text-gray-900 mb-2">{repo.name}</h4>
+                                                            {repo.description && (
+                                                                <p className="text-sm text-gray-600 mb-4">{repo.description}</p>
+                                                            )}
+
+                                                            <div className="flex gap-4 text-sm text-gray-700">
+                                                                <div className="flex items-center gap-1">
+                                                                <Star size={18}/>
+                                                                {repo.stars}
+                                                                </div>
+                                                                <div className="flex items-center gap-1">
+                                                                <GitFork size={18}/>
+                                                                {repo.forks}
+                                                                </div>
+                                                                <div className="flex items-center gap-1">
+                                                                <Eye size={18}/>
+                                                                {repo.watchers}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                        <div className="flex justify-center py-6">
+                                            <button
+                                            onClick={handleLoadMore}
+                                            className={`cursor-pointe text-white px-8 py-3 rounded-lg font-medium transition ${githubDetails.repos<=(REPO_LIMIT*repoPage)? 'disabled bg-grey':'bg-blue-500 hover:bg-blue-600'}`}
+                                            >
+                                            Load More Repos
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
                                     <div
-                                        key={repo.id}
-                                        className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+                                        className="py-3 flex justify-center cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
                                     >
-                                        <div className="w-full h-40 overflow-hidden bg-gray-200">
-                                        <img
-                                            src={repo.image || "/placeholder.svg"}
-                                            alt={repo.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                        </div>
-                                        <div className="p-4">
-                                        <h4 className="font-semibold text-gray-900 mb-2">{repo.title}</h4>
-                                        <p className="text-sm text-gray-600">{repo.description}</p>
-                                        </div>
+                                        <p>User doesnt have public repos</p>
                                     </div>
-                                    ))}
-                                </div>
+                                )}
+                                
                             </div>  
                         </>
                     ) : (

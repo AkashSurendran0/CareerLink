@@ -58,5 +58,6 @@ router.get("/getDetailsByEmail", userController.getUserDetailsByEmail);
 router.get("/getUserInfo", userController.getUserInfo);
 router.get("/getGithubData", userDetailsController.getGithubData)
 router.get("/getGithubActivity", userDetailsController.getGithubActivity)
+router.get("/getGithubRepo", userDetailsController.getGithubRepo)
 
 export default router;

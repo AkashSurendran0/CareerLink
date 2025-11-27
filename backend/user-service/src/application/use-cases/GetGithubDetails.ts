@@ -2,6 +2,8 @@ import axios from "axios";
 import { IGetGithubDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import { redisClient } from "../../utils/RedisClient";
 import dotenv from 'dotenv'
+import { RepoDTO } from "../../dto/RepoDTO";
+import { RepoMapper } from "../../mappers/RepoMapper";
 
 dotenv.config()
 
@@ -32,7 +34,7 @@ export class GetGithubDetails implements IGetGithubDetails {
         }
     }
 
-    async getGithubRepoDetails(user: string): Promise<any> {
+    async getGithubHeatmap(user: string): Promise<any> {
         try {
             let heatmap=await redisClient.get(`heatmapFor${user}`);
             if(heatmap) heatmap=JSON.parse(heatmap);
@@ -83,6 +85,24 @@ export class GetGithubDetails implements IGetGithubDetails {
 
             }
             return {success:true, heatmap};
+        } catch (error: any) {
+            console.log("Error getting details", error);
+            return {success:false};
+        }
+    }
+
+    async getGithubRepoDetails(page: number, user: string, limit: number): Promise<{success:boolean, data:RepoDTO} | {success:boolean}> {
+        try {
+            let data=await redisClient.get(`reposInPage${page}WithLimit${limit}for${user}`)
+            if(data) JSON.parse(data)
+            if(!data){
+                const skip=page*limit
+                const skipRepo=Math.floor(skip/limit)+1
+                const result=await axios.get(`https://api.github.com/users/${user}/repos?per_page=${limit}&page=${skipRepo}`)
+                data = result.data.map((repo:any)=>RepoMapper.toDTO(repo))
+                await redisClient.set(`reposInPage${page}WithLimit${limit}for${user}`, JSON.stringify(data), 'EX', 3600)
+            }
+            return {success:true, data}
         } catch (error: any) {
             console.log("Error getting details", error);
             return {success:false};
