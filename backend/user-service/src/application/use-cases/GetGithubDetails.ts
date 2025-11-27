@@ -94,7 +94,7 @@ export class GetGithubDetails implements IGetGithubDetails {
     async getGithubRepoDetails(page: number, user: string, limit: number): Promise<{success:boolean, data:RepoDTO} | {success:boolean}> {
         try {
             let data=await redisClient.get(`reposInPage${page}WithLimit${limit}for${user}`)
-            if(data) JSON.parse(data)
+            if(data) data=JSON.parse(data)
             if(!data){
                 const skip=page*limit
                 const skipRepo=Math.floor(skip/limit)+1
