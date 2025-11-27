@@ -1,3 +1,5 @@
+import { RepoDTO } from "../../dto/RepoDTO";
+
 type details={
     gender:string,
     location:string,
@@ -49,5 +51,6 @@ export interface IGetUserDetails {
 
 export interface IGetGithubDetails {
     getGithubDetails(user:string): Promise<any>
-    getGithubRepoDetails(user:string): Promise<any>
+    getGithubHeatmap(user:string): Promise<any>
+    getGithubRepoDetails(page:number, user:string, limit:number): Promise<{success:boolean, data:RepoDTO} | {success:boolean}>
 }

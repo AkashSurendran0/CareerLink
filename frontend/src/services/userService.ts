@@ -263,3 +263,8 @@ export const getGithubActivity = async (username:string) => {
     const res=await api.get(`user/v1/getGithubActivity?user=${username}`)
     return res.data
 }
+
+export const getUserRepos = async (page:number, username:string, limit:number) => {
+    const res=await api.get(`user/v1/getGithubRepo?page=${page}&user=${username}&limit=${limit}`)
+    return res.data
+}

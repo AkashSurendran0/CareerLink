@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
-import { getSignupOtp, sendSignupOtp, signUp } from "@/services/userService";
+import { getSignupOtp, sendSignupOtp, signUp, loa } from "@/services/userService";
 
 function Signup() {
     const [loadOTP, setLoadOTP]=useState(false)
