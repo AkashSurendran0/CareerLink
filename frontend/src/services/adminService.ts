@@ -71,3 +71,13 @@ export const addSubscriptionPlan = async (data:SubscriptionData) => {
     const res=await api.post('subscription/v1/addSubscription', data)
     return res.data
 }
+
+export const getAllPlans = async () => {
+    const res=await api.get('subscription/v1/getAllPlans')
+    return res.data
+}
+
+export const alterPlanStatus = async (id:string) => {
+    const res=await api.patch(`subscription/v1/alterPlanStatus?plan=${id}`)
+    return res.data
+}

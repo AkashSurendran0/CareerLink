@@ -1,3 +1,5 @@
+import { SubscriptionType } from "../entity/SubscriptionType";
+
 type Feature = {
   text: string;
   code: string;
@@ -12,4 +14,6 @@ type SubscriptionData = {
 
 export interface ISubscriptionTypesRepository {
     addSubscription(data:SubscriptionData): Promise<{success:boolean}>
+    getAllPlans(): Promise<SubscriptionType[]>
+    alterPlanStatus(id:string): Promise<{success:boolean}>
 }

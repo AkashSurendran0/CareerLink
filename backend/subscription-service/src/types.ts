@@ -1,5 +1,7 @@
 export const TYPES = {
     SubscriptionController:'SubscriptionController',
     IAddSubscription:'IAddSubscription',
-    ISubscriptionTypesRepository:'ISubscriptionTypesRepository'
+    ISubscriptionTypesRepository:'ISubscriptionTypesRepository',
+    IGetAllPlans:'IGetAllPlans',
+    IAlterPlanStatus:'IAlterPlanStatus'
 }
