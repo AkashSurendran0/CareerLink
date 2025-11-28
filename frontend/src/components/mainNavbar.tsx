@@ -3,6 +3,8 @@
 import socket from "@/lib/socket"
 import { deleteAllNotifications, deleteOneNotification, getAllNotifications, markAllNotificationsRead, markOneRead } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useLoading } from "@/app/(user)/template"
 
 interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
@@ -16,6 +18,8 @@ interface Notification {
 }
 
 function MainNavbar({ setSidebarOpen }: NavbarProps) {
+  const setLoading=useLoading()
+  const router=useRouter()
   const [notificationOpen, setNotificationOpen] = useState(false)
   const notificationRef = useRef<HTMLDivElement>(null)
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -96,6 +100,11 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     await deleteAllNotifications()
   }
 
+  const routeToVip = () => {
+    setLoading(true)
+    router.push('/becomeVip')
+  }
+
 
   return (
     <>
@@ -116,7 +125,10 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md text-sm">
+              <button 
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md text-sm"
+              onClick={routeToVip}
+              >
                 Become VIP
               </button>
 

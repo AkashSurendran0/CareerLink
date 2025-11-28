@@ -9,6 +9,19 @@ type ID = {
     id:string
 }
 
+type Feature = {
+  text: string;
+  code: string;
+};
+
+type SubscriptionData = {
+    planName:string,
+    amount:number,
+    billingCycle:number,
+    features:Feature[]
+    status:boolean
+}
+
 export const adminLogin = async (loginDetails: LoginDetails) =>{
     const res=await api.post('/admin/v1/login', loginDetails)
     return res.data
@@ -51,5 +64,10 @@ export const getUsers = async (start:number, limit:number, query:string) => {
 
 export const changeUserStatus = async (user: ID) => {
     const res=await api.patch('/user/v1/alterUserStatus', user)
+    return res.data
+}
+
+export const addSubscriptionPlan = async (data:SubscriptionData) => {
+    const res=await api.post('subscription/v1/addSubscription', data)
     return res.data
 }

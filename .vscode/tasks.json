@@ -104,6 +104,18 @@
             "options": {"cwd": "backend/post-service"}
         },
         {
+            "label": "watch subscription-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/subscription-service"}
+        },
+        {
+            "label": "run subscription-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/subscription-service"}
+        },
+        {
             "label": "Start all services",
             "dependsOn":[
                 "run frontend",
@@ -123,6 +135,8 @@
                 "run resume-service",
                 "watch post-service",
                 "run post-service",
+                "watch subscription-service",
+                "run subscription-service",
             ],
             "dependsOrder": "parallel"
         }

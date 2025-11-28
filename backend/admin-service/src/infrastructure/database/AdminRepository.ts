@@ -14,4 +14,10 @@ export class AdminRepository implements IAdminRepository {
         )
     }
 
+    async checkAdmin(user: string): Promise<{ success: boolean; }> {
+        const admin=await AdminModel.findOne({where:{email:user}})
+        if(!admin) return {success:false}
+        return {success:true}
+    }
+
 }

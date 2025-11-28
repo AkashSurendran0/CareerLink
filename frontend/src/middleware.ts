@@ -55,8 +55,10 @@ export async function middleware(req: NextRequest) {
 
 // Helper functions for better organization and performance
 async function handleAdminRoutes(req: NextRequest, token: string | undefined, refreshToken: string | undefined, pathname: string) {
+  let isAdmin=false
+  console.log(1)
   if (!token && refreshToken) {
-    const refreshResult = await handleTokenRefresh(req, refreshToken, 'adminToken');
+    const refreshResult = await handleTokenRefresh(req, refreshToken, 'token');
     if (refreshResult.redirect) return refreshResult.response;
   }
 
@@ -64,8 +66,21 @@ async function handleAdminRoutes(req: NextRequest, token: string | undefined, re
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
-  if (token && pathname.startsWith("/admin/login")) {
-    return NextResponse.redirect(new URL("/admin/userManagement", req.url));
+  if(token){
+    const result = await fetchWithCache(
+      "http://localhost:5000/admin/v1/checkAdmin",
+      token
+    );
+    console.log(result)
+    isAdmin = result.result?.success == true;
+    console.log(isAdmin)
+    if(!isAdmin && !pathname.startsWith("/admin/login")){
+      return NextResponse.redirect(new URL("/admin/login", req.url))
+    }
+  
+    if (isAdmin && pathname.startsWith("/admin/login")) {
+      return NextResponse.redirect(new URL("/admin/userManagement", req.url));
+    }
   }
 
   return NextResponse.next();
