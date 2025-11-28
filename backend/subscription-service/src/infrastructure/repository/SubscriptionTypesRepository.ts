@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { ISubscriptionTypesRepository } from "../../domain/respository/ISubscriptionTypesRepository";
 import { SubscriptionTypesModel } from "../models/SubscriptionTypeModel";
+import { Features, SubscriptionType } from "../../domain/entity/SubscriptionType";
 
 type Feature = {
   text: string;
@@ -19,6 +20,36 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
 
     async addSubscription(data: SubscriptionData): Promise<{ success: boolean; }> {
         await SubscriptionTypesModel.insertOne(data)
+        return {success:true}
+    }
+
+    async getAllPlans(): Promise<SubscriptionType[]> {
+        const plans=await SubscriptionTypesModel.find()
+        const allPlans=plans.map(plan=>{
+            const features=plan.features.map(
+                f=>new Features(f.text, f.code)
+            )
+
+            return new SubscriptionType (
+                plan._id,
+                plan.name,
+                plan.amount,
+                plan.billingCycle,
+                features,
+                plan.active
+            )
+        })
+
+        return allPlans
+    }
+
+    async alterPlanStatus(id: string): Promise<{ success: boolean; }> {
+        const plan=await SubscriptionTypesModel.findById(id)
+        if(!plan) return {success:false}
+        await SubscriptionTypesModel.findByIdAndUpdate(
+            id,
+            {active:!plan.active}
+        )
         return {success:true}
     }
 

@@ -1,3 +1,5 @@
+import { SubscriptionTypeDto } from "../../dto/SubscriptionTypeDto";
+
 type Feature = {
   text: string;
   code: string;
@@ -12,4 +14,12 @@ type SubscriptionData = {
 
 export interface IAddSubscription {
     addSubscription(data:SubscriptionData): Promise<{success:boolean}>
+}
+
+export interface IGetAllPlans {
+  getAllPlans(): Promise<SubscriptionTypeDto[]>
+}
+
+export interface IAlterPlanStatus {
+  alterPlanStatus(id:string) : Promise<{success:boolean}>
 }

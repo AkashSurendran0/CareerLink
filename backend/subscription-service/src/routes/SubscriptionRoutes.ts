@@ -8,5 +8,7 @@ const subscriptionController=container.get<SubscriptionController>(TYPES.Subscri
 const router=Router()
 
 router.post('/addSubscription', subscriptionController.addSubscription)
+router.get('/getAllPlans', subscriptionController.getAllPlans)
+router.patch('/alterPlanStatus', subscriptionController.alterPlanStatus)
 
 export default router
