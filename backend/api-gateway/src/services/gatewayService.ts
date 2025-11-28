@@ -16,6 +16,7 @@ export class GatewayService {
             '/job':`${process.env.JOB_SERVICE_ROUTE}`,
             '/resume':`${process.env.RESUME_SERVICE_ROUTE}`,
             '/media':`${process.env.POST_SERVICE_ROUTE}`,
+            '/subscription':`${process.env.SUBSCRIPTION_SERVICE_ROUTE}`,
         }
     }
 

@@ -7,5 +7,6 @@ const router=Router()
 const adminController=container.get<AdminController>(TYPES.AdminController)
 
 router.post('/login', adminController.adminLoginCase)
+router.get('/checkAdmin', adminController.checkAdmin)
 
 export default router

@@ -13,7 +13,7 @@ function AdminSidebar() {
     { icon: "🏢", label: "Companies", active: false, value:"/admin/companyManagement" },
     { icon: "📄", label: "Reports", active: false, value:"" },
     { icon: "📊", label: "Analytics", active: false, value:"" },
-    { icon: "💳", label: "Subscriptions", active: false, value:"" },
+    { icon: "💳", label: "Subscriptions", active: false, value:"/admin/subscriptionManagement" },
   ];
 
   return (
