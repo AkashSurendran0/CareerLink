@@ -6,6 +6,7 @@ import { IAddSubscription, IAlterPlanStatus, IGetActivePlans, IGetAllPlans } fro
 import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
+import { stripe } from "../../config/stripe";
 
 dotenv.config()
 
@@ -121,6 +122,71 @@ export class SubscriptionController {
                 return res.json({ success: true, message: "Payment verified" });
             } else {
                 return res.status(400).json({ success: false, message: "Invalid signature" });
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    createStripePayment = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-id'] as string
+            const {amount}=req.body
+            
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types:["card"],
+                mode:'payment',
+                success_url:'http://localhost:3000/settings',
+                cancel_url:'http://localhost:3000/becomeVip',
+                line_items:[
+                    {
+                        price_data:{
+                            currency:'inr',
+                            product_data:{
+                                name:'Premium subscription'
+                            },
+                            unit_amount:amount*100
+                        },
+                        quantity:1
+                    }
+                ],
+                metadata:{
+                    user
+                }
+            })
+
+            res.json({success:true, id:session.id, url:session.url})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    controlWebhook = async (req:Request, res:Response) => {
+        try {
+            const sig=req.headers['stripe-signature']
+            console.log(sig)
+            let event
+
+            try {
+                event=stripe.webhooks.constructEvent(req.body, sig!, process.env.STRIPE_WEBHOOK_SECRET!)
+            } catch (error:any) {
+                console.error("Webhook signature verification failed:", error.message);
+                return res.status(400).send(`Webhook Error: ${error.message}`);
+            }
+
+            if(event.type == 'checkout.session.completed'){
+                const session=event.data.object
+                console.log('Payment successfull', session)
             }
         } catch (error: unknown) {
             if (error instanceof Error) {

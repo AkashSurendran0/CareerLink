@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getActivePlans, getOrderId, verifyPayment } from "@/services/userService"
+import { getActivePlans, getOrderId, stripePayment, verifyPayment } from "@/services/userService"
 import { Check } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
 import axios from "axios"
@@ -82,6 +82,15 @@ export default function BecomeVIPPage() {
         rzp1.open()
     }
 
+    const openStripe = async () => {
+        if(!selectedPlan) return enqueueSnackbar('Server error, please try again later', {variant:'error'})
+        const data = {
+            amount:selectedPlan.amount
+        }
+        const result=await stripePayment(data)
+        window.location.href=result.url
+    }
+
     return (
         <main className="flex-1 overflow-auto">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -105,7 +114,7 @@ export default function BecomeVIPPage() {
                                 Razorpay
                             </button>
                             <button
-                                // onClick={onSelectFromSaved}
+                                onClick={openStripe}
                                 className="cursor-pointer w-full py-2 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition"
                             >
                                 Stripe

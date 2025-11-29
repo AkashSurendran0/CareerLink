@@ -287,3 +287,8 @@ export const verifyPayment = async (response:any) => {
     const res=await api.post('subscription/v1/verifyPayment', response)
     return res.data
 }
+
+export const stripePayment = async (data:Amount) => {
+    const res=await api.post('subscription/v1/createStripePayment', data)
+    return res.data
+}

@@ -13,5 +13,6 @@ router.patch('/alterPlanStatus', subscriptionController.alterPlanStatus)
 router.get('/getActivePlans', subscriptionController.getActivePlans)
 router.post('/create-order', subscriptionController.createOrder)
 router.post('/verifyPayment', subscriptionController.verifyPayment)
+router.post('/createStripePayment', subscriptionController.createStripePayment)
 
 export default router
