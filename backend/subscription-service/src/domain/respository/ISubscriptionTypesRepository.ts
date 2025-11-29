@@ -16,4 +16,5 @@ export interface ISubscriptionTypesRepository {
     addSubscription(data:SubscriptionData): Promise<{success:boolean}>
     getAllPlans(): Promise<SubscriptionType[]>
     alterPlanStatus(id:string): Promise<{success:boolean}>
+    getActivePlans(): Promise<SubscriptionType[]>
 }

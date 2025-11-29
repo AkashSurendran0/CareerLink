@@ -3,5 +3,7 @@ export const TYPES = {
     IAddSubscription:'IAddSubscription',
     ISubscriptionTypesRepository:'ISubscriptionTypesRepository',
     IGetAllPlans:'IGetAllPlans',
-    IAlterPlanStatus:'IAlterPlanStatus'
+    IAlterPlanStatus:'IAlterPlanStatus',
+    IGetActivePlans:'IGetActivePlans',
+    ISubscriptionRepository:'ISubscriptionRepository'
 }

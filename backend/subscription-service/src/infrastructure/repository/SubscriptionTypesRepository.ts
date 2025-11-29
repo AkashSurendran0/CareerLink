@@ -53,4 +53,24 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
         return {success:true}
     }
 
+    async getActivePlans(): Promise<SubscriptionType[]> {
+        const plans=await SubscriptionTypesModel.find({active:true})   
+        const allPlans=plans.map(plan=>{
+            const features=plan.features.map(
+                f=>new Features(f.text, f.code)
+            )
+
+            return new SubscriptionType (
+                plan._id,
+                plan.name,
+                plan.amount,
+                plan.billingCycle,
+                features,
+                plan.active
+            )
+        }) 
+
+        return allPlans
+    }
+
 }

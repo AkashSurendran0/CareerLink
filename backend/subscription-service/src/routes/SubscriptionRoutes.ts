@@ -10,5 +10,9 @@ const router=Router()
 router.post('/addSubscription', subscriptionController.addSubscription)
 router.get('/getAllPlans', subscriptionController.getAllPlans)
 router.patch('/alterPlanStatus', subscriptionController.alterPlanStatus)
+router.get('/getActivePlans', subscriptionController.getActivePlans)
+router.post('/create-order', subscriptionController.createOrder)
+router.post('/verifyPayment', subscriptionController.verifyPayment)
+router.post('/createStripePayment', subscriptionController.createStripePayment)
 
 export default router

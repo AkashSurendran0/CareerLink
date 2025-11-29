@@ -6,36 +6,8 @@ import { alterPlanStatus, getAllPlans } from "@/services/adminService"
 import { LoaderIcon } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
 
-interface Plan {
-  id: number
-  name: string
-  price: number
-  billingCycle: string
-  features: string[]
-  status: string
-}
-
-const plans: Plan[] = [
-  {
-    id: 1,
-    name: "Basic Plan",
-    price: 0.0,
-    billingCycle: "Monthly",
-    features: ["Feature 1", "Feature 2", "Feature 3", "+2 more"],
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Pro Plan",
-    price: 899.0,
-    billingCycle: "Monthly",
-    features: ["Feature 1", "Feature 2", "Feature 3", "+5 more"],
-    status: "Active",
-  },
-]
 
 export default function SubscriptionsPage() {
-    // const [tablePlans] = useState<Plan[]>(plans)
     const [plans, setPlans]=useState([])    
     const router=useRouter()
     const [statusLoading, setStatusLoading]=useState(false)
@@ -98,7 +70,7 @@ export default function SubscriptionsPage() {
                     </button>
                 </div>
                 {/* Table Container */}
-                {plans.length>0 ? (
+                {plans && plans.length>0 ? (
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                         {/* Desktop Table */}
                         <div className="hidden md:block overflow-x-auto">
@@ -122,10 +94,10 @@ export default function SubscriptionsPage() {
                                 <td className="px-6 py-4 text-sm">
                                     <div className="flex flex-wrap gap-1">
                                     {plan.features.map((feature, idx) => (
-                                        <a key={idx} href="#" className="hover:underline">
+                                        <p key={idx} className="hover:underline">
                                         {feature.code}
-                                        {/* {idx < plan.features.length - 1 && ", "} */}
-                                        </a>
+                                        {idx < plan.features.length - 1 && ", "}
+                                        </p>
                                     ))}
                                     </div>
                                 </td>
