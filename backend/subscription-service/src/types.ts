@@ -5,5 +5,6 @@ export const TYPES = {
     IGetAllPlans:'IGetAllPlans',
     IAlterPlanStatus:'IAlterPlanStatus',
     IGetActivePlans:'IGetActivePlans',
-    ISubscriptionRepository:'ISubscriptionRepository'
+    ISubscriptionRepository:'ISubscriptionRepository',
+    IBuySubscription:'IBuySubscription'
 }

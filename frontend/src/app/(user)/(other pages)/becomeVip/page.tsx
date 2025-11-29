@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getActivePlans, getOrderId, stripePayment, verifyPayment } from "@/services/userService"
+import { buyPremium, getActivePlans, getOrderId, stripePayment, verifyPayment } from "@/services/userService"
 import { Check } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
-import axios from "axios"
+import { useLoading } from "../../template"
 
 export default function BecomeVIPPage() {
+    const setLoading=useLoading()
     const [plans, setPlans]=useState([])
     const [showOptions, setShowOptions]=useState(false)
     const [selectedPlan, setSelectedPlan]=useState(null)
@@ -71,6 +72,10 @@ export default function BecomeVIPPage() {
                 const verifyData=await verifyPayment(response)
                 
                 if(verifyData.success){
+                    setLoading(true)
+                    const result=await buyPremium(selectedPlan._id, selectedPlan.billingCycle)
+                    console.log(result)
+                    setLoading(false)
                     enqueueSnackbar('Payment Success', {variant:"success"})
                 }else{
                     enqueueSnackbar('Payment Failed', {variant:'error'})
@@ -85,7 +90,9 @@ export default function BecomeVIPPage() {
     const openStripe = async () => {
         if(!selectedPlan) return enqueueSnackbar('Server error, please try again later', {variant:'error'})
         const data = {
-            amount:selectedPlan.amount
+            amount:selectedPlan.amount,
+            id:selectedPlan._id,
+            validity:selectedPlan.billingCycle
         }
         const result=await stripePayment(data)
         window.location.href=result.url

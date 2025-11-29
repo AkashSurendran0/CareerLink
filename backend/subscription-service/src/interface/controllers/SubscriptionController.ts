@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
+import { IBuySubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 
 dotenv.config()
 
@@ -22,7 +23,8 @@ export class SubscriptionController {
         @inject(TYPES.IAddSubscription) private _addSubscription:IAddSubscription,
         @inject(TYPES.IGetAllPlans) private _getAllPlans:IGetAllPlans,
         @inject(TYPES.IAlterPlanStatus) private _alterPlanStatus:IAlterPlanStatus,
-        @inject(TYPES.IGetActivePlans) private _getActivePlans:IGetActivePlans
+        @inject(TYPES.IGetActivePlans) private _getActivePlans:IGetActivePlans,
+        @inject(TYPES.IBuySubscription) private _buySubscription:IBuySubscription
     ) {}
 
     addSubscription = async (req:Request, res:Response) => {
@@ -136,7 +138,7 @@ export class SubscriptionController {
     createStripePayment = async (req:Request, res:Response) => {
         try {
             const user=req.headers['user-id'] as string
-            const {amount}=req.body
+            const {amount, id, validity}=req.body
             
             const session = await stripe.checkout.sessions.create({
                 payment_method_types:["card"],
@@ -156,7 +158,9 @@ export class SubscriptionController {
                     }
                 ],
                 metadata:{
-                    user
+                    user,
+                    id,
+                    validity
                 }
             })
 
@@ -174,7 +178,7 @@ export class SubscriptionController {
     controlWebhook = async (req:Request, res:Response) => {
         try {
             const sig=req.headers['stripe-signature']
-            console.log(sig)
+            // console.log(sig)
             let event
 
             try {
@@ -185,9 +189,28 @@ export class SubscriptionController {
             }
 
             if(event.type == 'checkout.session.completed'){
-                const session=event.data.object
-                console.log('Payment successfull', session)
+                const session=event.data.object 
+                // return console.log(session)
+                this._buySubscription.buySubscription(session.metadata.id, session.metadata.user, session.metadata.validity)
+                console.log('Payment successfull')
             }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    buyPremium = async (req:Request, res:Response) => {
+        try {
+            const {id, time}=req.query
+            const validity=parseInt(time)
+            const user=req.headers['user-id'] as string
+            const result=await this._buySubscription.buySubscription(id, user, validity)
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.log('error', error)
