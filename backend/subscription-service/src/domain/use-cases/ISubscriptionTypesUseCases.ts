@@ -23,3 +23,7 @@ export interface IGetAllPlans {
 export interface IAlterPlanStatus {
   alterPlanStatus(id:string) : Promise<{success:boolean}>
 }
+
+export interface IGetActivePlans {
+  getActivePlans(): Promise<SubscriptionTypeDto[]>
+}

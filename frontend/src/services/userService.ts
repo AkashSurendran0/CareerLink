@@ -22,6 +22,10 @@ type SignupForm = {
     confirmPass:string
 }
 
+type Amount = {
+    amount:number
+}
+
 export const loginUser = async (loginDetails: LoginDetails) => {
     const res=await api.post('/user/v1/login', loginDetails)
     return res.data
@@ -266,5 +270,20 @@ export const getGithubActivity = async (username:string) => {
 
 export const getUserRepos = async (page:number, username:string, limit:number) => {
     const res=await api.get(`user/v1/getGithubRepo?page=${page}&user=${username}&limit=${limit}`)
+    return res.data
+}
+
+export const getActivePlans = async () => {
+    const res=await api.get('subscription/v1/getActivePlans')
+    return res.data
+}
+
+export const getOrderId = async (data:Amount) => {
+    const res=await api.post('subscription/v1/create-order', data)
+    return res.data
+}
+
+export const verifyPayment = async (response:any) => {
+    const res=await api.post('subscription/v1/verifyPayment', response)
     return res.data
 }

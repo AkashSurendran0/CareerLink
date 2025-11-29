@@ -13,4 +13,4 @@ app.use('/v1', AdminRouter)
 
 app.listen(5002, ()=>{
     console.log('Admin service is running')
-}) 
+})  

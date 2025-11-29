@@ -15,7 +15,7 @@ connectDB();
 dbConnect(); 
 app.use(session({
     secret: "batman",
-    resave: false,
+    resave: false, 
     saveUninitialized: false
 }));
 app.use(passport.initialize());
