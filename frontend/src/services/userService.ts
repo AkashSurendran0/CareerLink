@@ -292,3 +292,8 @@ export const stripePayment = async (data:Amount) => {
     const res=await api.post('subscription/v1/createStripePayment', data)
     return res.data
 }
+
+export const buyPremium = async (id:string, time:number) => {
+    const res=await api.post(`subscription/v1/buyPremium?id=${id}&time=${time}`)
+    return res.data
+}

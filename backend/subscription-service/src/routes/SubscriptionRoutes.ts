@@ -14,5 +14,6 @@ router.get('/getActivePlans', subscriptionController.getActivePlans)
 router.post('/create-order', subscriptionController.createOrder)
 router.post('/verifyPayment', subscriptionController.verifyPayment)
 router.post('/createStripePayment', subscriptionController.createStripePayment)
+router.post('/buyPremium', subscriptionController.buyPremium)
 
 export default router
