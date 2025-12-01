@@ -8,7 +8,7 @@ import { TYPES } from './types'
 export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
-    private readonly exchange=["company.events"] 
+    private readonly exchange=["company.events", "subscription.events"] 
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -40,6 +40,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "company.events", "company.rejected")
         await this.channel.bindQueue(queue.queue, "company.events", "company.blocked")
         await this.channel.bindQueue(queue.queue, "company.events", "company.unblocked")
+        await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded")
 
         console.log('Notification service is listening for messages...')
 
@@ -121,11 +122,14 @@ You can now log back into your dashboard and continue using all available featur
 We appreciate your patience and understanding throughout the process.  
 If you face any issues logging in or using your account, please contact our support team.
 
-Best regards,  
+Best regards,   
 The CineScope Admin Team
 `
                     )
                 break
+
+                case 'upgraded':
+                    await this._addNotification.saveNotification(data.user, 'Upgraded to Vip Member 👑', '/settings')
 
                 default:
                     console.log('Unknown type event', data.action)
