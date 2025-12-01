@@ -92,7 +92,8 @@ export default function BecomeVIPPage() {
         const data = {
             amount:selectedPlan.amount,
             id:selectedPlan._id,
-            validity:selectedPlan.billingCycle
+            validity:selectedPlan.billingCycle,
+            
         }
         const result=await stripePayment(data)
         window.location.href=result.url

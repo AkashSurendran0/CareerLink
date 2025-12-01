@@ -140,6 +140,7 @@ export class SubscriptionController {
 
     createStripePayment = async (req:Request, res:Response) => {
         try {
+            const email=req.headers['user-email'] as string
             const user=req.headers['user-id'] as string
             const {amount, id, validity}=req.body
             
@@ -163,7 +164,8 @@ export class SubscriptionController {
                 metadata:{
                     user,
                     id,
-                    validity
+                    validity,
+                    email
                 }
             })
 
@@ -194,7 +196,7 @@ export class SubscriptionController {
             if(event.type == 'checkout.session.completed'){
                 const session=event.data.object 
                 // return console.log(session)
-                this._buySubscription.buySubscription(session.metadata.id, session.metadata.user, session.metadata.validity)
+                this._buySubscription.buySubscription(session?.metadata?.id, session?.metadata?.user, session?.metadata?.validity, session?.metadata?.email)
                 console.log('Payment successfull')
             }
         } catch (error: unknown) {
@@ -209,10 +211,11 @@ export class SubscriptionController {
 
     buyPremium = async (req:Request, res:Response) => {
         try {
+            const email=req.headers['user-email'] as string
             const {id, time}=req.query
             const validity=parseInt(time)
             const user=req.headers['user-id'] as string
-            const result=await this._buySubscription.buySubscription(id, user, validity)
+            const result=await this._buySubscription.buySubscription(id, user, validity, email)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -277,7 +280,7 @@ export class SubscriptionController {
     adminUpgradeUser = async (req:Request, res:Response) => {
         try {
             const data=req.body
-            const result=await this._buySubscription.buySubscription(data?.selectedPlan?._id, data?.selectedUser, data?.selectedPlan?.billingCycle)
+            const result=await this._buySubscription.buySubscription(data?.selectedPlan?._id, data?.selectedUser, data?.selectedPlan?.billingCycle, data?.selectedEmail)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

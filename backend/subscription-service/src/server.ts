@@ -5,13 +5,15 @@ import SubscriptionRoutes from './routes/SubscriptionRoutes'
 import container from "./inversify.config";
 import { SubscriptionController } from "./interface/controllers/SubscriptionController";
 import { TYPES } from "./types";
+import { rabbitmqService } from "./utils/Rabbitmq";
 
 const subscriptionController=container.get<SubscriptionController>(TYPES.SubscriptionController)
 const app=express()
 connectMongo()
-connectPSQL()
+connectPSQL();
+rabbitmqService.connect()
 
-app.post('/v1/stripe/webhook', 
+app.post('/v1/stripe/webhook',  
     express.raw({ type: 'application/json' }),
     subscriptionController.controlWebhook
 )

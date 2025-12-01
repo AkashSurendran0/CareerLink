@@ -1,5 +1,5 @@
 export interface IBuySubscription {
-    buySubscription(id:string, user:string, validity:number): Promise<{success:boolean}>
+    buySubscription(id:string, user:string, validity:number, email:string): Promise<{success:boolean}>
 }
 
 export interface IGetUserSubscription {

@@ -15,7 +15,7 @@ dbConnect();
 const rabbitmqService = container.get<RabbitMqService>(TYPES.RabbitMqService);
 (async ()=>{
     await rabbitmqService.connect()
-    await rabbitmqService.consumeNotification()
+    await rabbitmqService.consumeNotification() 
 })()
  
 app.use('/v1', NotificationRouter)

@@ -29,6 +29,7 @@ function UserManagement() {
     const [selectPlan, setSelectPlan]=useState(false)
     const [selectedPlan, setSelectedPlan]=useState(null)
     const [selectedUser, setSelectedUser]=useState(null)
+    const [selectedEmail, setSelectedEmail]=useState(null)
     const [openConfirmation, setOpenConfirmation]=useState(false)
     const [downgradeConfirmation, setDowngradeConfirmation]=useState(false)
     
@@ -89,9 +90,10 @@ function UserManagement() {
         setLoadingUserId(null)
     }   
 
-    const getPlans = async (id:string) => {
+    const getPlans = async (user:User) => {
         const result=await getAllPlans()
-        setSelectedUser(id)
+        setSelectedUser(user.id)
+        setSelectedEmail(user.email)
         setSelectPlan(true)
         setPlans(result.result)
     }
@@ -104,6 +106,7 @@ function UserManagement() {
     const closeOptions = () => {
         setSelectPlan(false)
         setSelectedUser(null)
+        setSelectedEmail(null)
     }
 
     const openOptions = async (plan:any) => {
@@ -115,7 +118,8 @@ function UserManagement() {
     const upgradeUser = async () => {
         const data = {
             selectedPlan,
-            selectedUser
+            selectedUser,
+            selectedEmail
         }
         await adminUpgradeUser(data)
         setUsers(prev=>
@@ -293,7 +297,7 @@ function UserManagement() {
                             {user.isVip ? (
                                 <button className="text-red-600 hover:red-blue-800 cursor-pointer" onClick={()=>removeUserPlan(user.id)}>Downgrade</button>
                             ) : (
-                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>getPlans(user.id)}>Upgrade</button>
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>getPlans(user)}>Upgrade</button>
                             )}
                             </div>
                         </td>
