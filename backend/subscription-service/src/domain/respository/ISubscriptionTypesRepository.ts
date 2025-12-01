@@ -17,4 +17,5 @@ export interface ISubscriptionTypesRepository {
     getAllPlans(): Promise<SubscriptionType[]>
     alterPlanStatus(id:string): Promise<{success:boolean}>
     getActivePlans(): Promise<SubscriptionType[]>
+    findById(id:string): Promise<SubscriptionType>
 }

@@ -17,7 +17,7 @@ app.use(session({
     secret: "batman",
     resave: false, 
     saveUninitialized: false
-}));
+})); 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());

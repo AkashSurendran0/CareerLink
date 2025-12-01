@@ -1,13 +1,31 @@
 "use client"
 
-import { useState } from "react"
+import { cancelSubscription, getUserPlan } from "@/services/userService"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useLoading } from "../../template"
+import ConfirmModal from "@/reusable-components/confirmModal"
 
 export default function SettingsPage() {
-    const [sidebarOpen, setSidebarOpen] = useState(false)
+    const setLoading=useLoading()
+    const router=useRouter()
     const [chatNotifications, setChatNotifications] = useState(true)
     const [callNotifications, setCallNotifications] = useState(false)
     const [jobNotifications, setJobNotifications] = useState(false)
-    const [hasSubscription, setHasSubscription] = useState(true)
+    const [userPlan, setUserPlan]=useState(null)
+    const [confirmBox, setConfirmBox]=useState(false)
+
+    useEffect(()=>{
+        console.log('here')
+        getPlan()
+    }, [])
+
+    const getPlan = async () => {
+        const result=await getUserPlan() 
+        if(result.result.plan!=null && result.result.planDetails!=null){
+            setUserPlan(result.result)
+        }
+    }
 
     const handleLogout = () => {
         // Handle logout logic here
@@ -15,17 +33,23 @@ export default function SettingsPage() {
     }
 
     const handleUpgradePlan = () => {
-        // Handle upgrade plan logic here
-        console.log("Upgrade plan clicked")
+        setLoading(true)
+        router.push('/becomeVip')
     }
 
-    const handleCancelSubscription = () => {
-        // Handle cancel subscription logic here
-        console.log("Cancel subscription clicked")
+    const handleCancelSubscription = async () => {
+        setLoading(true)
+        await cancelSubscription()
+        setUserPlan(null)
+        setConfirmBox(false)
+        setLoading(false)
     }
 
     return (
         <main className="flex-1 overflow-auto">
+            {confirmBox && (
+                <ConfirmModal onClose={()=>setConfirmBox(false)} title="Confirm your action" message="Do you want to cancel your ongoing subscription? (The amount is not refundable)" onConfirm={handleCancelSubscription}/>
+            )}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Settings Title */}
                 <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
@@ -34,7 +58,7 @@ export default function SettingsPage() {
                 <div className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Membership Information</h2>
 
-                {hasSubscription ? (
+                {userPlan ? (
                     <>
                     {/* Membership Table */}
                     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mb-6">
@@ -45,17 +69,15 @@ export default function SettingsPage() {
                                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Plan</th>
                                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Start Date</th>
                                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Renewal Date</th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Next Billing Date</th>
                                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
-                                <td className="px-6 py-4 text-sm text-blue-600 font-medium">Premium</td>
-                                <td className="px-6 py-4 text-sm text-gray-600">01/15/2023</td>
-                                <td className="px-6 py-4 text-sm text-gray-600">01/15/2024</td>
-                                <td className="px-6 py-4 text-sm text-gray-600">01/15/2024</td>
-                                <td className="px-6 py-4 text-sm text-gray-600">Active</td>
+                                <td className="px-6 py-4 text-sm text-blue-600 font-medium">{userPlan.planDetails.name}</td>
+                                <td className="px-6 py-4 text-sm text-gray-600">{new Date(userPlan.plan.createdAt).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 text-sm text-gray-600">{new Date(userPlan.plan.validTill).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 text-sm text-gray-600">{userPlan.plan.validTill < Date.now() ? 'Expired':'Active'}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -63,20 +85,30 @@ export default function SettingsPage() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <button
-                        onClick={handleUpgradePlan}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-md transition-colors"
-                        >
-                        Upgrade Plan
-                        </button>
-                        <button
-                        onClick={handleCancelSubscription}
-                        className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-                        >
-                        Cancel Subscription
-                        </button>
-                    </div>
+                    { new Date(userPlan.plan.validTill) > Date.now() ? (
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <button
+                            onClick={()=>setConfirmBox(true)}
+                            className="cursor-pointer text-white bg-red-600 hover:bg-red-700 px-6 py-2 rounded-md font-medium transition-colors"
+                            >
+                            Cancel Subscription
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-4">
+                            <div
+                                className="text-white py-2 bg-red-500 flex justify-center cursor-pointer rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+                            >
+                                <p>The Subscription has expired. Please check for new offers</p>
+                            </div>
+                            <button
+                            onClick={()=>router.push('/becomeVip')}
+                            className="cursor-pointer text-white bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md font-medium transition-colors"
+                            >
+                            Get New Plan
+                            </button>
+                        </div>
+                    )}
                     </>
                 ) : (
                     <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">

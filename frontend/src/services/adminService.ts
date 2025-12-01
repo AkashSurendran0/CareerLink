@@ -81,3 +81,13 @@ export const alterPlanStatus = async (id:string) => {
     const res=await api.patch(`subscription/v1/alterPlanStatus?plan=${id}`)
     return res.data
 }
+
+export const adminUpgradeUser = async (data:any) => {
+    const res=await api.post('subscription/v1/adminUpgradeUser', data)
+    return res.data
+}
+
+export const adminDowngradeUser = async (id:string) => {
+    const res=await api.delete(`subscription/v1/adminDowngradeUser?id=${id}`)
+    return res.data
+}

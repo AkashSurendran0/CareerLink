@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
-import { IBuySubscription } from "../../domain/use-cases/ISubscriptionUseCase";
+import { IBuySubscription, IDeletePlan, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 
 dotenv.config()
 
@@ -24,7 +24,10 @@ export class SubscriptionController {
         @inject(TYPES.IGetAllPlans) private _getAllPlans:IGetAllPlans,
         @inject(TYPES.IAlterPlanStatus) private _alterPlanStatus:IAlterPlanStatus,
         @inject(TYPES.IGetActivePlans) private _getActivePlans:IGetActivePlans,
-        @inject(TYPES.IBuySubscription) private _buySubscription:IBuySubscription
+        @inject(TYPES.IBuySubscription) private _buySubscription:IBuySubscription,
+        @inject(TYPES.IGetUserSubscription) private _getUserSubscription:IGetUserSubscription,
+        @inject(TYPES.IDeletePlan) private _deletePlan:IDeletePlan,
+        @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo:IGetSubscriptionInfo
     ) {}
 
     addSubscription = async (req:Request, res:Response) => {
@@ -210,6 +213,86 @@ export class SubscriptionController {
             const validity=parseInt(time)
             const user=req.headers['user-id'] as string
             const result=await this._buySubscription.buySubscription(id, user, validity)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getUserPlan = async (req:Request, res:Response) => {
+        try {
+            let id=req.headers['user-id'] as string
+            let {user}=req.query
+            let userId=user || id
+            // const user=req.headers['user-id'] as string
+            const result=await this._getUserSubscription.getSubscription(userId)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    deletePlan = async (req:Request, res:Response) => {
+        try {
+            const user=req.headers['user-id'] as string
+            const result=await this._deletePlan.deletePlan(user)
+            res.json({result}) 
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getSubscriptionInfo = async (req:Request, res:Response) => {
+        try {
+            let id=req.headers['user-id'] as string
+            let {user}=req.query
+            let userId=user || id
+            const result=await this._getSubscriptionInfo.getInfo(userId)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    adminUpgradeUser = async (req:Request, res:Response) => {
+        try {
+            const data=req.body
+            const result=await this._buySubscription.buySubscription(data?.selectedPlan?._id, data?.selectedUser, data?.selectedPlan?.billingCycle)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    adminDowngradeUser = async (req:Request, res:Response) => {
+        try {
+            const {id}=req.query
+            const result=await this._deletePlan.deletePlan(id)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
