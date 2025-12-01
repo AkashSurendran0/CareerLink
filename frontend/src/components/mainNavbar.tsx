@@ -5,6 +5,7 @@ import { deleteAllNotifications, deleteOneNotification, getAllNotifications, mar
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
+import { getSubscriptionInfo } from "../services/userService"
 
 interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
@@ -25,8 +26,10 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [userEmail, setUserEmail] = useState<string>()
+  const [isVip, setIsVip]=useState(false)
 
   useEffect(() => {
+    vipStatus()
     getNotifications()
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
@@ -72,6 +75,11 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     setNotifications(result.notifications)
     const unreadCount=result.notifications.filter((noti)=>!noti.isRead).length
     setUnreadCount(unreadCount)
+  }
+
+  const vipStatus = async () => {
+    const result=await getSubscriptionInfo()
+    setIsVip(result.result.success)
   }
 
   // const unreadCount = notifications.filter((n) => !n.read).length
@@ -125,12 +133,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+            {!isVip && (
               <button 
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md text-sm"
               onClick={routeToVip}
               >
                 Become VIP
               </button>
+            )}
 
               <div className="relative" ref={notificationRef}>
                 <button

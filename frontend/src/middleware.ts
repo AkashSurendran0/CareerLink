@@ -44,6 +44,10 @@ export async function middleware(req: NextRequest) {
     return handleCompanyRoutes(req, token, pathname);
   }
 
+  if(pathname.startsWith('/becomeVip')) {
+    return handleVipPage(req, token, pathname)
+  }
+
   // Check user status only if needed (non-public, authenticated routes)
   const userCheckResult = await checkUserStatus(req, token, pathname);
   if (userCheckResult.redirect) {
@@ -135,6 +139,21 @@ async function handleCompanyRoutes(req: NextRequest, token: string, pathname: st
   } catch (err) {
     console.error("Company route middleware error:", err);
     return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
+}
+
+async function handleVipPage(req:NextRequest, token:string, pathname:string) {
+  const result = await fetchWithCache(
+    "http://localhost:5000/subscription/v1/getSubscriptionInfo",
+    token
+  )
+
+  const isVip=result?.result?.success
+
+  if(isVip && pathname.startsWith('/becomeVip')){
+    return NextResponse.redirect(new URL("/settings", req.url));
   }
 
   return NextResponse.next();

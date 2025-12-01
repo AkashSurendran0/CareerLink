@@ -12,6 +12,7 @@ import {inject, injectable} from "inversify";
 import { TYPES } from "../../types";
 import dotenv from "dotenv";
 import { STATUS_CODES } from "../../utils/StatusCodes";
+import axios from "axios";
 
 dotenv.config();
 
@@ -144,7 +145,11 @@ export class UserController {
             const {page, limit, query}=req.query;
             const pageNum=parseInt(page as string, 10) || 1;
             const limitNum=parseInt(limit as string, 5) || 5;
-            const users=await this._getUsers.getUsers(pageNum, limitNum, query);
+            let users=await this._getUsers.getUsers(pageNum, limitNum, query);
+            for(let i=0;i<users.result.length;i++){
+                const result=await axios.get(`http://localhost:5000/subscription/v1/getSubscriptionInfo?user=${users.result[i].id}`);
+                users.result[i].isVip=result?.data?.result?.success
+            }
             res.json({users});
         } catch (error:unknown) {
             if (error instanceof Error) {

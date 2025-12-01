@@ -11,7 +11,9 @@ export class BuySubscription implements IBuySubscription {
     ){}
 
     async buySubscription(id: string, user: string, validity:number): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionRepository.addSubscription(id, user, validity)
+        let num=validity
+        if(typeof validity=='string') num=parseInt(validity)
+        const result=await this._subscriptionRepository.addSubscription(id, user, num)
         return result
     }
 

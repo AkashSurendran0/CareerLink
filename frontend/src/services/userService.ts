@@ -297,3 +297,18 @@ export const buyPremium = async (id:string, time:number) => {
     const res=await api.post(`subscription/v1/buyPremium?id=${id}&time=${time}`)
     return res.data
 }
+
+export const getUserPlan = async () => {
+    const res=await api.get('subscription/v1/getUserPlan')
+    return res.data
+}
+
+export const cancelSubscription = async () => {
+    const res=await api.delete('subscription/v1/deletePlan')
+    return res.data
+}
+
+export const getSubscriptionInfo = async () => {
+    const res=await api.get('subscription/v1/getSubscriptionInfo')
+    return res.data
+}

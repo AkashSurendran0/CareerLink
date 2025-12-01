@@ -73,4 +73,20 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
         return allPlans
     }
 
+    async findById(id: string): Promise<SubscriptionType> {
+        const details=await SubscriptionTypesModel.findById(id)
+        if(!details) return null
+        const features=details.features.map(
+            f=>new Features(f.text, f.code)
+        )
+        return new SubscriptionType(
+            details._id,
+            details.name,
+            details.amount,
+            details.billingCycle,
+            features,
+            details.active
+        )
+    }
+
 }

@@ -15,5 +15,10 @@ router.post('/create-order', subscriptionController.createOrder)
 router.post('/verifyPayment', subscriptionController.verifyPayment)
 router.post('/createStripePayment', subscriptionController.createStripePayment)
 router.post('/buyPremium', subscriptionController.buyPremium)
+router.get('/getUserPlan', subscriptionController.getUserPlan)
+router.delete('/deletePlan', subscriptionController.deletePlan)
+router.get('/getSubscriptionInfo', subscriptionController.getSubscriptionInfo)
+router.post('/adminUpgradeUser', subscriptionController.adminUpgradeUser)
+router.delete('/adminDowngradeUser', subscriptionController.adminDowngradeUser)
 
 export default router

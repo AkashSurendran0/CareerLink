@@ -3,16 +3,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import {LoaderIcon} from 'lucide-react'
-import { changeUserStatus, getUsers } from '@/services/adminService'
+import { adminDowngradeUser, adminUpgradeUser, changeUserStatus, getAllPlans, getUsers } from '@/services/adminService'
+import ConfirmModal from '@/reusable-components/confirmModal'
 
 
 type User = {
     id:string,
     username:string,
     email:string,
+    isVip:boolean,
     suspended:boolean,
     createdAt:Date,
-
 }
 
 function UserManagement() {
@@ -24,10 +25,17 @@ function UserManagement() {
     const STARTING_PAGE=1
     const LIMIT=3
     const debouncer=useRef<NodeJS.Timeout | null>(null)
+    const [plans, setPlans]=useState(null)
+    const [selectPlan, setSelectPlan]=useState(false)
+    const [selectedPlan, setSelectedPlan]=useState(null)
+    const [selectedUser, setSelectedUser]=useState(null)
+    const [openConfirmation, setOpenConfirmation]=useState(false)
+    const [downgradeConfirmation, setDowngradeConfirmation]=useState(false)
     
     useEffect(()=>{
         const fetchUsers= async () => {
             const result=await getUsers(STARTING_PAGE, LIMIT, query)
+            console.log(result)
             if(result.users.result.length<LIMIT){
                 setPageLimit(1)
             }else{
@@ -79,11 +87,111 @@ function UserManagement() {
             )
         )
         setLoadingUserId(null)
-
     }   
+
+    const getPlans = async (id:string) => {
+        const result=await getAllPlans()
+        setSelectedUser(id)
+        setSelectPlan(true)
+        setPlans(result.result)
+    }
+
+    const removeUserPlan = (id:string) => {
+        setSelectedUser(id)
+        setDowngradeConfirmation(true)
+    }
+
+    const closeOptions = () => {
+        setSelectPlan(false)
+        setSelectedUser(null)
+    }
+
+    const openOptions = async (plan:any) => {
+        setSelectPlan(false)
+        setSelectedPlan(plan)
+        setOpenConfirmation(true)
+    }
+
+    const upgradeUser = async () => {
+        const data = {
+            selectedPlan,
+            selectedUser
+        }
+        await adminUpgradeUser(data)
+        setUsers(prev=>
+            prev.map(i=>i.id==selectedUser? {...i, isVip:!i.isVip}:i)
+        )
+        setOpenConfirmation(false)
+    }
+
+    const downgradeUser = async () => {
+        await adminDowngradeUser(selectedUser)
+        setUsers(prev=>
+            prev.map(i=>i.id==selectedUser? {...i, isVip:!i.isVip}:i)
+        )
+        setDowngradeConfirmation(false)
+
+    }
 
     return (
         <div className="flex-1">
+            {downgradeConfirmation && (
+                <ConfirmModal onClose={()=>setDowngradeConfirmation(false)} title='Confirm your action' message='Do you want to remove the plan of this user?' onConfirm={downgradeUser}/>
+            )}
+            {openConfirmation && (
+                <ConfirmModal onClose={()=>setOpenConfirmation(false)} title='Confirm your action' message='Do you want to upgrade the user with the following plan?' onConfirm={upgradeUser}/>
+            )}
+            {selectPlan && (
+                <>
+                    {plans.length > 0 ? (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div
+                                className="absolute inset-0 bg-black/50"
+                                onClick={closeOptions}
+                            />
+
+                            <div className="relative bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-sm z-10">
+                                <h2 className="text-xl font-semibold text-center mb-4">
+                                Select a Plan
+                                </h2>
+
+                                <div className="flex flex-col gap-3">
+                                    {plans.map((i, ind)=>(
+                                        <button
+                                            key={ind}
+                                            onClick={()=>openOptions(i)}
+                                            className="cursor-pointer w-full py-2 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition"
+                                        >
+                                            {i.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div
+                                className="absolute inset-0 bg-black/50"
+                                onClick={()=>setPlans(null)}
+                            />
+
+                            <div className="relative bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-sm z-10">
+                                <h2 className="text-xl font-semibold text-center mb-4">
+                                Select an Option
+                                </h2>
+
+                                <div className="flex flex-col gap-3">
+                                <div
+                                    className="w-full py-2 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition text-center"
+                                >
+                                    There are no plans available
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
             <div className="bg-white border-b border-gray-200 px-8 py-6">
             <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                 <div>
@@ -182,8 +290,11 @@ function UserManagement() {
 
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
+                            {user.isVip ? (
+                                <button className="text-red-600 hover:red-blue-800 cursor-pointer" onClick={()=>removeUserPlan(user.id)}>Downgrade</button>
+                            ) : (
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>getPlans(user.id)}>Upgrade</button>
+                            )}
                             </div>
                         </td>
                         </tr>
