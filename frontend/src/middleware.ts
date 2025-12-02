@@ -151,7 +151,7 @@ async function handleVipPage(req:NextRequest, token:string, pathname:string) {
   )
 
   const isVip=result?.result?.success
-
+  console.log(isVip)
   if(isVip && pathname.startsWith('/becomeVip')){
     return NextResponse.redirect(new URL("/settings", req.url));
   }

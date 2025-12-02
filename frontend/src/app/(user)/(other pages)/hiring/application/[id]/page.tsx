@@ -167,6 +167,7 @@ export default function JobDetailsPage({params}:Props) {
         setTailoredResumeConfirmation(false)
         const {id}=params
         const result=await getTailoredResume(id)
+        console.log(result)
         if(result.result.success){
             setTailoredResume({html:result.result.html, pdf:result.result.pdf})
             setOpenResumePreview(true)

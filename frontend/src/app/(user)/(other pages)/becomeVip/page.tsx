@@ -5,8 +5,10 @@ import { buyPremium, getActivePlans, getOrderId, stripePayment, verifyPayment } 
 import { Check } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
 import { useLoading } from "../../template"
+import { useRouter } from "next/navigation"
 
 export default function BecomeVIPPage() {
+    const router=useRouter()
     const setLoading=useLoading()
     const [plans, setPlans]=useState([])
     const [showOptions, setShowOptions]=useState(false)
@@ -74,9 +76,7 @@ export default function BecomeVIPPage() {
                 if(verifyData.success){
                     setLoading(true)
                     const result=await buyPremium(selectedPlan._id, selectedPlan.billingCycle)
-                    console.log(result)
-                    setLoading(false)
-                    enqueueSnackbar('Payment Success', {variant:"success"})
+                    window.location.reload()
                 }else{
                     enqueueSnackbar('Payment Failed', {variant:'error'})
                 }

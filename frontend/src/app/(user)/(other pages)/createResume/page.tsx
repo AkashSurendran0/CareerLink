@@ -4,6 +4,7 @@ import { createResume } from "@/services/userService"
 import { useState } from "react"
 import { useLoading } from "../../template"
 import { useRouter } from "next/navigation"
+import { enqueueSnackbar } from "notistack"
 
 export default function ResumeBuilder() {
     const router=useRouter()
@@ -214,8 +215,13 @@ export default function ResumeBuilder() {
 
         setLoading(true)
         const result=await createResume(data)
-        sessionStorage.setItem('resumePdf', result.pdf)
-        sessionStorage.setItem('resumeHtml', result.html)
+        // return console.log(result)
+        if(!result.result.success){
+            setLoading(false)
+            return enqueueSnackbar(result.result.message, {variant:'error'})
+        } 
+        sessionStorage.setItem('resumePdf', result.result.base64Pdf)
+        sessionStorage.setItem('resumeHtml', result.result.html)
 
         router.push('/createResume/resumePreview')
     }

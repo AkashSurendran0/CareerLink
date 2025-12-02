@@ -8,6 +8,7 @@ import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
 import { IBuySubscription, IDeletePlan, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
+import axios from "axios";
 
 dotenv.config()
 
@@ -248,6 +249,7 @@ export class SubscriptionController {
     deletePlan = async (req:Request, res:Response) => {
         try {
             const user=req.headers['user-id'] as string
+            await axios.delete(`http://localhost:5000/resume/v1/deletePlan?user=${user}`)
             const result=await this._deletePlan.deletePlan(user)
             res.json({result}) 
         } catch (error: unknown) {
@@ -295,6 +297,7 @@ export class SubscriptionController {
     adminDowngradeUser = async (req:Request, res:Response) => {
         try {
             const {id}=req.query
+            await axios.delete(`http://localhost:5000/resume/v1/deletePlan?user=${id}`)
             const result=await this._deletePlan.deletePlan(id)
             res.json({result})
         } catch (error: unknown) {

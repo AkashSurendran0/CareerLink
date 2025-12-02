@@ -127,6 +127,7 @@ ${finalInterests.join(", ")}
         const pdfBuffer = await pdf.generatePdf(file, { format: "A4" });
 
         return {
+            success:true,
             pdf: pdfBuffer,
             html: cleanHTML,
         };

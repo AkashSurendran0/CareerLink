@@ -23,8 +23,10 @@ export default function ResumePreview() {
 
     useEffect(()=>{
         const pdf=sessionStorage.getItem('resumePdf')
+        console.log(pdf)
         if(!pdf) return router.push('/createResume')
         const html=sessionStorage.getItem('resumeHtml')
+        console.log(html)
         if(!html) return router.push('/createResume')
 
         setHtml(html)
