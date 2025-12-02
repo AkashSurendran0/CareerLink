@@ -14,5 +14,6 @@ router.get('/getAllUserResumes', resumeController.getAllUserResumes)
 router.post('/createCoverLetter', resumeController.createCoverLetter)
 router.post('/getTailoredResume', resumeController.getTailoredResume)
 router.post('/getTailoredCoverLetter', resumeController.getTailoredCoverLetter)
+router.delete('/deletePlan', resumeController.deletePlan)
 
 export default router

@@ -4,6 +4,7 @@ import { createCoverLetter, createResume } from "@/services/userService"
 import { useState } from "react"
 import { useLoading } from "../../template"
 import { useRouter } from "next/navigation"
+import { enqueueSnackbar } from "notistack"
 
 export default function ResumeBuilder() {
     const router=useRouter()
@@ -149,8 +150,12 @@ export default function ResumeBuilder() {
         console.log(data)
         setLoading(true)
         const result=await createCoverLetter(data)
+        if(!result.result.success){
+            setLoading(false)
+            return enqueueSnackbar(result.result.message, {variant:'error'})
+        } 
         console.log(result)
-        sessionStorage.setItem('coverLetter', result.letter.content)
+        sessionStorage.setItem('coverLetter', result.result.content)
 
         router.push('/createCoverletter/coverLetterPreview')
     }

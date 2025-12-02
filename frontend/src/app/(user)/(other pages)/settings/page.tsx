@@ -42,7 +42,7 @@ export default function SettingsPage() {
         await cancelSubscription()
         setUserPlan(null)
         setConfirmBox(false)
-        setLoading(false)
+        window.location.reload()
     }
 
     return (

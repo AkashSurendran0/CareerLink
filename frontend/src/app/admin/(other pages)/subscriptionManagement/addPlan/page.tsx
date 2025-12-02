@@ -18,12 +18,12 @@ import { addSubscriptionPlan } from "@/services/adminService"
 const features = [
     {text:'Unlimited Resume Generation', code:'UNL_RES_GEN'},
     {text:'Unlimited Cover letter Generation', code:'UNL_COV_GEN'},
-    {text:'5 Tailored Resume Generation Per Month', code:'5_TAIL_RES_GEN'},
-    {text:'5 Tailored Cover letter Generation per Month', code:'5_TAIL_COV_GEN'},
+    {text:'5 Tailored Resume Generation', code:'5_TAIL_RES_GEN'},
+    {text:'5 Tailored Cover letter Generation', code:'5_TAIL_COV_GEN'},
     {text:'Unlimited Tailored Resume Generation', code:'UNL_TAIL_RES_GEN'},
     {text:'Unlimited Tailored Cover letter Generation', code:'UNL_TAIL_COV_GEN'},
-    {text:'5 Resume Generation Per Month', code:'5_RES_GEN'},
-    {text:'5 Cover Letter Generation Per Month', code:'5_COV_GEN'}
+    {text:'5 Resume Generation', code:'5_RES_GEN'},
+    {text:'5 Cover Letter Generation', code:'5_COV_GEN'}
 ]
 
 type Feature = {

@@ -23,3 +23,17 @@ export interface ICreateTailoredResume {
 export interface ICreateTailoredCoverLetter {
     createTailoredCoverLetter(job:any, details:any, user:any): Promise<any>
 }
+
+export interface ICheckTailoredVersion {
+    checkTailoredResume(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkTailoredCoverLetter(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+}
+
+export interface IDeleteCount {
+    deleteCount(id:string): Promise<{success:boolean}>
+}
+
+export interface ICheckNormalVersion {
+    checkResume(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkCoverLetter(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+}

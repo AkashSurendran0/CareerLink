@@ -79,7 +79,7 @@ Generate a polished, compelling cover letter using only the information above.
         const result = await model.generateContent(prompt);
         const content= result.response.text(); 
 
-        return {content}
+        return {success:true, content}
 
         } catch (error) {
             console.log('Error generating cover letter with gemini', error)
