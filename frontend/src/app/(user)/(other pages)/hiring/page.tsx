@@ -6,12 +6,25 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
 
+interface Company {
+  name: string
+  logo: string
+}
+
+interface Job {
+  _id: string
+  jobTitle: string
+  jobDescription: string
+  location: string
+  company: Company
+}
+
 export default function JobApplications() {
   const setLoading=useLoading()
   const router=useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [jobs, setJobs]=useState<any>([])
+  const [jobs, setJobs]=useState<Job[]>([])
   const [query, setQuery] = useState('')
   const debouncer=useRef<NodeJS.Timeout | null>(null)
   const itemsPerPage = 3
@@ -34,7 +47,7 @@ export default function JobApplications() {
   // const startIndex = (currentPage - 1) * itemsPerPage
   // const paginatedApplications = filteredApplications.slice(startIndex, startIndex + itemsPerPage)
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
     if(debouncer.current) clearTimeout(debouncer.current)
     debouncer.current=setTimeout(() => {

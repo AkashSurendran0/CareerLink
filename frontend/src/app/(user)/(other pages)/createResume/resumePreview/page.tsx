@@ -9,8 +9,8 @@ import { saveResume } from "@/services/userService"
 export default function ResumePreview() {
     const setLoading=useLoading()
     const router=useRouter()
-    const [previewHtml, setHtml]=useState()
-    const [downloadPdf, setPdf]=useState()
+    const [previewHtml, setHtml]=useState<string | null>(null)
+    const [downloadPdf, setPdf]=useState<string | null>(null)
     const [isOpen, setIsOpen]=useState(false)
     const [filename, setFilename]=useState('')
 
@@ -58,7 +58,7 @@ export default function ResumePreview() {
         const pdf=sessionStorage.getItem('resumePdf')
         if(!pdf) return enqueueSnackbar('Pdf not available', {variant:'error'})
         const byteCharacters=atob(pdf)
-        const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
+        const byteNumbers=new Array(byteCharacters.length).fill(0).map((_, i)=>byteCharacters.charCodeAt(i))
         const byteArray=new Uint8Array(byteNumbers)
         const pdfBlob=new Blob([byteArray], {type: 'application/pdf'})
         if(!pdfBlob) return enqueueSnackbar('Something went wrong', {variant:'error'})

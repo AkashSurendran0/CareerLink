@@ -6,13 +6,39 @@ import React, { useEffect, useState } from 'react'
 import { useLoading } from '@/app/(user)/template';
 import { Heart, MessageCircle, X, User, Trash } from 'lucide-react'
 
+interface Comment {
+    _id: string
+    pfp?: string
+    userName: string
+    createdAt: string
+    comment: string
+}
+
+interface Post {
+    _id: string
+    pfp?: string
+    userName: string
+    text?: string
+    image?: string
+    title?: string
+    createdAt: string
+    likes: number
+    likedBy: string[]
+    comments: Comment[]
+}
+
+interface SinglePostUserDetails {
+    pfp?: string
+    name: string
+}
+
 function MyPosts() {
     const setLoading=useLoading()
-    const [posts, setPosts]=useState(null)
-    const [selectedPost, setSelectedPost] = useState(null)
-    const [singlePostUserDetails, setSinglePostUserDetails]=useState()
+    const [posts, setPosts]=useState<Post[] | null>(null)
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+    const [singlePostUserDetails, setSinglePostUserDetails]=useState<SinglePostUserDetails | null>(null)
     const [newComment, setNewComment] = useState('')
-    const [userId, setUserId]=useState()
+    const [userId, setUserId]=useState<string | null>(null)
 
     useEffect(()=>{
         getUserPost()
@@ -33,7 +59,7 @@ function MyPosts() {
         }
     }
 
-    const loadSinglePost = async (post:any) => {
+    const loadSinglePost = async (post: Post) => {
         setLoading(true)
         await fetchUserId()
         setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
@@ -59,7 +85,7 @@ function MyPosts() {
         setLoading(true)
         await deleteUserPost(id)
         setSelectedPost(null)
-        setPosts(prev=>prev.filter(i=>i._id!=id))
+        setPosts(prev=>prev?.filter((i: Post)=>i._id!=id) ?? null)
         setLoading(false)
     }
 
@@ -90,13 +116,13 @@ function MyPosts() {
                     <div className="p-6">
                         {/* Post Header */}
                         <div className="flex items-center space-x-3 mb-4">
-                        {singlePostUserDetails!.pfp? (
-                            <Image width={300} height={300} src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name} className="h-12 w-12 rounded-full object-cover" />
+                        {singlePostUserDetails?.pfp? (
+                            <Image width={300} height={300} src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name ?? ''} className="h-12 w-12 rounded-full object-cover" />
                         ) : (
                             <User className="h-10 w-10 rounded-full object-cover"/>
                         )}
                         <div>
-                            <h3 className="font-semibold text-gray-900">{singlePostUserDetails.name}</h3>
+                            <h3 className="font-semibold text-gray-900">{singlePostUserDetails?.name}</h3>
                             <p className="text-gray-500 text-sm">{new Date(selectedPost.createdAt).toLocaleDateString()}</p>
                         </div>
                         </div>
@@ -116,7 +142,7 @@ function MyPosts() {
                         {/* Engagement Stats */}
                         <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4 mb-4">
                         <div className="flex items-center space-x-1">
-                            <Heart size={16} className={`text-red-500 ${selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
+                            <Heart size={16} className={`text-red-500 ${userId && selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
                             <span>{selectedPost.likes}</span>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -189,7 +215,7 @@ function MyPosts() {
                                 width={300}
                                 height={300}
                                 src={post.image}
-                                alt={post.title}
+                                alt={post.title ?? ''}
                                 className="w-full h-full object-cover"
                                 />
                             </div>

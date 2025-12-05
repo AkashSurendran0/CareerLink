@@ -15,6 +15,22 @@ interface Props {
     }
 }
 
+interface Resume {
+    _id: string
+    name: string
+    url: string
+    createdAt: string
+}
+
+interface ResumeData {
+    resumes: Resume[]
+}
+
+interface TailoredResume {
+    html: string
+    pdf: { data: number[] } | null
+}
+
 export default function JobDetailsPage({params}:Props) {
     const router=useRouter()
     const setLoading=useLoading()
@@ -26,11 +42,11 @@ export default function JobDetailsPage({params}:Props) {
     const [openOptions, setOpenOptions]=useState(false)
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [openSavedResumes, setOpenSavedResumes]=useState(false)
-    const [resumes, setResumes]=useState()
-    const [resumeName, setResumeName]=useState<string | null>()
+    const [resumes, setResumes]=useState<ResumeData | null>(null)
+    const [resumeName, setResumeName]=useState<string | null>(null)
     const [tailoredResumeConfirmation, setTailoredResumeConfirmation]=useState(false)
     const [tailoredCoverLetterConfirmation, setTailoredCoverLetterConfirmation]=useState(false)
-    const [tailoredResume, setTailoredResume]=useState({html:'', pdf:''})
+    const [tailoredResume, setTailoredResume]=useState<TailoredResume>({html:'', pdf:null})
     const [openResumePreview, setOpenResumePreview]=useState(false)
     const [openCoverLetterPreview, setOpenCoverLetterPreview]=useState(false)
     
@@ -73,12 +89,12 @@ export default function JobDetailsPage({params}:Props) {
         setOpenSavedResumes(false)
     }
 
-    const previewResume = (e, url) => {
+    const previewResume = (e: React.MouseEvent, url: string) => {
         e.stopPropagation()
         window.open(url)
     }
 
-    const setUrl = (url, name) => {
+    const setUrl = (url: string, name: string) => {
         setResumeUrl(url)
         setResumeName(name)
         setOpenSavedResumes(false)
@@ -141,6 +157,7 @@ export default function JobDetailsPage({params}:Props) {
             // return console.log(tailoredResume.pdf)
             // const byteCharacters=atob(tailoredResume.pdf.data)
             // const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
+            if (!tailoredResume.pdf) return enqueueSnackbar('Something went wrong', {variant:'error'})
             const byteArray=new Uint8Array(tailoredResume.pdf.data)
             const pdfBlob=new Blob([byteArray], {type: 'application/pdf'})
             if(!pdfBlob) return enqueueSnackbar('Something went wrong', {variant:'error'})
@@ -200,7 +217,7 @@ export default function JobDetailsPage({params}:Props) {
 
     const removeResume = () => {
         setOpenResumePreview(false)
-        setTailoredResume({html:'', pdf:''})
+        setTailoredResume({html:'', pdf:null})
     }
 
     const removeCoverLetter = () => {
@@ -352,7 +369,7 @@ export default function JobDetailsPage({params}:Props) {
                                 {!resumes || resumes.resumes.length === 0 ? (
                                     <p className="text-gray-500 text-center">No saved resumes found.</p>
                                 ) : (
-                                    resumes.resumes.map((resume) => (
+                                    resumes.resumes.map((resume: Resume) => (
                                     <div
                                         key={resume._id}
                                         onClick={()=>setUrl(resume.url, resume.name)}
@@ -417,7 +434,7 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Responsibilities</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.responsibilities.map((responsibility, ind)=>(
+                        {jobDetails.responsibilities.map((responsibility: string, ind: number)=>(
                             <li className="flex gap-3" key={ind}>
                                 <span className="text-gray-400">•</span>
                                 <span>{responsibility}</span>
@@ -430,7 +447,7 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Requirements/Skills</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.qualifications.map((qualification, ind)=>(
+                        {jobDetails.qualifications.map((qualification: string, ind: number)=>(
                             <li className="flex gap-3" key={ind}>
                                 <span className="text-gray-400">•</span>
                                 <span>{qualification}</span>
@@ -443,7 +460,7 @@ export default function JobDetailsPage({params}:Props) {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 className="text-xl font-bold text-gray-900">Benefits</h2>
                     <ul className="mt-4 space-y-3 text-gray-600">
-                        {jobDetails.benefits?.map((benefit, ind)=>(    
+                        {jobDetails.benefits?.map((benefit: string, ind: number)=>(    
                             <li className="flex gap-3" key={ind}>
                             <span className="text-gray-400">•</span>
                             <span>{benefit}</span>

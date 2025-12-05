@@ -8,17 +8,42 @@ import { addComment, alterPostLike, getAllPosts, loadSinglePostDetails, postCont
 import { useLoading } from '../../template';
 import Image from 'next/image';
 
+interface Comment {
+  _id: string
+  pfp?: string
+  userName: string
+  createdAt: string
+  comment: string
+}
+
+interface Post {
+  _id: string
+  pfp?: string
+  userName: string
+  text?: string
+  image?: string
+  createdAt: string
+  likes: number
+  likedBy: string[]
+  comments: Comment[]
+}
+
+interface SinglePostUserDetails {
+  pfp?: string
+  name: string
+}
+
 export default function FeedsPage() {
   const setLoading=useLoading()
-  const [selectedPost, setSelectedPost] = useState(null)
-  const [singlePostUserDetails, setSinglePostUserDetails]=useState()
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+  const [singlePostUserDetails, setSinglePostUserDetails]=useState<SinglePostUserDetails | null>(null)
   const [emojiPicker, setEmojiPicker]=useState(false)
-  const [file, setFile]=useState<File | null>()
-  const fileRef=useRef(null)
-  const [posts, setPosts] = useState()
+  const [file, setFile]=useState<File | null>(null)
+  const fileRef=useRef<HTMLInputElement | null>(null)
+  const [posts, setPosts] = useState<Post[]>([])
   const [isLoading, setIsLoading]=useState(false)
   const [finished, setFinished]=useState(false)
-  const [userId, setUserId]=useState()
+  const [userId, setUserId]=useState<string | null>(null)
   const [content, setContent] = useState('')
   const [newComment, setNewComment] = useState('')
   const shownRef = useRef(0)
@@ -61,7 +86,7 @@ export default function FeedsPage() {
   const handlePost = async () => {
     setLoading(true)
     const formData=new FormData()
-    formData.append('image', file)
+    if (file) formData.append('image', file)
     formData.append('content', content)
     const result=await postContent(formData)
     setContent('')
@@ -74,17 +99,17 @@ export default function FeedsPage() {
 
   const handleLike = async (postId: string) => {
     setPosts((prevPosts) =>
-      prevPosts.map((post) => {
+      prevPosts.map((post: Post) => {
         if (post._id !== postId) return post;
 
-        const alreadyLiked = post.likedBy.includes(userId);
+        const alreadyLiked = userId ? post.likedBy.includes(userId) : false;
 
         return {
           ...post,
           likes: alreadyLiked ? post.likes - 1 : post.likes + 1,
           likedBy: alreadyLiked
-            ? post.likedBy.filter((id) => id !== userId)
-            : [...post.likedBy, userId],
+            ? post.likedBy.filter((id: string) => id !== userId)
+            : [...post.likedBy, userId ?? ''],
         };
       })
     );
@@ -105,11 +130,12 @@ export default function FeedsPage() {
   }
 
   const openFiles = () => {
-    fileRef.current.click()
+    fileRef.current?.click()
   }
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const image=e.target.files?.[0]
+    if (!image) return
     const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if(!validTypes.includes(image.type)){
       enqueueSnackbar('Please choose a valid image', {variant:'error'})
@@ -118,7 +144,7 @@ export default function FeedsPage() {
     setFile(image)
   }
 
-  const loadSinglePost = async (post:any) => {
+  const loadSinglePost = async (post: Post) => {
     console.log(post)
     setLoading(true)
     setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
@@ -156,13 +182,13 @@ export default function FeedsPage() {
                   <div className="p-6">
                     {/* Post Header */}
                     <div className="flex items-center space-x-3 mb-4">
-                      {singlePostUserDetails!.pfp? (
-                        <Image width={300} height={300} src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name} className="h-12 w-12 rounded-full object-cover" />
+                      {singlePostUserDetails?.pfp? (
+                        <Image width={300} height={300} src={singlePostUserDetails.pfp || "/placeholder.svg"} alt={singlePostUserDetails.name ?? ''} className="h-12 w-12 rounded-full object-cover" />
                       ) : (
                         <User className="h-10 w-10 rounded-full object-cover"/>
                       )}
                       <div>
-                        <h3 className="font-semibold text-gray-900">{singlePostUserDetails.name}</h3>
+                        <h3 className="font-semibold text-gray-900">{singlePostUserDetails?.name}</h3>
                         <p className="text-gray-500 text-sm">{new Date(selectedPost.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
@@ -182,7 +208,7 @@ export default function FeedsPage() {
                     {/* Engagement Stats */}
                     <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4 mb-4">
                       <div className="flex items-center space-x-1">
-                        <Heart size={16} className={`text-red-500 ${selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
+                        <Heart size={16} className={`text-red-500 ${userId && selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
                         <span>{selectedPost.likes}</span>
                       </div>
                       <div className="flex items-center space-x-1">
@@ -368,7 +394,7 @@ export default function FeedsPage() {
                           onClick={() => handleLike(post._id)}
                           className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition"
                         >
-                          <Heart size={18} fill={post.likedBy.includes(userId) ? '#EF4444' : 'none'} color={post.likedBy.includes(userId) ? '#EF4444' : 'currentColor'} />
+                          <Heart size={18} fill={userId && post.likedBy.includes(userId) ? '#EF4444' : 'none'} color={userId && post.likedBy.includes(userId) ? '#EF4444' : 'currentColor'} />
                           <div className='ml-1'>{post.likes}</div>
                         </button>
                         <button 

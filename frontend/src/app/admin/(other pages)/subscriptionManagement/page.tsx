@@ -6,9 +6,22 @@ import { alterPlanStatus, getAllPlans } from "@/services/adminService"
 import { LoaderIcon } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
 
+interface Feature {
+    code: string
+    text?: string
+}
+
+interface Plan {
+    _id: string
+    name: string
+    amount: number
+    billingCycle: number
+    features: Feature[]
+    active: boolean
+}
 
 export default function SubscriptionsPage() {
-    const [plans, setPlans]=useState([])    
+    const [plans, setPlans]=useState<Plan[]>([])    
     const router=useRouter()
     const [statusLoading, setStatusLoading]=useState(false)
 

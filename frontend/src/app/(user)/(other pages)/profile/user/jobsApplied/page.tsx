@@ -4,8 +4,27 @@ import { getUserAppliedJobs } from '@/services/userService';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
+interface JobDetails {
+    jobTitle: string
+    location: string
+    type: string
+}
+
+interface Applicant {
+    status: string
+}
+
+interface Job {
+    _id: string
+    createdAt: string
+    companyName: string
+    companyLogo: string
+    details: JobDetails
+    applicants: Applicant
+}
+
 function JobsApplied() {
-    const [jobs, setJobs]=useState(null)
+    const [jobs, setJobs]=useState<Job[] | null>(null)
 
     useEffect(() => {
         async function getJobs() {

@@ -13,15 +13,15 @@ dotenv.config();
 
 connectDB();
 dbConnect(); 
-app.use(session({
+app.use(session({ 
     secret: "batman",
     resave: false, 
-    saveUninitialized: false
+    saveUninitialized: false 
 })); 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
- 
+
 app.use("/v1", V1UserRouter);
 
 app.listen(5001, ()=>{

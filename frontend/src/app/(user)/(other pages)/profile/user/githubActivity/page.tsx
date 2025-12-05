@@ -6,15 +6,39 @@ import React, { useEffect, useState } from 'react'
 import Heatmap from '@/components/heatMap'
 import {Eye, Star, GitFork, LoaderIcon} from 'lucide-react'
 
+interface GithubDetails {
+    name: string
+    image: string
+    followers: number
+    following: number
+    totalStars: number
+    repos: number
+    [key: string]: string | number
+}
+
+interface Repo {
+    id: string
+    name: string
+    description?: string
+    url: string
+    stars: number
+    forks: number
+    watchers: number
+}
+
+interface HeatMapData {
+    [key: string]: number
+}
+
 function GitHubActivity() {
     const [loading, setLoading]=useState(true)
     const [valid, setValid]=useState(true)
-    const [githubDetails, setGithubDetails]=useState()
+    const [githubDetails, setGithubDetails]=useState<GithubDetails | null>(null)
     const [userName, setUsername]=useState('')
-    const [heatMap, setHeatMap]=useState()
+    const [heatMap, setHeatMap]=useState<HeatMapData | null>(null)
     const [validHeatmap, setValidHeatmap]=useState(true)
     const [repoPage, setRepoPage]=useState(0)
-    const [userRepo, setUserRepo]=useState([])
+    const [userRepo, setUserRepo]=useState<Repo[]>([])
     const REPO_LIMIT=3
 
     useEffect(()=>{
@@ -27,6 +51,7 @@ function GitHubActivity() {
         if(!result || !result.userDetails){
             setValid(false)
         }else{
+            if(!result.userDetails.githubLink) return setValid(false)
             const url=result.userDetails.githubLink.split('/')
             const username=url[url.length-1]
             const details=await getGithubData(username)
@@ -210,7 +235,7 @@ function GitHubActivity() {
                                         <div className="flex justify-center py-6">
                                             <button
                                             onClick={handleLoadMore}
-                                            className={`cursor-pointe text-white px-8 py-3 rounded-lg font-medium transition ${githubDetails.repos<=(REPO_LIMIT*repoPage)? 'disabled bg-grey':'bg-blue-500 hover:bg-blue-600'}`}
+                                            className={`cursor-pointe text-white px-8 py-3 rounded-lg font-medium transition ${githubDetails && githubDetails.repos<=(REPO_LIMIT*repoPage)? 'disabled bg-grey':'bg-blue-500 hover:bg-blue-600'}`}
                                             >
                                             Load More Repos
                                             </button>

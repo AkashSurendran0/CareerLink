@@ -11,12 +11,15 @@ export class GetGithubDetails implements IGetGithubDetails {
 
     async getGithubDetails(user: string): Promise<any> {
         try {
+            console.log('herer', user)
             let details=await redisClient.get(`detailsFor${user}`);
+            console.log(details) 
             if(details) details=JSON.parse(details);
             if(!details){
+                console.log('hum')
                 const info=await axios.get(`https://api.github.com/users/${user}`);
                 details={
-                    name:info.data.name,
+                    name:info.data.name, 
                     image:info.data.avatar_url,
                     followers:info.data.followers,
                     following:info.data.following,
@@ -30,7 +33,7 @@ export class GetGithubDetails implements IGetGithubDetails {
             return {success:true, details};
         } catch (error: any) {
             console.log("Error getting details", error);
-            return {success:false};
+            return {success:false}; 
         }
     }
 

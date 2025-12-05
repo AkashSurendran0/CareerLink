@@ -45,27 +45,27 @@ export default function ResumeBuilder() {
     }
 
     // Update field functions
-    const updateEducation = (index, value) => {
+    const updateEducation = (index: number, value: string) => {
         const updated = [...educations]
         updated[index] = value
         setEducations(updated)
     }
-    const updateExperience = (index, field, value) => {
+    const updateExperience = (index: number, field: string, value: string) => {
         const updated = [...experiences]
         updated[index] = { ...updated[index], [field]: value }
         setExperiences(updated)
     }
-    const updateSkill = (index, value) => {
+    const updateSkill = (index: number, value: string) => {
         const updated = [...skills]
         updated[index] = value
         setSkills(updated)
     }
-    const updateCertification = (index, value) => {
+    const updateCertification = (index: number, value: string) => {
         const updated = [...certifications]
         updated[index] = value
         setCertifications(updated)
     }
-    const updateInterest = (index, value) => {
+    const updateInterest = (index: number, value: string) => {
         const updated = [...interests]
         updated[index] = value
         setInterests(updated)

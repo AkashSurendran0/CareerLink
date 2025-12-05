@@ -139,6 +139,21 @@
                 "run subscription-service",
             ],
             "dependsOrder": "parallel"
+        },
+        {
+            "label": "run all services",
+            "dependsOn":[
+                "run frontend",
+                "run api-gateway",
+                "run user-service",
+                "run admin-service",
+                "run company-service",
+                "run notification-service",
+                "run job-service",
+                "run resume-service",
+                "run post-service",
+                "run subscription-service",
+            ],
         }
     ]
 }

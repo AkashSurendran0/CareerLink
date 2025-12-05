@@ -16,6 +16,13 @@ type User = {
     createdAt:Date,
 }
 
+type Plan = {
+    _id: string,
+    name: string,
+    amount: number,
+    billingCycle: number,
+}
+
 function UserManagement() {
     const [users, setUsers]=useState<User[]>([])
     const [pageLimit, setPageLimit]=useState(0)
@@ -25,11 +32,11 @@ function UserManagement() {
     const STARTING_PAGE=1
     const LIMIT=3
     const debouncer=useRef<NodeJS.Timeout | null>(null)
-    const [plans, setPlans]=useState(null)
+    const [plans, setPlans]=useState<Plan[] | null>(null)
     const [selectPlan, setSelectPlan]=useState(false)
-    const [selectedPlan, setSelectedPlan]=useState(null)
-    const [selectedUser, setSelectedUser]=useState(null)
-    const [selectedEmail, setSelectedEmail]=useState(null)
+    const [selectedPlan, setSelectedPlan]=useState<Plan | null>(null)
+    const [selectedUser, setSelectedUser]=useState<string | null>(null)
+    const [selectedEmail, setSelectedEmail]=useState<string | null>(null)
     const [openConfirmation, setOpenConfirmation]=useState(false)
     const [downgradeConfirmation, setDowngradeConfirmation]=useState(false)
     
@@ -109,7 +116,7 @@ function UserManagement() {
         setSelectedEmail(null)
     }
 
-    const openOptions = async (plan:any) => {
+    const openOptions = async (plan: Plan) => {
         setSelectPlan(false)
         setSelectedPlan(plan)
         setOpenConfirmation(true)
@@ -129,6 +136,7 @@ function UserManagement() {
     }
 
     const downgradeUser = async () => {
+        if (!selectedUser) return
         await adminDowngradeUser(selectedUser)
         setUsers(prev=>
             prev.map(i=>i.id==selectedUser? {...i, isVip:!i.isVip}:i)
@@ -147,7 +155,7 @@ function UserManagement() {
             )}
             {selectPlan && (
                 <>
-                    {plans.length > 0 ? (
+                    {plans && plans.length > 0 ? (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
                             <div
                                 className="absolute inset-0 bg-black/50"
@@ -160,7 +168,7 @@ function UserManagement() {
                                 </h2>
 
                                 <div className="flex flex-col gap-3">
-                                    {plans.map((i, ind)=>(
+                                    {plans?.map((i: Plan, ind: number)=>(
                                         <button
                                             key={ind}
                                             onClick={()=>openOptions(i)}

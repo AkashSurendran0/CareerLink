@@ -7,12 +7,50 @@ import { enqueueSnackbar } from "notistack"
 import { useLoading } from "../../template"
 import { useRouter } from "next/navigation"
 
+interface Feature {
+    text: string
+}
+
+interface Plan {
+    _id: string
+    name: string
+    amount: number
+    billingCycle: number
+    features: Feature[]
+}
+
+declare global {
+    interface Window {
+        Razorpay: new (options: RazorpayOptions) => RazorpayInstance
+    }
+}
+
+interface RazorpayOptions {
+    key: string | undefined
+    amount: number
+    currency: string
+    name: string
+    description: string
+    order_id: string
+    handler: (response: RazorpayResponse) => void
+}
+
+interface RazorpayInstance {
+    open: () => void
+}
+
+interface RazorpayResponse {
+    razorpay_payment_id: string
+    razorpay_order_id: string
+    razorpay_signature: string
+}
+
 export default function BecomeVIPPage() {
     const router=useRouter()
     const setLoading=useLoading()
-    const [plans, setPlans]=useState([])
+    const [plans, setPlans]=useState<Plan[]>([])
     const [showOptions, setShowOptions]=useState(false)
-    const [selectedPlan, setSelectedPlan]=useState(null)
+    const [selectedPlan, setSelectedPlan]=useState<Plan | null>(null)
 
     useEffect(()=>{
         getPlans()
@@ -37,7 +75,7 @@ export default function BecomeVIPPage() {
         setShowOptions(false)
     }
 
-    const openPaymentOptions = (plan) => {
+    const openPaymentOptions = (plan: Plan) => {
         setSelectedPlan(plan)
         setShowOptions(true)
     }
@@ -70,7 +108,7 @@ export default function BecomeVIPPage() {
             name:'CareerLink',
             description:'Purchase premium and unlock exciting features!',
             order_id:order.id,
-            handler: async function (response)  {
+            handler: async function (response: RazorpayResponse)  {
                 const verifyData=await verifyPayment(response)
                 
                 if(verifyData.success){
@@ -159,7 +197,7 @@ export default function BecomeVIPPage() {
 
                                     {/* Features List */}
                                     <ul className="space-y-4">
-                                    {plan.features.map((feature, index) => (
+                                    {plan.features.map((feature: Feature, index: number) => (
                                         <li key={index} className="flex items-start">
                                         <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
                                         <span className="text-gray-700">{feature.text}</span>

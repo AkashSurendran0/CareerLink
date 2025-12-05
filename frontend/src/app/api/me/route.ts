@@ -1,5 +1,10 @@
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+interface DecodedToken extends JwtPayload {
+  email: string;
+  id: string;
+}
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -10,7 +15,7 @@ export async function GET() {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     return Response.json({ userEmail: decoded.email, userId: decoded.id });
   } catch (error) {
     return Response.json({ userEmail: null }, { status: 401 });

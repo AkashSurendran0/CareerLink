@@ -30,6 +30,11 @@ type Details = {
     linkedin: string;
 };
 
+type Tab = {
+    href:string,
+    label:string
+}
+
 
 export default function UserLayout({
     children
@@ -64,7 +69,7 @@ export default function UserLayout({
         fetchUserDetails()
     }, [])
 
-    const setTab = (i) => {
+    const setTab = (i:Tab) => {
         setLoading(true)
         setActiveTab(i.label)
         router.push(i.href)

@@ -61,8 +61,8 @@ export default function AddPlanPage() {
     const handleFeatureToggle = (feature: Feature) => {
         setFormData((prev) => ({
         ...prev,
-        features: prev.features.includes(feature)
-            ? prev.features.filter((f) => f !== feature)
+        features: prev.features.some(f => f.code === feature.code)
+            ? prev.features.filter((f) => f.code !== feature.code)
             : [...prev.features, feature],
         }))
     }
@@ -183,8 +183,7 @@ export default function AddPlanPage() {
                         <label key={ind} className="flex items-center cursor-pointer">
                         <input
                             type="checkbox"
-                            value={feature}
-                            checked={formData.features.includes(feature)}
+                            checked={formData.features.some(f => f.code === feature.code)}
                             onChange={() => handleFeatureToggle(feature)}
                             className="w-5 h-5 rounded border-gray-300 cursor-pointer"
                         />
@@ -196,7 +195,7 @@ export default function AddPlanPage() {
 
                 {/* active */}
                 <div>
-                    <label  className="block text-sm font-semibold text-gray-900 mb-4">Status</label>
+                    <label  className="block text-sm font-semibold text-gray-900 mb-4">active</label>
                     <div className="flex items-center justify-between">
                     <span className="text-gray-700">Active</span>
                     <button

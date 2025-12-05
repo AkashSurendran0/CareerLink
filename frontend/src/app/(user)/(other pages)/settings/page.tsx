@@ -6,13 +6,27 @@ import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
 import ConfirmModal from "@/reusable-components/confirmModal"
 
+interface PlanDetails {
+    name: string
+}
+
+interface Plan {
+    createdAt: string
+    validTill: string
+}
+
+interface UserPlan {
+    plan: Plan
+    planDetails: PlanDetails
+}
+
 export default function SettingsPage() {
     const setLoading=useLoading()
     const router=useRouter()
     const [chatNotifications, setChatNotifications] = useState(true)
     const [callNotifications, setCallNotifications] = useState(false)
     const [jobNotifications, setJobNotifications] = useState(false)
-    const [userPlan, setUserPlan]=useState(null)
+    const [userPlan, setUserPlan]=useState<UserPlan | null>(null)
     const [confirmBox, setConfirmBox]=useState(false)
 
     useEffect(()=>{
@@ -77,7 +91,7 @@ export default function SettingsPage() {
                                 <td className="px-6 py-4 text-sm text-blue-600 font-medium">{userPlan.planDetails.name}</td>
                                 <td className="px-6 py-4 text-sm text-gray-600">{new Date(userPlan.plan.createdAt).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 text-sm text-gray-600">{new Date(userPlan.plan.validTill).toLocaleDateString()}</td>
-                                <td className="px-6 py-4 text-sm text-gray-600">{userPlan.plan.validTill < Date.now() ? 'Expired':'Active'}</td>
+                                <td className="px-6 py-4 text-sm text-gray-600">{new Date(userPlan.plan.validTill).getTime() < Date.now() ? 'Expired':'Active'}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -85,7 +99,7 @@ export default function SettingsPage() {
                     </div>
 
                     {/* Action Buttons */}
-                    { new Date(userPlan.plan.validTill) > Date.now() ? (
+                    { new Date(userPlan.plan.validTill).getTime() > Date.now() ? (
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                             onClick={()=>setConfirmBox(true)}

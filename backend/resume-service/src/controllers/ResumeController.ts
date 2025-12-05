@@ -116,6 +116,7 @@ export class ResumeController {
                     Cookie:`token=${token}`
                 }
             })
+            console.log(details.data)
             if(!details.data.userDetails){
                 res.json({success:false, message:'User doesnt have sufficient details'})
                 return

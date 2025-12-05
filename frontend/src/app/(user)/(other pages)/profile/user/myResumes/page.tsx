@@ -3,8 +3,19 @@
 import { getAllUserResumes } from '@/services/userService'
 import React, { useEffect, useState } from 'react'
 
+interface Resume {
+    _id: string
+    name: string
+    createdAt: string
+    url: string
+}
+
+interface AllResumes {
+    resumes: Resume[]
+}
+
 function MyResumes() {
-    const [allResumes, setAllResumes]=useState()
+    const [allResumes, setAllResumes]=useState<AllResumes | null>(null)
 
     useEffect(()=>{
         getResumes()

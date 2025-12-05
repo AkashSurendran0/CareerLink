@@ -75,7 +75,7 @@ export default function CompanyRegistrationPage() {
         if (dropRef.current) dropRef.current.classList.remove("ring-2", "ring-blue-500")
     }
 
-    const createCompany = async (e) => {
+    const createCompany = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         clearErrors()
 

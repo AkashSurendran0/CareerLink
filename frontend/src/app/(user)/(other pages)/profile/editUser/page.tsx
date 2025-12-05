@@ -15,7 +15,7 @@ export default function EditProfile() {
     const [skillsFields, setSkillsFields] = useState([{ id: 1, value: "" }])
     const [educationFields, setEducationFields] = useState([{ id: 1, degree:"", university:"", passingYear:"" }])
     const [experienceFields, setExperienceFields] = useState([{ id: 1, company:'', experience:'' }])
-    const [previewImage, setPreviewImage]=useState()
+    const [previewImage, setPreviewImage]=useState<string | null>(null)
     const [detailsForm, setDetailsForm]=useState({
         username:'',
         profilePicture:null as File | null,
@@ -248,7 +248,7 @@ export default function EditProfile() {
                 <div className="flex flex-col items-center">
                     <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
                         {previewImage ? (
-                            <Image width={300} height={300} src={previewImage || detailsForm.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                            <Image width={300} height={300} src={previewImage} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                             <UserCircle className="w-full h-full object-cover"/>
                         )}
