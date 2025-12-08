@@ -4,10 +4,10 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const elasticClient=new Client({
-    node:"https://localhost:9200",
+    node:"http://localhost:9200",
     auth:{
         username:"elastic",
-        password:"V1Hblk3hZq4VlnecLucU"
+        password:"akash1"
     },
     tls:{
         rejectUnauthorized:false

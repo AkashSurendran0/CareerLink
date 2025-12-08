@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 export const sequelize = new Sequelize(
     "careerlink",
     "postgres",
-    "akash123",
+    "akash1",
     {
         host: "localhost",
         port: 5432,

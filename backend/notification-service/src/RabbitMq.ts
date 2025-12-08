@@ -17,7 +17,7 @@ export class RabbitMqService {
 
     public async connect(): Promise<void> {
         try {
-            this.connection=await amqp.connect('amqp://localhost')
+            this.connection=await amqp.connect('amqp://achu:akash1@localhost:5672')
             this.channel=await this.connection.createChannel()
 
             for(const exchange of this.exchange){

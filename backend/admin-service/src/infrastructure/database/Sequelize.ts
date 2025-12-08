@@ -3,7 +3,7 @@ import {Sequelize} from 'sequelize'
 export const sequelize=new Sequelize(
     'careerlink',
     'postgres',
-    'akash123',
+    'akash1', 
     {
         host: 'localhost',
         port: 5432,
@@ -12,7 +12,7 @@ export const sequelize=new Sequelize(
     }
 )
 
-export const connectDB = async () =>{
+export const connectDB = async () =>{ 
     try {
         await sequelize.authenticate()
         await sequelize.sync({alter: true})
@@ -20,4 +20,4 @@ export const connectDB = async () =>{
     } catch (error: any) {
         console.log('Database connection failed', error)
     }
-}
+} 

@@ -10,9 +10,8 @@ import "reflect-metadata";
 
 const app = express();
 dotenv.config();
-
 connectDB();
-dbConnect(); 
+dbConnect();  
 app.use(session({ 
     secret: "batman",
     resave: false, 
@@ -21,7 +20,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-
 app.use("/v1", V1UserRouter);
 
 app.listen(5001, ()=>{

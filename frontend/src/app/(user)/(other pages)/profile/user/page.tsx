@@ -35,6 +35,7 @@ export default function ProfileDashboard() {
 
         const fetchUserDetails=async ()=>{
             const details=await getUserDetails()
+            console.log(details.userDetails)
             setUserDetails(details.userDetails)
         }
 

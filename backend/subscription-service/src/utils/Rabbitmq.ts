@@ -5,7 +5,7 @@ class RabbitMqService {
     private channel: Channel | null=null
 
     constructor(
-        private readonly url:string = "amqp://localhost"
+        private readonly url:string = "amqp://achu:akash1@localhost:5672"
     ){}
 
     public async connect(): Promise<void> {

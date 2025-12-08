@@ -191,7 +191,7 @@ export default function EditProfile() {
         }
 
         setLoading(true)
-
+        console.log(1)
         const filteredEdu=detailsForm.education.filter(edu=>edu.degree.trim() && edu.university.trim() && edu.passingYear.trim())
         const filteredExp=detailsForm.experience.filter(exp=>exp.position.trim() && exp.company.trim() && exp.experience.trim())
         const filteredSkills=detailsForm.skills.filter(skill=>skill.trim())
@@ -201,9 +201,9 @@ export default function EditProfile() {
         experience:filteredExp,
         skills:filteredSkills
         }
-
+        console.log(2)
         const formData=new FormData()
-
+        console.log(3)
         Object.entries(updatedForm).forEach(([key, value]) => {
         if (key !== "profilePicture") {
             if (typeof value === "object") {
@@ -217,9 +217,9 @@ export default function EditProfile() {
         if (detailsForm.profilePicture) {
             formData.append("profilePicture", detailsForm.profilePicture);
         }
-
+        console.log(4)
         setDetailsForm(updatedForm)
-
+        console.log(5)
         const result=await editUserDetails(formData)
         if(result.success) router.push('/profile/user')
     }

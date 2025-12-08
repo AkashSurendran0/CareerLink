@@ -49,16 +49,20 @@ export class UserDetailsController {
 
     modifyUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {
+            console.log(1) 
             const userId=req.headers["user-id"] as string;
             let imageUrl: string | undefined;
             if (req.file) {
                 imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
+            console.log(2)
             const details=req.body;
             if(imageUrl){
                 details.profilePicture=imageUrl;
             }
+            console.log(3)
             await this._editUserDetails.editUserDetails(details, userId);
+            console.log(4)
             res.json({success:true});
         } catch (error: unknown) {
             if (error instanceof Error) {

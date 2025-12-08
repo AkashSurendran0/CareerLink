@@ -211,7 +211,7 @@ async function fetchWithCache(url: string, token: string) {
   
   // Cache for 30 seconds
   userStatusCache.set(cacheKey, data);
-  setTimeout(() => userStatusCache.delete(cacheKey), 30000);
+  setTimeout(() => userStatusCache.delete(cacheKey), 10000);
 
   return data;
 }
