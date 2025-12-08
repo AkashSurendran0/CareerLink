@@ -34,8 +34,8 @@ export class GetUserDetails implements IGetUserDetails {
 
     constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
 
-    async getUserDetails(email:string): Promise<Details | null> {
-        const user=await this._userRepository.findByEmail(email);
+    async getUserDetails(id:string): Promise<Details | null> {
+        const user=await this._userRepository.findById(id);
         if(!user) return null;
         const details=await this._userDetailsRepository.getUserDetails(user.id);
         const result={

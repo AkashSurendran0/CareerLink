@@ -20,4 +20,5 @@ export interface IUserRepository {
     editUserName(id:string, username:string): Promise<User>
     findById(id:string): Promise<User | null>
     alterUserStatus(user:UserType): Promise<User>
+    getAllUsers(): Promise<User[]>
 }

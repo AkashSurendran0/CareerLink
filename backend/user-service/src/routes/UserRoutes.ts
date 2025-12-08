@@ -7,11 +7,13 @@ import { TYPES } from "../types";
 import multer from "multer";
 import dotenv from "dotenv";
 import { createAccessToken, createRefreshToken } from "../utils/SetToken";
+import { ConnectionController } from "../interfaces/controllers/ConnectionController";
 
 dotenv.config();  
 const router=Router();
 const userController=container.get<UserController>(TYPES.UserController);
 const userDetailsController=container.get<UserDetailsController>(TYPES.UserDetailsController);
+const connectionController=container.get<ConnectionController>(TYPES.ConnectionController);
 const upload=multer();
 
 
@@ -56,8 +58,10 @@ router.get("/getOTP", userController.verifyOTP);
 router.get("/getDetailsByQuery", userController.getUserDetails);
 router.get("/getDetailsByEmail", userController.getUserDetailsByEmail);
 router.get("/getUserInfo", userController.getUserInfo);
-router.get("/getGithubData", userDetailsController.getGithubData)
-router.get("/getGithubActivity", userDetailsController.getGithubActivity)
-router.get("/getGithubRepo", userDetailsController.getGithubRepo)
+router.get("/getGithubData", userDetailsController.getGithubData);
+router.get("/getGithubActivity", userDetailsController.getGithubActivity);
+router.get("/getGithubRepo", userDetailsController.getGithubRepo);
+router.get("/getUnconnectedUsers", userController.getUnconnectedUsers);
+router.patch("/sendConnectionRequest", connectionController.sendConnectionRequest);
 
 export default router;

@@ -20,11 +20,16 @@ import { Mailer } from "./utils/MailHelper";
 import { VerifyOTP } from "./application/use-cases/VerifyOTP";
 import { GetUserNames } from "./application/use-cases/GetUserNames";
 import { GetGithubDetails } from "./application/use-cases/GetGithubDetails";
+import { GetConnections } from "./application/use-cases/GetConnections";
+import { SendConnectionRequest } from "./application/use-cases/SendConnectionRequest";
+import { ConnectionsRepository } from "./infrastructure/repositories/ConnectionsRepository";
+import { ConnectionController } from "./interfaces/controllers/ConnectionController";
 
 const container = new Container();
 
 container.bind(TYPES.IUserRepository).to(UserRepository).inSingletonScope();
 container.bind(TYPES.IUserDetailsRepository).to(UserDetailsRepository).inSingletonScope();
+container.bind(TYPES.IConnectionRepository).to(ConnectionsRepository).inSingletonScope();
 
 container.bind(TYPES.ILoginUser).to(LoginUser).inSingletonScope();
 container.bind(TYPES.ISignupUser).to(SignupUser).inSingletonScope();
@@ -42,8 +47,11 @@ container.bind(TYPES.Mailer).to(Mailer).inSingletonScope();
 container.bind(TYPES.IVerifyOTP).to(VerifyOTP).inSingletonScope();
 container.bind(TYPES.IGetUserNames).to(GetUserNames).inSingletonScope();
 container.bind(TYPES.IGetGithubDetails).to(GetGithubDetails).inSingletonScope();
+container.bind(TYPES.IGetConnections).to(GetConnections).inSingletonScope();
+container.bind(TYPES.ISendConnectionRequest).to(SendConnectionRequest).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);
+container.bind<ConnectionController>(TYPES.ConnectionController).to(ConnectionController);
 
 export default container; 

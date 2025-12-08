@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IGetUserNames, ILoginUser } from "../../domain/use-cases/IUserUseCase";
+import { IGetConnections, IGetUserNames, ILoginUser } from "../../domain/use-cases/IUserUseCase";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
@@ -30,6 +30,7 @@ export class UserController {
         @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
         @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP,
         @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames,
+        @inject(TYPES.IGetConnections) private _getConnections:IGetConnections
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -176,6 +177,7 @@ export class UserController {
 
     checkBlock = async (req:Request, res:Response): Promise<void> => {
         try {
+            console.log('here')
             const userId=req.headers["user-id"] as string;
             const result=await this._checkUserBlock.checkUserBlock(userId);
             res.json({result});
@@ -235,6 +237,20 @@ export class UserController {
             const {user}=req.query
             const result=await this._getUserNames.getUserInfo(user)
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getUnconnectedUsers = async (req:Request, res:Response) => {
+        try {
+            const id=req.headers['user-id'] as string
+            const user=await this._getConnections.getUnconnectedUsers(id)
+            res.json({user})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
