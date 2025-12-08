@@ -45,3 +45,11 @@ export interface IGetUserNames {
     getUserNamesByEmail(email:string): Promise<any>
     getUserInfo(email:string): Promise<any>
 }
+
+export interface IGetConnections {
+    getUnconnectedUsers (id:string): Promise<any>
+}
+
+export interface ISendConnectionRequest {
+    sendConnection (user:string, id:string): Promise<{success:boolean}>
+}

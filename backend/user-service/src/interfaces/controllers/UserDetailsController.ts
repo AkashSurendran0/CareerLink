@@ -35,8 +35,10 @@ export class UserDetailsController {
 
     queryUserDetails = async (req:Request, res:Response): Promise<void> => {
         try {
-            const userEmail=req.headers["user-email"] as string;
-            const userDetails=await this._getUserDetails.getUserDetails(userEmail);
+            const {user}=req.query
+            const userId=req.headers["user-id"] as string;
+            const id=user || userId
+            const userDetails=await this._getUserDetails.getUserDetails(id);
             res.json({userDetails}); 
         } catch (error: unknown) {
             if (error instanceof Error) {

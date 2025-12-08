@@ -1,6 +1,6 @@
 'use client'
 
-import { getGithubActivity, getGithubData, getUserDetails, getUserRepos } from '@/services/userService'
+import { getGithubActivity, getGithubData, getUserDetails, getUserRepos, viewOtherUserDetails } from '@/services/userService'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import Heatmap from '@/components/heatMap'
@@ -26,11 +26,18 @@ interface Repo {
     watchers: number
 }
 
+interface Props {
+    params:{
+        id:string
+    }
+}
+
 interface HeatMapData {
     [key: string]: number
 }
 
-function GitHubActivity() {
+function GitHubActivity({params}: Props) {
+    const {id}=params
     const [loading, setLoading]=useState(true)
     const [valid, setValid]=useState(true)
     const [githubDetails, setGithubDetails]=useState<GithubDetails | null>(null)
@@ -46,7 +53,7 @@ function GitHubActivity() {
     }, [])
 
     const getDetails= async () => {
-        const result=await getUserDetails()
+        const result=await viewOtherUserDetails(id)
         setLoading(false)
         if(!result || !result.userDetails){
             setValid(false)

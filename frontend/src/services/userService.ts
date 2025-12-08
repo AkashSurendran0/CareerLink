@@ -312,3 +312,23 @@ export const getSubscriptionInfo = async () => {
     const res=await api.get('subscription/v1/getSubscriptionInfo')
     return res.data
 }
+
+export const getConnectionUsers = async () => {
+    const res=await api.get('user/v1/getUnconnectedUsers')
+    return res.data
+}
+
+export const sendConnectionRequest = async (id:string) => {
+    const res=await api.patch(`user/v1/sendConnectionRequest?user=${id}`)
+    return res.data
+}
+
+export const viewOtherUserDetails = async (id:string) => {
+    const res=await api.get(`/user/v1/getUserDetails?user=${id}`)
+    return res.data
+}
+
+export const viewOtherUserPosts = async (id:string) => {
+    const res=await api.get(`media/v1/getAllUserPosts?user=${id}`)
+    return res.data
+}

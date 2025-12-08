@@ -21,7 +21,7 @@ export class PostController {
 
     postContent = async (req:Request, res:Response): Promise<void> => {
         try {
-            const user=req.headers['user-email'] as string
+            const user=req.headers['user-id'] as string
             const {content}=req.body
             let text=content?? null
             let url=null
@@ -118,8 +118,11 @@ export class PostController {
 
     getAllUserPosts = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-email'] as string
-            const result=await this._getAllUserPosts.getAllPosts(user)
+            const {user}=req.query
+            console.log(user)
+            const userId=req.headers['user-id'] as string
+            const id=user || userId
+            const result=await this._getAllUserPosts.getAllPosts(id)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

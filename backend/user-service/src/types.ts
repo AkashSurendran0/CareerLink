@@ -18,5 +18,9 @@ export const TYPES={
     Mailer:"Mailer",
     IVerifyOTP:"IVerifyOTP",
     IGetUserNames:"IGetUserNames",
-    IGetGithubDetails:"IGetGithubDetails"
+    IGetGithubDetails:"IGetGithubDetails",
+    IGetConnections:'IGetConnections',
+    ISendConnectionRequest:'ISendConnectionRequest',
+    IConnectionRepository:'IConnectionRepository',
+    ConnectionController:'ConnectionController'
 };

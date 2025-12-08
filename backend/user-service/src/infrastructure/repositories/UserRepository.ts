@@ -162,4 +162,19 @@ export class UserRepository implements IUserRepository {
         );
     }
 
+    async getAllUsers(): Promise<User[]> {
+        const users=await UserModel.findAll({raw:true});
+        return users.map((user: any) => 
+            new User(
+                user.id.toString(), 
+                user.username, 
+                user.email, 
+                user.password, 
+                user.googleId, 
+                user.suspended,
+                user.createdAt
+            )
+        );
+    }
+
 }
