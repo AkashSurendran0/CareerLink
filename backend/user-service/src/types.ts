@@ -19,8 +19,10 @@ export const TYPES={
     IVerifyOTP:"IVerifyOTP",
     IGetUserNames:"IGetUserNames",
     IGetGithubDetails:"IGetGithubDetails",
-    IGetConnections:'IGetConnections',
-    ISendConnectionRequest:'ISendConnectionRequest',
-    IConnectionRepository:'IConnectionRepository',
-    ConnectionController:'ConnectionController'
+    IGetConnections:"IGetConnections",
+    IAlterConnectionRequest:"IAlterConnectionRequest",
+    IConnectionRepository:"IConnectionRepository",
+    ConnectionController:"ConnectionController",
+    IGetUserRequests:"IGetUserRequests",
+    IEvaluateRequest:"IEvaluateRequest"
 };

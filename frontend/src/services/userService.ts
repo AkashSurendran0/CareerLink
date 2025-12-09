@@ -318,8 +318,8 @@ export const getConnectionUsers = async () => {
     return res.data
 }
 
-export const sendConnectionRequest = async (id:string) => {
-    const res=await api.patch(`user/v1/sendConnectionRequest?user=${id}`)
+export const alterConnReq = async (id:string, action:string) => {
+    const res=await api.patch(`user/v1/alterConnectionRequest?user=${id}&action=${action}`)
     return res.data
 }
 
@@ -330,5 +330,15 @@ export const viewOtherUserDetails = async (id:string) => {
 
 export const viewOtherUserPosts = async (id:string) => {
     const res=await api.get(`media/v1/getAllUserPosts?user=${id}`)
+    return res.data
+}
+
+export const getUserRequests = async () => {
+    const res=await api.get('user/v1/getUserRequests')
+    return res.data
+}
+
+export const evaluateRequest = async (id:string, action:string) => {
+    const res=await api.patch(`user/v1/evaluateRequest?user=${id}&action=${action}`)
     return res.data
 }

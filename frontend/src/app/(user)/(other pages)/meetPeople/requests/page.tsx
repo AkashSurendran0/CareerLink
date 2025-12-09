@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
-import { alterConnReq, getConnectionUsers } from "@/services/userService"
+import { evaluateRequest, getUserRequests } from "@/services/userService"
 import {User} from 'lucide-react'
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { enqueueSnackbar } from "notistack"
-import { useLoading } from "../../template"
+import { useLoading } from "@/app/(user)/template"
 
 export default function MeetPeoplePage() {
     const router=useRouter()
@@ -18,28 +18,26 @@ export default function MeetPeoplePage() {
     const [requestCount, setRequestCount]=useState(0)
 
     useEffect(() => {
-        getUsers()
+        getRequests()
     }, [])
 
-    const getUsers = async () => {
-        const result=await getConnectionUsers()
-        setUsers(result.user.users)
-        setRequestCount(result.user.requestCount)
+    const getRequests = async () => {
+        const result=await getUserRequests()
+        setRequestCount(result.result.requestCount)
+        setUsers(result.result.users)
         setUserLoading(false)
         console.log(result)
     }
 
     const alterConnectionRequest = async (id:string, action:string) => {
         setLoading(true)
-        const result=await alterConnReq(id, action)
+        const result=await evaluateRequest(id, action)
         if(result.result.success){
-            setUsers((prev: any)=> 
-                prev.map(user => 
-                    user.id==id? {...user, pending:!user.pending} : user
-                )
+            setUsers((prev)=>
+                prev.filter(user=>user!=id)
             )
         }else{
-            enqueueSnackbar(result.result.message, {variant:'error'})
+            enqueueSnackbar('Error occured, please refresh the page and try again', {variant:'error'})
         }
         setLoading(false)
     }
@@ -49,9 +47,9 @@ export default function MeetPeoplePage() {
         router.push(`/meetPeople/${id}`)
     }
 
-    const routeToRequestPage = async () => {
+    const routeToMeetPeoplePage = async () => {
         setLoading(true)
-        router.push('/meetPeople/requests')
+        router.push('/meetPeople')
     }
 
     return (
@@ -74,13 +72,13 @@ export default function MeetPeoplePage() {
                     {/* Heading */}
                     <div className="flex items-center gap-6 mb-6 border-b border-gray-200">
                         <button
-                            className={`pb-3 font-medium transition-colors text-gray-900 border-b-2 border-gray-900"`}
+                            onClick={routeToMeetPeoplePage}
+                            className={`pb-3 font-medium transition-colors text-gray-500 hover:text-gray-700`}
                         >
                             People you may know
                         </button>
                         <button
-                            onClick={routeToRequestPage}
-                            className={`cursor-pointer pb-3 font-medium transition-colors flex items-center gap-2 text-gray-500 hover:text-gray-700`}
+                            className={`pb-3 font-medium transition-colors flex items-center gap-2 text-gray-900 border-b-2 border-gray-900`}
                         >
                             Requests
                             <span className="bg-blue-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
@@ -123,21 +121,20 @@ export default function MeetPeoplePage() {
                                                     )}
                                                     <span className="text-gray-900 font-medium">{user.name}</span>
                                                 </div>
-                                                {user.pending ? (
+                                                <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => alterConnectionRequest(user.id, 'cancel')}
-                                                        className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-red-500 text-white hover:bg-red-600`}
-                                                    >
-                                                        Cancel Request
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => alterConnectionRequest(user.id, 'send')}
+                                                        onClick={() => alterConnectionRequest(user.id, 'accept')}
                                                         className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-gray-200 text-gray-900 hover:bg-gray-300`}
                                                     >
-                                                        Connect
+                                                        Accept
                                                     </button>
-                                                )}
+                                                    <button
+                                                        onClick={() => alterConnectionRequest(user.id, 'reject')}
+                                                        className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-red-500 text-white hover:bg-red-600`}
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </div>
                                                 </div>
                                                 <div className="mt-8 text-center">
                                                     <button
@@ -151,8 +148,8 @@ export default function MeetPeoplePage() {
                                         ))}
                                     </>
                                 ) : (
-                                    <div class="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">
-                                        No active users available
+                                    <div className="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">
+                                        No requests available
                                     </div>
 
                                 )}

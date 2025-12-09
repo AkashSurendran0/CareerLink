@@ -49,7 +49,7 @@ export class PostController {
             const SHOWN=parseInt(shown)
             let result=await this._getAllPosts.getAllPosts(LIMIT, SHOWN)
             for(let i=0;i<result.allPost.length;i++){
-                const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByEmail?email=${result.allPost[i].createdBy}`)
+                const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.allPost[i].createdBy}`)
                 result.allPost[i].userName=user.data.result.result.username
                 result.allPost[i].pfp=user.data.result.pfp?? null
             }

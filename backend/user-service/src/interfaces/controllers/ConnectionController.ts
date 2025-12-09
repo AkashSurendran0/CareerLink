@@ -2,21 +2,23 @@ import { Request, Response } from "express";
 import { STATUS_CODES } from "../../utils/StatusCodes";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
-import { ISendConnectionRequest } from "../../domain/use-cases/IUserUseCase";
+import { IAlterConnectionRequest, IEvaluateRequest, IGetConnections, IGetUserRequests } from "../../domain/use-cases/IConnectionUseCase";
 
 @injectable()
 export class ConnectionController {
 
     constructor(
-        @inject(TYPES.ISendConnectionRequest) private _sendConnectionRequest:ISendConnectionRequest
+        @inject(TYPES.IAlterConnectionRequest) private _alterConnectionRequest:IAlterConnectionRequest,
+        @inject(TYPES.IGetConnections) private _getConnections:IGetConnections,
+        @inject(TYPES.IGetUserRequests) private _getUserRequests:IGetUserRequests,
+        @inject(TYPES.IEvaluateRequest) private _evaluateRequest:IEvaluateRequest
     ) {}
 
-    sendConnectionRequest = async (req:Request, res:Response) => {
+    getUnconnectedUsers = async (req:Request, res:Response) => {
         try {
-            const {user}=req.query;
-            const id=req.headers["user-id"] as string;
-            const result=await this._sendConnectionRequest.sendConnection(user, id);
-            res.json({result})
+            const id=req.headers['user-id'] as string
+            const user=await this._getConnections.getUnconnectedUsers(id)
+            res.json({user})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -25,5 +27,49 @@ export class ConnectionController {
             }
         }
     }
+
+    alterConnectionRequest = async (req:Request, res:Response) => {
+        try {
+            const {user, action}=req.query;
+            const id=req.headers["user-id"] as string;
+            const result=await this._alterConnectionRequest.alterConnectionRequest(user, id, action);
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
+
+    getUserRequests = async (req:Request, res:Response) => {
+        try {
+            const id=req.headers["user-id"] as string;
+            const result=await this._getUserRequests.getUserRequests(id);
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
+
+    evaluateRequest = async (req:Request, res:Response) => {
+        try {
+            const id=req.headers["user-id"] as string;
+            const {user, action}=req.query;
+            const result=await this._evaluateRequest.evaluateRequest(user, id, action);
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
 
 }

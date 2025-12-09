@@ -106,6 +106,14 @@ export default function ConnectionLayout({
                 </p>
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
+                <div className="flex-shrink-0 flex flex-col ga">
+                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer">
+                    Connect
+                </button>
+                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer">
+                    Connect
+                </button>
+                </div>
             </div>
             </div>
 
