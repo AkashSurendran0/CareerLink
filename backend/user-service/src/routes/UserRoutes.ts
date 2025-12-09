@@ -61,7 +61,9 @@ router.get("/getUserInfo", userController.getUserInfo);
 router.get("/getGithubData", userDetailsController.getGithubData);
 router.get("/getGithubActivity", userDetailsController.getGithubActivity);
 router.get("/getGithubRepo", userDetailsController.getGithubRepo);
-router.get("/getUnconnectedUsers", userController.getUnconnectedUsers);
-router.patch("/sendConnectionRequest", connectionController.sendConnectionRequest);
+router.get("/getUnconnectedUsers", connectionController.getUnconnectedUsers);
+router.patch("/alterConnectionRequest", connectionController.alterConnectionRequest);
+router.get("/getUserRequests", connectionController.getUserRequests);
+router.patch("/evaluateRequest", connectionController.evaluateRequest);
 
 export default router;

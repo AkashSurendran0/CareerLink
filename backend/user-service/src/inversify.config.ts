@@ -21,9 +21,11 @@ import { VerifyOTP } from "./application/use-cases/VerifyOTP";
 import { GetUserNames } from "./application/use-cases/GetUserNames";
 import { GetGithubDetails } from "./application/use-cases/GetGithubDetails";
 import { GetConnections } from "./application/use-cases/GetConnections";
-import { SendConnectionRequest } from "./application/use-cases/SendConnectionRequest";
 import { ConnectionsRepository } from "./infrastructure/repositories/ConnectionsRepository";
 import { ConnectionController } from "./interfaces/controllers/ConnectionController";
+import { AlterConnectionRequest } from "./application/use-cases/AlterConnectionRequest";
+import { GetUserRequests } from "./application/use-cases/GetUserRequests";
+import { EvaluateRequest } from "./application/use-cases/EvaluateRequest";
 
 const container = new Container();
 
@@ -48,7 +50,9 @@ container.bind(TYPES.IVerifyOTP).to(VerifyOTP).inSingletonScope();
 container.bind(TYPES.IGetUserNames).to(GetUserNames).inSingletonScope();
 container.bind(TYPES.IGetGithubDetails).to(GetGithubDetails).inSingletonScope();
 container.bind(TYPES.IGetConnections).to(GetConnections).inSingletonScope();
-container.bind(TYPES.ISendConnectionRequest).to(SendConnectionRequest).inSingletonScope();
+container.bind(TYPES.IAlterConnectionRequest).to(AlterConnectionRequest).inSingletonScope();
+container.bind(TYPES.IGetUserRequests).to(GetUserRequests).inSingletonScope();
+container.bind(TYPES.IEvaluateRequest).to(EvaluateRequest).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);

@@ -5,6 +5,10 @@ import { ConnectionModel } from "../models/ConnectionsModel";
 export class ConnectionsRepository implements IConnectionRepository {
 
     async sendConnection(user: string, id: string): Promise<{ success: boolean; }> {
+        const connection=await ConnectionModel.findOne({user:id});
+        if(connection && connection.connections.includes(user)){
+            return {success:false};
+        }
         await ConnectionModel.updateOne(
             {user:id},
             {$push:{
@@ -24,6 +28,79 @@ export class ConnectionsRepository implements IConnectionRepository {
             result.connections,
             result.pending
         );
+    }
+
+    async cancelConnectionRequest(user: string, id: string): Promise<{ success: boolean; } | { success: boolean; message: string; }> {
+        const userConnections=await ConnectionModel.findOne({user:id});
+        if(!userConnections) return {success:false, message:"Error occured, please refresh the page and try again"};
+        if(!userConnections.pending.includes(user)) return {success:false, message:"Error occured, please refresh the page and try again"};
+        await ConnectionModel.updateOne(
+            {user:id},
+            {$pull:{
+                pending:user
+            }}
+        );
+        return {success:true};
+    }
+
+    async getUserRequests(id: string): Promise<any> {
+        const users=await ConnectionModel.aggregate([
+            {$unwind:"$pending"},
+            {$match:{
+                pending:id
+            }}
+        ]);
+        return users;
+    }
+
+    async acceptConnection(user1: string, user2: string): Promise<{ success: boolean; }> {
+        const user1Connections=await ConnectionModel.findOne({user:user1});
+        if(user1Connections && user1Connections.pending.includes(user2)){
+            await ConnectionModel.updateOne(
+                {user:user1},
+                {$pull:{
+                    pending:user2
+                }}
+            );
+        }
+        await ConnectionModel.updateOne(
+            {user:user1},
+            {$push:{
+                connections:user2
+            }},
+            {upsert:true}
+        );
+        const user2Connections=await ConnectionModel.findOne({user:user2});
+        if(user2Connections && user2Connections.pending.includes(user1)){
+            await ConnectionModel.updateOne(
+                {user:user2},
+                {$pull:{
+                    pending:user1
+                }}
+            );
+        }
+        await ConnectionModel.updateOne(
+            {user:user2},
+            {$push:{
+                connections:user1
+            }},
+            {upsert:true}
+        );
+        return {success:true};
+    }
+
+    async rejectConnection(user: string, id: string): Promise<{ success: boolean; }> {
+        const connections=await ConnectionModel.findOne({user:user});
+        if(connections && connections.pending.includes(id)){
+            await ConnectionModel.updateOne(
+                {user:user},
+                {$pull:{
+                    pending:id
+                }}
+            );
+            return {success:true};
+        }
+        return {success:false};
     }
 
 }
