@@ -161,17 +161,9 @@ export default function MeetPeoplePage() {
                                                 </div>
                                             </>
                                         ))}
-                                                <div className="mt-8 text-center">
-                                                    <button
-                                                        // onClick={handleLoadMore}
-                                                        className="cursor-pointer px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                                                    >
-                                                        Load More Users
-                                                    </button>
-                                                </div>
                                     </>
                                 ) : (
-                                    <div class="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">
+                                    <div className="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">
                                         No active users available
                                     </div>
 

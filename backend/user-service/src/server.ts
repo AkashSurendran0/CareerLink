@@ -7,6 +7,7 @@ import session from "express-session";
 import "./config/passport";
 import { dbConnect } from "./infrastructure/database/Mongoose";
 import "reflect-metadata";
+import { rabbitmqService } from "./utils/Rabbitmq";
 
 const app = express();
 dotenv.config();
@@ -17,6 +18,9 @@ app.use(session({
     resave: false, 
     saveUninitialized: false 
 })); 
+(async () => {
+rabbitmqService.connect();
+})();
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
