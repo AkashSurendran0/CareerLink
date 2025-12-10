@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Search } from "lucide-react"
 import { alterConnReq, getConnectionUsers } from "@/services/userService"
 import {User} from 'lucide-react'
@@ -16,13 +16,14 @@ export default function MeetPeoplePage() {
     const [users, setUsers]=useState()
     const [userLoading, setUserLoading]=useState(true)
     const [requestCount, setRequestCount]=useState(0)
+    const debouncer=useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
-        getUsers()
+        getUsers(searchQuery)
     }, [])
 
-    const getUsers = async () => {
-        const result=await getConnectionUsers()
+    const getUsers = async (val:string) => {
+        const result=await getConnectionUsers(val)
         setUsers(result.user.users)
         setRequestCount(result.user.requestCount)
         setUserLoading(false)
@@ -44,6 +45,14 @@ export default function MeetPeoplePage() {
         setLoading(false)
     }
 
+    const searchUser = async (val:string) => {
+        setSearchQuery(val) 
+        if(debouncer.current) clearTimeout(debouncer.current)
+        debouncer.current=setTimeout(() => {
+            getUsers(val)
+        }, 1500); 
+    }
+
     const routeToUserViewPage = async (id:string) => {
         setLoading(true)
         router.push(`/meetPeople/${id}`)
@@ -52,6 +61,11 @@ export default function MeetPeoplePage() {
     const routeToRequestPage = async () => {
         setLoading(true)
         router.push('/meetPeople/requests')
+    }
+
+    const routeToUserConnectionsPage = async () => {
+        setLoading(true)
+        router.push('/meetPeople/myConnections')
     }
 
     return (
@@ -65,7 +79,7 @@ export default function MeetPeoplePage() {
                         type="text"
                         placeholder="Search for people"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => searchUser(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-100 border-0 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -86,6 +100,12 @@ export default function MeetPeoplePage() {
                             <span className="bg-blue-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
                             {requestCount}
                             </span>
+                        </button>
+                        <button
+                            onClick={routeToUserConnectionsPage}
+                            className={`cursor-pointer pb-3 font-medium transition-colors flex items-center gap-2 text-gray-500 hover:text-gray-700`}
+                        >
+                            My Connections
                         </button>
                     </div>
 
@@ -139,6 +159,8 @@ export default function MeetPeoplePage() {
                                                     </button>
                                                 )}
                                                 </div>
+                                            </>
+                                        ))}
                                                 <div className="mt-8 text-center">
                                                     <button
                                                         // onClick={handleLoadMore}
@@ -147,8 +169,6 @@ export default function MeetPeoplePage() {
                                                         Load More Users
                                                     </button>
                                                 </div>
-                                            </>
-                                        ))}
                                     </>
                                 ) : (
                                     <div class="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">

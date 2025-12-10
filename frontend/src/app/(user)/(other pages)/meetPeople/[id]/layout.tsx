@@ -5,7 +5,8 @@ import Image from "next/image";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
-import { getUserDetails, viewOtherUserDetails } from "@/services/userService";
+import { alterConnReq, getConnectionDetails, getUserDetails, removeConnection, viewOtherUserDetails } from "@/services/userService";
+import { enqueueSnackbar } from "notistack";
 
 type Education = {
     degree: string;
@@ -54,6 +55,7 @@ export default function ConnectionLayout({
     const router=useRouter()
     const [activeTab, setActiveTab] = useState("About");
     const [userDetails, setUserDetails] = useState<Details>()
+    const [connection, setConnection]=useState<string>()
 
     const tabs = [
         { href:`/meetPeople/${id}`, label:'About' },
@@ -68,6 +70,12 @@ export default function ConnectionLayout({
             setUserDetails(details.userDetails)
         }
 
+        const fetchConnectionDetails = async () => {
+            const result=await getConnectionDetails(id)
+            setConnection(result.result.connection)
+        }
+
+        fetchConnectionDetails()
         fetchUserDetails()
     }, [])
 
@@ -75,6 +83,39 @@ export default function ConnectionLayout({
         setLoading(true)
         setActiveTab(i.label)
         router.push(i.href)
+    }
+
+    const sendConnectionRequest = async () => {
+        setLoading(true)
+        const result=await alterConnReq(id, 'send')
+        if(result.result.success){
+            setConnection('pending')
+        }else{
+            enqueueSnackbar(result.result.message, {variant:'error'})
+        }
+        setLoading(false)
+    }
+
+    const cancelConnectionRequest = async () => {
+        setLoading(true)
+        const result=await alterConnReq(id, 'cancel')
+        if(result.result.success){
+            setConnection('none')
+        }else{
+            enqueueSnackbar(result.result.message, {variant:'error'})
+        }
+        setLoading(false)   
+    }
+
+    const removeUserConnection = async () => {
+        setLoading(true)
+        const result=await removeConnection(id)
+        if(result.result.success){
+            setConnection('none')
+        }else{
+            enqueueSnackbar('Error occured, please refresh the page and try again', {variant:'error'})
+        }
+        setLoading(false)
     }
 
     return (
@@ -106,12 +147,42 @@ export default function ConnectionLayout({
                 </p>
                 <p className="text-gray-500 mt-1">{userDetails && userDetails.location}</p>
                 </div>
-                <div className="flex-shrink-0 flex flex-col ga">
-                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer">
-                    Connect
-                </button>
-                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer">
-                    Connect
+                <div className="flex-shrink-0 flex flex-col">
+                    {connection == 'none' && (
+                        <button 
+                        className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer"
+                        onClick={sendConnectionRequest}
+                        >
+                            Connect
+                        </button>
+                    )}
+                    {connection == 'pending' && (
+                        <>
+                            <button 
+                            className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer"
+                            onClick={cancelConnectionRequest}
+                            >
+                                Cancel Request
+                            </button>
+                        </>
+                    )} 
+                    {connection == 'connection' && (
+                        <>
+                            <button 
+                            className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer"
+                            >
+                                Message
+                            </button>
+                            <button 
+                            className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer mt-1"
+                            onClick={removeUserConnection}
+                            >
+                                Unfollow
+                            </button>
+                        </>
+                    )}
+                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer mt-1">
+                    Report
                 </button>
                 </div>
             </div>

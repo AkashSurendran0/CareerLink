@@ -7,4 +7,5 @@ export interface IConnectionRepository {
     getUserRequests(id:string): Promise<any>
     acceptConnection(user1:string, user2:string): Promise<{success:boolean}>
     rejectConnection(user:string, id:string): Promise<{success:boolean}>
+    removeConnection(id:string, user:string): Promise<{success:boolean}>
 }

@@ -103,4 +103,24 @@ export class ConnectionsRepository implements IConnectionRepository {
         return {success:false};
     }
 
+    async removeConnection(id: string, user:string): Promise<{ success: boolean; }> {
+        const user1Connection=await ConnectionModel.findOne({user:id});
+        if(user1Connection && !user1Connection.connections.includes(user)) return {success:false};
+        await ConnectionModel.updateOne(
+            {user:id},
+            {$pull:{
+                connections:user
+            }}
+        );
+        const user2Connection=await ConnectionModel.findOne({user:user});
+        if(user2Connection && !user2Connection.connections.includes(id)) return {success:false};
+        await ConnectionModel.updateOne(
+            {user:user},
+            {$pull:{
+                connections:id
+            }}
+        );
+        return {success:true};
+    }
+
 }

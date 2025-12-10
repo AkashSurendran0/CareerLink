@@ -24,5 +24,8 @@ export const TYPES={
     IConnectionRepository:"IConnectionRepository",
     ConnectionController:"ConnectionController",
     IGetUserRequests:"IGetUserRequests",
-    IEvaluateRequest:"IEvaluateRequest"
+    IEvaluateRequest:"IEvaluateRequest",
+    IGetConnectedUsers:"IGetConnectedUsers",
+    IRemoveConnection:"IRemoveConnection",
+    IGetConnectionDetails:"IGetConnectionDetails"
 };

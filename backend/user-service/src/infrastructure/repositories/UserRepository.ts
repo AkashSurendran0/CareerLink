@@ -2,6 +2,7 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
 import {injectable} from "inversify";
+import { Op } from "sequelize";
 
 type UserType={
     id:string,
@@ -164,6 +165,21 @@ export class UserRepository implements IUserRepository {
 
     async getAllUsers(): Promise<User[]> {
         const users=await UserModel.findAll({raw:true});
+        return users.map((user: any) => 
+            new User(
+                user.id.toString(), 
+                user.username, 
+                user.email, 
+                user.password, 
+                user.googleId, 
+                user.suspended,
+                user.createdAt
+            )
+        );
+    }
+
+    async findByName(name: string): Promise<User[]> {
+        const users=await UserModel.findAll({where:{username:{[Op.iLike]:`%${name}%`}}, raw:true});
         return users.map((user: any) => 
             new User(
                 user.id.toString(), 

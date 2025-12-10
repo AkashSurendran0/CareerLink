@@ -26,6 +26,9 @@ import { ConnectionController } from "./interfaces/controllers/ConnectionControl
 import { AlterConnectionRequest } from "./application/use-cases/AlterConnectionRequest";
 import { GetUserRequests } from "./application/use-cases/GetUserRequests";
 import { EvaluateRequest } from "./application/use-cases/EvaluateRequest";
+import { GetConnectedUsers } from "./application/use-cases/GetConnectedUsers";
+import { RemoveConnection } from "./application/use-cases/RemoveConnection";
+import { GetConnectionDetails } from "./application/use-cases/GetConnectionDetails";
 
 const container = new Container();
 
@@ -53,6 +56,9 @@ container.bind(TYPES.IGetConnections).to(GetConnections).inSingletonScope();
 container.bind(TYPES.IAlterConnectionRequest).to(AlterConnectionRequest).inSingletonScope();
 container.bind(TYPES.IGetUserRequests).to(GetUserRequests).inSingletonScope();
 container.bind(TYPES.IEvaluateRequest).to(EvaluateRequest).inSingletonScope();
+container.bind(TYPES.IGetConnectedUsers).to(GetConnectedUsers).inSingletonScope();
+container.bind(TYPES.IRemoveConnection).to(RemoveConnection).inSingletonScope();
+container.bind(TYPES.IGetConnectionDetails).to(GetConnectionDetails).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);
