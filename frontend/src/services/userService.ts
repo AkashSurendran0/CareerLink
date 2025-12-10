@@ -313,8 +313,8 @@ export const getSubscriptionInfo = async () => {
     return res.data
 }
 
-export const getConnectionUsers = async () => {
-    const res=await api.get('user/v1/getUnconnectedUsers')
+export const getConnectionUsers = async (query:string) => {
+    const res=await api.get(`user/v1/getUnconnectedUsers?name=${query}`)
     return res.data
 }
 
@@ -333,12 +333,27 @@ export const viewOtherUserPosts = async (id:string) => {
     return res.data
 }
 
-export const getUserRequests = async () => {
-    const res=await api.get('user/v1/getUserRequests')
+export const getUserRequests = async (query:string) => {
+    const res=await api.get(`user/v1/getUserRequests?name=${query}`)
     return res.data
 }
 
 export const evaluateRequest = async (id:string, action:string) => {
     const res=await api.patch(`user/v1/evaluateRequest?user=${id}&action=${action}`)
+    return res.data
+}
+
+export const getConnectedUsers = async (query:string) => {
+    const res=await api.get(`user/v1/getConnectedUsers?name=${query}`)
+    return res.data
+}
+
+export const removeConnection = async (id:string) => {
+    const res=await api.patch(`user/v1/removeConnection?user=${id}`)
+    return res.data
+}
+
+export const getConnectionDetails = async (id:string) => {
+    const res=await api.get(`user/v1/getConnectionDetails?user=${id}`)
     return res.data
 }

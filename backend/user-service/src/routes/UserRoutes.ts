@@ -65,5 +65,8 @@ router.get("/getUnconnectedUsers", connectionController.getUnconnectedUsers);
 router.patch("/alterConnectionRequest", connectionController.alterConnectionRequest);
 router.get("/getUserRequests", connectionController.getUserRequests);
 router.patch("/evaluateRequest", connectionController.evaluateRequest);
+router.get("/getConnectedUsers", connectionController.getConnectedUsers);
+router.patch("/removeConnection", connectionController.removeConnection);
+router.get("/getConnectionDetails", connectionController.getConnectionDetails);
 
 export default router;

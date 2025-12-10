@@ -21,4 +21,5 @@ export interface IUserRepository {
     findById(id:string): Promise<User | null>
     alterUserStatus(user:UserType): Promise<User>
     getAllUsers(): Promise<User[]>
+    findByName(name:string): Promise<User[]>
 }

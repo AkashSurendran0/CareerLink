@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Search } from "lucide-react"
-import { evaluateRequest, getUserRequests } from "@/services/userService"
+import { alterConnReq, getConnectedUsers, removeConnection } from "@/services/userService"
 import {User} from 'lucide-react'
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -19,22 +19,20 @@ export default function MeetPeoplePage() {
     const debouncer=useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
-        getRequests(searchQuery)
+        getUsers(searchQuery)
     }, [])
 
-    const getRequests = async (val:string) => {
-        const result=await getUserRequests(val)
-        setRequestCount(result.result.requestCount)
+    const getUsers = async (val:string) => {
+        const result=await getConnectedUsers(val)
         setUsers(result.result.users)
+        setRequestCount(result.result.requestCount)
         setUserLoading(false)
-        console.log(result)
     }
 
-    const alterConnectionRequest = async (id:string, action:string) => {
+    const removeUserConnection = async (id:string) => {
         setLoading(true)
-        const result=await evaluateRequest(id, action)
+        const result=await removeConnection(id)
         if(result.result.success){
-            setRequestCount(prev=>prev-1)
             setUsers((prev)=>
                 prev.filter(user=>user.id!=id)
             )
@@ -48,7 +46,7 @@ export default function MeetPeoplePage() {
         setSearchQuery(val) 
         if(debouncer.current) clearTimeout(debouncer.current)
         debouncer.current=setTimeout(() => {
-            getRequests(val)
+            getUsers(val)
         }, 1500); 
     }
 
@@ -57,14 +55,14 @@ export default function MeetPeoplePage() {
         router.push(`/meetPeople/${id}`)
     }
 
+    const routeToRequestPage = async () => {
+        setLoading(true)
+        router.push('/meetPeople/requests')
+    }
+
     const routeToMeetPeoplePage = async () => {
         setLoading(true)
         router.push('/meetPeople')
-    }
-
-    const routeToUserConnectionsPage = async () => {
-        setLoading(true)
-        router.push('/meetPeople/myConnections')
     }
 
     return (
@@ -88,12 +86,13 @@ export default function MeetPeoplePage() {
                     <div className="flex items-center gap-6 mb-6 border-b border-gray-200">
                         <button
                             onClick={routeToMeetPeoplePage}
-                            className={`pb-3 font-medium transition-colors text-gray-500 hover:text-gray-700`}
+                            className={`cursor-pointer pb-3 font-medium transition-colors text-gray-500 hover:text-gray-700"`}
                         >
                             People you may know
                         </button>
                         <button
-                            className={`pb-3 font-medium transition-colors flex items-center gap-2 text-gray-900 border-b-2 border-gray-900`}
+                            onClick={routeToRequestPage}
+                            className={`cursor-pointer pb-3 font-medium transition-colors flex items-center gap-2 text-gray-500 hover:text-gray-700`}
                         >
                             Requests
                             <span className="bg-blue-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
@@ -101,8 +100,7 @@ export default function MeetPeoplePage() {
                             </span>
                         </button>
                         <button
-                            onClick={routeToUserConnectionsPage}
-                            className={`cursor-pointer pb-3 font-medium transition-colors flex items-center gap-2 text-gray-500 hover:text-gray-700`}
+                            className={`pb-3 font-medium transition-colors flex items-center gap-2 text-gray-900 border-b-2 border-gray-900`}
                         >
                             My Connections
                         </button>
@@ -142,20 +140,12 @@ export default function MeetPeoplePage() {
                                                     )}
                                                     <span className="text-gray-900 font-medium">{user.name}</span>
                                                 </div>
-                                                <div className="flex gap-2">
                                                     <button
-                                                        onClick={() => alterConnectionRequest(user.id, 'accept')}
-                                                        className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-gray-200 text-gray-900 hover:bg-gray-300`}
+                                                        onClick={() => removeUserConnection(user.id)}
+                                                        className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-red-600 text-white hover:bg-red-700`}
                                                     >
-                                                        Accept
+                                                        Unfollow
                                                     </button>
-                                                    <button
-                                                        onClick={() => alterConnectionRequest(user.id, 'reject')}
-                                                        className={`cursor-pointer px-6 py-2 rounded-lg font-medium transition-colors bg-red-500 text-white hover:bg-red-600`}
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </div>
                                                 </div>
                                                 <div className="mt-8 text-center">
                                                     <button
@@ -170,7 +160,7 @@ export default function MeetPeoplePage() {
                                     </>
                                 ) : (
                                     <div className="w-full text-center py-4 bg-gray-100 text-gray-600 rounded-lg">
-                                        No requests available
+                                        No active users available
                                     </div>
 
                                 )}

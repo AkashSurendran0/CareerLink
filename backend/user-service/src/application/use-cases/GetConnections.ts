@@ -14,8 +14,10 @@ export class GetConnections implements IGetConnections {
         @inject(TYPES.IConnectionRepository) private _connectionRepository:IConnectionRepository
     ) {}
 
-    async getUnconnectedUsers(id: string): Promise<any> {
-        const result=await this._userRepository.getAllUsers();
+    async getUnconnectedUsers(id: string, name:string): Promise<any> {
+        let result;
+        if(name) result=await this._userRepository.findByName(name);
+        else result=await this._userRepository.getAllUsers();
         const connections=await this._connectionRepository.findByUser(id);
         let requestCount=await this._connectionRepository.getUserRequests(id);
         requestCount=requestCount.length;
