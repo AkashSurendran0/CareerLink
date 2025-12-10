@@ -8,7 +8,7 @@ import { TYPES } from './types'
 export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
-    private readonly exchange=["company.events", "subscription.events"] 
+    private readonly exchange=["company.events", "subscription.events", "connection.events"] 
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -41,6 +41,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "company.events", "company.blocked")
         await this.channel.bindQueue(queue.queue, "company.events", "company.unblocked")
         await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded")
+        await this.channel.bindQueue(queue.queue, "connection.events", "connection.sendRequest")
 
         console.log('Notification service is listening for messages...')
 
@@ -130,6 +131,9 @@ The CineScope Admin Team
 
                 case 'upgraded':
                     await this._addNotification.saveNotification(data.user, 'Upgraded to Vip Member 👑', '/settings')
+
+                case 'sendRequest':
+                    await this._addNotification.saveNotification(data.reciever, `${data.sender} send you a connection request`, '/meetPeople/requests')
 
                 default:
                     console.log('Unknown type event', data.action)
