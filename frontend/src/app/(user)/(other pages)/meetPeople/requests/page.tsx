@@ -88,7 +88,7 @@ export default function MeetPeoplePage() {
                     <div className="flex items-center gap-6 mb-6 border-b border-gray-200">
                         <button
                             onClick={routeToMeetPeoplePage}
-                            className={`pb-3 font-medium transition-colors text-gray-500 hover:text-gray-700`}
+                            className={`cursor-pointer pb-3 font-medium transition-colors text-gray-500 hover:text-gray-700`}
                         >
                             People you may know
                         </button>

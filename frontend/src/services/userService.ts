@@ -136,8 +136,8 @@ export const addJob = async (jobDetails) => {
     return res.data
 }
 
-export const getAllCompanyJob = async (startingPage:number, limit:number, query:string, filter:string) => {
-    const res=await api.get(`job/v1/getAllJobs?start=${startingPage}&limit=${limit}&query=${query}&filter=${filter}`)
+export const getAllCompanyJob = async (startingPage:number, limit:number, query:string, filter:string, id:string | null) => {
+    const res=await api.get(`job/v1/getAllJobs?start=${startingPage}&limit=${limit}&query=${query}&filter=${filter}&id=${id}`)
     return res.data
 }
 
@@ -355,5 +355,15 @@ export const removeConnection = async (id:string) => {
 
 export const getConnectionDetails = async (id:string) => {
     const res=await api.get(`user/v1/getConnectionDetails?user=${id}`)
+    return res.data
+}
+
+export const getAvailableCompanies = async (query:string) => {
+    const res=await api.get(`company/v1/getAvailableCompanies?name=${query}`)
+    return res.data
+}
+
+export const discoverCompanyInfo = async (id:string) => {
+    const res=await api.get(`company/v1/getCompanyDetailsByQuery?id=${id}`)
     return res.data
 }

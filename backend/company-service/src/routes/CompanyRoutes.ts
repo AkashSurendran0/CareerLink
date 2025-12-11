@@ -20,5 +20,7 @@ router.patch('/rejectCompany', companyController.rejectCompany)
 router.patch('/acceptCompany', companyController.acceptCompany)
 router.patch('/reapplyCompany', companyController.reapplyCompany)
 router.delete('/deleteCompany', companyController.deleteCompany)
+router.get('/getAvailableCompanies', companyController.getAvailableCompanies)
+router.get('/getCompanyDetailsByQuery', companyController.getCompanyDetailsByQuery)
 
 export default router;

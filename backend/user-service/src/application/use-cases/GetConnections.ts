@@ -22,6 +22,7 @@ export class GetConnections implements IGetConnections {
         let requestCount=await this._connectionRepository.getUserRequests(id);
         requestCount=requestCount.length;
         let unconnectedUsers=result.filter(user=>user.id != id);
+        unconnectedUsers=unconnectedUsers.filter(user=>user.suspended == false);
         unconnectedUsers=unconnectedUsers.filter(user=>!connections?.connections?.includes(user.id));
         for(let i=0;i<unconnectedUsers.length;i++){
             if(connections?.pendings.includes(unconnectedUsers[i].id)){
