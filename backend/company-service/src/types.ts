@@ -11,4 +11,6 @@ export const TYPES = {
     IAlterCompanyRegistrationStatus:"IAlterCompanyRegistrationStatus",
     IReapplyCompany:"IReapplyCompany",
     IDeleteCompany:"IDeleteCompany",
+    IGetAvailableCompanies:"IGetAvailableCompanies",
+    IGetCompanyDetailsByQuery:"IGetCompanyDetailsByQuery"
 }

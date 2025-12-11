@@ -53,7 +53,6 @@ export default function CompanyLayout({
     const tabs = [
         {text:'About', route:'/company/registeredCompany'},
         {text:'Jobs Posted', route:'/company/registeredCompany/jobsPosted'},
-        {text:'Photos/Media', route:''}
     ]
 
     const goToEditPage = () => {

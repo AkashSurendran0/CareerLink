@@ -45,16 +45,26 @@ export class JobController {
     getAllJobs = async (req:Request, res:Response) => {
         try {
             const token=req.cookies?.token
-            const company=await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
-                headers:{
-                    Cookie:`token=${token}`
-                }
-            })
-            const id=company.data.result.id
+            const {id}=req.query
+            let company;
+            if(id){
+                company=await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${id}`, {
+                    headers:{
+                        Cookie:`token=${token}`
+                    }
+                })
+            }else{
+                company=await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
+                    headers:{
+                        Cookie:`token=${token}`
+                    }
+                })
+            }
+            const companyId=company.data.result.id
             const {start, limit, query, filter}=req.query
             const numStart=Number(start)
             const numLimit=Number(limit)
-            const result=await this._getAllJobs.getAllJobs(id, numStart, numLimit, query, filter)
+            const result=await this._getAllJobs.getAllJobs(companyId, numStart, numLimit, query, filter)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

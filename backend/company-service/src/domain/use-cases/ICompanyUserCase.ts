@@ -54,3 +54,11 @@ export interface IReapplyCompany {
 export interface IDeleteCompany {
     deleteCompany (user:string):Promise<{success:boolean}>
 }
+
+export interface IGetAvailableCompanies {
+    getAvailableCompanies (email:string, query:string):Promise<CompanyDTO[]>
+}
+
+export interface IGetCompanyDetailsByQuery {
+    getCompanyDetails(id:string): Promise<CompanyDTO>
+}

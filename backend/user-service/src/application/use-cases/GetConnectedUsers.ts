@@ -23,7 +23,7 @@ export class GetConnectedUsers implements IGetConnectedUsers {
             for(let user of result.connections){
                 const details=await this._userDetailsRepository.getUserDetails(user);
                 const info=await this._userRepository.findById(user);
-                users.push({id:user, name:info.username, dp:details?.profilePicture ?? null});
+                if(info?.suspended == false) users.push({id:user, name:info?.username, dp:details?.profilePicture ?? null});
             }  
         }
         if (name && name.trim() !== "") {

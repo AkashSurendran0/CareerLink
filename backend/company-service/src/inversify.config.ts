@@ -12,6 +12,8 @@ import { CheckCompanyDetails } from "./application/user-cases/CheckCompanyDetail
 import { AlterCompanyRegistrationStatus } from "./application/user-cases/AlterCompanyRegistrationStatus";
 import { ReapplyCompany } from "./application/user-cases/ReapplyCompany";
 import { DeleteCompany } from "./application/user-cases/DeleteCompany";
+import { GetAvailableCompanies } from "./application/user-cases/GetAvailableCompanies";
+import { GetCompanyDetailsByQuery } from "./application/user-cases/GetCompanyDetailsByQuery";
 
 const container=new Container()
 
@@ -27,6 +29,8 @@ container.bind(TYPES.ICheckCompanyDetails).to(CheckCompanyDetails).inSingletonSc
 container.bind(TYPES.IAlterCompanyRegistrationStatus).to(AlterCompanyRegistrationStatus).inSingletonScope()
 container.bind(TYPES.IReapplyCompany).to(ReapplyCompany).inSingletonScope()
 container.bind(TYPES.IDeleteCompany).to(DeleteCompany).inSingletonScope()
+container.bind(TYPES.IGetAvailableCompanies).to(GetAvailableCompanies).inSingletonScope()
+container.bind(TYPES.IGetCompanyDetailsByQuery).to(GetCompanyDetailsByQuery).inSingletonScope()
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 
