@@ -36,7 +36,7 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     { icon: "👥", label: "Meet People", value:"/meetPeople" },
     { icon: "🏭", label: "Discover Companies", value:"/discoverCompanies"},
     { icon: "💼", label: "Hiring", value:"/hiring" },
-    { icon: "💬", label: "Chats", value:"" },
+    { icon: "💬", label: "Chats", value:"/chats" },
     { icon: "👤", label: "Your Profile", value:"/profile/user" },
     { icon: "🏢", label: `${tab.label}`, value:`${tab.value}` },
     { icon: "📄", label: "Generate A Cover Letter", value:"/createCoverletter" },

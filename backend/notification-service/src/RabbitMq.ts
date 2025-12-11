@@ -42,6 +42,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "company.events", "company.unblocked")
         await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded")
         await this.channel.bindQueue(queue.queue, "connection.events", "connection.sendRequest")
+        await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest")
 
         console.log('Notification service is listening for messages...')
 
@@ -134,6 +135,9 @@ The CineScope Admin Team
 
                 case 'sendRequest':
                     await this._addNotification.saveNotification(data.reciever, `${data.sender} send you a connection request`, '/meetPeople/requests')
+
+                case 'acceptRequest':
+                    await this._addNotification.saveNotification(data.reciever, `${data.sender} accepted your connection request`, '/meetPeople/myConnections')
 
                 default:
                     console.log('Unknown type event', data.action)

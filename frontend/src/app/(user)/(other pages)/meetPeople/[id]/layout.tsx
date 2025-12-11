@@ -5,7 +5,7 @@ import Image from "next/image";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
-import { alterConnReq, getConnectionDetails, getUserDetails, removeConnection, viewOtherUserDetails } from "@/services/userService";
+import { alterConnReq, getConnectionDetails, getUserDetails, removeConnection, startUserConversation, viewOtherUserDetails } from "@/services/userService";
 import { enqueueSnackbar } from "notistack";
 
 type Education = {
@@ -118,6 +118,12 @@ export default function ConnectionLayout({
         setLoading(false)
     }
 
+    const startConversation = async () => {
+        setLoading(true)
+        await startUserConversation(id)
+        router.push('/chats')
+    }
+
     return (
         <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -170,6 +176,7 @@ export default function ConnectionLayout({
                         <>
                             <button 
                             className="bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer"
+                            onClick={startConversation}
                             >
                                 Message
                             </button>

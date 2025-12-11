@@ -367,3 +367,8 @@ export const discoverCompanyInfo = async (id:string) => {
     const res=await api.get(`company/v1/getCompanyDetailsByQuery?id=${id}`)
     return res.data
 }
+
+export const startUserConversation = async (id:string) => {
+    const res=await api.post(`chat/v1/startUserConversation?user=${id}`)
+    return res.data
+}
