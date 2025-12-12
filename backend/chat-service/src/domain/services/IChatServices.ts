@@ -13,5 +13,5 @@ export interface ISendMessage {
 }
 
 export interface IGetChats {
-    getChats(convo:string): Promise<ChatDto>
+    getChats(convo:string): Promise<ChatDto | null>
 }
