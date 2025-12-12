@@ -1,6 +1,6 @@
 "use client"
 
-import socket from "@/lib/socket"
+import {notificationSocket, userSocket} from "@/lib/socket"
 import { deleteAllNotifications, deleteOneNotification, getAllNotifications, markAllNotificationsRead, markOneRead } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -26,6 +26,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [userEmail, setUserEmail] = useState<string>()
+  const [userId, setUserId] = useState<string>()
   const [isVip, setIsVip]=useState(false)
 
   useEffect(() => {
@@ -47,6 +48,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
         const res=await fetch('/api/me')
         const data=await res.json()
         setUserEmail(data.userEmail)
+        setUserId(data.userId)
       } catch (error) {
         console.log('Failed to fetch userid', error)
       }
@@ -57,16 +59,16 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   useEffect(()=>{
     if(!userEmail) return
-
-    socket.emit('join', userEmail)
-    socket.on('notification', (data)=>{
+    userSocket.emit('user-online', userId)  
+    notificationSocket.emit('join', userEmail)
+    notificationSocket.on('notification', (data)=>{
       console.log(data)
       setNotifications([data, ...notifications])
       setUnreadCount(unreadCount+1)
     })
 
     return()=>{
-      socket.off('notification')
+      notificationSocket.off('notification')
     }
   }, [userEmail])
 
