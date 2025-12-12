@@ -36,26 +36,6 @@ export default function ChatsPage() {
   const [userDetails, setUserDetails] = useState()
   const [userChats, setUserChats] = useState()
   const [userId, setUserId] = useState()
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      sender: "Sophia Clark",
-      text: "Hey, how's it going?",
-      timestamp: "10:30 AM",
-      isOwn: false,
-      avatar: "/professional-woman-avatar.png",
-      isRead: true,
-    },
-    {
-      id: 2,
-      sender: "You",
-      text: "I'm doing great, thanks! How about you?",
-      timestamp: "10:32 AM",
-      isOwn: true,
-      avatar: "/professional-man-avatar.png",
-      isRead: true,
-    },
-  ])
 
   useEffect(()=>{
     getUserConversations()
@@ -100,7 +80,6 @@ export default function ChatsPage() {
   const getDetails = async () => {
     const result=await getUserDetails()
     setUserDetails(result.userDetails)
-    console.log(result)
   }
 
   const getUserConversations = async () => {
@@ -109,14 +88,13 @@ export default function ChatsPage() {
   }
 
   const setUserAndConvo = async (convo) => {
-    console.log(convo)
     setChatLoading(true)
     setSelectedConvo(convo._id)
     setSelectedUser(convo)
     const result=await getUserChats(convo._id)
+    console.log(result)
     setUserChats(result.result)
     setChatLoading(false)
-    console.log(result)
   }
 
   const handleSendMessage = async () => {
@@ -125,17 +103,17 @@ export default function ChatsPage() {
         convoId:selectedConvo,
         message:messageInput
       }
-      await sendMessage(data)
-      const newMessage: Message = {
-        id: messages.length + 1,
-        sender: "You",
-        text: messageInput,
-        timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-        isOwn: true,
-        avatar: "/professional-man-avatar.png",
-        isRead: false,
+      const result=await sendMessage(data)
+      const lastMessage=result.result?.content[result.result?.content?.length-1]
+      if(!userChats) {
+        setUserChats(result.result)
+      }else{
+        setUserChats((prev)=>({
+          ...prev,
+          content:[...prev.content, lastMessage]
+        }))
       }
-      setMessages([...messages, newMessage])
+      console.log(result)
       setMessageInput("")
     }
   }
@@ -210,7 +188,7 @@ export default function ChatsPage() {
             )}
           </div>
 
-          {!chatLoading && selectedUser && userChats && (
+          {!chatLoading && selectedUser && (
             <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-0">
               <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
@@ -248,64 +226,72 @@ export default function ChatsPage() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-4">
-                {userChats.content.map((message) => {
-                  const isMe = message.sendBy === userId
-                  const isOther = message.sendBy === selectedUser.user;
+              <div className="flex-1 overflow-y-auto min-h-0 p-4 flex flex-col-reverse">
+                <div className="space-y-4 flex flex-col">
+                  {userChats?.content?.length > 0 ?(
+                    userChats.content.map((message) => {
+                      const isMe = message.sendBy === userId
+                      const isOther = message.sendBy === selectedUser.user;
 
-                  return (
-                  
-                  <div key={message._id} className={`flex gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
-                    {!isMe && (
-                      selectedUser.pfp? (
-                        <Image
-                          height={300}
-                          width={300}
-                          src={selectedUser.pfp }
-                          alt={selectedUser.username}
-                          className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <User className="h-10 w-10 rounded-full object-cover"/>
-                      )
-                    )}
-                    <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-                      <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
-                      <div
-                        className={`px-4 py-2 rounded-lg max-w-xs ${
-                          isMe
-                            ? "bg-blue-500 text-white rounded-br-none"
-                            : "bg-gray-100 text-gray-900 rounded-bl-none"
-                        }`}
-                      >
-                        <p className="text-sm">{message.message}</p>
-                      </div>
-                      {isMe && (
-                        <div className="flex items-center gap-1 mt-1">
-                          {message.isRead ? (
-                            <CheckCheck className="h-4 w-4 text-green-500" />
+                      return (
+                      
+                      <div key={message._id} className={`flex gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
+                        {!isMe && (
+                          selectedUser.pfp? (
+                            <Image
+                              height={300}
+                              width={300}
+                              src={selectedUser.pfp }
+                              alt={selectedUser.username}
+                              className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                            />
                           ) : (
-                            <CheckCheck className="h-4 w-4 text-blue-500" />
+                            <User className="h-10 w-10 rounded-full object-cover"/>
+                          )
+                        )}
+                        <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                          <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
+                          <div
+                            className={`px-4 py-2 rounded-lg max-w-xs ${
+                              isMe
+                                ? "bg-blue-500 text-white rounded-br-none"
+                                : "bg-gray-100 text-gray-900 rounded-bl-none"
+                            }`}
+                          >
+                            <p className="text-sm">{message.message}</p>
+                          </div>
+                          {isMe && (
+                            <div className="flex items-center gap-1 mt-1">
+                              {message.isRead ? (
+                                <CheckCheck className="h-4 w-4 text-green-500" />
+                              ) : (
+                                <CheckCheck className="h-4 w-4 text-blue-500" />
+                              )}
+                              <span className="text-xs text-gray-500">{message.timestamp}</span>
+                            </div>
                           )}
-                          <span className="text-xs text-gray-500">{message.timestamp}</span>
                         </div>
+                        {isMe && (
+                          userDetails.profilePicture ? (
+                          <Image
+                            height={40}
+                            width={40}
+                            src={userDetails.profilePicture}
+                            alt="You"
+                            className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <User className="h-10 w-10 rounded-full object-cover"/>
+                        )
                       )}
+                      </div>
+                    )})
+                  ) : (
+                    <div className="text-center text-gray-400 mt-10">
+                      No messages yet. Start the conversation!
                     </div>
-                    {isMe && (
-                      userDetails.profilePicture ? (
-                      <Image
-                        height={40}
-                        width={40}
-                        src={userDetails.profilePicture}
-                        alt="You"
-                        className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                      />
-                    ) : (
-                      <User className="h-10 w-10 rounded-full object-cover"/>
-                    )
                   )}
-                  </div>
-                )})}
+                </div>
               </div>
 
               <div className="p-4 border-t border-gray-200 flex-shrink-0">
