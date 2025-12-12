@@ -372,3 +372,18 @@ export const startUserConversation = async (id:string) => {
     const res=await api.post(`chat/v1/startUserConversation?user=${id}`)
     return res.data
 }
+
+export const getConversations = async () => {
+    const res=await api.get('chat/v1/getConversations')
+    return res.data
+}
+
+export const sendMessage = async (data:any) => {
+    const res=await api.patch('chat/v1/sendMessage', data)
+    return res.data
+}
+
+export const getUserChats = async (conversation:string) => {
+    const res=await api.get(`chat/v1/getChats?convo=${conversation}`)
+    return res.data
+}

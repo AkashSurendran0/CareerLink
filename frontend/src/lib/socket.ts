@@ -1,8 +1,11 @@
 import {io} from 'socket.io-client'
 
-const socket=io('http://localhost:5004', {
+export const notificationSocket=io('http://localhost:5004', {
     transports:['websocket'],
     withCredentials:true
 })
 
-export default socket
+export const userSocket=io('http://localhost:5001', {
+    transports:['websocket'],
+    withCredentials:true
+})
