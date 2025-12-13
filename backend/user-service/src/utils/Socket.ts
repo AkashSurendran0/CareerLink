@@ -22,6 +22,14 @@ export const initUserSocket = (server: http.Server) => {
             socket.emit("online-users", Array.from(onlineUsers.keys()));
         });
 
+        socket.on("join-conversation", (convoId)=>{
+            socket.join(convoId);
+        });
+
+        socket.on("send-message", ({convoId, message}) => {
+            socket.to(convoId).emit("receive-message", message, convoId);
+        });
+
         socket.on("disconnect", () => {
             const entries=[...onlineUsers.entries()];
             const userEntry=entries.find(([_, sid]) => sid === socket.id);
