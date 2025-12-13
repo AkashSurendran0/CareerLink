@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IGetChats, IGetConversations, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IGetChats, IGetConversations, IReadMessages, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 
 @injectable()
@@ -12,7 +12,8 @@ export class ChatController {
         @inject(TYPES.IStartConversation) private _startConversation:IStartConversation,
         @inject(TYPES.IGetConversations) private _getConversations:IGetConversations,
         @inject(TYPES.ISendMessage) private _sendMessage:ISendMessage,
-        @inject(TYPES.IGetChats) private _getChats:IGetChats
+        @inject(TYPES.IGetChats) private _getChats:IGetChats,
+        @inject(TYPES.IReadMessages) private _readMessages:IReadMessages
     ){}
 
     startUserConversation = async (req:Request, res:Response) => {
@@ -66,8 +67,9 @@ export class ChatController {
 
     getChats = async (req:Request, res:Response) => {
         try {
+            const user=req.headers['user-id'] as string
             const {convo}=req.query
-            const result=await this._getChats.getChats(convo)
+            const result=await this._getChats.getChats(convo, user)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -75,6 +77,21 @@ export class ChatController {
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             } 
+        }
+    }
+
+    readMessages = async (req:Request, res:Response) => {
+        try {
+            const {convo, user}=req.query
+            console.log(convo, user)
+            const result=await this._readMessages.readMessages(convo, user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
         }
     }
 

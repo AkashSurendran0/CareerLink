@@ -387,3 +387,8 @@ export const getUserChats = async (conversation:string) => {
     const res=await api.get(`chat/v1/getChats?convo=${conversation}`)
     return res.data
 }
+
+export const readOtherUserChats = async (conversation:string) => {
+    const res=await api.patch(`chat/v1/readOtherUserChats?convo=${conversation}`)
+    return res.data
+}

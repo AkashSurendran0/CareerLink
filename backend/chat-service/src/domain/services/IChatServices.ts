@@ -13,5 +13,9 @@ export interface ISendMessage {
 }
 
 export interface IGetChats {
-    getChats(convo:string): Promise<ChatDto | null>
+    getChats(convo:string, user:string): Promise<ChatDto | null>
+}
+
+export interface IReadMessages {
+    readMessages(convo:string, user:string): Promise<{success:boolean}>
 }

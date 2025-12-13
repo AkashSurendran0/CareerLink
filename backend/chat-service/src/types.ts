@@ -5,5 +5,6 @@ export const TYPES = {
     IConversationRepository:'IConversationRepository',
     IGetConversations:'IGetConversations',
     ISendMessage:'ISendMessage',
-    IGetChats:'IGetChats'
+    IGetChats:'IGetChats',
+    IReadMessages:'IReadMessages'
 }

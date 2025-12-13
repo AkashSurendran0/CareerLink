@@ -50,4 +50,20 @@ export class ChatRepository implements IChatRepository {
         )
     }
 
+    async readMessages(convo: string, user: string): Promise<{ success: boolean; }> {
+        await ChatModel.updateMany(
+            {conversation:convo},
+            {
+                $set:{'content.$[msg].isRead':true}
+            },
+            {arrayFilters:[
+                {
+                    "msg.sendBy":{$ne:user},
+                    "msg.isRead":false
+                }
+            ]}
+        )
+        return {success:true}
+    }
+
 }
