@@ -43,6 +43,16 @@ export default function ChatsPage() {
     fetchUserId()
   }, [])
 
+  useEffect(()=>{
+    if(!selectedConvo) return
+
+    userSocket.emit("join-conversation", selectedConvo)
+
+    return () => {
+      userSocket.emit("leave-conversation", selectedConvo)
+    }
+  }, [selectedConvo])
+
   const fetchUserId=async()=>{
     try {
       const res=await fetch('/api/me')
@@ -76,6 +86,29 @@ export default function ChatsPage() {
       userSocket.off("online-users", handler);
     };
   }, [conversations]);
+
+  useEffect(()=>{
+    const receiveHandler = (message, convoId) => {
+      console.log(message, convoId)
+      if(selectedConvo == convoId) {
+        if(!userChats){
+          setUserChats(message)
+        }else{
+          const lastMessage=message?.content[message?.content?.length-1]
+          setUserChats((prev)=>({
+            ...prev,
+            content:[...prev.content, lastMessage]
+          }))
+        }
+      }
+      }
+
+    userSocket.on('receive-message', receiveHandler)
+
+    return () => {
+      userSocket.off("receive-message", receiveHandler);
+    }
+  }, [selectedConvo])
 
   const getDetails = async () => {
     const result=await getUserDetails()
@@ -113,7 +146,11 @@ export default function ChatsPage() {
           content:[...prev.content, lastMessage]
         }))
       }
-      console.log(result)
+
+      userSocket.emit("send-message", {
+        convoId:selectedConvo,
+        message:result.result
+      })
       setMessageInput("")
     }
   }
