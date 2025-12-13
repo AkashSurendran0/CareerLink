@@ -28,7 +28,7 @@ interface Message {
 
 export default function ChatsPage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedUser, setSelectedUser] = useState<string | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null)
   const [messageInput, setMessageInput] = useState("")
   const [conversations, setConversations] = useState()
@@ -44,14 +44,46 @@ export default function ChatsPage() {
   }, [])
 
   useEffect(()=>{
-    if(!selectedConvo) return
+    if(!selectedConvo || !userId) return
 
-    userSocket.emit("join-conversation", selectedConvo)
+    userSocket.emit("join-conversation", {
+      convoId:selectedConvo,
+      userId
+    })
 
     return () => {
       userSocket.emit("leave-conversation", selectedConvo)
     }
-  }, [selectedConvo])
+  }, [selectedConvo, userId])
+
+  useEffect(() => {
+  const handler = ({ convoId }) => {
+    if (convoId !== selectedConvo) return;
+
+    setUserChats((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        content: prev.content.map((msg) => {
+          // Mark as read ONLY:
+          // 1. I sent the message
+          // 2. Someone else read it
+          if (msg.sendBy == userId) {
+            return { ...msg, isRead: true };
+          }
+          return msg;
+        })
+      };
+    });
+  };
+
+  userSocket.on("messages-read", handler);
+
+  return () => {
+    userSocket.off("messages-read", handler);
+  };
+}, [selectedConvo, userId]);
 
   const fetchUserId=async()=>{
     try {
@@ -123,12 +155,16 @@ export default function ChatsPage() {
   const setUserAndConvo = async (convo) => {
     setChatLoading(true)
     setSelectedConvo(convo._id)
-    setSelectedUser(convo)
+    setSelectedUserId(convo.user)
     const result=await getUserChats(convo._id)
     console.log(result)
     setUserChats(result.result)
     setChatLoading(false)
   }
+
+  const selectedUser = conversations?.find(
+    (c) => c.user === selectedUserId
+  );
 
   const handleSendMessage = async () => {
     if (messageInput.trim() && selectedUser && selectedConvo) {
@@ -149,7 +185,8 @@ export default function ChatsPage() {
 
       userSocket.emit("send-message", {
         convoId:selectedConvo,
-        message:result.result
+        message:result.result,
+        userId
       })
       setMessageInput("")
     }

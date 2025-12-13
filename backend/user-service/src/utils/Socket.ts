@@ -1,5 +1,6 @@
 import {Server} from "socket.io";
 import http from "http";
+import axios from "axios";
 
 export const initUserSocket = (server: http.Server) => {
     const io=new Server(server, {
@@ -22,12 +23,31 @@ export const initUserSocket = (server: http.Server) => {
             socket.emit("online-users", Array.from(onlineUsers.keys()));
         });
 
-        socket.on("join-conversation", (convoId)=>{
+        socket.on("join-conversation", async ({convoId, userId})=>{
             socket.join(convoId);
+
+            await axios.patch(`http://localhost:5000/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
+
+            socket.to(convoId).emit("messages-read", {
+                convoId,
+                readBy:userId
+            });
         });
 
-        socket.on("send-message", ({convoId, message}) => {
+        socket.on("leave-conversation", (convoId) => {
+            socket.leave(convoId);
+        });
+
+        socket.on("send-message", async ({convoId, message, userId}) => {
             socket.to(convoId).emit("receive-message", message, convoId);
+
+            const room=io.sockets.adapter.rooms.get(convoId);
+            const roomsSize=room? room.size : 0;
+
+            if(roomsSize > 1) {
+                await axios.patch(`http://localhost:5000/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
+                io.in(convoId).emit("messages-read", { convoId, readBy: userId });
+            }
         });
 
         socket.on("disconnect", () => {
