@@ -149,6 +149,7 @@ export default function ChatsPage() {
 
   const getUserConversations = async () => {
     const result=await getConversations()
+    console.log(result)
     setConversations(result.result)
   }
 
@@ -245,7 +246,7 @@ export default function ChatsPage() {
                             <h3 className="font-medium text-gray-900 truncate">{user.username}</h3>
                             {/* <span className="text-xs text-gray-500 flex-shrink-0">{user.timestamp}</span> */}
                           </div>
-                          {/* <p className="text-sm text-blue-600 truncate">{user.lastMessage}</p> */}
+                            <p className={`text-sm ${user?.lastMessage?.content?.isRead? 'text-gray-500':'text-black'}  truncate`}>{user?.lastMessage?.content?.message}</p> 
                         </div>
                       </div>
                     </div>
@@ -377,9 +378,6 @@ export default function ChatsPage() {
                     onChange={(e) => setMessageInput(e.target.value)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                    <Paperclip className="h-5 w-5 text-gray-600" />
-                  </button>
                   <button
                     onClick={handleSendMessage}
                     className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"

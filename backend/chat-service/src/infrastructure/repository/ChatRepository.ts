@@ -66,4 +66,38 @@ export class ChatRepository implements IChatRepository {
         return {success:true}
     }
 
+    async getLastMessageAndCount(convo: string, id:string): Promise<any> {
+        console.log(convo)
+        const chats=await ChatModel.findOne({conversation:convo})
+        let lastMessage=null, unreadCount=null
+        // console.log(chats)
+        if(chats){
+            // lastMessage=chats?.content[chats.content.length - 1]
+            lastMessage=await ChatModel.aggregate([
+                {$match:{conversation:convo.toString()}},
+                {$unwind:'$content'},
+                {$match:
+                    {
+                        'content.sendBy':{$ne:id},
+                    },
+                },
+            ])
+            console.log('1', lastMessage)
+            lastMessage=lastMessage[lastMessage.length-1]
+            console.log('2', lastMessage)
+            unreadCount=await ChatModel.aggregate([
+                {$match:{conversation:convo.toString()}},
+                {$unwind:'$content'},
+                {$match:
+                    {
+                        'content.sendBy':{$ne:id},
+                        'content.isRead':false
+                    },
+                },
+            ])
+            unreadCount=unreadCount.length
+        }
+        return {lastMessage, unreadCount}
+    }
+
 }
