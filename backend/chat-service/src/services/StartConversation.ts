@@ -10,8 +10,8 @@ export class StartCoversation implements IStartConversation {
         @inject(TYPES.IConversationRepository) private _conversationRepository:IConversationRepository
     ){}
 
-    async startConversation(id: string, user: string): Promise<{ success: boolean; }> {
-        const result=await this._conversationRepository.addConversation(id, user)
+    async startConversation(id: string, user: string, isCompany:boolean): Promise<{ success: boolean, id:string}> {
+        const result=await this._conversationRepository.addConversation(id, user, isCompany)
         return result
     }
 

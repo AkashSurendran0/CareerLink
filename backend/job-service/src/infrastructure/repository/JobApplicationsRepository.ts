@@ -59,4 +59,30 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
         )
     }
 
+    async acceptApplication(job: string, user: string): Promise<{ success: boolean; }> {
+        const result=await JobApplicationModel.updateOne(
+            {
+                jobPost:job,
+                'applicants.user':user
+            },
+            {$set:{
+                'applicants.$.status':'Accepted'
+            }}
+        )
+        return {success: result.modifiedCount == 1}
+    }
+
+    async rejectApplication(job: string, user: string): Promise<{ success: boolean; }> {
+        const result=await JobApplicationModel.updateOne(
+            {
+                jobPost:job,
+                'applicants.user':user
+            },
+            {$set:{
+                'applicants.$.status':'Rejected'
+            }}
+        )
+        return {success: result.modifiedCount == 1}
+    }
+
 }

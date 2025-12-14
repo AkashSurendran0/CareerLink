@@ -18,4 +18,5 @@ export interface ISubscriptionTypesRepository {
     alterPlanStatus(id:string): Promise<{success:boolean}>
     getActivePlans(): Promise<SubscriptionType[]>
     findById(id:string): Promise<SubscriptionType>
+    deleteType(id:string): Promise<{success:true}>
 }

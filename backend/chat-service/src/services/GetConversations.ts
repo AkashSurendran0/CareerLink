@@ -13,8 +13,8 @@ export class GetConversations implements IGetConversations {
     ){}
 
     async getConversations(id: string): Promise<any> {
-        let result=await this._conversationRepository.getUserConversations(id)
-        console.log(result) 
+        let result=await this._conversationRepository.getConversations(id)
+        console.log(result)
         for(let i=0;i<result.length;i++){
             const lastMessageCount=await this._chatRepository.getLastMessageAndCount(result[i]._id, id)
             result[i].lastMessage=lastMessageCount.lastMessage

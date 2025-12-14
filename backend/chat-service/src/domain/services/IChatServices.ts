@@ -1,7 +1,7 @@
 import { ChatDto } from "../../dto/ChatDto"
 
 export interface IStartConversation {
-    startConversation(id:string, user:string):Promise<{success:boolean}>
+    startConversation(id:string, user:string, isCompany:boolean):Promise<{success:boolean, id:string}>
 }
 
 export interface IGetConversations {

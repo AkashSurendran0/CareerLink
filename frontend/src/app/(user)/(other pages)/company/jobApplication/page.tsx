@@ -2,21 +2,26 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getCompanyInfo, getJobApplicants, getJobDetails } from "@/services/userService"
+import { alterUserApplication, getCompanyInfo, getJobApplicants, getJobDetails } from "@/services/userService"
 import Image from "next/image"
+import { enqueueSnackbar } from "notistack"
+import { useLoading } from "@/app/(user)/template"
 
 export default function JobDetailsPage() {
+    const setLoading=useLoading()
     const router=useRouter()
     const [jobDetails, setJobDetails]=useState<any>(null)
     const [companyDetails, setCompanyDetails]=useState<any>(null)
     const [applicants, setApplicants]=useState()
     const [showLetter, setShowLetter]=useState(false)
     const [letter, setLetter]=useState('')
+    const [jobId, setJobId]=useState()
 
     useEffect(()=>{
         const fetchDetails = async () => {
             const id=localStorage.getItem('jobId')
             if(!id) return router.push('/company/registeredCompany/jobsPosted')
+            setJobId(id)
             fetchApplicants(id)
             const job=await getJobDetails(id)
             const company=await getCompanyInfo()
@@ -40,6 +45,50 @@ export default function JobDetailsPage() {
     const removeLetter = async () => {
         setLetter('')
         setShowLetter(false)
+    }
+
+    const acceptUser = async (userId:string) => {
+        if(!jobId) return
+        setLoading(true)
+        const result=await alterUserApplication(jobId, userId, companyDetails.id, 'accept')
+        setLoading(false)
+        if(result.result.success){
+            setApplicants((prev)=>{
+                return {
+                    ...prev,
+                    applicants:prev.applicants.map((user)=>
+                        user.user == userId
+                        ? {...user, status:'Accepted'}
+                        : user
+                    )
+                }
+            })
+            enqueueSnackbar('User is accepted and message is send accordingly', {variant:'success'})
+        }else{
+            enqueueSnackbar('Something went wrong, please refresh the page and try again', {variant:'error'})
+        }
+    }
+
+    const rejectUser = async (userId:string) => {
+        if(!jobId) return
+        setLoading(true)
+        const result=await alterUserApplication(jobId, userId, companyDetails.id, 'reject')
+        setLoading(false)
+        if(result.result.success){
+            setApplicants((prev)=>{
+                return {
+                    ...prev,
+                    applicants:prev.applicants.map((user)=>
+                        user.user == userId
+                        ? {...user, status:'Rejected'}
+                        : user
+                    )
+                }
+            })
+            enqueueSnackbar('User has been rejected', {variant:'success'})
+        }else{
+            enqueueSnackbar('Something went wrong, please refresh the page and try again', {variant:'error'})
+        }
     }
 
     return (
@@ -157,9 +206,9 @@ export default function JobDetailsPage() {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <h2 className="text-xl font-bold text-gray-900">Applicants</h2>
-                        <button className="cursor-pointer inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white">
+                        {/* <button className="cursor-pointer inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white">
                         Find Best Match
-                        </button>
+                        </button> */}
                     </div>
 
                     {/* Table - Desktop */}
@@ -174,7 +223,9 @@ export default function JobDetailsPage() {
                         </thead>
                         <tbody>
                             {applicants && applicants.applicants?.map((applicant) => (
-                            <tr key={applicant._id} className="border-b border-gray-100 hover:bg-gray-50">
+                            <tr key={applicant._id} 
+                            className={` ${applicant.status == 'Pending' && 'border-gray-100 hover:bg-gray-50'} ${applicant.status == 'Accepted' && 'bg-green-400 hover:bg-green-500'} ${applicant.status == 'Rejected' && 'bg-red-400 hover:bg-red-500'}`}
+                            >
                                 <td className="px-4 py-4 text-sm text-gray-900">{applicant.userName}</td>
                                 <td className="px-4 py-4 text-sm text-gray-600">{new Date(applicant.createdAt).toLocaleDateString()}</td>
                                 <td className="px-4 py-4 text-sm">
@@ -192,14 +243,24 @@ export default function JobDetailsPage() {
                                     >
                                     View Cover Letter
                                     </button>
-                                    <span className="text-gray-300">|</span>
-                                    <button className="cursor-pointer text-blue-600 hover:underline">
-                                    Accept
-                                    </button>
-                                    <span className="text-gray-300">|</span>
-                                    <button className="cursor-pointer text-blue-600 hover:underline">
-                                    Reject
-                                    </button>
+                                    {applicant.status == 'Pending' && (
+                                        <>
+                                            <span className="text-gray-300">|</span>
+                                            <button 
+                                            className="cursor-pointer text-blue-600 hover:underline"
+                                            onClick={()=>acceptUser(applicant.user)}
+                                            >
+                                            Accept
+                                            </button>
+                                            <span className="text-gray-300">|</span>
+                                            <button 
+                                            className="cursor-pointer text-blue-600 hover:underline"
+                                            onClick={()=>rejectUser(applicant.user)}
+                                            >
+                                            Reject
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                                 </td>
                             </tr>

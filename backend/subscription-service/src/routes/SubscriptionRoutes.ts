@@ -20,5 +20,7 @@ router.delete('/deletePlan', subscriptionController.deletePlan)
 router.get('/getSubscriptionInfo', subscriptionController.getSubscriptionInfo)
 router.post('/adminUpgradeUser', subscriptionController.adminUpgradeUser)
 router.delete('/adminDowngradeUser', subscriptionController.adminDowngradeUser)
+router.get('/getActivePlanUsers', subscriptionController.getActivePlanUsers)
+router.delete('/deleteSubscriptionPlan', subscriptionController.deleteSubscriptionPlan)
 
 export default router

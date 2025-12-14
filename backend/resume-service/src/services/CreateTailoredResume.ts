@@ -13,7 +13,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
         try {
             const genAI = new GoogleGenerativeAI(process.env.GEMINI_AI_API);
             const model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-pro",
+                model: "gemini-1.5-flash",
             });
  
             const prompt = `

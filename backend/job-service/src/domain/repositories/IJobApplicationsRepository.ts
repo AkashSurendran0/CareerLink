@@ -5,4 +5,6 @@ export interface IJobApplicationsRepository {
     getUserApplications(user:string): Promise<{success:boolean} | {success:boolean, jobs:any[]}>
     getCount(id:string): Promise<number>
     getJobApplicants(id:string): Promise<JobApplications | null>
+    acceptApplication(job:string, user:string): Promise<{success:boolean}>
+    rejectApplication(job:string, user:string): Promise<{success:boolean}>
 }

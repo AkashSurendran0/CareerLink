@@ -8,7 +8,7 @@ import { TYPES } from './types'
 export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
-    private readonly exchange=["company.events", "subscription.events", "connection.events"] 
+    private readonly exchange=["company.events", "subscription.events", "connection.events", "jobApplication.events"] 
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -43,6 +43,8 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded")
         await this.channel.bindQueue(queue.queue, "connection.events", "connection.sendRequest")
         await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest")
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.accepted")
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.rejected")
 
         console.log('Notification service is listening for messages...')
 
@@ -139,6 +141,12 @@ The CineScope Admin Team
                 case 'acceptRequest':
                     await this._addNotification.saveNotification(data.reciever, `${data.sender} accepted your connection request`, '/meetPeople/myConnections')
 
+                case 'applicationAccepted':
+                    await this._addNotification.saveNotification(data.userEmail, `You have been shortlisted !!`, '/profile/user/jobsApplied')
+
+                case 'applicationRejected':
+                    await this._addNotification.saveNotification(data.userEmail, 'Update on your job application', '/profile/user/jobsApplied')
+                
                 default:
                     console.log('Unknown type event', data.action)
             }

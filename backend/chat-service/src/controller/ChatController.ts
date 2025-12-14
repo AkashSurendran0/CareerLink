@@ -18,9 +18,12 @@ export class ChatController {
 
     startUserConversation = async (req:Request, res:Response) => {
         try {
+            const {company}=req.query
             const id=req.headers['user-id'] as string
+            let sender = company || id
+            let isCompany=company ? true:false
             const {user}=req.query
-            const result=await this._startConversation.startConversation(id, user)
+            const result=await this._startConversation.startConversation(sender, user, isCompany)
             res.json({result})
         } catch (error:unknown) {
             if (error instanceof Error) {
@@ -36,9 +39,15 @@ export class ChatController {
             const id=req.headers['user-id'] as string
             let result=await this._getConversations.getConversations(id)
             for(let i=0;i<result.length;i++){
-                const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].user}`)
-                result[i].username=userDetails.data.result.result.username
-                result[i].pfp=userDetails.data.result?.pfp || null
+                if(result[i].isCompany){
+                    const companyDetails=await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${result[i].user}`)
+                    result[i].username=companyDetails.data.result.name
+                    result[i].pfp=companyDetails.data.result.logo
+                }else{
+                    const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].user}`)
+                    result[i].username=userDetails.data.result.result.username
+                    result[i].pfp=userDetails.data.result?.pfp || null
+                }
             }
             res.json({result})
         } catch (error: unknown) {
@@ -53,7 +62,9 @@ export class ChatController {
     sendMessage = async (req:Request, res:Response) => {
         try {
             const {convoId, message}=req.body
-            const sender=req.headers['user-id'] as string
+            const id=req.headers['user-id'] as string
+            const {company}=req.query
+            let sender = company || id
             const result=await this._sendMessage.sendMessage(sender, message, convoId)
             res.json({result})
         } catch (error: unknown) {
@@ -83,8 +94,27 @@ export class ChatController {
     readMessages = async (req:Request, res:Response) => {
         try {
             const {convo, user}=req.query
-            console.log(convo, user)
             const result=await this._readMessages.readMessages(convo, user)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getCompanyConversations = async (req:Request, res:Response) => {
+        try {
+            const {company}=req.query
+            console.log(company)
+            let result=await this._getConversations.getConversations(company)
+            for(let i=0;i<result.length;i++){
+                const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].user}`)
+                result[i].username=userDetails.data.result.result.username
+                result[i].pfp=userDetails.data.result?.pfp || null
+            }
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

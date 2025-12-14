@@ -149,6 +149,8 @@
                 "run post-service",
                 "watch subscription-service",
                 "run subscription-service",
+                "watch chat-service",
+                "run chat-service",
             ],
             "dependsOrder": "parallel"
         },
@@ -165,6 +167,7 @@
                 "run resume-service",
                 "run post-service",
                 "run subscription-service",
+                "run chat-service"
             ],
         }
     ]

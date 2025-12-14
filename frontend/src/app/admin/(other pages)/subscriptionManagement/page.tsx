@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { alterPlanStatus, getAllPlans } from "@/services/adminService"
 import { LoaderIcon } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
+import { deleteSubscriptionPlan, getActivePlanUsers } from "@/services/userService"
 
 interface Feature {
     code: string
@@ -53,6 +54,27 @@ export default function SubscriptionsPage() {
 
     const goToAddPlan = () => {
         router.push('/admin/subscriptionManagement/addPlan')
+    }
+
+    const goToEditPage = async (id:string) => {
+        const result=await getActivePlanUsers(id)
+        if(result.result.success){
+            localStorage.setItem('plan', id)
+            router.push('/admin/subscriptionManagement/editPlan')
+        }else{
+            enqueueSnackbar('Editing the plan is not possible currently as there are active users with the same plan', {variant:'error'})
+        }
+    }
+
+    const deletePlan = async (id:string) => {
+        const result=await deleteSubscriptionPlan(id)
+        if(result.result.success){
+            setPlans((prev)=>{
+                return prev.filter(plan=>plan._id != id)
+            })
+        }else{
+            enqueueSnackbar('Deleting the plan is not possible currently as there are active users with the same plan', {variant:'error'})
+        }
     }
 
     return (
@@ -141,6 +163,14 @@ export default function SubscriptionsPage() {
                                             Activate
                                         </button>
                                     )}
+                                    <span className="text-gray-300">|</span>
+                                    <button onClick={() => goToEditPage(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                        Edit Plan
+                                    </button>
+                                    <span className="text-gray-300">|</span>
+                                    <button onClick={()=>deletePlan(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                        Delete Plan
+                                    </button>
                                 </td>
                                 </tr>
                             ))}
