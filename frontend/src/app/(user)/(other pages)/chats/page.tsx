@@ -5,6 +5,8 @@ import { Search, Phone, Video, Send, Paperclip, X, CheckCheck, User, LoaderIcon 
 import { getConversations, getUserChats, getUserDetails, sendMessage } from "@/services/userService"
 import Image from "next/image"
 import { userSocket } from "@/lib/socket"
+import { useLoading } from "../../template"
+import { useRouter } from "next/navigation"
 
 interface ChatUser {
   id: number
@@ -27,6 +29,8 @@ interface Message {
 }
 
 export default function ChatsPage() {
+  const setLoading=useLoading()
+  const router=useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null)
@@ -149,6 +153,7 @@ export default function ChatsPage() {
 
   const getUserConversations = async () => {
     const result=await getConversations()
+    console.log(result)
     setConversations(result.result)
   }
 
@@ -192,6 +197,11 @@ export default function ChatsPage() {
     }
   }
 
+  const routeToCompanyChatPage = async () => {
+    setLoading(true)
+    router.push('/chats/companyChats')
+  }
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
 
@@ -201,6 +211,23 @@ export default function ChatsPage() {
           <div
             className={`${selectedUser ? "hidden" : "flex"} md:flex w-full md:w-80 bg-white rounded-lg shadow-sm border border-gray-200 flex-col overflow-hidden min-h-0`}
           >
+            <div className="flex border-b border-gray-200 flex-shrink-0">
+              <button
+                // onClick={() => {
+                //   setChatType("users")
+                //   setSelectedUser(null)
+                // }}
+                className={`flex-1 py-3 text-sm font-medium transition-colors text-blue-600 border-b-2 border-blue-600`}
+              >
+                User
+              </button>
+              <button
+                onClick={routeToCompanyChatPage}
+                className={`cursor-pointer flex-1 py-3 text-sm font-medium transition-colors text-gray-600 hover:text-gray-900`}
+              >
+                Company
+              </button>
+            </div>
             <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div className="relative">
                 <Search className="absolute left-3 top-3 text-gray-400 h-5 w-5" />
@@ -245,7 +272,7 @@ export default function ChatsPage() {
                             <h3 className="font-medium text-gray-900 truncate">{user.username}</h3>
                             {/* <span className="text-xs text-gray-500 flex-shrink-0">{user.timestamp}</span> */}
                           </div>
-                          {/* <p className="text-sm text-blue-600 truncate">{user.lastMessage}</p> */}
+                            <p className={`text-sm ${user?.lastMessage?.content?.isRead? 'text-gray-500':'text-black'}  truncate`}>{user?.lastMessage?.content?.message}</p> 
                         </div>
                       </div>
                     </div>
@@ -332,7 +359,7 @@ export default function ChatsPage() {
                                 : "bg-gray-100 text-gray-900 rounded-bl-none"
                             }`}
                           >
-                            <p className="text-sm">{message.message}</p>
+                            <p className="text-sm whitespace-pre-line">{message.message}</p>
                           </div>
                           {isMe && (
                             <div className="flex items-center gap-1 mt-1">
@@ -377,9 +404,6 @@ export default function ChatsPage() {
                     onChange={(e) => setMessageInput(e.target.value)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                    <Paperclip className="h-5 w-5 text-gray-600" />
-                  </button>
                   <button
                     onClick={handleSendMessage}
                     className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"

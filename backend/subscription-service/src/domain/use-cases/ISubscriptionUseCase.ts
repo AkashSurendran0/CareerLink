@@ -13,3 +13,7 @@ export interface IDeletePlan {
 export interface IGetSubscriptionInfo {
     getInfo(user:string): Promise<{success:boolean}>
 }
+
+export interface IGetActivePlanUsers {
+    getActiveUsers(plan:string): Promise<{success:boolean}>
+}

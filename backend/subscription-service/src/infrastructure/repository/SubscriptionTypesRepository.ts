@@ -89,4 +89,9 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
         )
     }
 
+    async deleteType(id: string): Promise<{ success: true; }> {
+        await SubscriptionTypesModel.deleteOne({_id:id})
+        return {success:true}
+    }
+
 }

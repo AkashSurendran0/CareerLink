@@ -2,12 +2,12 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
-import { IAddSubscription, IAlterPlanStatus, IGetActivePlans, IGetAllPlans } from "../../domain/use-cases/ISubscriptionTypesUseCases";
+import { IAddSubscription, IAlterPlanStatus, IDeletePlanType, IGetActivePlans, IGetAllPlans } from "../../domain/use-cases/ISubscriptionTypesUseCases";
 import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
-import { IBuySubscription, IDeletePlan, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
+import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 import axios from "axios";
 
 dotenv.config()
@@ -28,7 +28,9 @@ export class SubscriptionController {
         @inject(TYPES.IBuySubscription) private _buySubscription:IBuySubscription,
         @inject(TYPES.IGetUserSubscription) private _getUserSubscription:IGetUserSubscription,
         @inject(TYPES.IDeletePlan) private _deletePlan:IDeletePlan,
-        @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo:IGetSubscriptionInfo
+        @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo:IGetSubscriptionInfo,
+        @inject(TYPES.IGetActivePlanUsers) private _getActivePlanUsers:IGetActivePlanUsers,
+        @inject(TYPES.IDeletePlanType) private _deletePlanType:IDeletePlanType
     ) {}
 
     addSubscription = async (req:Request, res:Response) => {
@@ -299,6 +301,37 @@ export class SubscriptionController {
             const {id}=req.query
             await axios.delete(`http://localhost:5000/resume/v1/deletePlan?user=${id}`)
             const result=await this._deletePlan.deletePlan(id)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getActivePlanUsers = async (req:Request, res:Response) => {
+        try {
+            const {plan}=req.query
+            console.log(plan)
+            const result=await this._getActivePlanUsers.getActiveUsers(plan)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    deleteSubscriptionPlan = async (req:Request, res:Response) => {
+        try {
+            const {plan}=req.query
+            const result=await this._deletePlanType.deletePlanType(plan)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

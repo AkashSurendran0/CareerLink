@@ -378,8 +378,8 @@ export const getConversations = async () => {
     return res.data
 }
 
-export const sendMessage = async (data:any) => {
-    const res=await api.patch('chat/v1/sendMessage', data)
+export const sendMessage = async (data:any, companyId:string) => {
+    const res=await api.patch(`chat/v1/sendMessage?company=${companyId}`, data)
     return res.data
 }
 
@@ -390,5 +390,25 @@ export const getUserChats = async (conversation:string) => {
 
 export const readOtherUserChats = async (conversation:string) => {
     const res=await api.patch(`chat/v1/readOtherUserChats?convo=${conversation}`)
+    return res.data
+}
+
+export const getCompanyConversations = async (companyId:string) => {
+    const res=await api.get(`chat/v1/getCompanyConversations?company=${companyId}`)
+    return res.data
+}
+
+export const alterUserApplication = async (jobId:string, user:string, companyId:string, action:string) => {
+    const res=await api.patch(`job/v1/alterUserApplication?jobId=${jobId}&user=${user}&company=${companyId}&action=${action}`)
+    return res.data
+}
+
+export const getActivePlanUsers = async (id:string) => {
+    const res=await api.get(`subscription/v1/getActivePlanUsers?plan=${id}`)
+    return res.data
+}
+
+export const deleteSubscriptionPlan = async (id:string) => {
+    const res=await api.delete(`subscription/v1/deleteSubscriptionPlan?plan=${id}`)
     return res.data
 }

@@ -31,7 +31,7 @@ export default function CompanyJobsPage() {
 
     useEffect(()=>{
         const fetchJobs=async ()=>{
-            const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, query, filter)
+            const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, query, filter, null)
             console.log(result.result.jobs)
             setPageLimit(result.result.limit)
             setJobs(result.result.jobs)
@@ -42,7 +42,7 @@ export default function CompanyJobsPage() {
     }, [])
 
     const getPaginatedCompanies = async (i:number) => {
-        const result=await getAllCompanyJob(i, LIMIT, query, filter)
+        const result=await getAllCompanyJob(i, LIMIT, query, filter, null)
         setPage(i)
         setPageLimit(result.result.limit)
         setJobs(result.result.jobs)
@@ -51,7 +51,7 @@ export default function CompanyJobsPage() {
 
     const queryStatus = async (i:string) => {
         setFilter(i)
-        const result=await getAllCompanyJob(page, LIMIT, query, i)
+        const result=await getAllCompanyJob(page, LIMIT, query, i, null)
         setPageLimit(result.result.limit)
         setJobs(result.result.jobs)
         setTotalCount(result.result.count)
@@ -67,7 +67,7 @@ export default function CompanyJobsPage() {
     }
 
     const fetchWithSearch = async (char:string) => {
-        const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, char, filter)
+        const result=await getAllCompanyJob(STARTING_PAGE, LIMIT, char, filter, null)
         setPageLimit(result.result.limit)
         setJobs(result.result.jobs)
         setTotalCount(result.result.count)

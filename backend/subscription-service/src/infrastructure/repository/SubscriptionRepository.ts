@@ -42,4 +42,23 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         return {success:true}
     }
 
+    async getActivePlanUsers(plan: string): Promise<{ success: boolean; }> {
+        const existingPlans=await SubscriptionModel.findAll({where:{subscriptionType:plan}, raw:true})
+        console.log(existingPlans, plan)
+        if(!existingPlans || existingPlans.length == 0) return {success:true}
+        const now=new Date()
+        for(let plan of existingPlans){
+            if(plan.validTill > now){
+                return {success:false}
+            }
+        }
+
+        return {success:true}
+    }
+
+    async deletePlans(id: string): Promise<{ success: boolean; }> {
+        await SubscriptionModel.destroy({where:{subscriptionType:id}})
+        return {success:true}
+    }
+
 }

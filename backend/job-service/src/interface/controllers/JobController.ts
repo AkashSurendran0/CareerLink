@@ -2,9 +2,10 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants, IAlterUserApplication } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { uploadResume } from "../../config/upload"
+import { rabbitmqService } from "../../utils/Rabbitmq"
 
 @injectable()
 export class JobController {
@@ -18,7 +19,8 @@ export class JobController {
         @inject(TYPES.IGetAvailableJobs) private _getAvailableJobs:IGetAvailableJobs,
         @inject(TYPES.IApplyJob) private _applyJob:IApplyJob,
         @inject(TYPES.IGetUserAppliedJobs) private _getUserAppliedJobs:IGetUserAppliedJobs,
-        @inject(TYPES.IGetJobApplicants) private _getJobApplicants:IGetJobApplicants
+        @inject(TYPES.IGetJobApplicants) private _getJobApplicants:IGetJobApplicants,
+        @inject(TYPES.IAlterUserApplication) private _alterUserApplication:IAlterUserApplication
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -47,7 +49,7 @@ export class JobController {
             const token=req.cookies?.token
             const {id}=req.query
             let company;
-            if(id){
+            if(id != 'null'){
                 company=await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${id}`, {
                     headers:{
                         Cookie:`token=${token}`
@@ -221,6 +223,51 @@ export class JobController {
                 }
             }
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    alterUserApplication = async (req:Request, res:Response) => {
+        try {
+            const {jobId, user, company, action}=req.query
+            const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${user}`)
+            if(action=='accept'){
+                const result=await this._alterUserApplication.acceptApplication(jobId, user)
+                console.log(result)
+                if(result.success){
+                    const conversation=await axios.post(`http://localhost:5000/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const message=`Congratulations,
+Your application has been shortlisted by our hiring team.
+Our team will review your profile in detail and contact you with the next steps shortly.
+
+Thank you for your interest in joining our company`;
+                    const data={
+                        convoId:conversation.data.result.id,
+                        message
+                    }
+                    await axios.patch(`http://localhost:5000/chat/v1/sendMessage?company=${company}`, data)
+                    await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.accepted", {
+                        userEmail:userDetails.data?.result?.result?.email,
+                        action:'applicationAccepted'
+                    })
+                }
+                res.json({result}) 
+            }else if(action=='reject'){
+                const result=await this._alterUserApplication.rejectApplication(jobId, user)
+                await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.rejected", {
+                    userEmail:userDetails.data?.result?.result?.email,
+                    action:'applicationRejected'
+                })
+                res.json({result})
+            }else{
+                const result={success:false}
+                res.json({result})
+            }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

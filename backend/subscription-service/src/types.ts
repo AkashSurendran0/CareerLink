@@ -9,5 +9,7 @@ export const TYPES = {
     IBuySubscription:'IBuySubscription',
     IGetUserSubscription:'IGetUserSubscription',
     IDeletePlan:'IDeletePlan',
-    IGetSubscriptionInfo:'IGetSubscriptionInfo'
+    IGetSubscriptionInfo:'IGetSubscriptionInfo',
+    IGetActivePlanUsers:'IGetActivePlanUsers',
+    IDeletePlanType:'IDeletePlanType'
 }

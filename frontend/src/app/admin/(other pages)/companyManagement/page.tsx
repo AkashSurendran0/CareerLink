@@ -275,9 +275,9 @@ function UserManagement() {
                                     {company.suspended? "Make Active" : "Suspend"}
 
                                 </button>
-                                <span className="text-gray-300">|</span>
+                                {/* <span className="text-gray-300">|</span>
                                 <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Upgrade/</button>
-                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button>
+                                <button className="text-blue-600 hover:text-blue-800 cursor-pointer">Downgrade</button> */}
                                 </div>
                             </td>
                             </tr>

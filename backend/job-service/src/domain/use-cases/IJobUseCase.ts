@@ -49,3 +49,8 @@ export interface IGetUserAppliedJobs {
 export interface IGetJobApplicants {
     getApplicants(id:string): Promise<JobApplicationDto | null>
 }
+
+export interface IAlterUserApplication {
+    acceptApplication(job:string, user:string): Promise<{success:boolean}>
+    rejectApplication(job:string, user:string): Promise<{success:boolean}>
+}
