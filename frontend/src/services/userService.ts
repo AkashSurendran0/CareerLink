@@ -26,148 +26,157 @@ type Amount = {
     amount:number
 }
 
+const USER_V1_ROUTE = '/user/v1'
+const COMPANY_V1_ROUTE = '/company/v1'
+const NOTIFICATION_V1_ROUTE = '/notification/v1'
+const JOB_V1_ROUTE = '/job/v1'
+const RESUME_V1_ROUTE = '/resume/v1'
+const POST_V1_ROUTE = '/media/v1'
+const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
+const CHAT_V1_ROUTE = '/chat/v1'
+
 export const loginUser = async (loginDetails: LoginDetails) => {
-    const res=await api.post('/user/v1/login', loginDetails)
+    const res=await api.post(`${USER_V1_ROUTE}/login`, loginDetails)
     return res.data
 }
 
 export const resetGetOtp = async (email: string) => {
-    const res=await api.get(`/user/v1/getOTP?email=${email}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}`)
     return res.data
 }
 
 export const sendResetOtp = async (data: Data) => {
-    const res=await api.post('/user/v1/sendResetOTP', data)
+    const res=await api.post(`${USER_V1_ROUTE}/sendResetOTP`, data)
     return res.data
 }
 
 export const changePassword = async (changePassForm: ChangePassForm) => {
-    const res=await api.post('/user/v1/changePassword', changePassForm)
+    const res=await api.post(`${USER_V1_ROUTE}/changePassword`, changePassForm)
     return res.data
 }
 
 export const getSignupOtp = async (email: string) => {
-    const res=await api.get(`/user/v1/getOTP?email=${email}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}`)
     return res.data
 }
 
 export const sendSignupOtp = async (data: Data) => {
-    const res=await api.post('/user/v1/sendOTP', data)
+    const res=await api.post(`${USER_V1_ROUTE}/sendOTP`, data)
     return res.data
 }
 
 export const signUp = async (signupForm: SignupForm) => {
-    const res=await api.post('/user/v1/signup', signupForm)
+    const res=await api.post(`${USER_V1_ROUTE}/signup`, signupForm)
     return res.data
 }
 
 export const getCompanyInfo = async () => {
-    const res=await api.get('/company/v1/getCompanyDetails')
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getCompanyDetails`)
     return res.data
 }
 
 export const editCompany = async (formData) => {
-    const res=await api.post('/company/v1/editCompany', formData)
+    const res=await api.post(`${COMPANY_V1_ROUTE}/editCompany`, formData)
     return res.data
 }
 
 export const addCompany = async (formData) => {
-    const res=await api.post('/company/v1/addCompany', formData)
+    const res=await api.post(`${COMPANY_V1_ROUTE}/addCompany`, formData)
     return res.data 
 }
 
 export const getUserDetails = async () => {
-    const res=await api.get('/user/v1/getUserDetails')
+    const res=await api.get(`${USER_V1_ROUTE}/getUserDetails`)
     return res.data
 }
 
 export const editUserDetails = async (formData) => {
-    const res=await api.patch('/user/v1/editUserDetails', formData)
+    const res=await api.patch(`${USER_V1_ROUTE}/editUserDetails`, formData)
     return res.data
 }
 
 export const addUserDetails = async (form) => {
-    const res=await api.post('/user/v1/addUserDetails', form)
+    const res=await api.post(`${USER_V1_ROUTE}/addUserDetails`, form)
     return res.data
 }
 
 export const getCompanyRegistrationInfo = async () => {
-    const res=await api.get('company/v1/getCompanyRegistrationInfo')
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getCompanyRegistrationInfo`)
     return res.data
 }
 
 export const reapplyCompany = async () => {
-    const res=await api.patch('company/v1/reapplyCompany')
+    const res=await api.patch(`${COMPANY_V1_ROUTE}/reapplyCompany`)
     return res.data
 }
 
 export const deleteCompany = async (id:string) => {
-    const res=await api.delete(`company/v1/deleteCompany?id=${id}`)
+    const res=await api.delete(`${COMPANY_V1_ROUTE}/deleteCompany?id=${id}`)
     return res.data
 }
 
 export const getAllNotifications = async () => {
-    const res=await api.get('notification/v1/getNotifications')
+    const res=await api.get(`${NOTIFICATION_V1_ROUTE}/getNotifications`)
     return res.data
 }
 
 export const markAllNotificationsRead = async () => {
-    const res=await api.patch('notification/v1/markAllRead')
+    const res=await api.patch(`${NOTIFICATION_V1_ROUTE}/markAllRead`)
     return res.data
 }
 
 export const deleteAllNotifications = async () => {
-    const res=await api.delete('notification/v1/deleteAll')
+    const res=await api.delete(`${NOTIFICATION_V1_ROUTE}/deleteAll`)
     return res.data
 }
 
 export const deleteOneNotification = async (id:string) => {
-    const res=await api.delete(`notification/v1/deleteOne?id=${id}`)
+    const res=await api.delete(`${NOTIFICATION_V1_ROUTE}/deleteOne?id=${id}`)
     return res.data
 }
 
 export const markOneRead = async (id:string) => {
-    const res=await api.patch(`notification/v1/readOne?id=${id}`)
+    const res=await api.patch(`${NOTIFICATION_V1_ROUTE}/readOne?id=${id}`)
     return res.data
 }
 
 export const addJob = async (jobDetails) => {
-    const res=await api.post('job/v1/addJob', jobDetails)
+    const res=await api.post(`${JOB_V1_ROUTE}/addJob`, jobDetails)
     return res.data
 }
 
 export const getAllCompanyJob = async (startingPage:number, limit:number, query:string, filter:string, id:string | null) => {
-    const res=await api.get(`job/v1/getAllJobs?start=${startingPage}&limit=${limit}&query=${query}&filter=${filter}&id=${id}`)
+    const res=await api.get(`${JOB_V1_ROUTE}/getAllJobs?start=${startingPage}&limit=${limit}&query=${query}&filter=${filter}&id=${id}`)
     return res.data
 }
 
 export const getJobDetails = async (id:string) => {
-    const res=await api.get(`job/v1/getJobDetails?id=${id}`)
+    const res=await api.get(`${JOB_V1_ROUTE}/getJobDetails?id=${id}`)
     return res.data
 }
 
 export const editJob = async (jobDetails) => {
-    const res=await api.patch('job/v1/editJob', jobDetails)
+    const res=await api.patch(`${JOB_V1_ROUTE}/editJob`, jobDetails)
     return res.data
 }
 
 export const closeJob = async (id:string) => {
-    const res=await api.patch(`job/v1/closeJob?id=${id}`)
+    const res=await api.patch(`${JOB_V1_ROUTE}/closeJob?id=${id}`)
     return res.data
 }
 
 export const getAllJobs = async (query:string) => {
-    const res=await api.get(`job/v1/getAvailableJobs?query=${query}`)
+    const res=await api.get(`${JOB_V1_ROUTE}/getAvailableJobs?query=${query}`)
     return res.data
 }
 
 export const createResume = async (data:any) => {
-    const res=await api.post('resume/v1/createResume', data)
+    const res=await api.post(`${RESUME_V1_ROUTE}/createResume`, data)
     return res.data
 }
 
 export const saveResume = async (data:any) => {
-    const res=await api.post('resume/v1/saveResume', data, {
+    const res=await api.post(`${RESUME_V1_ROUTE}/saveResume`, data, {
         headers:{
             'Content-Type':'multipart/form-data'
         }
@@ -176,239 +185,239 @@ export const saveResume = async (data:any) => {
 }
 
 export const getAllUserResumes = async () => {
-    const res=await api.get('resume/v1/getAllUserResumes')
+    const res=await api.get(`${RESUME_V1_ROUTE}/getAllUserResumes`)
     return res.data
 }
 
 export const createCoverLetter = async (data:any) => {
-    const res=await api.post('resume/v1/createCoverLetter', data)
+    const res=await api.post(`${RESUME_V1_ROUTE}/createCoverLetter`, data)
     return res.data
 }
 
 export const applyJobWithUrl = async (data:any) => {
-    const res=await api.post('job/v1/applyJobWithUrl', data)
+    const res=await api.post(`${JOB_V1_ROUTE}/applyJobWithUrl`, data)
     return res.data
 }
 
 export const applyJobWithFile = async (formData:any) => {
-    const res=await api.post('job/v1/applyJobWithFile', formData, {
+    const res=await api.post(`${JOB_V1_ROUTE}/applyJobWithFile`, formData, {
         headers:{
-            "Content-Type":'multipart/form-data'
+            "Content-Type":`multipart/form-data`
         }
     })
     return res.data
 }
 
 export const getUserAppliedJobs = async () => {
-    const res=await api.get('job/v1/getUserAppliedJobs')
+    const res=await api.get(`${JOB_V1_ROUTE}/getUserAppliedJobs`)
     return res.data
 }
 
 export const getJobApplicants = async (id:string) => {
-    const res=await api.get(`job/v1/getJobApplicants?job=${id}`)
+    const res=await api.get(`${JOB_V1_ROUTE}/getJobApplicants?job=${id}`)
     return res.data
 }
 
 export const postContent = async (formData:any) => {
-    const res=await api.post('media/v1/postContent', formData, {
+    const res=await api.post(`${POST_V1_ROUTE}/postContent`, formData, {
         headers:{
-            "Content-Type":'multipart/form-data'
+            "Content-Type":`multipart/form-data`
         }
     })
     return res.data
 }
 
 export const getAllPosts = async (limit:number, shown:number) => {
-    const res=await api.get(`media/v1/getAllPosts?lim=${limit}&shown=${shown}`)
+    const res=await api.get(`${POST_V1_ROUTE}/getAllPosts?lim=${limit}&shown=${shown}`)
     return res.data
 }
 
 export const alterPostLike = async (postId:string) => {
-    const res=await api.patch(`media/v1/alterPostLike?post=${postId}`)
+    const res=await api.patch(`${POST_V1_ROUTE}/alterPostLike?post=${postId}`)
     return res.data
 }
 
 export const addComment = async (data:any) => {
-    const res=await api.patch('media/v1/addComment', data)
+    const res=await api.patch(`${POST_V1_ROUTE}/addComment`, data)
     return res.data 
 }
 
 export const loadSinglePostDetails = async (id:string) => {
-    const res=await api.get(`media/v1/getSinglePostDetails?post=${id}`)
+    const res=await api.get(`${POST_V1_ROUTE}/getSinglePostDetails?post=${id}`)
     return res.data
 }
 
 export const getAllUserPosts = async () => {
-    const res=await api.get('media/v1/getAllUserPosts')
+    const res=await api.get(`${POST_V1_ROUTE}/getAllUserPosts`)
     return res.data
 }
 
 export const deleteUserPost = async (id:string) => {
-    const res=await api.delete(`media/v1/deletePost?id=${id}`)
+    const res=await api.delete(`${POST_V1_ROUTE}/deletePost?id=${id}`)
     return res.data
 }
 
 export const getTailoredResume = async (id:string) => {
-    const res=await api.post(`resume/v1/getTailoredResume?job=${id}`)
+    const res=await api.post(`${RESUME_V1_ROUTE}/getTailoredResume?job=${id}`)
     return res.data
 }
 
 export const getTailoredCoverLetter = async (id:string) => {
-    const res=await api.post(`resume/v1/getTailoredCoverLetter?job=${id}`)
+    const res=await api.post(`${RESUME_V1_ROUTE}/getTailoredCoverLetter?job=${id}`)
     return res.data
 }
 
 export const getGithubData = async (username:string) => {
-    const res=await api.get(`user/v1/getGithubData?user=${username}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getGithubData?user=${username}`)
     return res.data
 }
 
 export const getGithubActivity = async (username:string) => {
-    const res=await api.get(`user/v1/getGithubActivity?user=${username}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getGithubActivity?user=${username}`)
     return res.data
 }
 
 export const getUserRepos = async (page:number, username:string, limit:number) => {
-    const res=await api.get(`user/v1/getGithubRepo?page=${page}&user=${username}&limit=${limit}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getGithubRepo?page=${page}&user=${username}&limit=${limit}`)
     return res.data
 }
 
 export const getActivePlans = async () => {
-    const res=await api.get('subscription/v1/getActivePlans')
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getActivePlans`)
     return res.data
 }
 
 export const getOrderId = async (data:Amount) => {
-    const res=await api.post('subscription/v1/create-order', data)
+    const res=await api.post(`${SUBSCRIPTION_V1_ROUTE}/create-order`, data)
     return res.data
 }
 
 export const verifyPayment = async (response:any) => {
-    const res=await api.post('subscription/v1/verifyPayment', response)
+    const res=await api.post(`${SUBSCRIPTION_V1_ROUTE}/verifyPayment`, response)
     return res.data
 }
 
 export const stripePayment = async (data:Amount) => {
-    const res=await api.post('subscription/v1/createStripePayment', data)
+    const res=await api.post(`${SUBSCRIPTION_V1_ROUTE}/createStripePayment`, data)
     return res.data
 }
 
 export const buyPremium = async (id:string, time:number) => {
-    const res=await api.post(`subscription/v1/buyPremium?id=${id}&time=${time}`)
+    const res=await api.post(`${SUBSCRIPTION_V1_ROUTE}/buyPremium?id=${id}&time=${time}`)
     return res.data
 }
 
 export const getUserPlan = async () => {
-    const res=await api.get('subscription/v1/getUserPlan')
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getUserPlan`)
     return res.data
 }
 
 export const cancelSubscription = async () => {
-    const res=await api.delete('subscription/v1/deletePlan')
+    const res=await api.delete(`${SUBSCRIPTION_V1_ROUTE}/deletePlan`)
     return res.data
 }
 
 export const getSubscriptionInfo = async () => {
-    const res=await api.get('subscription/v1/getSubscriptionInfo')
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getSubscriptionInfo`)
     return res.data
 }
 
 export const getConnectionUsers = async (query:string) => {
-    const res=await api.get(`user/v1/getUnconnectedUsers?name=${query}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getUnconnectedUsers?name=${query}`)
     return res.data
 }
 
 export const alterConnReq = async (id:string, action:string) => {
-    const res=await api.patch(`user/v1/alterConnectionRequest?user=${id}&action=${action}`)
+    const res=await api.patch(`${USER_V1_ROUTE}/alterConnectionRequest?user=${id}&action=${action}`)
     return res.data
 }
 
 export const viewOtherUserDetails = async (id:string) => {
-    const res=await api.get(`/user/v1/getUserDetails?user=${id}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getUserDetails?user=${id}`)
     return res.data
 }
 
 export const viewOtherUserPosts = async (id:string) => {
-    const res=await api.get(`media/v1/getAllUserPosts?user=${id}`)
+    const res=await api.get(`${POST_V1_ROUTE}/getAllUserPosts?user=${id}`)
     return res.data
 }
 
 export const getUserRequests = async (query:string) => {
-    const res=await api.get(`user/v1/getUserRequests?name=${query}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getUserRequests?name=${query}`)
     return res.data
 }
 
 export const evaluateRequest = async (id:string, action:string) => {
-    const res=await api.patch(`user/v1/evaluateRequest?user=${id}&action=${action}`)
+    const res=await api.patch(`${USER_V1_ROUTE}/evaluateRequest?user=${id}&action=${action}`)
     return res.data
 }
 
 export const getConnectedUsers = async (query:string) => {
-    const res=await api.get(`user/v1/getConnectedUsers?name=${query}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getConnectedUsers?name=${query}`)
     return res.data
 }
 
 export const removeConnection = async (id:string) => {
-    const res=await api.patch(`user/v1/removeConnection?user=${id}`)
+    const res=await api.patch(`${USER_V1_ROUTE}/removeConnection?user=${id}`)
     return res.data
 }
 
 export const getConnectionDetails = async (id:string) => {
-    const res=await api.get(`user/v1/getConnectionDetails?user=${id}`)
+    const res=await api.get(`${USER_V1_ROUTE}/getConnectionDetails?user=${id}`)
     return res.data
 }
 
 export const getAvailableCompanies = async (query:string) => {
-    const res=await api.get(`company/v1/getAvailableCompanies?name=${query}`)
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getAvailableCompanies?name=${query}`)
     return res.data
 }
 
 export const discoverCompanyInfo = async (id:string) => {
-    const res=await api.get(`company/v1/getCompanyDetailsByQuery?id=${id}`)
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getCompanyDetailsByQuery?id=${id}`)
     return res.data
 }
 
 export const startUserConversation = async (id:string) => {
-    const res=await api.post(`chat/v1/startUserConversation?user=${id}`)
+    const res=await api.post(`${CHAT_V1_ROUTE}/startUserConversation?user=${id}`)
     return res.data
 }
 
 export const getConversations = async () => {
-    const res=await api.get('chat/v1/getConversations')
+    const res=await api.get(`${CHAT_V1_ROUTE}/getConversations`)
     return res.data
 }
 
 export const sendMessage = async (data:any, companyId:string) => {
-    const res=await api.patch(`chat/v1/sendMessage?company=${companyId}`, data)
+    const res=await api.patch(`${CHAT_V1_ROUTE}/sendMessage?company=${companyId}`, data)
     return res.data
 }
 
 export const getUserChats = async (conversation:string) => {
-    const res=await api.get(`chat/v1/getChats?convo=${conversation}`)
+    const res=await api.get(`${CHAT_V1_ROUTE}/getChats?convo=${conversation}`)
     return res.data
 }
 
 export const readOtherUserChats = async (conversation:string) => {
-    const res=await api.patch(`chat/v1/readOtherUserChats?convo=${conversation}`)
+    const res=await api.patch(`${CHAT_V1_ROUTE}/readOtherUserChats?convo=${conversation}`)
     return res.data
 }
 
 export const getCompanyConversations = async (companyId:string) => {
-    const res=await api.get(`chat/v1/getCompanyConversations?company=${companyId}`)
+    const res=await api.get(`${CHAT_V1_ROUTE}/getCompanyConversations?company=${companyId}`)
     return res.data
 }
 
 export const alterUserApplication = async (jobId:string, user:string, companyId:string, action:string) => {
-    const res=await api.patch(`job/v1/alterUserApplication?jobId=${jobId}&user=${user}&company=${companyId}&action=${action}`)
+    const res=await api.patch(`${JOB_V1_ROUTE}/alterUserApplication?jobId=${jobId}&user=${user}&company=${companyId}&action=${action}`)
     return res.data
 }
 
 export const getActivePlanUsers = async (id:string) => {
-    const res=await api.get(`subscription/v1/getActivePlanUsers?plan=${id}`)
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getActivePlanUsers?plan=${id}`)
     return res.data
 }
 
 export const deleteSubscriptionPlan = async (id:string) => {
-    const res=await api.delete(`subscription/v1/deleteSubscriptionPlan?plan=${id}`)
+    const res=await api.delete(`${SUBSCRIPTION_V1_ROUTE}/deleteSubscriptionPlan?plan=${id}`)
     return res.data
 }
