@@ -26,6 +26,7 @@ const USER_V1_ROUTE = '/user/v1'
 const ADMIN_V1_ROUTE = '/admin/v1'
 const COMPANY_V1_ROUTE = '/company/v1'
 const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
+const REPORT_V1_ROUTE = '/report/v1'
 
 export const adminLogin = async (loginDetails: LoginDetails) =>{
     const res=await api.post(`${ADMIN_V1_ROUTE}/login`, loginDetails)
@@ -94,5 +95,10 @@ export const adminUpgradeUser = async (data:any) => {
 
 export const adminDowngradeUser = async (id:string) => {
     const res=await api.delete(`${SUBSCRIPTION_V1_ROUTE}/adminDowngradeUser?id=${id}`)
+    return res.data
+}
+
+export const getPaginatedReports = async (startingPage:number, limit:number, status:string) => {
+    const res=await api.get(`${REPORT_V1_ROUTE}/getPaginatedReports?startingPage=${startingPage}&limit=${limit}&status=${status}`)
     return res.data
 }

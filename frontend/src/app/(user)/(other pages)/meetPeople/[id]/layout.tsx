@@ -5,8 +5,10 @@ import Image from "next/image";
 import {UserCircle} from 'lucide-react'
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
-import { alterConnReq, getConnectionDetails, getUserDetails, removeConnection, startUserConversation, viewOtherUserDetails } from "@/services/userService";
+import { alterConnReq, getConnectionDetails, getUserDetails, removeConnection, reportConnection, startUserConversation, viewOtherUserDetails } from "@/services/userService";
 import { enqueueSnackbar } from "notistack";
+import ReportModal from "@/reusable-components/reportModal";
+import ConfirmModal from "@/reusable-components/confirmModal";
 
 type Education = {
     degree: string;
@@ -56,6 +58,9 @@ export default function ConnectionLayout({
     const [activeTab, setActiveTab] = useState("About");
     const [userDetails, setUserDetails] = useState<Details>()
     const [connection, setConnection]=useState<string>()
+    const [reportModal, setReportModal]=useState(false)
+    const [confirmReport, setConfirmReport]=useState(false)
+    const [reportType, setReportType]=useState()
 
     const tabs = [
         { href:`/meetPeople/${id}`, label:'About' },
@@ -123,11 +128,35 @@ export default function ConnectionLayout({
         await startUserConversation(id)
         router.push('/chats')
     }
+    
+    const openConfirmModal = async (type:string) => {
+        setReportType(type)
+        setReportModal(false)
+        setConfirmReport(true)
+    }
+
+    const reportUser = async () => {
+        setLoading(true)
+        setConfirmReport(false)
+        const result=await reportConnection(id, reportType)
+        setLoading(false)
+        if(result.result.success){
+            enqueueSnackbar('Report has been submitted', {variant:'success'})
+        }else{
+            enqueueSnackbar('A previous report is pending with the same user, please try again after some time', {variant:'error'})
+        }
+    }
 
     return (
         <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Profile Header */}
+            {reportModal && (
+                <ReportModal onClose={()=>setReportModal(false)} onReport={openConfirmModal} />
+            )}
+            {confirmReport && (
+                <ConfirmModal onClose={()=>setConfirmReport(false)} title="Confirm your action!" message="Do you want to report this user?" onConfirm={reportUser}/>
+            )}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
                 <div className="flex-shrink-0">
@@ -188,7 +217,10 @@ export default function ConnectionLayout({
                             </button>
                         </>
                     )}
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer mt-1">
+                <button 
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer mt-1"
+                onClick={()=>setReportModal(true)}
+                >
                     Report
                 </button>
                 </div>

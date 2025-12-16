@@ -45,8 +45,8 @@ export class GetAllUsers implements IGetAllUsers {
         const result=hits.map((user:any)=>UserMapper.toDTO(user))
         return {
             result: result,
-            pageLimit: pageLimit
-        };
+            pageLimit: pageLimit 
+        }; 
     }
 
 }

@@ -170,7 +170,7 @@ async function checkUserStatus(req: NextRequest, token: string, pathname: string
 
   try {
     const userData = await fetchWithCache("http://localhost:5000/user/v1/check", token);
-    
+    console.log('checkkk', userData)
     if (userData?.result?.success) {
       return {
         redirect: true,
@@ -208,11 +208,12 @@ async function fetchWithCache(url: string, token: string) {
   }
 
   const data = await res.json();
+  if(url != 'http://localhost:5000/user/v1/check'){
+    // Cache for 30 seconds
+    userStatusCache.set(cacheKey, data);
+    setTimeout(() => userStatusCache.delete(cacheKey), 10000);
+  }
   
-  // Cache for 30 seconds
-  userStatusCache.set(cacheKey, data);
-  setTimeout(() => userStatusCache.delete(cacheKey), 10000);
-
   return data;
 }
 

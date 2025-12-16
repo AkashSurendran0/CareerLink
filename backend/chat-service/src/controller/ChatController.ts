@@ -64,7 +64,9 @@ export class ChatController {
             const {convoId, message}=req.body
             const id=req.headers['user-id'] as string
             const {company}=req.query
-            let sender = company || id
+            let sender;
+            if(company==='undefined') sender=id
+            else sender = company || id
             const result=await this._sendMessage.sendMessage(sender, message, convoId)
             res.json({result})
         } catch (error: unknown) {

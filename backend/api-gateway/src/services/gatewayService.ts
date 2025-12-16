@@ -7,7 +7,6 @@ dotenv.config()
 export class GatewayService {
     private _routes:{[key:string]:string}
     constructor(){
-        console.log(process.env.USER_SERVICE_ROUTE)
         this._routes={
             '/user':`${process.env.USER_SERVICE_ROUTE}`,
             '/admin':`${process.env.ADMIN_SERVICE_ROUTE}`,
@@ -17,7 +16,8 @@ export class GatewayService {
             '/resume':`${process.env.RESUME_SERVICE_ROUTE}`,
             '/media':`${process.env.POST_SERVICE_ROUTE}`,
             '/subscription':`${process.env.SUBSCRIPTION_SERVICE_ROUTE}`,
-            '/chat':`${process.env.CHAT_SERVICE_ROUTE}`
+            '/chat':`${process.env.CHAT_SERVICE_ROUTE}`,
+            '/report':`${process.env.REPORT_SERVICE_ROUTE}`
         }
     }
  
@@ -30,7 +30,9 @@ export class GatewayService {
         return createProxyMiddleware({
             target,
             changeOrigin: true,
-            pathRewrite: (pathReq:string) => pathReq.replace(path, '')
+            pathRewrite: {
+                [`^${path}`]: ''
+            }
         })
     }
 }

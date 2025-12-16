@@ -34,6 +34,7 @@ const RESUME_V1_ROUTE = '/resume/v1'
 const POST_V1_ROUTE = '/media/v1'
 const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
 const CHAT_V1_ROUTE = '/chat/v1'
+const REPORT_V1_ROUTE = '/report/v1'
 
 export const loginUser = async (loginDetails: LoginDetails) => {
     const res=await api.post(`${USER_V1_ROUTE}/login`, loginDetails)
@@ -419,5 +420,15 @@ export const getActivePlanUsers = async (id:string) => {
 
 export const deleteSubscriptionPlan = async (id:string) => {
     const res=await api.delete(`${SUBSCRIPTION_V1_ROUTE}/deleteSubscriptionPlan?plan=${id}`)
+    return res.data
+}
+
+export const reportConnection = async (id:string, type:string) => {
+    const res=await api.post(`${REPORT_V1_ROUTE}/reportUser?user=${id}&type=${type}`)
+    return res.data
+}
+
+export const reportCompany = async (id:string, type:string) => {
+    const res=await api.post(`${REPORT_V1_ROUTE}/reportCompany?company=${id}&type=${type}`)
     return res.data
 }
