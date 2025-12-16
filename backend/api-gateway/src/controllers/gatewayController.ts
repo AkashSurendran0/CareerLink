@@ -8,6 +8,7 @@ export class GatewayController {
     }
 
     getPath(path:string){
+        console.log('PROXY FUNCTION HIT')
         return this._gatewayService.getProxy(path)
     }
 

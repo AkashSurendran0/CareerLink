@@ -11,7 +11,7 @@ function AdminSidebar() {
     { icon: "🏠", label: "Dashboard", active: false, value:"" },
     { icon: "👥", label: "Users", active: true, value:"/admin/userManagement" },
     { icon: "🏢", label: "Companies", active: false, value:"/admin/companyManagement" },
-    { icon: "📄", label: "Reports", active: false, value:"" },
+    { icon: "📄", label: "Reports", active: false, value:"/admin/reports" },
     { icon: "📊", label: "Analytics", active: false, value:"" },
     { icon: "💳", label: "Subscriptions", active: false, value:"/admin/subscriptionManagement" },
   ];

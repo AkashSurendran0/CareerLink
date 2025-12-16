@@ -6,7 +6,7 @@ dotenv.config();
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = req.cookies?.token;
-
+    
     if (!accessToken) {
         return next();
     }

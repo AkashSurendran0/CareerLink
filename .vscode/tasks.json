@@ -128,6 +128,18 @@
             "options": {"cwd": "backend/chat-service"}
         },
         {
+            "label": "watch report-service",
+            "type": "shell",
+            "command": "npm run watch",
+            "options": {"cwd": "backend/report-service"}
+        },
+        {
+            "label": "run report-service",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {"cwd": "backend/report-service"}
+        },
+        {
             "label": "Start all services",
             "dependsOn":[
                 "run frontend",
@@ -151,6 +163,8 @@
                 "run subscription-service",
                 "watch chat-service",
                 "run chat-service",
+                "watch report-service",
+                "run report-service",
             ],
             "dependsOrder": "parallel"
         },
@@ -167,7 +181,8 @@
                 "run resume-service",
                 "run post-service",
                 "run subscription-service",
-                "run chat-service"
+                "run chat-service",
+                "run report-service"
             ],
         }
     ]

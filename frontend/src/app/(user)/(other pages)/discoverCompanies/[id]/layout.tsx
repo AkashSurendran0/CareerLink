@@ -4,9 +4,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/app/(user)/template";
+import ReportModal from "@/reusable-components/reportModal";
+import ConfirmModal from "@/reusable-components/confirmModal";
+
 import {
   discoverCompanyInfo,
+  reportCompany,
 } from "@/services/userService";
+import { enqueueSnackbar } from "notistack";
 
 type Company = {
   id: string;
@@ -42,6 +47,9 @@ export default function CompanyLayout({
     const router = useRouter();
     const [companyDetails, setCompanyDetails] = useState<Company>();
     const [activeTab, setActiveTab] = useState("About");
+    const [reportModal, setReportModal]=useState(false)
+    const [confirmModal, setConfirmModal]=useState(false)
+    const [reportType, setReportType]=useState()
 
     useEffect(() => {
         async function discoverCompanyDetails() {
@@ -70,12 +78,36 @@ export default function CompanyLayout({
         router.push(tab.route);
     };
 
+    const openConfirmModal = async (type:string) => {
+        setReportType(type)
+        setReportModal(false)
+        setConfirmModal(true)
+    }
+
+    const report = async () => {
+        setLoading(true)
+        setConfirmModal(false)
+        const result=await reportCompany(id, reportType)
+        setLoading(false)
+        if(result.result.success){
+            enqueueSnackbar('Report has been submitted', {variant:'success'})
+        }else{
+            enqueueSnackbar('A previous report is pending with the same company, please try again after some time', {variant:'error'})
+        }
+    }
+
     return (
         <>
         {companyDetails && (
             <main className="flex-1">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Company Header Card */}
+                {reportModal && (
+                    <ReportModal onClose={()=>setReportModal(false)} onReport={openConfirmModal} />
+                )}
+                {confirmModal && (
+                    <ConfirmModal onClose={()=>setConfirmModal(false)} title="Confirm your action!" message="Do you want to report this company?" onConfirm={report}/>
+                )}
                 <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     {/* Left: Logo + Basic Info */}
@@ -105,6 +137,15 @@ export default function CompanyLayout({
                         </span>
                         </div>
                     </div>
+                    </div>
+
+                    <div className="flex justify-start lg:justify-end">
+                        <button 
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md cursor-pointer mt-1"
+                        onClick={()=>setReportModal(true)}
+                        >
+                            Report
+                        </button>
                     </div>
                 </div>
 
