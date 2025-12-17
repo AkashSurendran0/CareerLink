@@ -6,5 +6,6 @@ export const TYPES = {
     IGetPaginatedReports:'IGetPaginatedReports',
     IGetPreviousUserReports:'IGetPreviousUserReports',
     IGetReportDetails:'IGetReportDetails',
-    ICloseReport:'ICloseReport'
+    ICloseReport:'ICloseReport',
+    IReportMessage:'IReportMessage'
 }

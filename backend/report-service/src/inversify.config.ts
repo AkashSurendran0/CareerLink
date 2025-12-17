@@ -8,6 +8,7 @@ import { GetPaginatedReports } from "./services/GetPaginatedReports";
 import { GetPreviousUserReports } from "./services/GetPreviousReports";
 import { GetReportDetails } from "./services/GetReportDetails";
 import { CloseReport } from "./services/CloseReport";
+import { ReportMessage } from "./services/ReportMessage";
 
 const container=new Container()
 
@@ -19,6 +20,7 @@ container.bind(TYPES.IGetPaginatedReports).to(GetPaginatedReports).inSingletonSc
 container.bind(TYPES.IGetPreviousUserReports).to(GetPreviousUserReports).inSingletonScope()
 container.bind(TYPES.IGetReportDetails).to(GetReportDetails).inSingletonScope()
 container.bind(TYPES.ICloseReport).to(CloseReport).inSingletonScope()
+container.bind(TYPES.IReportMessage).to(ReportMessage).inSingletonScope()
 
 container.bind(TYPES.ReportController).to(ReportController).inSingletonScope()
 

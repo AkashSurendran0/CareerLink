@@ -1,32 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Search, Phone, Video, Send, Paperclip, X, CheckCheck, User, LoaderIcon } from "lucide-react"
-import { getConversations, getUserChats, getUserDetails, sendMessage } from "@/services/userService"
+import { useEffect, useRef, useState } from "react"
+import { Search, Phone, Video, Send, Paperclip, X, CheckCheck, User, LoaderIcon, Flag } from "lucide-react"
+import { getConversations, getUserChats, getUserDetails, reportMessage, sendMessage } from "@/services/userService"
 import Image from "next/image"
 import { userSocket } from "@/lib/socket"
 import { useLoading } from "../../template"
 import { useRouter } from "next/navigation"
-
-interface ChatUser {
-  id: number
-  name: string
-  avatar: string
-  lastMessage: string
-  timestamp: string
-  isOnline: boolean
-  lastSeen?: string
-}
-
-interface Message {
-  id: number
-  sender: string
-  text: string
-  timestamp: string
-  isOwn: boolean
-  avatar: string
-  isRead: boolean
-}
+import ReportModal from "@/reusable-components/reportModal"
+import ConfirmModal from "@/reusable-components/confirmModal"
+import { enqueueSnackbar } from "notistack"
 
 export default function ChatsPage() {
   const setLoading=useLoading()
@@ -40,6 +23,15 @@ export default function ChatsPage() {
   const [userDetails, setUserDetails] = useState()
   const [userChats, setUserChats] = useState()
   const [userId, setUserId] = useState()
+  const [hoveredMessageId, setHoveredMessageId] = useState<number | null>(null)
+  const [longPressMessageId, setLongPressMessageId] = useState<number | null>(null)
+  const [reportModal, setReportModal] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [selectedReport, setSelectedReport] = useState(null)
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(()=>{
     getUserConversations()
@@ -202,8 +194,71 @@ export default function ChatsPage() {
     router.push('/chats/companyChats')
   }
 
+  const handleMessageMouseEnter = (messageId: number) => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current)
+    }
+    setHoveredMessageId(messageId)
+  }
+
+  const handleMessageMouseLeave = () => {
+    hideTimerRef.current = setTimeout(() => {
+      setHoveredMessageId(null)
+    }, 300) // 300ms delay before hiding
+  }
+
+  const handleTouchStart = (messageId: number) => {
+    longPressTimer.current = setTimeout(() => {
+      setLongPressMessageId(messageId)
+    }, 500) // 500ms for long press
+  }
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+    }
+  }
+
+  const showReportModal = async (message:any) => {
+    console.log(message)
+    setReportModal(true)
+    setSelectedMessage(message)
+  }
+
+  const showConfirmModal = async (report:string) => {
+    setSelectedReport(report)
+    setReportModal(false)
+    setConfirmModal(true)
+  }
+
+  const closeConfirmModal = async () => {
+    setConfirmModal(false)
+    setSelectedMessage(null)
+    setSelectedReport(null)
+  }
+
+  const reportUserMessage = async () => {
+    setConfirmModal(false)
+    setLoading(true)
+    const result=await reportMessage(selectedMessage.sendBy, selectedMessage._id, selectedReport)
+    setLoading(false)
+    if(result.result.success){
+      enqueueSnackbar('Report has been submitted with the message', {variant:'success'})
+    }else{
+      enqueueSnackbar('A report is pending with the same user, please try again later', {variant:'error'})
+    }
+  }
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
+
+      {reportModal && (
+        <ReportModal onClose={()=>setReportModal(false)} onReport={showConfirmModal} title="Report Message" message="Select the reason for reporting this message:"/>
+      )}
+
+      {confirmModal && (
+        <ConfirmModal onClose={closeConfirmModal} title="Confirm your action" message="Do you want to report this message?" onConfirm={reportUserMessage}/>
+      )}
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
 
@@ -319,7 +374,7 @@ export default function ChatsPage() {
                     <Video className="h-5 w-5 text-gray-600" />
                   </button>
                   <button
-                    onClick={() => setSelectedUser(null)}
+                    onClick={() => setSelectedConvo(null)}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:hidden"
                   >
                     <X className="h-5 w-5 text-gray-600" />
@@ -347,11 +402,19 @@ export default function ChatsPage() {
                               className="h-8 w-8 rounded-full object-cover flex-shrink-0"
                             />
                           ) : (
-                            <User className="h-10 w-10 rounded-full object-cover"/>
+                            <User className="h-8 w-8 rounded-full object-cover flex-shrink-0"/>
                           )
                         )}
                         <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                           <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
+                          <div
+                            className={`relative group ${!isMe ? "pr-10" : ""}`}
+                            onMouseEnter={() => !isMe && handleMessageMouseEnter(message._id)}
+                            onMouseLeave={handleMessageMouseLeave}
+                            onTouchStart={() => !isMe && handleTouchStart(message._id)}
+                            onTouchEnd={handleTouchEnd}
+                            onTouchMove={handleTouchEnd}
+                          >
                           <div
                             className={`px-4 py-2 rounded-lg max-w-xs ${
                               isMe
@@ -360,6 +423,16 @@ export default function ChatsPage() {
                             }`}
                           >
                             <p className="text-sm whitespace-pre-line">{message.message}</p>
+                            {!isMe && (hoveredMessageId === message._id || longPressMessageId === message._id) && (
+                              <button
+                                onClick={() => showReportModal(message)}
+                                onMouseEnter={() => handleMessageMouseEnter(message._id)}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-red-50 hover:border-red-300 transition-colors z-10"
+                                title="Report message"
+                              >
+                                <Flag className="h-3.5 w-3.5 text-red-500" />
+                              </button>
+                            )}
                           </div>
                           {isMe && (
                             <div className="flex items-center gap-1 mt-1">
@@ -368,24 +441,25 @@ export default function ChatsPage() {
                               ) : (
                                 <CheckCheck className="h-4 w-4 text-blue-500" />
                               )}
-                              <span className="text-xs text-gray-500">{message.timestamp}</span>
+                              {/* <span className="text-xs text-gray-500">{message.timestamp}</span> */}
                             </div>
                           )}
                         </div>
                         {isMe && (
                           userDetails.profilePicture ? (
                           <Image
-                            height={40}
-                            width={40}
+                            height={300}
+                            width={300}
                             src={userDetails.profilePicture}
                             alt="You"
                             className="h-8 w-8 rounded-full object-cover flex-shrink-0"
                           />
                         ) : (
-                          <User className="h-10 w-10 rounded-full object-cover"/>
+                          <User className="h-8 w-8 rounded-full object-cover flex-shrink-0"/>
                         )
                       )}
                       </div>
+                    </div>
                     )})
                   ) : (
                     <div className="text-center text-gray-400 mt-10">

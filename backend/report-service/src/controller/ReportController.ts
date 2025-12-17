@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { ICloseReport, IGetPaginatedReports, IGetPreviousUserReports, IGetReportDetails, IReportCompany, IReportUser } from "../domain/service/IReportService";
+import { ICloseReport, IGetPaginatedReports, IGetPreviousUserReports, IGetReportDetails, IReportCompany, IReportMessage, IReportUser } from "../domain/service/IReportService";
 import axios from "axios";
 
 @injectable()
@@ -14,7 +14,8 @@ export class ReportController {
         @inject(TYPES.IGetPaginatedReports) private _getPaginatedReports:IGetPaginatedReports,
         @inject(TYPES.IGetPreviousUserReports) private _getPreviousUserReports:IGetPreviousUserReports,
         @inject(TYPES.IGetReportDetails) private _getReportDetails:IGetReportDetails,
-        @inject(TYPES.ICloseReport) private _closeReport:ICloseReport
+        @inject(TYPES.ICloseReport) private _closeReport:ICloseReport,
+        @inject(TYPES.IReportMessage) private _reportMessage:IReportMessage
     ){}
 
     reportUser = async (req:Request, res:Response) => {
@@ -115,6 +116,22 @@ export class ReportController {
             const {reportId}=req.query
             console.log(reportId)
             const result=await this._closeReport.closeReport(reportId)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    reportMessage = async (req:Request, res:Response) => {
+        try {
+            const id=req.headers['user-id'] as string
+            const {sendBy, chat, type} = req.query
+            console.log(req.query)
+            const result=await this._reportMessage.reportMessage(id, sendBy, chat, type)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

@@ -128,3 +128,8 @@ export const closeReport = async (reportId:string) => {
     const res=await api.patch(`${REPORT_V1_ROUTE}/closeReport?reportId=${reportId}`)
     return res.data
 }
+
+export const discoverCompanyInfo = async (id:string) => {
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getCompanyDetailsByQuery?id=${id}`)
+    return res.data
+}

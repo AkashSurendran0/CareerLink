@@ -21,7 +21,7 @@ export class GetUserRequests implements IGetUserRequests {
         for(let user of requests){
             const details=await this._userDetailsRepository.getUserDetails(user.user);
             const info=await this._userRepository.findById(user.user);
-            if(info?.suspended == false) users.push({id:user, name:info?.username, dp:details?.profilePicture ?? null});
+            if(info?.suspended == false) users.push({id:user.user, name:info?.username, dp:details?.profilePicture ?? null});
         }
         if (name && name.trim() !== "") {
             const search = name.toLowerCase();
