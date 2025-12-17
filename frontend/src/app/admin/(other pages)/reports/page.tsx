@@ -2,6 +2,7 @@
 
 import { getPaginatedReports } from "@/services/adminService"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface Report {
   id: string
@@ -16,13 +17,11 @@ interface Report {
 }
 
 export default function ReportsPage() {
-    const [searchQuery, setSearchQuery] = useState("")
-    const [filterValue, setFilterValue] = useState("all")
+    const router=useRouter()
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [reports, setReports] = useState()
-    const [currentFilter, setCurrentFilter] = useState('all')
-    const [page, setPage] = useState(1)
+    const [currentFilter, setCurrentFilter] = useState('All')
     const STARTING_PAGE = 1
     const LIMIT = 2
 
@@ -34,7 +33,6 @@ export default function ReportsPage() {
         const result=await getPaginatedReports(STARTING_PAGE, LIMIT, currentFilter)
         setReports(result.result.reports)
         setTotalPages(result.result.pageLimit)
-        console.log(result)
     }
 
     const getPaginatedResults = async (i:number) => {
@@ -42,17 +40,27 @@ export default function ReportsPage() {
         const result=await getPaginatedReports(i, LIMIT, currentFilter)
         setReports(result.result.reports)
         setTotalPages(result.result.pageLimit)
-        console.log(result)
+    }
+
+    const searchByFilter = async (i:string) => {
+        setCurrentFilter(i)
+        const result=await getPaginatedReports(STARTING_PAGE, LIMIT, i)
+        setReports(result.result.reports)
+        setTotalPages(result.result.pageLimit)
+    }
+
+    const routeToViewSingleReportPage = async (report: any) => {
+        if(report.reportedAccount && report.reportedChat) router.push(`/admin/reports/chat/${report.reportedAccount}?reportId=${report.id}`)
+        else if(report.reportedAccount) router.push(`/admin/reports/user/${report.reportedAccount}?reportId=${report.id}`)
+        else if(report.reportedCompany) router.push(`/admin/reports/company/${report.reportedCompany}?reportId=${report.id}`)
     }
 
     const getStatusColor = (status: string) => {
         switch (status) {
         case "Pending":
             return "bg-gray-100 text-gray-700"
-        case "Resolved":
+        case "Closed":
             return "bg-green-100 text-green-700"
-        case "Dismissed":
-            return "bg-red-100 text-red-700"
         default:
             return "bg-gray-100 text-gray-700"
         }
@@ -65,10 +73,10 @@ export default function ReportsPage() {
                 <div className="flex items-center justify-between text-sm md:text-base lg:text-xl">
                     <div>
                     <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-                        Manage Companies
-                        <span className="text-blue-600">🏢</span>
+                        Manage Reports
+                        <span className="text-blue-600"></span>
                     </h1>
-                    <p className="text-gray-600 mt-1">View, search, and manage all registered companies.</p>
+                    <p className="text-gray-600 mt-1">Review and act on reports submitted by users.</p>
                     </div>
                     <div className="text-right">
                     </div>
@@ -82,44 +90,20 @@ export default function ReportsPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
                 <div className="flex flex-col md:flex-row gap-4">
                 {/* Search Bar */}
-                <div className="flex-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
-                    </div>
-                    <input
-                    type="text"
-                    placeholder="Search by user, company, or report type"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                </div>
-
-                {/* Filter Dropdown */}
-                <div className="relative">
-                    <select
-                    value={filterValue}
-                    onChange={(e) => setFilterValue(e.target.value)}
-                    className="w-full md:w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white cursor-pointer"
+                {["All", "Pending", "Closed"].map((status) => (
+                    <button
+                    key={status}
+                    disabled={currentFilter==status}
+                    onClick={() => searchByFilter(status)}
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        currentFilter === status
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
                     >
-                    <option value="all">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dismissed">Dismissed</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                    </div>
-                </div>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </button>
+                ))}
                 </div>
             </div>
 
@@ -190,7 +174,7 @@ export default function ReportsPage() {
                             </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button className="cursor-pointer text-blue-600 hover:text-blue-800 font-medium">View</button>
+                            <button className="cursor-pointer text-blue-600 hover:text-blue-800 font-medium" onClick={()=>routeToViewSingleReportPage(report)}>View</button>
                         </td>
                         </tr>
                     ))}
@@ -267,7 +251,7 @@ export default function ReportsPage() {
                     .filter(p=>{
                         if(p==1) return p<=3
                         if(p==totalPages) return p>=totalPages-2
-                        return p>=page-1 && p<=page+1
+                        return p>=p-1 && p<=p+1
                     })
                     .map(p=>
                         <button

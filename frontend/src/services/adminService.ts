@@ -27,6 +27,7 @@ const ADMIN_V1_ROUTE = '/admin/v1'
 const COMPANY_V1_ROUTE = '/company/v1'
 const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
 const REPORT_V1_ROUTE = '/report/v1'
+const POST_V1_ROUTE = '/media/v1'
 
 export const adminLogin = async (loginDetails: LoginDetails) =>{
     const res=await api.post(`${ADMIN_V1_ROUTE}/login`, loginDetails)
@@ -100,5 +101,30 @@ export const adminDowngradeUser = async (id:string) => {
 
 export const getPaginatedReports = async (startingPage:number, limit:number, status:string) => {
     const res=await api.get(`${REPORT_V1_ROUTE}/getPaginatedReports?startingPage=${startingPage}&limit=${limit}&status=${status}`)
+    return res.data
+}
+
+export const getDetailsByQuery = async (id:string) => {
+    const res=await api.get(`${USER_V1_ROUTE}/getDetailsByQuery?id=${id}`)
+    return res.data
+}
+
+export const viewOtherUserPosts = async (id:string) => {
+    const res=await api.get(`${POST_V1_ROUTE}/getAllUserPosts?user=${id}`)
+    return res.data
+}
+
+export const getPreviousUserReports = async (id:string) => {
+    const res=await api.get(`${REPORT_V1_ROUTE}/getPreviousUserReports?id=${id}`)
+    return res.data
+}
+
+export const getReportDetails = async (reportId:string) => {
+    const res=await api.get(`${REPORT_V1_ROUTE}/getReportDetails?reportId=${reportId}`)
+    return res.data
+}
+
+export const closeReport = async (reportId:string) => {
+    const res=await api.patch(`${REPORT_V1_ROUTE}/closeReport?reportId=${reportId}`)
     return res.data
 }
