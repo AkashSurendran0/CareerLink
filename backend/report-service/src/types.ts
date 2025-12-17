@@ -3,5 +3,8 @@ export const TYPES = {
     IReportUser:'IReportUser',
     IReportRepository:'IReportRepository',
     IReportCompany:'IReportCompany',
-    IGetPaginatedReports:'IGetPaginatedReports'
+    IGetPaginatedReports:'IGetPaginatedReports',
+    IGetPreviousUserReports:'IGetPreviousUserReports',
+    IGetReportDetails:'IGetReportDetails',
+    ICloseReport:'ICloseReport'
 }

@@ -11,3 +11,15 @@ export interface IReportCompany {
 export interface IGetPaginatedReports {
     getReports(start:number, limit:number, filter:string): Promise<{reports:ReportDto[], pageLimit:number}>
 }
+
+export interface IGetPreviousUserReports {
+    getPreviousReports(id:string): Promise<ReportDto[]>
+}
+
+export interface IGetReportDetails {
+    getReportDetails(reportId:string): Promise<{success:boolean, report?:ReportDto}>
+}
+
+export interface ICloseReport {
+    closeReport(reportId:string): Promise<{success:boolean}>
+}

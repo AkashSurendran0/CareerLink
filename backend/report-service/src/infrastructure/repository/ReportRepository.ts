@@ -45,7 +45,7 @@ export class ReportRepository implements IReportRepository {
         let pageLimit;
         let beginning=(start-1)*limit;
         let reports
-        if(filter=='all'){
+        if(filter=='All'){
             totalCount=await ReportModel.findAll({raw:true})
             totalCount=totalCount.length
             reports=await ReportModel.findAll({
@@ -78,6 +78,46 @@ export class ReportRepository implements IReportRepository {
             )
         })
         return {reports, pageLimit}
+    }
+
+    async getPreviousUserReports(id: string): Promise<Report[]> {
+        const reports=await ReportModel.findAll({where:{reportedAccount:id}, raw:true})
+        return reports.map((report:any) => {
+            return new Report(
+                report.id,
+                report.reportedBy,
+                report.reportedChat,
+                report.reportedAccount,
+                report.reason,
+                report.status,
+                report.createdAt,
+                report.reportedCompany
+            )
+        })
+    }
+
+    async findById(id: string): Promise<{success:boolean, report?:Report}>{
+        const existingReport=await ReportModel.findOne({where:{id:id}, raw:true})
+        if(!existingReport) return {success:false}
+        const report=new Report (
+            existingReport.id,
+            existingReport.reportedBy,
+            existingReport.reportedChat,
+            existingReport.reportedAccount,
+            existingReport.reason,
+            existingReport.status,
+            existingReport.createdAt,
+            existingReport.reportedCompany
+        )
+        return {success:true, report}
+    }
+
+    async closeReport(id: string): Promise<{ success: boolean; }> {
+        await ReportModel.update(
+            {status:'Closed'},
+            {where:{id:id}}
+        )
+        return {success:true}
     }
 
 }
