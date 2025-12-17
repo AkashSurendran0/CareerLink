@@ -31,6 +31,7 @@ export default function MeetPeoplePage() {
     }
 
     const alterConnectionRequest = async (id:string, action:string) => {
+        console.log(id)
         setLoading(true)
         const result=await evaluateRequest(id, action)
         if(result.result.success){

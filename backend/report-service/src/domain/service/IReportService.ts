@@ -23,3 +23,7 @@ export interface IGetReportDetails {
 export interface ICloseReport {
     closeReport(reportId:string): Promise<{success:boolean}>
 }
+
+export interface IReportMessage {
+    reportMessage(reporter:string, sendBy:string, chat:string, type:string): Promise<{success:boolean}>
+}

@@ -432,3 +432,8 @@ export const reportCompany = async (id:string, type:string) => {
     const res=await api.post(`${REPORT_V1_ROUTE}/reportCompany?company=${id}&type=${type}`)
     return res.data
 }
+
+export const reportMessage = async (sendBy:string, chatId:string, type:string) => {
+    const res=await api.post(`${REPORT_V1_ROUTE}/reportMessage?sendBy=${sendBy}&chat=${chatId}&type=${type}`)
+    return res.data
+}

@@ -7,4 +7,5 @@ export interface IReportRepository {
     getPreviousUserReports(id:string): Promise<Report[]>
     findById(id:string): Promise<{success:boolean, report?:Report}>
     closeReport(id:string): Promise<{success:boolean}>
+    reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{success:boolean}>
 }

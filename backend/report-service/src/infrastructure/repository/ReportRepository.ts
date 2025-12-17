@@ -8,7 +8,8 @@ export class ReportRepository implements IReportRepository {
         const existingReport=await ReportModel.findOne({
             where:{
                 reportedBy:reporter,
-                reportedAccount:user
+                reportedAccount:user,
+                status:'Pending'
             }
         })
         if(existingReport) return {success:false}
@@ -26,7 +27,8 @@ export class ReportRepository implements IReportRepository {
         const existingReport=await ReportModel.findOne({
             where:{
                 reportedBy:reporter,
-                reportedCompany:company
+                reportedCompany:company,
+                status:'Pending'
             }
         })
         if(existingReport) return {success:false}
@@ -116,6 +118,26 @@ export class ReportRepository implements IReportRepository {
         await ReportModel.update(
             {status:'Closed'},
             {where:{id:id}}
+        )
+        return {success:true}
+    }
+
+    async reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{ success: boolean; }> {
+        const existingReport=await ReportModel.findOne({
+            where:{
+                reportedBy:reporter,
+                reportedAccount:sendBy,
+                status:'Pending'
+            }
+        })
+        if(existingReport) return {success:false}
+        await ReportModel.create(
+            {
+                reportedBy:reporter,
+                reportedAccount:sendBy,
+                reportedChat:chat,
+                reason:type
+            }
         )
         return {success:true}
     }
