@@ -6,5 +6,6 @@ export const TYPES = {
     IGetConversations:'IGetConversations',
     ISendMessage:'ISendMessage',
     IGetChats:'IGetChats',
-    IReadMessages:'IReadMessages'
+    IReadMessages:'IReadMessages',
+    IGetReportedMessage:'IGetReportedMessage'
 }

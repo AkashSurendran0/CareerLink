@@ -29,6 +29,7 @@ import { EvaluateRequest } from "./application/use-cases/EvaluateRequest";
 import { GetConnectedUsers } from "./application/use-cases/GetConnectedUsers";
 import { RemoveConnection } from "./application/use-cases/RemoveConnection";
 import { GetConnectionDetails } from "./application/use-cases/GetConnectionDetails";
+import { SendWarningMail } from "./application/use-cases/SendWarningMail";
 
 const container = new Container();
 
@@ -59,6 +60,7 @@ container.bind(TYPES.IEvaluateRequest).to(EvaluateRequest).inSingletonScope();
 container.bind(TYPES.IGetConnectedUsers).to(GetConnectedUsers).inSingletonScope();
 container.bind(TYPES.IRemoveConnection).to(RemoveConnection).inSingletonScope();
 container.bind(TYPES.IGetConnectionDetails).to(GetConnectionDetails).inSingletonScope();
+container.bind(TYPES.ISendWarningMail).to(SendWarningMail).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);

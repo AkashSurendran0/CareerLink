@@ -19,3 +19,7 @@ export interface IGetChats {
 export interface IReadMessages {
     readMessages(convo:string, user:string): Promise<{success:boolean}>
 }
+
+export interface IGetReportedMessage {
+    getReportedMessage(user1:string, user2:string, chatId:string): Promise<ChatDto>
+}

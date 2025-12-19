@@ -8,6 +8,7 @@ import { GetConversations } from './services/GetConversations'
 import { SendMessage } from './services/SendMessage'
 import { GetChats } from './services/GetChats'
 import { ReadMessages } from './services/ReadMessages'
+import { GetReportedMessage } from './services/GetReportedMessage'
 
 const container=new Container()
 
@@ -19,6 +20,7 @@ container.bind(TYPES.IGetConversations).to(GetConversations).inSingletonScope()
 container.bind(TYPES.ISendMessage).to(SendMessage).inSingletonScope()
 container.bind(TYPES.IGetChats).to(GetChats).inSingletonScope()
 container.bind(TYPES.IReadMessages).to(ReadMessages).inSingletonScope()
+container.bind(TYPES.IGetReportedMessage).to(GetReportedMessage).inSingletonScope()
 
 container.bind(TYPES.ChatController).to(ChatController).inSingletonScope()
 

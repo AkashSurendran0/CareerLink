@@ -148,7 +148,7 @@ export default function ReportsPage() {
                                         Chat:{report.reportedAccountName}
                                     </>
                                 )}
-                                {report.reportedAccount && (
+                                {report.reportedAccount && !report.reportedChat && (
                                     <>
                                         User:{report.reportedAccountName}
                                     </>
@@ -202,7 +202,7 @@ export default function ReportsPage() {
                                 Chat:{report.reportedAccountName}
                             </>
                         )}
-                        {report.reportedAccount && (
+                        {report.reportedAccount && !report.reportedChat && (
                             <>
                                 User:{report.reportedAccountName}
                             </>

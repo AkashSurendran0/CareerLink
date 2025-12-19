@@ -68,5 +68,6 @@ router.patch("/evaluateRequest", connectionController.evaluateRequest);
 router.get("/getConnectedUsers", connectionController.getConnectedUsers);
 router.patch("/removeConnection", connectionController.removeConnection);
 router.get("/getConnectionDetails", connectionController.getConnectionDetails);
+router.post("/sendWarningMail", userController.sendWarningMail);
 
 export default router;

@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import { IChatRepository } from "../../domain/repository/IChatRepository";
 import { Chat, Content } from "../../domain/entity/Chat";
 import { ChatModel } from "../models/ChatModel";
+import {ObjectId} from 'mongodb'
 
 @injectable()
 export class ChatRepository implements IChatRepository {
@@ -95,6 +96,70 @@ export class ChatRepository implements IChatRepository {
             unreadCount=unreadCount.length
         }
         return {lastMessage, unreadCount}
+    }
+
+    async getReportedMessage(convo: string, chatId:string): Promise<Chat> {
+        console.log(chatId)
+        const chats = await ChatModel.aggregate([
+            {
+                $match: {
+                conversation: convo.toString()
+                }
+            },
+            {
+                $addFields: {
+                targetIndex: {
+                    $indexOfArray: ["$content._id", new ObjectId(chatId)]
+                },
+                contentSize: { $size: "$content" }
+                }
+            },
+            {
+                $addFields: {
+                startIndex: {
+                    $max: [{ $subtract: ["$targetIndex", 5] }, 0]
+                },
+                endIndex: {
+                    $min: [
+                    { $add: ["$targetIndex", 5] },
+                    { $subtract: ["$contentSize", 1] }
+                    ]
+                }
+                }
+            },
+            {
+                $addFields: {
+                sliceLength: {
+                    $add: [
+                    { $subtract: ["$endIndex", "$startIndex"] },
+                    1
+                    ]
+                }
+                }
+            },
+            {
+                $project: {
+                content: {
+                    $slice: ["$content", "$startIndex", "$sliceLength"]
+                }
+                }
+            }
+        ]);
+
+        console.log(chats)
+        const contents=chats[0]?.content?.map((item) => new Content (
+            item._id, 
+            item.sendBy, 
+            item.message, 
+            item.isRead, 
+            item.sendAt
+        ))
+        return new Chat (
+            chats._id,
+            chats.conversation,
+            contents,
+            chats.createdAt
+        )
     }
 
 }
