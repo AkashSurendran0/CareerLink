@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import { getSubscriptionInfo } from "../services/userService"
+import CallPopup from "@/reusable-components/callPopup"
+import RingingPopup from "@/reusable-components/ringingPopup"
 
 interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
@@ -27,7 +29,47 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   const [unreadCount, setUnreadCount] = useState(0)
   const [userEmail, setUserEmail] = useState<string>()
   const [userId, setUserId] = useState<string>()
+  const [callerId, setCallerId] = useState()
   const [isVip, setIsVip]=useState(false)
+  const [incomingCall, setIncomingCall] = useState(null)
+  const [outgoingCall, setOutgoingCall] = useState(null)
+  const [callDeclined, setCallDeclined] = useState(false)
+
+  useEffect(()=>{
+    userSocket.on('incoming-call', ({from, caller, callType}) => {
+      setCallerId(from)
+      const data={
+        from,
+        caller,
+        callType
+      }
+      setIncomingCall(data)
+    })
+  }, [])
+
+  useEffect(()=>{
+    userSocket.on('user-disconnected', ()=>{
+      setOutgoingCall(null)
+      setIncomingCall(null)
+    })
+  }, [])
+
+  useEffect(()=>{
+    userSocket.on('ringing', ({reciever, callType}) => {
+      const data={
+        reciever, 
+        callType
+      }
+      setOutgoingCall(data)
+    })
+
+    userSocket.on('call-declined', () => {
+      setCallDeclined(true)
+      setTimeout(() => {
+        setOutgoingCall(null)
+      }, 500);
+    })
+  }, [])
 
   useEffect(() => {
     vipStatus()
@@ -115,10 +157,25 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     router.push('/becomeVip')
   }
 
+  const handleRejectCall = async () => {
+    setCallDeclined(false)
+    userSocket.emit('reject-call', {
+      userId,
+      callerId
+    })
+    setIncomingCall(null)
+  }
+
 
   return (
     <>
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white shadow-sm border-b border-gray-200 relative">
+        {incomingCall && (
+          <CallPopup name={incomingCall.caller} callType={incomingCall.callType} handleRejectCall={handleRejectCall}/>
+        )}
+        {outgoingCall && (
+          <RingingPopup name={outgoingCall.reciever} callType={outgoingCall.callType} callDeclined={callDeclined}/>
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">

@@ -30,13 +30,34 @@ export default function ChatsPage() {
   const [selectedReport, setSelectedReport] = useState(null)
   const [selectedMessage, setSelectedMessage] = useState(null)
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const longPressTimer = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(()=>{
     getUserConversations()
     getDetails()
     fetchUserId()
+  }, [])
+
+  useEffect(()=>{
+    userSocket.on('call-failed', ({reason}) => {
+
+      if(reason == 'USER_OFFLINE'){
+        enqueueSnackbar('User is offline, please try again later', {variant:'error'})
+      }
+
+      if(reason == 'USER_BUSY'){
+        enqueueSnackbar('User is on another call right now, please try after some time', {variant:'error'})
+      }
+
+      if(reason == 'IN_ANOTHER_CALL'){
+        enqueueSnackbar('You are already in another call, please try after cancelling the current call', {variant:'error'})
+      }
+
+    })
+
+    return () => {
+      userSocket.off('call-failed')
+    }
   }, [])
 
   useEffect(()=>{
@@ -249,6 +270,18 @@ export default function ChatsPage() {
     }
   }
 
+  const voiceCallUser = async () => {
+    if(!selectedUserId) return 
+
+    userSocket.emit('ring-call', {
+      from: userId,
+      caller: userDetails.username,
+      to: selectedUser.user,
+      reciever: selectedUser.username,
+      callType: 'voice-call'
+    })
+  }
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
 
@@ -367,10 +400,13 @@ export default function ChatsPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
+                  <button 
+                  onClick={voiceCallUser}
+                  className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block"
+                  >
                     <Phone className="h-5 w-5 text-gray-600" />
                   </button>
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
+                  <button className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
                     <Video className="h-5 w-5 text-gray-600" />
                   </button>
                   <button
