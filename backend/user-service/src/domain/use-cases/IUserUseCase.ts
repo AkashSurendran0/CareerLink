@@ -45,3 +45,7 @@ export interface IGetUserNames {
     getUserNamesByEmail(email:string): Promise<any>
     getUserInfo(email:string): Promise<any>
 }
+
+export interface ISendWarningMail {
+    sendWarningMail(email: string): Promise<{success:boolean}>
+}

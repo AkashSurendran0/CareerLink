@@ -27,5 +27,6 @@ export const TYPES={
     IEvaluateRequest:"IEvaluateRequest",
     IGetConnectedUsers:"IGetConnectedUsers",
     IRemoveConnection:"IRemoveConnection",
-    IGetConnectionDetails:"IGetConnectionDetails"
+    IGetConnectionDetails:"IGetConnectionDetails",
+    ISendWarningMail:"ISendWarningMail"
 };

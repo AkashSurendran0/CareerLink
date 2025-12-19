@@ -44,4 +44,20 @@ export class ConversationRepository implements IConversationRepository {
         ))
     }
 
+    async findByUsers(user1: string, user2: string): Promise<{ success: boolean; conversation?: Conversation; }> {
+        const conversation=await ConversationModel.findOne(
+            {users:{
+                $in:[user1, user2]
+            }}
+        )
+        if(!conversation) return {success:false}
+        const convo=new Conversation (
+            conversation._id,
+            conversation.isCompany,
+            conversation.users,
+            conversation.createdAt
+        )
+        return {success:true, conversation:convo}
+    }
+
 }

@@ -28,6 +28,7 @@ const COMPANY_V1_ROUTE = '/company/v1'
 const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
 const REPORT_V1_ROUTE = '/report/v1'
 const POST_V1_ROUTE = '/media/v1'
+const CHAT_V1_ROUTE = '/chat/v1'
 
 export const adminLogin = async (loginDetails: LoginDetails) =>{
     const res=await api.post(`${ADMIN_V1_ROUTE}/login`, loginDetails)
@@ -132,4 +133,14 @@ export const closeReport = async (reportId:string) => {
 export const discoverCompanyInfo = async (id:string) => {
     const res=await api.get(`${COMPANY_V1_ROUTE}/getCompanyDetailsByQuery?id=${id}`)
     return res.data
+}
+
+export const getReportedMessage = async (user1:string, user2:string, reportedChat:string) => {
+    const res=await api.get(`${CHAT_V1_ROUTE}/getReportedMessage?user1=${user1}&user2=${user2}&chatId=${reportedChat}`)
+    return res.data
+}
+
+export const sendWarningMail = async (email:string) => {
+    const res=await api.post(`${USER_V1_ROUTE}/sendWarningMail?email=${email}`)
+    await res.data
 }

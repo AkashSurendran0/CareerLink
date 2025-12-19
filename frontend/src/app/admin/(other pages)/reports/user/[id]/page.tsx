@@ -1,6 +1,6 @@
 "use client"
 
-import { changeUserStatus, closeReport, getDetailsByQuery, getPreviousUserReports, getReportDetails, viewOtherUserPosts } from "@/services/adminService"
+import { changeUserStatus, closeReport, getDetailsByQuery, getPreviousUserReports, getReportDetails, sendWarningMail, viewOtherUserPosts } from "@/services/adminService"
 import { User } from "lucide-react"
 import Image from "next/image"
 import { enqueueSnackbar } from "notistack"
@@ -35,7 +35,6 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
   const getUserDetails = async () => {
     const result=await getDetailsByQuery(id)
-    console.log(result)
     setUserDetails(result.result)
   }
 
@@ -89,6 +88,12 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
     router.push('/admin/reports')
   }
 
+  const sendMail = async () => {
+    await sendWarningMail(userDetails.result.email)
+    await alterReportStatus()
+    router.push('/admin/reports')
+  }
+
   const alterReportStatus = async () => {
     await closeReport(reportId)
   }
@@ -98,9 +103,9 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
       {/* Main Content */}
       <div className="mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             {/* Page Title */}
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Reported User Account</h1>
@@ -287,7 +292,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                           Suspend Account
                         </button>
                       )}
-                      <button className="cursor-pointer w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors">
+                      <button onClick={sendMail} className="cursor-pointer w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors">
                         Send Warning Mail
                       </button>
                     </div>

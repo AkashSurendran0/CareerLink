@@ -130,7 +130,6 @@ export class ReportController {
         try {
             const id=req.headers['user-id'] as string
             const {sendBy, chat, type} = req.query
-            console.log(req.query)
             const result=await this._reportMessage.reportMessage(id, sendBy, chat, type)
             res.json({result})
         } catch (error: unknown) {

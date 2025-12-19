@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IGetChats, IGetConversations, IReadMessages, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 
 @injectable()
@@ -13,7 +13,8 @@ export class ChatController {
         @inject(TYPES.IGetConversations) private _getConversations:IGetConversations,
         @inject(TYPES.ISendMessage) private _sendMessage:ISendMessage,
         @inject(TYPES.IGetChats) private _getChats:IGetChats,
-        @inject(TYPES.IReadMessages) private _readMessages:IReadMessages
+        @inject(TYPES.IReadMessages) private _readMessages:IReadMessages,
+        @inject(TYPES.IGetReportedMessage) private _getReportedMessages:IGetReportedMessage
     ){}
 
     startUserConversation = async (req:Request, res:Response) => {
@@ -118,6 +119,20 @@ export class ChatController {
                 result[i].pfp=userDetails.data.result?.pfp || null
             }
             res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getReportedMessage = async (req:Request, res:Response) => {
+        try {
+            const {user1, user2, chatId}=req.query
+            const result=await this._getReportedMessages.getReportedMessage(user1, user2, chatId)
+            res.json(result)
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });

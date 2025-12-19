@@ -10,7 +10,7 @@ export class Mailer {
             service:"gmail",
             auth:{
                 user:"achusnjr11@gmail.com",
-                pass:"ighj btwr mzlr tgud"
+                pass:"vbwy yumg cwko hksa"
             }
         });
     }

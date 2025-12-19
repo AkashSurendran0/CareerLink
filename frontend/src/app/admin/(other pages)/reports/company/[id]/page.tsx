@@ -1,6 +1,6 @@
 "use client"
 
-import { changeCompanyStatus, changeUserStatus, closeReport, discoverCompanyInfo, getDetailsByQuery, getPreviousUserReports, getReportDetails, viewOtherUserPosts } from "@/services/adminService"
+import { changeCompanyStatus, changeUserStatus, closeReport, discoverCompanyInfo, getDetailsByQuery, getPreviousUserReports, getReportDetails, sendWarningMail, viewOtherUserPosts } from "@/services/adminService"
 import { User } from "lucide-react"
 import Image from "next/image"
 import { enqueueSnackbar } from "notistack"
@@ -34,6 +34,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
   const getCompanyDetails = async () => {
     const result=await discoverCompanyInfo(id)
+    console.log(result.result)
     setCompanyDetails(result.result)
   }
 
@@ -51,7 +52,6 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
     }else{
       enqueueSnackbar('Report not available, please try again later')
     }
-    console.log(result)
   }
 
   const getStatusColor = (status: string) => {
@@ -81,6 +81,12 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
     router.push('/admin/reports')
   }
 
+  const sendMail = async () => {
+    await sendWarningMail(companyDetails.registeredBy)
+    await alterReportStatus()
+    router.push('/admin/reports')
+  }
+
   const alterReportStatus = async () => {
     await closeReport(reportId)
   }
@@ -90,9 +96,9 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
       {/* Main Content */}
       <div className="mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             {/* Page Title */}
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Reported User Account</h1>
@@ -244,7 +250,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                           Suspend Account
                         </button>
                       )}
-                      <button className="cursor-pointer w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors">
+                      <button onClick={sendMail} className="cursor-pointer w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors">
                         Send Warning Mail
                       </button>
                     </div>

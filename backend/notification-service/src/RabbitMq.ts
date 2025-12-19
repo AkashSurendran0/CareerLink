@@ -8,7 +8,7 @@ import { TYPES } from './types'
 export class RabbitMqService {
     private connection!:ChannelModel
     private channel!:Channel
-    private readonly exchange=["company.events", "subscription.events", "connection.events", "jobApplication.events"] 
+    private readonly exchange=["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"] 
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -45,6 +45,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest")
         await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.accepted")
         await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.rejected")
+        await this.channel.bindQueue(queue.queue, "mail.events", "mail.sendWarningMail")
 
         console.log('Notification service is listening for messages...')
 
@@ -109,7 +110,7 @@ If you believe this action was taken in error, please reach out to our support t
 Thank you for your understanding and cooperation.
 
 Best regards,  
-The CineScope Admin Team
+The CareerLink Team
 `
                     )
                 break
@@ -127,7 +128,7 @@ We appreciate your patience and understanding throughout the process.
 If you face any issues logging in or using your account, please contact our support team.
 
 Best regards,   
-The CineScope Admin Team
+The CareerLink Team
 `
                     )
                 break
@@ -146,6 +147,24 @@ The CineScope Admin Team
 
                 case 'applicationRejected':
                     await this._addNotification.saveNotification(data.userEmail, 'Update on your job application', '/profile/user/jobsApplied')
+
+                case 'sendWarningMail':
+                    await this._mailer.sendMail(data.reciever, 'Warning Regarding Reported Activity on Your Account', 
+                        `Hello,
+
+We are writing to inform you that we have received a report concerning content or activity associated with your account.
+After an initial review, we identified behavior that may violate our platform’s community guidelines or terms of service. At this time, no immediate action has been taken against your account. However, this message serves as a formal warning.
+
+Please take a moment to review our guidelines and ensure that all future activity complies with our policies. Repeated or serious violations may result in further actions, including temporary restrictions or permanent suspension of your account.
+If you believe this warning was issued in error, you may contact our support team for clarification.
+
+Thank you for your cooperation.
+
+Best regards,   
+The CareerLink Team
+` 
+                    )
+                break
                 
                 default:
                     console.log('Unknown type event', data.action)
