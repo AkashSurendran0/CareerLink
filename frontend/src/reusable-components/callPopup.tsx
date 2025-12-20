@@ -3,10 +3,11 @@ import { Phone, PhoneOff, Camera } from "lucide-react"
 interface Props {
     name:string,
     callType:string,
-    handleRejectCall () : void
+    handleRejectCall () : void,
+    handleAcceptCall () : void
 }
 
-export default function CallPopup ({name, callType, handleRejectCall}:Props){
+export default function CallPopup ({name, callType, handleRejectCall, handleAcceptCall}:Props){
 
     return  (
         <div className="fixed top-1 left-1/2 -translate-x-1/2 mt-2 z-50 animate-in slide-in-from-top">
@@ -35,7 +36,7 @@ export default function CallPopup ({name, callType, handleRejectCall}:Props){
                   </button>
 
                   <button
-                    // onClick={handleAcceptCall}
+                    onClick={handleAcceptCall}
                     className="cursor-pointer flex items-center justify-center w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors"
                     title="Accept"
                   >
