@@ -8,6 +8,7 @@ import { useLoading } from "@/app/(user)/template"
 import { getSubscriptionInfo } from "../services/userService"
 import CallPopup from "@/reusable-components/callPopup"
 import RingingPopup from "@/reusable-components/ringingPopup"
+import crypto from "crypto";
 
 interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
@@ -56,6 +57,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   useEffect(()=>{
     userSocket.on('ringing', ({reciever, callType}) => {
+      setCallDeclined(false)
       const data={
         reciever, 
         callType
@@ -114,6 +116,16 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     }
   }, [userEmail])
 
+  useEffect(()=>{
+    userSocket.on("call-accepted", ({callId}) => {
+      router.push(`/chat/voice-call/${callId}`)
+    })
+
+    return () => {
+      userSocket.off("call-accepted");
+    };
+  }, [])
+
   const getNotifications = async () => {
     const result=await getAllNotifications()
     setNotifications(result.notifications)
@@ -166,12 +178,20 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     setIncomingCall(null)
   }
 
+  const handleAcceptCall = async () => {
+    const callId=window.crypto.randomUUID()
+    userSocket.emit('accept-call', {
+      callId,
+      callerId
+    })
+  }
+
 
   return (
     <>
       <header className="bg-white shadow-sm border-b border-gray-200 relative">
         {incomingCall && (
-          <CallPopup name={incomingCall.caller} callType={incomingCall.callType} handleRejectCall={handleRejectCall}/>
+          <CallPopup name={incomingCall.caller} callType={incomingCall.callType} handleRejectCall={handleRejectCall} handleAcceptCall={handleAcceptCall}/>
         )}
         {outgoingCall && (
           <RingingPopup name={outgoingCall.reciever} callType={outgoingCall.callType} callDeclined={callDeclined}/>
