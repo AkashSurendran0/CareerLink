@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Mic, MicOff, Phone, Volume2, VolumeX } from "lucide-react"
 import { userSocket } from "@/lib/socket"
+import Image from "next/image"
 
 interface Props {
     callId:string
@@ -10,16 +11,34 @@ interface Props {
 
 export default function VoiceCall({params}: Props) {
     const {callId}=params
-    const [isSpeakerOn, setIsSpeakerOn] = useState(true)
     const [callDuration, setCallDuration] = useState(0)
     const [userLeft, setUserLeft] = useState(false)
-    const [remoteMuted, setRemoteMuted] = useState(false)
+    const [muteSpeaker, setMuteSpeaker] = useState(false)
+    const [callDetails, setCallDetails] = useState(null)
+    const [mikeMuted, setMikeMuted] = useState(false)
     const pcRef = useRef<RTCPeerConnection | null>(null)
     const localStreamRef = useRef<MediaStream | null>(null)
     const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
     const pendingCandidates = useRef<RTCIceCandidate[]>([])
     const isNegotiating = useRef(false)
     const isInitialized = useRef(false);
+
+    useEffect(()=>{
+        if(!callId) return
+
+        const raw=sessionStorage.getItem(`${callId}`)
+        if(!raw) return
+        const {name, image}=JSON.parse(raw)
+        const data={
+            name,
+            image
+        }
+        setCallDetails(data)
+
+        return () => {
+            sessionStorage.removeItem(`${callId}`)
+        }
+    }, [callId])
 
     const initializeWebRTC = useCallback(async () => {
         if(pcRef.current || !callId) return
@@ -255,9 +274,9 @@ export default function VoiceCall({params}: Props) {
 
     useEffect(() => {
         if (remoteAudioRef.current) {
-            remoteAudioRef.current.muted = remoteMuted;
+            remoteAudioRef.current.muted = muteSpeaker;
         }
-    }, [remoteMuted]);
+    }, [muteSpeaker]);
 
     useEffect(() => {
         // Create audio element for remote audio
@@ -294,6 +313,17 @@ export default function VoiceCall({params}: Props) {
         return () => clearInterval(interval);
     }, []);
 
+    const toggleMic = () => {
+        const tracks=localStreamRef.current?.getAudioTracks()
+        if(!tracks) return
+
+        tracks.forEach(track => {
+            track.enabled = mikeMuted
+        })
+
+        setMikeMuted(!mikeMuted)
+    }
+
 
     const formatTime = (seconds: number) => {
         const hrs = Math.floor(seconds / 3600)
@@ -314,6 +344,7 @@ export default function VoiceCall({params}: Props) {
         localStreamRef.current?.getTracks().forEach(t => t.stop())
         pcRef.current?.close()
         userSocket.emit("end-call", {callId})
+        sessionStorage.removeItem(`${callId}`)
         window.history.back()
     }
 
@@ -325,10 +356,24 @@ export default function VoiceCall({params}: Props) {
             </div>
 
             <div className="mb-12 flex flex-col items-center">
-                <div className="mb-6 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-2xl md:h-48 md:w-48">
-                    <span className="text-4xl font-bold text-white md:text-5xl">SC</span>
-                </div>
-                <h2 className="text-2xl font-semibold text-gray-800 md:text-3xl">Sophia Clark</h2>
+                {callDetails && (
+                    callDetails.image ? (
+                        <Image
+                        height={300}
+                        width={300}
+                        src={callDetails.image}
+                        className="mb-6 flex h-40 w-40 items-center justify-center rounded-full shadow-2xl md:h-48 md:w-48"
+                        alt={callDetails.name}
+                        />
+                    ) : (
+                        <div className="mb-6 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-2xl md:h-48 md:w-48">
+                            <span className="text-4xl font-bold text-white md:text-5xl">{callDetails.name[0].toUpperCase()}</span>
+                        </div>
+                    )
+                )}
+                {callDetails && (
+                    <h2 className="text-2xl font-semibold text-gray-800 md:text-3xl">{callDetails.name}</h2>
+                )}
                 {userLeft ? (
                     <p className="mt-2 text-red-500">User Disconnected</p>
                 ) : (
@@ -338,14 +383,14 @@ export default function VoiceCall({params}: Props) {
 
             <div className="flex items-center gap-4 md:gap-6">
             <button
-                onClick={() => setRemoteMuted(!remoteMuted)}
+                onClick={toggleMic}
                 className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${
-                remoteMuted
+                mikeMuted
                     ? "border-red-500 bg-red-500 text-white hover:bg-red-600"
                     : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 }`}
             >
-                {remoteMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+                {mikeMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
             </button>
 
             <button
@@ -356,14 +401,14 @@ export default function VoiceCall({params}: Props) {
             </button>
 
             <button
-                onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+                onClick={() => setMuteSpeaker(!muteSpeaker)}
                 className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${
-                isSpeakerOn
+                muteSpeaker
                     ? "border-blue-500 bg-blue-500 text-white hover:bg-blue-600"
                     : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 }`}
             >
-                {isSpeakerOn ? <Volume2 className="h-6 w-6" /> : <VolumeX className="h-6 w-6" />}
+                {muteSpeaker ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
             </button>
             </div>
         </main>

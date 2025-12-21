@@ -15,7 +15,7 @@ export const initUserSocket = (server: http.Server) => {
     io.on("connection", (socket)=>{
         console.log("User socket connected:", socket.id);
 
-        socket.on("ring-call", ({from, caller, to, reciever, callType}) => {
+        socket.on("ring-call", ({from, caller, callerImage, to, reciever, callType}) => {
             
             if((!onlineUsers.has(to))){
                 io.to(socket.id).emit("call-failed", {
@@ -47,6 +47,7 @@ export const initUserSocket = (server: http.Server) => {
             io.to(receiverSocket).emit("incoming-call", {
                 from,
                 caller,
+                callerImage,
                 callType
             });
 
@@ -68,8 +69,10 @@ export const initUserSocket = (server: http.Server) => {
             io.to(callerSocket).emit("call-declined");
         });
 
-        socket.on("accept-call", ({callId, callerId}) => {
+        socket.on("accept-call", ({callId, callerId, calleeName, calleeImage, callerName, callerImage}) => {
+            console.log(callerId);
             const callerSocket=onlineUsers.get(callerId);
+            console.log(callerSocket);
             if(!callerSocket) {
                 io.to(socket.id).emit("call-failed", {
                     reason:"USER_OFFLINE"
@@ -78,11 +81,15 @@ export const initUserSocket = (server: http.Server) => {
             }
 
             io.to(callerSocket).emit("call-accepted", {
-                callId
+                callId,
+                name: calleeName,
+                image: calleeImage
             });
 
             io.to(socket.id).emit("call-accepted", {
-                callId
+                callId,
+                name: callerName,
+                image: callerImage
             });
         });
 

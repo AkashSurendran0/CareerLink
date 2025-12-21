@@ -276,6 +276,7 @@ export default function ChatsPage() {
     userSocket.emit('ring-call', {
       from: userId,
       caller: userDetails.username,
+      callerImage: userDetails.profilePicture || null,
       to: selectedUser.user,
       reciever: selectedUser.username,
       callType: 'voice-call'
