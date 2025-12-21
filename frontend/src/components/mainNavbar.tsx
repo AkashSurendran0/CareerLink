@@ -1,7 +1,7 @@
 "use client"
 
 import {notificationSocket, userSocket} from "@/lib/socket"
-import { deleteAllNotifications, deleteOneNotification, getAllNotifications, markAllNotificationsRead, markOneRead } from "@/services/userService"
+import { deleteAllNotifications, deleteOneNotification, getAllNotifications, getUserDetails, markAllNotificationsRead, markOneRead } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
@@ -35,13 +35,24 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   const [incomingCall, setIncomingCall] = useState(null)
   const [outgoingCall, setOutgoingCall] = useState(null)
   const [callDeclined, setCallDeclined] = useState(false)
+  const [userDetails, setUserDetails] = useState()
 
   useEffect(()=>{
-    userSocket.on('incoming-call', ({from, caller, callType}) => {
+    getDetails()
+  }, [])
+
+  const getDetails = async () => {
+    const result=await getUserDetails()
+    setUserDetails(result.userDetails)
+  }
+
+  useEffect(()=>{
+    userSocket.on('incoming-call', ({from, caller, callerImage, callType}) => {
       setCallerId(from)
       const data={
         from,
         caller,
+        callerImage,
         callType
       }
       setIncomingCall(data)
@@ -117,7 +128,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }, [userEmail])
 
   useEffect(()=>{
-    userSocket.on("call-accepted", ({callId}) => {
+    userSocket.on("call-accepted", ({callId, name, image}) => {
+      sessionStorage.setItem(
+        `${callId}`,
+        JSON.stringify({
+          name,  
+          image
+        })
+      )
       router.push(`/chat/voice-call/${callId}`)
     })
 
@@ -171,6 +189,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const handleRejectCall = async () => {
     setCallDeclined(false)
+    console.log(userId, callerId)
     userSocket.emit('reject-call', {
       userId,
       callerId
@@ -182,7 +201,11 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     const callId=window.crypto.randomUUID()
     userSocket.emit('accept-call', {
       callId,
-      callerId
+      callerId,
+      calleeName: userDetails.username,
+      calleeImage: userDetails.profilePicture || null,
+      callerName: incomingCall.caller,
+      callerImage: incomingCall.callerImage
     })
   }
 

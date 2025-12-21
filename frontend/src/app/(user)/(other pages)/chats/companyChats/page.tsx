@@ -7,6 +7,7 @@ import Image from "next/image"
 import { userSocket } from "@/lib/socket"
 import { useLoading } from "@/app/(user)/template"
 import { useRouter } from "next/navigation"
+import { enqueueSnackbar } from "notistack"
 
 interface ChatUser {
   id: number
@@ -39,8 +40,35 @@ export default function ChatsPage() {
     const [chatLoading, setChatLoading] = useState(false)
     const [userChats, setUserChats] = useState()
     const [userId, setUserId] = useState()
+    const [companyOwnerId, setCompanyOwnerId] = useState()
     const [companyExists, setCompanyExists] = useState(false)
     const [companyDetails, setCompanyDetails] = useState(null)
+
+    useEffect(() => {
+        fetchUserId()
+    }, [])
+
+    useEffect(()=>{
+        userSocket.on('call-failed', ({reason}) => {
+    
+          if(reason == 'USER_OFFLINE'){
+            enqueueSnackbar('User is offline, please try again later', {variant:'error'})
+          }
+    
+          if(reason == 'USER_BUSY'){
+            enqueueSnackbar('User is on another call right now, please try after some time', {variant:'error'})
+          }
+    
+          if(reason == 'IN_ANOTHER_CALL'){
+            enqueueSnackbar('You are already in another call, please try after cancelling the current call', {variant:'error'})
+          }
+    
+        })
+    
+        return () => {
+          userSocket.off('call-failed')
+        }
+      }, [])
 
     useEffect(()=>{
         if(!selectedConvo || !userId) return
@@ -56,24 +84,24 @@ export default function ChatsPage() {
     }, [selectedConvo, userId])
 
     useEffect(() => {
-    const handler = ({ convoId }) => {
-        if (convoId !== selectedConvo) return;
+        const handler = ({ convoId }) => {
+            if (convoId !== selectedConvo) return;
 
-        setUserChats((prev) => {
-        if (!prev) return prev;
+            setUserChats((prev) => {
+            if (!prev) return prev;
 
-        return {
-            ...prev,
-            content: prev.content.map((msg) => {
-            // Mark as read ONLY:
-            // 1. I sent the message
-            // 2. Someone else read it
-            if (msg.sendBy == userId) {
-                return { ...msg, isRead: true };
-            }
-            return msg;
-            })
-        };
+            return {
+                ...prev,
+                content: prev.content.map((msg) => {
+                // Mark as read ONLY:
+                // 1. I sent the message
+                // 2. Someone else read it
+                if (msg.sendBy == userId) {
+                    return { ...msg, isRead: true };
+                }
+                return msg;
+                })
+            };
         });
     };
 
@@ -188,6 +216,29 @@ export default function ChatsPage() {
     const routeToChatPage = async () => {
         setLoading(true)
         router.push('/chats')
+    }
+
+    const fetchUserId=async()=>{
+        try {
+            const res=await fetch('/api/me')
+            const data=await res.json()
+            setCompanyOwnerId(data.userId)
+        } catch (error) {
+            console.log('Failed to fetch userid', error)
+        }
+    }
+
+    const voiceCallUser = async () => {
+        if(!selectedUserId) return 
+        console.log(userId, selectedUser.user)
+        userSocket.emit('ring-call', {
+            from: companyOwnerId,
+            caller: companyDetails.name,
+            callerImage: companyDetails.logo || null,
+            to: selectedUser.user,
+            reciever: selectedUser.username,
+            callType: 'voice-call'
+        })
     }
 
     return (
@@ -318,10 +369,13 @@ export default function ChatsPage() {
                     </div>
                     </div>
                     <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
+                    <button 
+                    onClick={voiceCallUser}
+                    className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block"
+                    >
                         <Phone className="h-5 w-5 text-gray-600" />
                     </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
+                    <button className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
                         <Video className="h-5 w-5 text-gray-600" />
                     </button>
                     <button
