@@ -136,13 +136,17 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
           image
         })
       )
-      router.push(`/chat/voice-call/${callId}`)
+      if(incomingCall?.callType == 'voice-call' || outgoingCall?.callType == 'voice-call'){
+        router.push(`/chat/voice-call/${callId}`)
+      }else{
+        router.push(`/chat/video-call/${callId}`)
+      }
     })
 
     return () => {
       userSocket.off("call-accepted");
     };
-  }, [])
+  }, [incomingCall, outgoingCall])
 
   const getNotifications = async () => {
     const result=await getAllNotifications()
