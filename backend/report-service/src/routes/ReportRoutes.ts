@@ -13,5 +13,6 @@ router.get('/getPreviousUserReports', reportController.getPreviousUserReports)
 router.get('/getReportDetails', reportController.getReportDetails)
 router.patch('/closeReport', reportController.closeReport)
 router.post('/reportMessage', reportController.reportMessage)
+router.get('/getReportAnalytics', reportController.getReportAnalytics)
 
 export default router

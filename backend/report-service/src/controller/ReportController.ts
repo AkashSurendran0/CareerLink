@@ -141,4 +141,16 @@ export class ReportController {
         }
     }
 
+    getReportAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await 
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
 }

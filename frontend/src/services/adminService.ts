@@ -144,3 +144,8 @@ export const sendWarningMail = async (email:string) => {
     const res=await api.post(`${USER_V1_ROUTE}/sendWarningMail?email=${email}`)
     await res.data
 }
+
+export const getReportAnalytics = async () => {
+    const res=await api.get(`${REPORT_V1_ROUTE}/getReportAnalytics`)
+    return res.data
+}
