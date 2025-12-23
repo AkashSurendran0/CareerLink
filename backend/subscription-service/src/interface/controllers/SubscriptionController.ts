@@ -2,12 +2,12 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
-import { IAddSubscription, IAlterPlanStatus, IDeletePlanType, IGetActivePlans, IGetAllPlans } from "../../domain/use-cases/ISubscriptionTypesUseCases";
+import { IAddSubscription, IAlterPlanStatus, IDeletePlanType, IGetActivePlans, IGetAllPlans, IGetSubscriptionTypeAnalytics } from "../../domain/use-cases/ISubscriptionTypesUseCases";
 import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
-import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
+import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetSubscriptionAnalysis, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 import axios from "axios";
 
 dotenv.config()
@@ -30,7 +30,9 @@ export class SubscriptionController {
         @inject(TYPES.IDeletePlan) private _deletePlan:IDeletePlan,
         @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo:IGetSubscriptionInfo,
         @inject(TYPES.IGetActivePlanUsers) private _getActivePlanUsers:IGetActivePlanUsers,
-        @inject(TYPES.IDeletePlanType) private _deletePlanType:IDeletePlanType
+        @inject(TYPES.IDeletePlanType) private _deletePlanType:IDeletePlanType,
+        @inject(TYPES.IGetSubscriptionAnalysis) private _getSubscriptionAnalysis:IGetSubscriptionAnalysis,
+        @inject(TYPES.IGetSubscriptionTypeAnalytics) private _getSubscriptionTypeAnalytics:IGetSubscriptionTypeAnalytics
     ) {}
 
     addSubscription = async (req:Request, res:Response) => {
@@ -332,6 +334,34 @@ export class SubscriptionController {
         try {
             const {plan}=req.query
             const result=await this._deletePlanType.deletePlanType(plan)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getSubscriptionAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getSubscriptionAnalysis.getSubscriptionAnalysis()
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getSubscriptionTypeAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getSubscriptionTypeAnalytics.getSubscriptionTypeAnalytics()
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

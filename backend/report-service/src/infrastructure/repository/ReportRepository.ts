@@ -1,5 +1,7 @@
+import { QueryTypes } from "sequelize";
 import { Report } from "../../domain/entity/Report";
 import { IReportRepository } from "../../domain/repository/IReportRepository";
+import { sequelize } from "../database/Sequelize";
 import { ReportModel } from "../model/ReportModel";
 
 export class ReportRepository implements IReportRepository {
@@ -140,6 +142,18 @@ export class ReportRepository implements IReportRepository {
             }
         )
         return {success:true}
+    }
+
+    async getReportAnalytics(): Promise<any> {
+        const result = await sequelize.query(
+            `
+            SELECT reason, COUNT(*) AS count
+            FROM reports
+            GROUP BY reason
+            `,
+            { type: QueryTypes.SELECT }
+        );
+        return result
     }
 
 }

@@ -7,4 +7,6 @@ export interface ISubscriptionRepository {
     getInfo(user:string): Promise<{success:boolean}>
     getActivePlanUsers(plan:string): Promise<{success:boolean}>
     deletePlans(id:string): Promise<{success:boolean}>
+    getSubscriptionAnalysis(): Promise<any>
+    groupByPlan(): Promise<any>
 }

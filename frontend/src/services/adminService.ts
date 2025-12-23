@@ -29,6 +29,7 @@ const SUBSCRIPTION_V1_ROUTE = '/subscription/v1'
 const REPORT_V1_ROUTE = '/report/v1'
 const POST_V1_ROUTE = '/media/v1'
 const CHAT_V1_ROUTE = '/chat/v1'
+const JOB_V1_ROUTE = '/job/v1'
 
 export const adminLogin = async (loginDetails: LoginDetails) =>{
     const res=await api.post(`${ADMIN_V1_ROUTE}/login`, loginDetails)
@@ -147,5 +148,30 @@ export const sendWarningMail = async (email:string) => {
 
 export const getReportAnalytics = async () => {
     const res=await api.get(`${REPORT_V1_ROUTE}/getReportAnalytics`)
+    return res.data
+}
+
+export const getCompanyAnalytics = async () => {
+    const res=await api.get(`${JOB_V1_ROUTE}/getCompanyAnalytics`)
+    return res.data
+}
+
+export const getJobApplicationAnalytics = async () => {
+    const res=await api.get(`${JOB_V1_ROUTE}/getJobApplicationAnalytics`)
+    return res.data
+}
+
+export const getUserAnalytics = async () => {
+    const res=await api.get(`${USER_V1_ROUTE}/getUserAnalytics`)
+    return res.data
+}
+
+export const getSubscriptionAnalytics = async () => {
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getSubscriptionAnalytics`)
+    return res.data
+}
+
+export const getSubscriptionTypeAnalytics = async () => {
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getSubscriptionTypeAnalytics`)
     return res.data
 }

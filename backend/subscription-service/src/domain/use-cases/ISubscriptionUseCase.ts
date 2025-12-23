@@ -17,3 +17,7 @@ export interface IGetSubscriptionInfo {
 export interface IGetActivePlanUsers {
     getActiveUsers(plan:string): Promise<{success:boolean}>
 }
+
+export interface IGetSubscriptionAnalysis {
+    getSubscriptionAnalysis(): Promise<any>
+}

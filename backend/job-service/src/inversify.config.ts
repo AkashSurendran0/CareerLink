@@ -13,6 +13,8 @@ import { JobApplicationsRepository } from "./infrastructure/repository/JobApplic
 import { GetUserAppliedJobs } from "./application/use-case/GetUserAppliedJobs";
 import { GetJobApplicants } from "./application/use-case/GetJobApplicants";
 import { AlterUserApplication } from "./application/use-case/AlterJobApplication";
+import { GetCompanyAnalytics } from "./application/use-case/GetCompanyAnalytics";
+import { GetJobApplicationAnalytics } from "./application/use-case/GetJobApplicationAnalytics";
 
 const container=new Container()
 
@@ -29,6 +31,8 @@ container.bind(TYPES.IApplyJob).to(ApplyJob).inSingletonScope()
 container.bind(TYPES.IGetUserAppliedJobs).to(GetUserAppliedJobs).inSingletonScope()
 container.bind(TYPES.IGetJobApplicants).to(GetJobApplicants).inSingletonScope()
 container.bind(TYPES.IAlterUserApplication).to(AlterUserApplication).inSingletonScope()
+container.bind(TYPES.IGetCompanyAnalytics).to(GetCompanyAnalytics).inSingletonScope()
+container.bind(TYPES.IGetJobApplicationAnalytics).to(GetJobApplicationAnalytics).inSingletonScope()
 
 container.bind<JobController>(TYPES.JobController).to(JobController)
 

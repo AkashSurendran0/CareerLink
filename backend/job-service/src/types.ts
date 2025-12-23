@@ -11,5 +11,7 @@ export const TYPES = {
     IJobApplicationsRepository:'IJobApplicationsRepository',
     IGetUserAppliedJobs:'IGetUserAppliedJobs',
     IGetJobApplicants:'IGetJobApplicants',
-    IAlterUserApplication:'IAlterUserApplication'
+    IAlterUserApplication:'IAlterUserApplication',
+    IGetCompanyAnalytics:'IGetCompanyAnalytics',
+    IGetJobApplicationAnalytics:'IGetJobApplicationAnalytics'
 }

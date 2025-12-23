@@ -22,5 +22,6 @@ export interface IJobRepository {
     closeJob(id:string): Promise<{success:boolean}>
     getAvailableJobs(query:string):Promise<Job[]>
     getQueryJobs(id:string, start:number, limit:number, query:string|undefined, filter:string):Promise<Job[]>
+    getJobAnalytics(): Promise<any>
 
 }

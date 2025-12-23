@@ -219,4 +219,16 @@ export class JobRepository implements IJobRepository {
         )
     }
 
+    async getJobAnalytics(): Promise<any> {
+        const result=await JobModel.aggregate([
+            {
+                $group:{
+                    _id:'$company',
+                    count:{$sum:1}
+                },
+            }
+        ])
+        return result
+    }
+
 }

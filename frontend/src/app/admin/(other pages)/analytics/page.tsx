@@ -1,5 +1,6 @@
 "use client"
 
+import { getCompanyAnalytics, getJobApplicationAnalytics, getReportAnalytics, getSubscriptionAnalytics, getSubscriptionTypeAnalytics, getUserAnalytics } from "@/services/adminService"
 import { useEffect, useState } from "react"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
@@ -29,13 +30,6 @@ const companyEngagementData = [
   { company: "Company E", value: 48 },
 ]
 
-const reportsCategoryData = [
-  { category: "Spam", value: 45 },
-  { category: "Harassment", value: 62 },
-  { category: "Fake Jobs", value: 58 },
-  { category: "Fake Profiles", value: 71 },
-  { category: "Other", value: 38 },
-]
 
 const applicationsData = [
   { week: "Week 1", value: 320 },
@@ -54,15 +48,56 @@ const activeCompaniesData = [
 
 export default function AnalyticsPage() {
     const [reportAnalytics, setReportAnalytics] = useState()
+    const [companyAnalytics, setCompanyAnalytics] = useState()
+    const [jobAnalytics, setJobAnalytics] = useState()
+    const [userAnalytics, setUserAnalytics] = useState()
+    const [subscriptionAnalytics, setSubscriptionAnalytics] = useState()
+    const [subscriptionTypeAnalytics, setSubscriptionTypeAnalytics] = useState()
 
     useEffect(() => {
         getReportData()
+        getCompanyData()
+        getApplicationData()
+        getUserdata()
+        getSubscriptionData()
+        getSubscriptionTypeData()
     }, [])
 
     const getReportData = async () => {
         const result=await getReportAnalytics()
+        setReportAnalytics(result.result)
     }
- 
+
+    const getCompanyData = async () => {
+        const result=await getCompanyAnalytics()
+        setCompanyAnalytics(result.companyDetails)
+    }
+
+    const getApplicationData = async () => {
+        const result=await getJobApplicationAnalytics()
+        for(let i=0;i<result.result.length;i++){
+            result.result[i].name = months[result.result[i].month-1]
+        }
+        setJobAnalytics(result.result)
+    }
+
+    const getUserdata = async () => {
+        const result=await getUserAnalytics()
+        setUserAnalytics(result.result)
+    }
+
+    const getSubscriptionData = async () => {
+        const result=await getSubscriptionAnalytics()
+        setSubscriptionAnalytics(result.result)
+    }
+
+    const getSubscriptionTypeData = async () => {
+        const result=await getSubscriptionTypeAnalytics()
+        setSubscriptionTypeAnalytics(result.result)
+    }
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 
     return (
         <div className="flex-1">
@@ -85,163 +120,178 @@ export default function AnalyticsPage() {
         <div className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* New User Registrations */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">New User Registrations</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+15%</span>
-                    <span className="text-sm text-green-600">This month +15%</span>
-                    </div>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={userRegistrationsData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 12 }} />
-                    <YAxis hide />
-                    <Tooltip
-                        contentStyle={{
-                        backgroundColor: "white",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        }}
-                    />
-                    <Line type="monotone" dataKey="value" stroke="#5B7FDB" strokeWidth={2} dot={false} />
-                    </LineChart>
-                </ResponsiveContainer>
-                </div>
-
-                {/* Subscriptions Trend */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Subscriptions trend</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+10%</span>
-                    <span className="text-sm text-green-600">This month +10%</span>
-                    </div>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={subscriptionsData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 12 }} />
-                    <YAxis hide />
-                    <Tooltip
-                        contentStyle={{
-                        backgroundColor: "white",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        }}
-                    />
-                    <Line type="monotone" dataKey="value" stroke="#5B7FDB" strokeWidth={2} dot={false} />
-                    </LineChart>
-                </ResponsiveContainer>
-                </div>
-
-                {/* Company Engagement */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Company Engagement</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+20%</span>
-                    <span className="text-sm text-green-600">This month +20%</span>
-                    </div>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <BarChart data={companyEngagementData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                    <XAxis dataKey="company" tick={{ fill: "#6b7280", fontSize: 12 }} />
-                    <YAxis hide />
-                    <Tooltip
-                        contentStyle={{
-                        backgroundColor: "white",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        }}
-                    />
-                    <Bar dataKey="value" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-                </div>
-
-                {/* Reports by Category */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Reports by Category</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+5%</span>
-                    <span className="text-sm text-green-600">This month +5%</span>
-                    </div>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <BarChart data={reportsCategoryData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                    <XAxis dataKey="category" tick={{ fill: "#6b7280", fontSize: 11 }} angle={0} />
-                    <YAxis hide />
-                    <Tooltip
-                        contentStyle={{
-                        backgroundColor: "white",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        }}
-                    />
-                    <Bar dataKey="value" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-                </div>
-
-                {/* Applications Submitted */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Applications Submitted</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+10%</span>
-                    <span className="text-sm text-green-600">This month +10%</span>
-                    </div>
-                </div>
-                <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={applicationsData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="week" tick={{ fill: "#6b7280", fontSize: 12 }} />
-                    <YAxis hide />
-                    <Tooltip
-                        contentStyle={{
-                        backgroundColor: "white",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        }}
-                    />
-                    <Line type="monotone" dataKey="value" stroke="#5B7FDB" strokeWidth={2} dot={false} />
-                    </LineChart>
-                </ResponsiveContainer>
-                </div>
-
-                {/* Most Active Companies */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Most Active Companies</h3>
-                    <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-2xl font-bold text-gray-900">+8%</span>
-                    <span className="text-sm text-green-600">This month +8%</span>
-                    </div>
-                </div>
-                <div className="space-y-3">
-                    {activeCompaniesData.map((company) => (
-                    <div key={company.company} className="flex items-center gap-3">
-                        <span className="text-sm text-blue-600 font-medium w-24 shrink-0">{company.company}</span>
-                        <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div
-                            className="bg-blue-600 h-full rounded-full transition-all duration-300"
-                            style={{ width: `${company.value}%` }}
-                        />
+                {userAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">New User Registrations</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+15%</span>
+                        <span className="text-sm text-green-600">This month +15%</span> */}
                         </div>
                     </div>
-                    ))}
-                </div>
-                </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <LineChart data={userAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Line type="monotone" dataKey="count" stroke="#5B7FDB" strokeWidth={2} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Subscriptions Trend */}
+                {subscriptionAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">Subscriptions trend</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+10%</span>
+                        <span className="text-sm text-green-600">This month +10%</span> */}
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <LineChart data={subscriptionAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Line type="monotone" dataKey="count" stroke="#5B7FDB" strokeWidth={2} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Company Engagement */}
+                {companyAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">Company Engagement</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+20%</span>
+                        <span className="text-sm text-green-600">This month +20%</span> */}
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <BarChart data={companyAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                        <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Bar dataKey="count" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Reports by Category */}
+                {reportAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">Reports by Category</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+5%</span>
+                        <span className="text-sm text-green-600">This month +5%</span> */}
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <BarChart data={reportAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                        <XAxis dataKey="reason" tick={{ fill: "#6b7280", fontSize: 11 }} angle={0} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Bar dataKey="count" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Applications Submitted */}
+                {jobAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">Applications Submitted</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+10%</span>
+                        <span className="text-sm text-green-600">This month +10%</span> */}
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <LineChart data={jobAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Line type="monotone" dataKey="count" stroke="#5B7FDB" strokeWidth={2} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Most Active Companies */}
+                {subscriptionTypeAnalytics && (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                    <div className="mb-4">
+                        <h3 className="text-sm font-medium text-gray-700">Most Purchased Plans</h3>
+                        <div className="flex items-baseline gap-2 mt-2">
+                        {/* <span className="text-2xl font-bold text-gray-900">+8%</span>
+                        <span className="text-sm text-green-600">This month +8%</span> */}
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={180}>
+                        <BarChart data={subscriptionTypeAnalytics}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                        <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 11 }} angle={0} />
+                        <YAxis hide />
+                        <Tooltip
+                            contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "6px",
+                            fontSize: "12px",
+                            }}
+                        />
+                        <Bar dataKey="count" fill="#E5E7EB" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    </div>
+                )}
             </div>
         </div>
         </div>

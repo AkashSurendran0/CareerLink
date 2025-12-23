@@ -2,7 +2,8 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
 import {injectable} from "inversify";
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
+import { sequelize } from "../database/Sequelize";
 
 type UserType={
     id:string,
@@ -191,6 +192,32 @@ export class UserRepository implements IUserRepository {
                 user.createdAt
             )
         );
+    }
+
+    async getUserAnalytics(): Promise<any> {
+        const result = await sequelize.query(
+            `
+            WITH months AS (
+                SELECT generate_series(
+                DATE_TRUNC('year', CURRENT_DATE),
+                DATE_TRUNC('month', CURRENT_DATE),
+                INTERVAL '1 month'
+                ) AS month
+            )
+            SELECT
+                TO_CHAR(m.month, 'Mon') AS month,
+                COUNT(u.id) AS count
+            FROM months m
+            LEFT JOIN users u
+                ON DATE_TRUNC('month', u."createdAt") = m.month
+            GROUP BY m.month
+            ORDER BY m.month;
+            `,
+            {
+                type: QueryTypes.SELECT,
+            }
+        );
+        return result;
     }
 
 }

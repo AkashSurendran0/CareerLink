@@ -9,6 +9,7 @@ import { GetPreviousUserReports } from "./services/GetPreviousReports";
 import { GetReportDetails } from "./services/GetReportDetails";
 import { CloseReport } from "./services/CloseReport";
 import { ReportMessage } from "./services/ReportMessage";
+import { GetReportAnalyics } from "./services/GetReportAnalytics";
 
 const container=new Container()
 
@@ -21,6 +22,7 @@ container.bind(TYPES.IGetPreviousUserReports).to(GetPreviousUserReports).inSingl
 container.bind(TYPES.IGetReportDetails).to(GetReportDetails).inSingletonScope()
 container.bind(TYPES.ICloseReport).to(CloseReport).inSingletonScope()
 container.bind(TYPES.IReportMessage).to(ReportMessage).inSingletonScope()
+container.bind(TYPES.IGetReportAnalytics).to(GetReportAnalyics).inSingletonScope()
 
 container.bind(TYPES.ReportController).to(ReportController).inSingletonScope()
 

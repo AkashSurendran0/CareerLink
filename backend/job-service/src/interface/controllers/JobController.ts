@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { STATUS_CODES } from "../../utils/StatusCodes"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../../types"
-import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants, IAlterUserApplication } from "../../domain/use-cases/IJobUseCase"
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants, IAlterUserApplication, IGetCompanyAnalytics, IGetJobApplicationAnalytics } from "../../domain/use-cases/IJobUseCase"
 import axios from "axios"
 import { uploadResume } from "../../config/upload"
 import { rabbitmqService } from "../../utils/Rabbitmq"
@@ -20,7 +20,9 @@ export class JobController {
         @inject(TYPES.IApplyJob) private _applyJob:IApplyJob,
         @inject(TYPES.IGetUserAppliedJobs) private _getUserAppliedJobs:IGetUserAppliedJobs,
         @inject(TYPES.IGetJobApplicants) private _getJobApplicants:IGetJobApplicants,
-        @inject(TYPES.IAlterUserApplication) private _alterUserApplication:IAlterUserApplication
+        @inject(TYPES.IAlterUserApplication) private _alterUserApplication:IAlterUserApplication,
+        @inject(TYPES.IGetCompanyAnalytics) private _getCompanyAnalytics:IGetCompanyAnalytics,
+        @inject(TYPES.IGetJobApplicationAnalytics) private _getJobApplicationAnalytics:IGetJobApplicationAnalytics
     ){}
 
     addJob = async (req:Request, res:Response) => {
@@ -268,6 +270,41 @@ Thank you for your interest in joining our company`;
                 const result={success:false}
                 res.json({result})
             }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getCompanyAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getCompanyAnalytics.getCompanyAnalytics()
+            const companyDetails=await Promise.all(
+                result.map(async job=>{
+                    const result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job._id}`)
+                    return {
+                        ...job,
+                        name:result.data.company.name
+                    }
+                })
+            )
+            res.json({companyDetails})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getJobApplicationAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getJobApplicationAnalytics.getJobApplicationAnalytics()
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

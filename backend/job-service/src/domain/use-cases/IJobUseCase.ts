@@ -54,3 +54,11 @@ export interface IAlterUserApplication {
     acceptApplication(job:string, user:string): Promise<{success:boolean}>
     rejectApplication(job:string, user:string): Promise<{success:boolean}>
 }
+
+export interface IGetCompanyAnalytics {
+    getCompanyAnalytics(): Promise<any>
+}
+
+export interface IGetJobApplicationAnalytics {
+    getJobApplicationAnalytics(): Promise<any>
+}

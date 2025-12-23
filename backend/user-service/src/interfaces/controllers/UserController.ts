@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IGetUserNames, ILoginUser, ISendWarningMail } from "../../domain/use-cases/IUserUseCase";
+import { IGetUserAnalytics, IGetUserNames, ILoginUser, ISendWarningMail } from "../../domain/use-cases/IUserUseCase";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
@@ -30,7 +30,8 @@ export class UserController {
         @inject(TYPES.ICheckUserBlock) private _checkUserBlock:ICheckUserBlock,
         @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP,
         @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames,
-        @inject(TYPES.ISendWarningMail) private _sendWarningMail:ISendWarningMail
+        @inject(TYPES.ISendWarningMail) private _sendWarningMail:ISendWarningMail,
+        @inject(TYPES.IGetUserAnalytics) private _getUserAnalytics:IGetUserAnalytics
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -258,6 +259,19 @@ export class UserController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
+
+    getUserAnalytics = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getUserAnalytics.getUserAnalytics();
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
 
 }

@@ -7,5 +7,6 @@ export const TYPES = {
     IGetPreviousUserReports:'IGetPreviousUserReports',
     IGetReportDetails:'IGetReportDetails',
     ICloseReport:'ICloseReport',
-    IReportMessage:'IReportMessage'
+    IReportMessage:'IReportMessage',
+    IGetReportAnalytics:'IGetReportAnalytics'
 }
