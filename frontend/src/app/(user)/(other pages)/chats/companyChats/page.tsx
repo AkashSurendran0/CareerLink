@@ -241,6 +241,19 @@ export default function ChatsPage() {
         })
     }
 
+    const videoCallUser = async () => {
+        if(!selectedUser) return
+
+        userSocket.emit('ring-call', {
+        from: companyOwnerId,
+        caller: companyDetails.name,
+        callerImage: companyDetails.logo || null,
+        to: selectedUser.user,
+        reciever: selectedUser.username,
+        callType: 'video-call'
+        })
+    }
+
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
 
@@ -375,7 +388,10 @@ export default function ChatsPage() {
                     >
                         <Phone className="h-5 w-5 text-gray-600" />
                     </button>
-                    <button className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block">
+                    <button 
+                    onClick={videoCallUser}
+                    className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block"
+                    >
                         <Video className="h-5 w-5 text-gray-600" />
                     </button>
                     <button
