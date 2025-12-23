@@ -31,3 +31,7 @@ export interface IGetActivePlans {
 export interface IDeletePlanType {
   deletePlanType(id:string): Promise<{success:boolean}>
 }
+
+export interface IGetSubscriptionTypeAnalytics {
+  getSubscriptionTypeAnalytics(): Promise<any>
+}

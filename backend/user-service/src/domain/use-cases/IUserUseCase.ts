@@ -49,3 +49,7 @@ export interface IGetUserNames {
 export interface ISendWarningMail {
     sendWarningMail(email: string): Promise<{success:boolean}>
 }
+
+export interface IGetUserAnalytics {
+    getUserAnalytics(): Promise<any>
+}

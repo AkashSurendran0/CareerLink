@@ -3,6 +3,8 @@ import { ISubscriptionRepository } from "../../domain/respository/ISubscriptionR
 import { SubscriptionModel } from "../models/SubscriptionModel";
 import { getNthDay } from "../../utils/GetValidityDate";
 import { Subscription } from "../../domain/entity/Subscription";
+import { sequelize } from "../database/Sequelize";
+import { QueryTypes } from "sequelize";
 
 
 @injectable()
@@ -59,6 +61,44 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     async deletePlans(id: string): Promise<{ success: boolean; }> {
         await SubscriptionModel.destroy({where:{subscriptionType:id}})
         return {success:true}
+    }
+
+    async getSubscriptionAnalysis(): Promise<any> {
+        const result = await sequelize.query(
+            `
+            WITH months AS (
+                SELECT generate_series(
+                DATE_TRUNC('year', CURRENT_DATE),
+                DATE_TRUNC('month', CURRENT_DATE),
+                INTERVAL '1 month'
+                ) AS month
+            )
+            SELECT
+                TO_CHAR(m.month, 'Mon') AS month,
+                COUNT(u.id) AS count
+            FROM months m
+            LEFT JOIN subscriptions u
+                ON DATE_TRUNC('month', u."createdAt") = m.month
+            GROUP BY m.month
+            ORDER BY m.month;
+            `,
+            {
+                type: QueryTypes.SELECT,
+            }
+        );
+        return result
+    }
+
+    async groupByPlan(): Promise<any> {
+        const result = await sequelize.query(
+            `
+            SELECT "subscriptionType", COUNT(*) AS count
+            FROM subscriptions
+            GROUP BY "subscriptionType"
+            `,
+            { type: QueryTypes.SELECT }
+        );
+        return result
     }
 
 }

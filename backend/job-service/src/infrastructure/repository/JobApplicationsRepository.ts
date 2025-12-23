@@ -85,4 +85,40 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
         return {success: result.modifiedCount == 1}
     }
 
+    async getJobApplicationAnalytics(): Promise<any> {
+        const result=await JobApplicationModel.aggregate([
+            {
+                $unwind:'$applicants'
+            },
+            {
+                $match:{
+                    'applicants.createdAt':{
+                        $gt:new Date(new Date().getFullYear(), 0, 1),
+                        $lt:new Date()
+                    }
+                }
+            },
+            {
+                $group:{
+                    _id: {
+                        month:{$month: "$applicants.createdAt"},
+                        year:{$year: "$applicants.createdAt"}
+                    },
+                    count: {$sum:1}
+                }
+            },
+            {
+                $project:{
+                    _id:0,
+                    month:"$_id.month",
+                    count:1
+                }
+            },
+            {
+                $sort:{month : 1}
+            }
+        ])
+        return result
+    }
+
 }

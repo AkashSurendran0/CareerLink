@@ -7,4 +7,5 @@ export interface IJobApplicationsRepository {
     getJobApplicants(id:string): Promise<JobApplications | null>
     acceptApplication(job:string, user:string): Promise<{success:boolean}>
     rejectApplication(job:string, user:string): Promise<{success:boolean}>
+    getJobApplicationAnalytics(): Promise<any>
 }
