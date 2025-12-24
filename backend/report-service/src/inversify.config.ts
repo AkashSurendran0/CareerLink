@@ -10,6 +10,7 @@ import { GetReportDetails } from "./services/GetReportDetails";
 import { CloseReport } from "./services/CloseReport";
 import { ReportMessage } from "./services/ReportMessage";
 import { GetReportAnalyics } from "./services/GetReportAnalytics";
+import { GetTodayReportCount } from "./services/GetTodayReportCount";
 
 const container=new Container()
 
@@ -23,6 +24,7 @@ container.bind(TYPES.IGetReportDetails).to(GetReportDetails).inSingletonScope()
 container.bind(TYPES.ICloseReport).to(CloseReport).inSingletonScope()
 container.bind(TYPES.IReportMessage).to(ReportMessage).inSingletonScope()
 container.bind(TYPES.IGetReportAnalytics).to(GetReportAnalyics).inSingletonScope()
+container.bind(TYPES.IGetTodayReportCount).to(GetTodayReportCount).inSingletonScope()
 
 container.bind(TYPES.ReportController).to(ReportController).inSingletonScope()
 

@@ -70,5 +70,6 @@ router.patch("/removeConnection", connectionController.removeConnection);
 router.get("/getConnectionDetails", connectionController.getConnectionDetails);
 router.post("/sendWarningMail", userController.sendWarningMail);
 router.get("/getUserAnalytics", userController.getUserAnalytics);
+router.get("/getTotalUserCount", userController.getTotalUserCount);
 
 export default router;

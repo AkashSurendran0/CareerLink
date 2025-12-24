@@ -8,7 +8,7 @@ function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const sidebarItems = [
-    { icon: "🏠", label: "Dashboard", active: false, value:"" },
+    { icon: "🏠", label: "Dashboard", active: false, value:"/admin/dashboard" },
     { icon: "👥", label: "Users", active: true, value:"/admin/userManagement" },
     { icon: "🏢", label: "Companies", active: false, value:"/admin/companyManagement" },
     { icon: "📄", label: "Reports", active: false, value:"/admin/reports" },

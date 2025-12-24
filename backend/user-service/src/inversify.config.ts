@@ -31,6 +31,7 @@ import { RemoveConnection } from "./application/use-cases/RemoveConnection";
 import { GetConnectionDetails } from "./application/use-cases/GetConnectionDetails";
 import { SendWarningMail } from "./application/use-cases/SendWarningMail";
 import { GetUserAnalytics } from "./application/use-cases/GetUserAnalytics";
+import { GetTotalUserCount } from "./application/use-cases/GetTotalUserCount";
 
 const container = new Container();
 
@@ -63,6 +64,7 @@ container.bind(TYPES.IRemoveConnection).to(RemoveConnection).inSingletonScope();
 container.bind(TYPES.IGetConnectionDetails).to(GetConnectionDetails).inSingletonScope();
 container.bind(TYPES.ISendWarningMail).to(SendWarningMail).inSingletonScope();
 container.bind(TYPES.IGetUserAnalytics).to(GetUserAnalytics).inSingletonScope();
+container.bind(TYPES.IGetTotalUserCount).to(GetTotalUserCount).inSingletonScope();
 
 container.bind<UserController>(TYPES.UserController).to(UserController);
 container.bind<UserDetailsController>(TYPES.UserDetailsController).to(UserDetailsController);

@@ -4,7 +4,7 @@ import { SubscriptionModel } from "../models/SubscriptionModel";
 import { getNthDay } from "../../utils/GetValidityDate";
 import { Subscription } from "../../domain/entity/Subscription";
 import { sequelize } from "../database/Sequelize";
-import { QueryTypes } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 
 
 @injectable()
@@ -46,7 +46,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
     async getActivePlanUsers(plan: string): Promise<{ success: boolean; }> {
         const existingPlans=await SubscriptionModel.findAll({where:{subscriptionType:plan}, raw:true})
-        console.log(existingPlans, plan)
         if(!existingPlans || existingPlans.length == 0) return {success:true}
         const now=new Date()
         for(let plan of existingPlans){
@@ -99,6 +98,17 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             { type: QueryTypes.SELECT }
         );
         return result
+    }
+
+    async getPremiumUserCount(): Promise<number> {
+        const result = await SubscriptionModel.findAll({
+            where: {
+                validTill: {
+                    [Op.gt]: new Date()
+                }
+            }
+        });
+        return result.length
     }
 
 }

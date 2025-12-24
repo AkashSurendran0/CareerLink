@@ -14,6 +14,7 @@ import { ReapplyCompany } from "./application/user-cases/ReapplyCompany";
 import { DeleteCompany } from "./application/user-cases/DeleteCompany";
 import { GetAvailableCompanies } from "./application/user-cases/GetAvailableCompanies";
 import { GetCompanyDetailsByQuery } from "./application/user-cases/GetCompanyDetailsByQuery";
+import { GetActiveCompanyCount } from "./application/user-cases/GetActiveCompanyCount";
 
 const container=new Container()
 
@@ -31,6 +32,7 @@ container.bind(TYPES.IReapplyCompany).to(ReapplyCompany).inSingletonScope()
 container.bind(TYPES.IDeleteCompany).to(DeleteCompany).inSingletonScope()
 container.bind(TYPES.IGetAvailableCompanies).to(GetAvailableCompanies).inSingletonScope()
 container.bind(TYPES.IGetCompanyDetailsByQuery).to(GetCompanyDetailsByQuery).inSingletonScope()
+container.bind(TYPES.IGetActiveCompanyCount).to(GetActiveCompanyCount).inSingletonScope()
 
 container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
 

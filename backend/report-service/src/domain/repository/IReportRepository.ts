@@ -9,4 +9,5 @@ export interface IReportRepository {
     closeReport(id:string): Promise<{success:boolean}>
     reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{success:boolean}>
     getReportAnalytics(): Promise<any>
+    getTodayReportCount(): Promise<number>
 }

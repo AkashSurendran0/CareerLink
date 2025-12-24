@@ -53,3 +53,7 @@ export interface ISendWarningMail {
 export interface IGetUserAnalytics {
     getUserAnalytics(): Promise<any>
 }
+
+export interface IGetTotalUserCount {
+    getTotalUserCount(): Promise<number>
+}

@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
-import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetSubscriptionAnalysis, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
+import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetPremiumUserCount, IGetSubscriptionAnalysis, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 import axios from "axios";
 
 dotenv.config()
@@ -32,7 +32,8 @@ export class SubscriptionController {
         @inject(TYPES.IGetActivePlanUsers) private _getActivePlanUsers:IGetActivePlanUsers,
         @inject(TYPES.IDeletePlanType) private _deletePlanType:IDeletePlanType,
         @inject(TYPES.IGetSubscriptionAnalysis) private _getSubscriptionAnalysis:IGetSubscriptionAnalysis,
-        @inject(TYPES.IGetSubscriptionTypeAnalytics) private _getSubscriptionTypeAnalytics:IGetSubscriptionTypeAnalytics
+        @inject(TYPES.IGetSubscriptionTypeAnalytics) private _getSubscriptionTypeAnalytics:IGetSubscriptionTypeAnalytics,
+        @inject(TYPES.IGetPremiumUserCount) private _premiumUserCount:IGetPremiumUserCount
     ) {}
 
     addSubscription = async (req:Request, res:Response) => {
@@ -362,6 +363,20 @@ export class SubscriptionController {
     getSubscriptionTypeAnalytics = async (req:Request, res:Response) => {
         try {
             const result=await this._getSubscriptionTypeAnalytics.getSubscriptionTypeAnalytics()
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log('error', error)
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getPremiumUserCount = async (req:Request, res:Response) => {
+        try {
+            const result=await this._premiumUserCount.getPremiumUserCount()
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

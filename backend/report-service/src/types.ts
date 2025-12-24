@@ -8,5 +8,6 @@ export const TYPES = {
     IGetReportDetails:'IGetReportDetails',
     ICloseReport:'ICloseReport',
     IReportMessage:'IReportMessage',
-    IGetReportAnalytics:'IGetReportAnalytics'
+    IGetReportAnalytics:'IGetReportAnalytics',
+    IGetTodayReportCount:'IGetTodayReportCount'
 }

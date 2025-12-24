@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { ICloseReport, IGetPaginatedReports, IGetPreviousUserReports, IGetReportAnalytics, IGetReportDetails, IReportCompany, IReportMessage, IReportUser } from "../domain/service/IReportService";
+import { ICloseReport, IGetPaginatedReports, IGetPreviousUserReports, IGetReportAnalytics, IGetReportDetails, IGetTodayReportCount, IReportCompany, IReportMessage, IReportUser } from "../domain/service/IReportService";
 import axios from "axios";
 
 @injectable()
@@ -15,8 +15,9 @@ export class ReportController {
         @inject(TYPES.IGetPreviousUserReports) private _getPreviousUserReports:IGetPreviousUserReports,
         @inject(TYPES.IGetReportDetails) private _getReportDetails:IGetReportDetails,
         @inject(TYPES.ICloseReport) private _closeReport:ICloseReport,
-        @inject(TYPES.IReportMessage) private _reportMessage:IReportMessage
-        @inject(TYPES.IGetReportAnalytics) private _getReportAnalytics:IGetReportAnalytics
+        @inject(TYPES.IReportMessage) private _reportMessage:IReportMessage,
+        @inject(TYPES.IGetReportAnalytics) private _getReportAnalytics:IGetReportAnalytics,
+        @inject(TYPES.IGetTodayReportCount) private _getTodayReportCount:IGetTodayReportCount
     ){}
 
     reportUser = async (req:Request, res:Response) => {
@@ -145,6 +146,19 @@ export class ReportController {
     getReportAnalytics = async (req:Request, res:Response) => {
         try {
             const result=await this._getReportAnalytics.getReportAnalytics()
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getTodayReportCount = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getTodayReportCount.getTodayReportCount()
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
