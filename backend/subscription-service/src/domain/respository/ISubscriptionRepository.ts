@@ -9,4 +9,5 @@ export interface ISubscriptionRepository {
     deletePlans(id:string): Promise<{success:boolean}>
     getSubscriptionAnalysis(): Promise<any>
     groupByPlan(): Promise<any>
+    getPremiumUserCount(): Promise<number>
 }

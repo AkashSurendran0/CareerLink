@@ -14,5 +14,6 @@ router.get('/getReportDetails', reportController.getReportDetails)
 router.patch('/closeReport', reportController.closeReport)
 router.post('/reportMessage', reportController.reportMessage)
 router.get('/getReportAnalytics', reportController.getReportAnalytics)
+router.get('/getTodayReportCount', reportController.getTodayReportCount)
 
 export default router

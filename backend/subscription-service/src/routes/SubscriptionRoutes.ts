@@ -24,5 +24,6 @@ router.get('/getActivePlanUsers', subscriptionController.getActivePlanUsers)
 router.delete('/deleteSubscriptionPlan', subscriptionController.deleteSubscriptionPlan)
 router.get('/getSubscriptionAnalytics', subscriptionController.getSubscriptionAnalytics)
 router.get('/getSubscriptionTypeAnalytics', subscriptionController.getSubscriptionTypeAnalytics)
+router.get('/getPremiumUserCount', subscriptionController.getPremiumUserCount)
 
 export default router

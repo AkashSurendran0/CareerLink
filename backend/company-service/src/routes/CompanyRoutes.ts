@@ -22,5 +22,6 @@ router.patch('/reapplyCompany', companyController.reapplyCompany)
 router.delete('/deleteCompany', companyController.deleteCompany)
 router.get('/getAvailableCompanies', companyController.getAvailableCompanies)
 router.get('/getCompanyDetailsByQuery', companyController.getCompanyDetailsByQuery)
+router.get('/getActiveCompanyCount', companyController.getActiveCompanyCount)
 
 export default router;

@@ -175,3 +175,23 @@ export const getSubscriptionTypeAnalytics = async () => {
     const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getSubscriptionTypeAnalytics`)
     return res.data
 }
+
+export const getTotalUserCount = async () => {
+    const res=await api.get(`${USER_V1_ROUTE}/getTotalUserCount`)
+    return res.data
+}
+
+export const getActiveCompanyCount = async () => {
+    const res=await api.get(`${COMPANY_V1_ROUTE}/getActiveCompanyCount`)
+    return res.data
+}
+
+export const getTodayReportCount = async () => {
+    const res=await api.get(`${REPORT_V1_ROUTE}/getTodayReportCount`)
+    return res.data
+}
+
+export const getPremiumUserCount = async () => {
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getPremiumUserCount`)
+    return res.data
+}

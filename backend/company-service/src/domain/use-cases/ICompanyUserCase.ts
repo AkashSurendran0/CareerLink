@@ -62,3 +62,7 @@ export interface IGetAvailableCompanies {
 export interface IGetCompanyDetailsByQuery {
     getCompanyDetails(id:string): Promise<CompanyDTO>
 }
+
+export interface IGetActiveCompanyCount {
+    getActiveCompanyCount(): Promise<number>
+}

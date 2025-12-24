@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { uploadImageToS3 } from "../../config/upload";
 import { TYPES } from "../../types";
-import { IAddCompany, IGetAvailableCompanies, IGetCompanyDetailsByQuery } from "../../domain/use-cases/ICompanyUserCase";
+import { IAddCompany, IGetActiveCompanyCount, IGetAvailableCompanies, IGetCompanyDetailsByQuery } from "../../domain/use-cases/ICompanyUserCase";
 import { ICheckCompanyRegistrationInfo } from "../../domain/use-cases/ICompanyUserCase";
 import { IGetCompanyDetails } from "../../domain/use-cases/ICompanyUserCase";
 import { IEditCompany } from "../../domain/use-cases/ICompanyUserCase";
@@ -29,7 +29,8 @@ export class CompanyController {
         @inject(TYPES.IReapplyCompany) private _reapplyCompany:IReapplyCompany,
         @inject(TYPES.IDeleteCompany) private _deleteCompany:IDeleteCompany,
         @inject(TYPES.IGetAvailableCompanies) private _getAvailableCompanies:IGetAvailableCompanies,
-        @inject(TYPES.IGetCompanyDetailsByQuery) private _getCompanyDetailsByQuery:IGetCompanyDetailsByQuery
+        @inject(TYPES.IGetCompanyDetailsByQuery) private _getCompanyDetailsByQuery:IGetCompanyDetailsByQuery,
+        @inject(TYPES.IGetActiveCompanyCount) private _getActiveCompanyCount:IGetActiveCompanyCount
     ){}
 
     addCompany = async (req:Request, res:Response): Promise<void> => {
@@ -242,6 +243,19 @@ export class CompanyController {
         try {
             const {id}=req.query
             const result=await this._getCompanyDetailsByQuery.getCompanyDetails(id)
+            res.json({result})
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    getActiveCompanyCount = async (req:Request, res:Response) => {
+        try {
+            const result=await this._getActiveCompanyCount.getActiveCompanyCount()
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {

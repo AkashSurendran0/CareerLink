@@ -31,3 +31,7 @@ export interface IReportMessage {
 export interface IGetReportAnalytics {
     getReportAnalytics(): Promise<any>
 }
+
+export interface IGetTodayReportCount {
+    getTodayReportCount(): Promise<number>
+}

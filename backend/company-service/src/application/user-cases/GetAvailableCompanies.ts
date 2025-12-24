@@ -8,7 +8,6 @@ import { CompanyMapper } from "../../mapper/CompanyMapper";
 export class GetAvailableCompanies implements IGetAvailableCompanies {
 
     async getAvailableCompanies(email: string, query: string): Promise<CompanyDTO[]> {
-        console.log(email, query)
         let esQuery:any
         
         if (!query || query.trim() === "") {

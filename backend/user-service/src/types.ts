@@ -29,5 +29,6 @@ export const TYPES={
     IRemoveConnection:"IRemoveConnection",
     IGetConnectionDetails:"IGetConnectionDetails",
     ISendWarningMail:"ISendWarningMail",
-    IGetUserAnalytics:"IGetUserAnalytics"
+    IGetUserAnalytics:"IGetUserAnalytics",
+    IGetTotalUserCount:"IGetTotalUserCount"
 };

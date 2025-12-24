@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IGetUserAnalytics, IGetUserNames, ILoginUser, ISendWarningMail } from "../../domain/use-cases/IUserUseCase";
+import { IGetTotalUserCount, IGetUserAnalytics, IGetUserNames, ILoginUser, ISendWarningMail } from "../../domain/use-cases/IUserUseCase";
 import { ISignupUser } from "../../domain/use-cases/IUserUseCase";
 import { ISendOTP } from "../../domain/use-cases/IUserUseCase";
 import { IChangePass } from "../../domain/use-cases/IUserUseCase";
@@ -31,7 +31,8 @@ export class UserController {
         @inject(TYPES.IVerifyOTP) private _verifyOtp:IVerifyOTP,
         @inject(TYPES.IGetUserNames) private _getUserNames:IGetUserNames,
         @inject(TYPES.ISendWarningMail) private _sendWarningMail:ISendWarningMail,
-        @inject(TYPES.IGetUserAnalytics) private _getUserAnalytics:IGetUserAnalytics
+        @inject(TYPES.IGetUserAnalytics) private _getUserAnalytics:IGetUserAnalytics,
+        @inject(TYPES.IGetTotalUserCount) private _totalUserCount: IGetTotalUserCount
     ) {}
 
     login = async (req:Request, res:Response): Promise<void> => {
@@ -273,5 +274,18 @@ export class UserController {
             }
         }
     };
+
+    getTotalUserCount = async (req:Request, res:Response) => {
+        try {
+            const result=await this._totalUserCount.getTotalUserCount();
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
 
 }

@@ -13,5 +13,6 @@ export const TYPES = {
     IGetActivePlanUsers:'IGetActivePlanUsers',
     IDeletePlanType:'IDeletePlanType',
     IGetSubscriptionAnalysis:'IGetSubscriptionAnalysis',
-    IGetSubscriptionTypeAnalytics:'IGetSubscriptionTypeAnalytics'
+    IGetSubscriptionTypeAnalytics:'IGetSubscriptionTypeAnalytics',
+    IGetPremiumUserCount:'IGetPremiumUserCount'
 }

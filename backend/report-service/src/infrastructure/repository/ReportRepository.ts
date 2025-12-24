@@ -1,4 +1,4 @@
-import { QueryTypes } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import { Report } from "../../domain/entity/Report";
 import { IReportRepository } from "../../domain/repository/IReportRepository";
 import { sequelize } from "../database/Sequelize";
@@ -154,6 +154,25 @@ export class ReportRepository implements IReportRepository {
             { type: QueryTypes.SELECT }
         );
         return result
+    }
+
+    async getTodayReportCount(): Promise<number> {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const count = await ReportModel.count({
+            where: {
+            createdAt: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay,
+            },
+            },
+        });
+
+        return count;
     }
 
 }

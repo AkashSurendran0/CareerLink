@@ -47,10 +47,8 @@ export class GetAllCompanies implements IGetAllCompanies {
                 bool:{
                     must:[
                         {       
-                            multi_match:{
-                                query:query,
-                                fields:["name"],
-                                fuzziness:"AUTO"
+                            prefix: {
+                                name: query.toLowerCase()
                             }
                         }
                     ],
@@ -112,10 +110,8 @@ export class GetAllCompanies implements IGetAllCompanies {
                 bool:{
                     must:[
                         {       
-                            multi_match:{
-                                query:query,
-                                fields:["name"],
-                                fuzziness:"AUTO"
+                            prefix: {
+                                name: query.toLowerCase()
                             }
                         }
                     ],

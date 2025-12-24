@@ -12,5 +12,6 @@ export const TYPES = {
     IReapplyCompany:"IReapplyCompany",
     IDeleteCompany:"IDeleteCompany",
     IGetAvailableCompanies:"IGetAvailableCompanies",
-    IGetCompanyDetailsByQuery:"IGetCompanyDetailsByQuery"
+    IGetCompanyDetailsByQuery:"IGetCompanyDetailsByQuery",
+    IGetActiveCompanyCount:"IGetActiveCompanyCount"
 }

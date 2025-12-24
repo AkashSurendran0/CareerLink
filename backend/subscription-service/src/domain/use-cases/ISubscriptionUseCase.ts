@@ -21,3 +21,7 @@ export interface IGetActivePlanUsers {
 export interface IGetSubscriptionAnalysis {
     getSubscriptionAnalysis(): Promise<any>
 }
+
+export interface IGetPremiumUserCount {
+    getPremiumUserCount(): Promise<number>
+}
