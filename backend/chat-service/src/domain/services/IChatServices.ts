@@ -1,5 +1,11 @@
 import { ChatDto } from "../../dto/ChatDto"
 
+type Data = {
+    convoId:string,
+    date:Date,
+    time:string
+}
+
 export interface IStartConversation {
     startConversation(id:string, user:string, isCompany:boolean):Promise<{success:boolean, id:string}>
 }
@@ -22,4 +28,8 @@ export interface IReadMessages {
 
 export interface IGetReportedMessage {
     getReportedMessage(user1:string, user2:string, chatId:string): Promise<ChatDto>
+}
+
+export interface IScheduleCall {
+    scheduleCall(data:Data, companyId:any): Promise<ChatDto>
 }

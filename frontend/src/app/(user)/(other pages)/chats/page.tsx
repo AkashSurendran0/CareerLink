@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import ReportModal from "@/reusable-components/reportModal"
 import ConfirmModal from "@/reusable-components/confirmModal"
 import { enqueueSnackbar } from "notistack"
+import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMessage"
 
 export default function ChatsPage() {
   const setLoading=useLoading()
@@ -440,7 +441,19 @@ export default function ChatsPage() {
                   {userChats?.content?.length > 0 ?(
                     userChats.content.map((message) => {
                       const isMe = message.sendBy === userId
-                      const isOther = message.sendBy === selectedUser.user;
+                      if(message.isScheduleMessage) { 
+                        return (
+                          <ScheduledMeetingMessage
+                          key={message._id}
+                          date={message.date}
+                          time={message.time}
+                          onRemind={videoCallUser}
+                          onCall={videoCallUser}
+                          isMe={isMe}
+                          isRead={message.isRead}
+                          />
+                        )
+                      }
 
                       return (
                       

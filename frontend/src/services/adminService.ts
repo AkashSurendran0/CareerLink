@@ -195,3 +195,8 @@ export const getPremiumUserCount = async () => {
     const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getPremiumUserCount`)
     return res.data
 }
+
+export const adminLogout = async () => {
+    const res=await api.delete(`${ADMIN_V1_ROUTE}/adminLogout`)
+    return res.data
+}

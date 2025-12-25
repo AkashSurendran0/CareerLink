@@ -9,6 +9,8 @@ import { getSubscriptionInfo } from "../services/userService"
 import CallPopup from "@/reusable-components/callPopup"
 import RingingPopup from "@/reusable-components/ringingPopup"
 import crypto from "crypto";
+import { User } from "lucide-react"
+import Image from "next/image"
 
 interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
@@ -43,6 +45,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const getDetails = async () => {
     const result=await getUserDetails()
+    console.log(result)
     setUserDetails(result.userDetails)
   }
 
@@ -329,8 +332,19 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                   </div>
                 )}
               </div>
-
-              <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center"></div>
+                {userDetails && (
+                  userDetails.profilePicture ? (
+                      <Image
+                      height={300}
+                      width={300}
+                      className="h-8 w-8 rounded-full flex items-center justify-center"
+                      src={userDetails.profilePicture}
+                      alt="User Image"
+                      />
+                  ):(
+                    <User className="h-8 w-8 rounded-full object-cover"/>
+                  )
+                )}
             </div>
           </div>
         </div>

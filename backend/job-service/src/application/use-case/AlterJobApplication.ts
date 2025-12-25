@@ -21,4 +21,9 @@ export class AlterUserApplication implements IAlterUserApplication {
         return result
     }
 
+    async hireUser(job: string, user: string): Promise<{ success: boolean; }> {
+        const result=await this._jobApplicationRepository.hireApplication(job, user)
+        return result
+    }
+
 }

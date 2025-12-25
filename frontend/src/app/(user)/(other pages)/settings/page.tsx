@@ -1,6 +1,6 @@
 "use client"
 
-import { cancelSubscription, getUserPlan } from "@/services/userService"
+import { cancelSubscription, getUserPlan, userLogout } from "@/services/userService"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLoading } from "../../template"
@@ -26,6 +26,7 @@ export default function SettingsPage() {
     const [chatNotifications, setChatNotifications] = useState(true)
     const [callNotifications, setCallNotifications] = useState(false)
     const [jobNotifications, setJobNotifications] = useState(false)
+    const [logoutConfirmation, setLogoutConfirmation] = useState(false)
     const [userPlan, setUserPlan]=useState<UserPlan | null>(null)
     const [confirmBox, setConfirmBox]=useState(false)
 
@@ -41,8 +42,11 @@ export default function SettingsPage() {
         }
     }
 
-    const handleLogout = () => {
-        // Handle logout logic here
+    const handleLogout = async () => {
+        const result=await userLogout()
+        if(result.success){
+            router.push('/login')
+        }
         console.log("User logged out")
     }
 
@@ -63,6 +67,10 @@ export default function SettingsPage() {
         <main className="flex-1 overflow-auto">
             {confirmBox && (
                 <ConfirmModal onClose={()=>setConfirmBox(false)} title="Confirm your action" message="Do you want to cancel your ongoing subscription? (The amount is not refundable)" onConfirm={handleCancelSubscription}/>
+            )}
+
+            {logoutConfirmation && (
+                <ConfirmModal onClose={()=>setLogoutConfirmation(false)} title="Confirm your action" message="Do you want to logout?" onConfirm={handleLogout}/>
             )}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Settings Title */}
@@ -139,11 +147,10 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Notification Settings Section */}
-                <div className="mb-12">
+                {/* <div className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Notification Settings</h2>
 
                 <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
-                    {/* Chat Notifications Toggle */}
                     <div className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
                     <label className="text-gray-700 font-medium">Chat Notifications</label>
                     <button
@@ -160,7 +167,6 @@ export default function SettingsPage() {
                     </button>
                     </div>
 
-                    {/* Call Notifications Toggle */}
                     <div className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
                     <label className="text-gray-700 font-medium">Call Notifications</label>
                     <button
@@ -177,7 +183,6 @@ export default function SettingsPage() {
                     </button>
                     </div>
 
-                    {/* Job Posting Notifications Toggle */}
                     <div className="flex items-center justify-between py-4">
                     <label className="text-gray-700 font-medium">Job Posting Notifications</label>
                     <button
@@ -194,13 +199,13 @@ export default function SettingsPage() {
                     </button>
                     </div>
                 </div>
-                </div>
+                </div> */}
 
                 {/* Logout Button */}
                 <div>
                 <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-full transition-colors"
+                    onClick={()=>setLogoutConfirmation(true)}
+                    className="cursor-pointer bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-full transition-colors"
                 >
                     Logout
                 </button>

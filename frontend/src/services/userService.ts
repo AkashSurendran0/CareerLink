@@ -214,8 +214,8 @@ export const getUserAppliedJobs = async () => {
     return res.data
 }
 
-export const getJobApplicants = async (id:string) => {
-    const res=await api.get(`${JOB_V1_ROUTE}/getJobApplicants?job=${id}`)
+export const getJobApplicants = async (id:string, filter:string) => {
+    const res=await api.get(`${JOB_V1_ROUTE}/getJobApplicants?job=${id}&filter=${filter}`)
     return res.data
 }
 
@@ -435,5 +435,25 @@ export const reportCompany = async (id:string, type:string) => {
 
 export const reportMessage = async (sendBy:string, chatId:string, type:string) => {
     const res=await api.post(`${REPORT_V1_ROUTE}/reportMessage?sendBy=${sendBy}&chat=${chatId}&type=${type}`)
+    return res.data
+}
+
+export const scheduleCall = async (data, companyId:string) => {
+    const res=await api.patch(`${CHAT_V1_ROUTE}/scheduleCall?company=${companyId}`, data)
+    return res.data
+}
+
+export const sendScheduleMail = async (data) => {
+    const res=await api.post(`${NOTIFICATION_V1_ROUTE}/sendScheduleMail`, data)
+    return res.data
+}
+
+export const sendRemindMail = async (data) => {
+    const res=await api.post(`${NOTIFICATION_V1_ROUTE}/sendRemindMail`, data)
+    return res.data
+}
+
+export const userLogout = async () => {
+    const res=await api.delete(`${USER_V1_ROUTE}/userLogout`)
     return res.data
 }

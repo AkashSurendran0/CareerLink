@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 
 @injectable()
@@ -14,7 +14,8 @@ export class ChatController {
         @inject(TYPES.ISendMessage) private _sendMessage:ISendMessage,
         @inject(TYPES.IGetChats) private _getChats:IGetChats,
         @inject(TYPES.IReadMessages) private _readMessages:IReadMessages,
-        @inject(TYPES.IGetReportedMessage) private _getReportedMessages:IGetReportedMessage
+        @inject(TYPES.IGetReportedMessage) private _getReportedMessages:IGetReportedMessage,
+        @inject(TYPES.IScheduleCall) private _scheduleCall:IScheduleCall
     ){}
 
     startUserConversation = async (req:Request, res:Response) => {
@@ -46,12 +47,13 @@ export class ChatController {
                     result[i].pfp=companyDetails.data.result.logo
                 }else{
                     const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].user}`)
+                    result[i].email=userDetails.data.result.result.email
                     result[i].username=userDetails.data.result.result.username
                     result[i].pfp=userDetails.data.result?.pfp || null
                 }
             }
             res.json({result})
-        } catch (error: unknown) {
+        } catch (error: unknown) {  
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
@@ -115,6 +117,7 @@ export class ChatController {
             let result=await this._getConversations.getConversations(company)
             for(let i=0;i<result.length;i++){
                 const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].user}`)
+                result[i].email=userDetails.data.result.result.email
                 result[i].username=userDetails.data.result.result.username
                 result[i].pfp=userDetails.data.result?.pfp || null
             }
@@ -133,6 +136,33 @@ export class ChatController {
             const {user1, user2, chatId}=req.query
             const result=await this._getReportedMessages.getReportedMessage(user1, user2, chatId)
             res.json(result)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    deleteConversation = async (req:Request, res:Response) => {
+        try {
+            
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    scheduleCall = async (req:Request, res:Response) => {
+        try {
+            const data=req.body
+            const {company}=req.query
+            const result=await this._scheduleCall.scheduleCall(data, company)
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });

@@ -2,9 +2,12 @@ export class Content {
     constructor (
         public _id:string,
         public sendBy:string,
-        public message:string,
         public isRead:boolean,
-        public sendAt:Date
+        public sendAt:Date,
+        public time?:string,
+        public date?:string,
+        public message?:string,
+        public isScheduleMessage?:boolean,
     ){}
 }
 
@@ -13,6 +16,6 @@ export class Chat {
         public _id:string,
         public conversation:string,
         public content:Content[],
-        public createdAt:Date
+        public createdAt:Date,
     ){}
 }

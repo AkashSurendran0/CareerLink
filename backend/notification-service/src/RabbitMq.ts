@@ -45,6 +45,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest")
         await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.accepted")
         await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.rejected")
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.applicationHired")
         await this.channel.bindQueue(queue.queue, "mail.events", "mail.sendWarningMail")
 
         console.log('Notification service is listening for messages...')
@@ -147,6 +148,9 @@ The CareerLink Team
 
                 case 'applicationRejected':
                     await this._addNotification.saveNotification(data.userEmail, 'Update on your job application', '/profile/user/jobsApplied')
+
+                case 'applicationHired':
+                    await this._addNotification.saveNotification(data.userEmail, 'You have been hired !!', '/profile/user/jobsApplied')
 
                 case 'sendWarningMail':
                     await this._mailer.sendMail(data.reciever, 'Warning Regarding Reported Activity on Your Account', 

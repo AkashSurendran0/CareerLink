@@ -4,6 +4,9 @@ export interface IChat extends Document {
     conversation:string,
     content:[{
         sendBy:string,
+        isScheduleMessage:boolean,
+        time:string,
+        date:string,
         message:string,
         isRead:boolean,
         sendAt:Date
@@ -21,9 +24,21 @@ const chatSchema: Schema<IChat>=new Schema (
                 type:String,
                 required:true
             },
+            isScheduleMessage:{
+                type:Boolean,
+                required:false
+            },
+            time:{
+                type:String,
+                required:false
+            },
+            date:{
+                type:String,
+                required:false
+            },
             message:{
                 type:String,
-                required:true
+                required:false
             },
             isRead:{
                 type:Boolean,
