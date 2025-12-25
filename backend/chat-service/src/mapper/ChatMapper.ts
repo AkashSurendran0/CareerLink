@@ -8,6 +8,9 @@ export class ChatMapper {
             content:chat.content.map((item:any)=>({
                 _id:item._id,
                 sendBy:item.sendBy,
+                isScheduleMessage:item.isScheduleMessage,
+                time:item.time,
+                date:item.date,
                 message:item.message,
                 isRead:item.isRead,
                 sendAt:item.sendAt

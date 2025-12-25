@@ -216,12 +216,12 @@ export class JobController {
 
     getJobApplicants = async (req:Request, res:Response) => {
         try {
-            const {job}=req.query
-            let result=await this._getJobApplicants.getApplicants(job)
-            if(result){
-                for(let i=0;i<result.applicants.length;i++){
-                    const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.applicants[i].user}`)
-                    result.applicants[i]!.userName=user.data.result.result.username
+            const {job, filter}=req.query
+            let result=await this._getJobApplicants.getApplicants(job, filter)
+            if(result && result.result.length>0){
+                for(let i=0;i<result.result.length;i++){
+                    const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.result[i].applicants.user}`)
+                    result.result[i].applicants.userName=user.data.result.result.username
                 }
             }
             res.json({result})
@@ -240,7 +240,6 @@ export class JobController {
             const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${user}`)
             if(action=='accept'){
                 const result=await this._alterUserApplication.acceptApplication(jobId, user)
-                console.log(result)
                 if(result.success){
                     const conversation=await axios.post(`http://localhost:5000/chat/v1/startUserConversation?company=${company}&user=${user}`)
                     const message=`Congratulations,
@@ -265,6 +264,27 @@ Thank you for your interest in joining our company`;
                     userEmail:userDetails.data?.result?.result?.email,
                     action:'applicationRejected'
                 })
+                res.json({result})
+            }else if(action=='hire'){
+                const result=await this._alterUserApplication.hireUser(jobId, user)
+                if(result.success){
+                    const conversation=await axios.post(`http://localhost:5000/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const message=`Congratulations,
+We are pleased to inform you that you have been selected to join our team.
+Our hiring team will reach out shortly with details regarding onboarding and next steps.
+
+Thank you for choosing to be a part of our company.
+`;
+                    const data={
+                        convoId:conversation.data.result.id,
+                        message
+                    }
+                    await axios.patch(`http://localhost:5000/chat/v1/sendMessage?company=${company}`, data)
+                    await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.hired", {
+                        userEmail:userDetails.data?.result?.result?.email,
+                        action:'applicationHired'
+                    })
+                }
                 res.json({result})
             }else{
                 const result={success:false}

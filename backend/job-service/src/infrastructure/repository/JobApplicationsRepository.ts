@@ -46,17 +46,40 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
         return docs.length
     }
 
-    async getJobApplicants(id: string): Promise<JobApplications | null> {
-        const result=await JobApplicationModel.findOne({jobPost:id})
-        if(!result) return null
-        const applications=result?.applicants.map(
-            r=>new Applications(r._id, r.user, r.resume, r.coverLetter, r.status, r.createdAt)
-        )
-        return new JobApplications (
-            result?._id,
-            result?.jobPost,
-            applications
-        )
+    async getJobApplicants(id: string, filter:string): Promise<any> {
+        const totalCount = await JobApplicationModel.aggregate([
+            {$match: {
+                jobPost:id
+            }},
+            {$unwind:'$applicants'},
+            {$group:{
+                _id:'$applicants.status',
+                count:{$sum:1}
+            }}
+        ])
+        let result
+        if(filter == 'All'){
+            result=await JobApplicationModel.aggregate([
+                {$match: {
+                    jobPost:id
+                }},
+                {$unwind:'$applicants'}
+            ])
+            if(!result) return null
+        }else{
+            result=await JobApplicationModel.aggregate([
+                {$match:{
+                    jobPost:id
+                }},
+                {$unwind:'$applicants'},
+                {$match:{
+                    'applicants.status':filter
+                }}
+            ])
+            if(!result) return null
+        }
+        return {result, totalCount}
+        
     }
 
     async acceptApplication(job: string, user: string): Promise<{ success: boolean; }> {
@@ -80,6 +103,19 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
             },
             {$set:{
                 'applicants.$.status':'Rejected'
+            }}
+        )
+        return {success: result.modifiedCount == 1}
+    }
+
+    async hireApplication(job: string, user: string): Promise<{ success: boolean; }> {
+        const result=await JobApplicationModel.updateOne(
+            {
+                jobPost:job,
+                'applicants.user':user
+            },
+            {$set:{
+                'applicants.$.status':'Hired'
             }}
         )
         return {success: result.modifiedCount == 1}

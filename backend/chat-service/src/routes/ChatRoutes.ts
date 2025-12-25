@@ -13,5 +13,7 @@ router.get('/getChats', chatController.getChats)
 router.patch('/readMessages', chatController.readMessages)
 router.get('/getCompanyConversations', chatController.getCompanyConversations)
 router.get('/getReportedMessage', chatController.getReportedMessage)
+router.get('/deleteConversation', chatController.deleteConversation)
+router.patch('/scheduleCall', chatController.scheduleCall)
 
 export default router

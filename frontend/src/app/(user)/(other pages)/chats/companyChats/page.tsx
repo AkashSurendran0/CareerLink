@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react"
 import { Search, Phone, Video, Send, Paperclip, X, CheckCheck, User, LoaderIcon } from "lucide-react"
-import { getCompanyConversations, getCompanyInfo, getCompanyRegistrationInfo, getConversations, getUserChats, getUserDetails, sendMessage } from "@/services/userService"
+import { getCompanyConversations, getCompanyInfo, getCompanyRegistrationInfo, getConversations, getUserChats, getUserDetails, scheduleCall, sendMessage, sendRemindMail, sendScheduleMail } from "@/services/userService"
 import Image from "next/image"
 import { userSocket } from "@/lib/socket"
 import { useLoading } from "@/app/(user)/template"
 import { useRouter } from "next/navigation"
 import { enqueueSnackbar } from "notistack"
+import { CallOptionsPopup } from "@/reusable-components/companyCallOptions"
+import { ScheduleCallModal } from "@/reusable-components/scheduleCallModal"
+import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMessage"
 
 interface ChatUser {
   id: number
@@ -43,6 +46,8 @@ export default function ChatsPage() {
     const [companyOwnerId, setCompanyOwnerId] = useState()
     const [companyExists, setCompanyExists] = useState(false)
     const [companyDetails, setCompanyDetails] = useState(null)
+    const [callOptionsModal, setCallOptionsModal] = useState(false)
+    const [callScheduleModal, setCallScheduleModal] = useState(false)
 
     useEffect(() => {
         fetchUserId()
@@ -230,7 +235,6 @@ export default function ChatsPage() {
 
     const voiceCallUser = async () => {
         if(!selectedUserId) return 
-        console.log(userId, selectedUser.user)
         userSocket.emit('ring-call', {
             from: companyOwnerId,
             caller: companyDetails.name,
@@ -254,8 +258,69 @@ export default function ChatsPage() {
         })
     }
 
+    const openScheduleModal = async () => {
+        setCallOptionsModal(false)
+        setCallScheduleModal(true)
+    }
+
+    const scheduleMeeting = async (date:Date, time:string) => {
+        const data={
+            convoId:selectedConvo,
+            date,
+            time
+        }
+        const result=await scheduleCall(data, userId)
+        const lastMessage=result.result?.content[result.result?.content?.length-1]
+        if(!userChats) {
+            setUserChats(result.result)
+        }else{
+            setUserChats((prev)=>({
+            ...prev,
+            content:[...prev.content, lastMessage]
+            }))
+        }
+
+        const details={
+            userEmail:selectedUser.email,
+            userName:selectedUser.username,
+            companyName: companyDetails.name,
+            date,
+            time
+        }
+
+        sendScheduleMail(details)
+
+        userSocket.emit("send-message", {
+            convoId:selectedConvo,
+            message:result.result,
+            userId
+        })
+        setCallScheduleModal(false)
+    }
+
+    const remindUser = async (date, time) => {
+        const details={
+            userEmail:selectedUser.email,
+            userName:selectedUser.username,
+            companyName: companyDetails.name,
+            date,
+            time
+        }
+
+        sendRemindMail(details)
+        enqueueSnackbar('Reminder send', {variant:'success'})
+    }
+
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
+
+            {callOptionsModal && (
+                <CallOptionsPopup userName={selectedUser.username} onCallNow={videoCallUser} onScheduleLater={openScheduleModal} onClose={()=>setCallOptionsModal(false)}/>
+            )}
+
+            {callScheduleModal && (
+                <ScheduleCallModal userName={selectedUser.username} onConfirm={scheduleMeeting} onClose={()=>setCallScheduleModal(false)} />
+            )}
 
         <div className="flex-1 flex flex-col h-screen overflow-hidden">
 
@@ -389,7 +454,7 @@ export default function ChatsPage() {
                         <Phone className="h-5 w-5 text-gray-600" />
                     </button>
                     <button 
-                    onClick={videoCallUser}
+                    onClick={()=>setCallOptionsModal(true)}
                     className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors md:block"
                     >
                         <Video className="h-5 w-5 text-gray-600" />
@@ -408,60 +473,72 @@ export default function ChatsPage() {
                     {userChats?.content?.length > 0 ?(
                         userChats?.content?.map((message) => {
                         const isMe = message.sendBy == userId
-                        const isOther = message.sendBy == selectedUser.user;
+                        if(message.isScheduleMessage) { 
+                            return (
+                                <ScheduledMeetingMessage
+                                key={message._id}
+                                date={message.date}
+                                time={message.time}
+                                onRemind={()=>remindUser(message.date, message.time)}
+                                onCall={videoCallUser}
+                                isMe={isMe}
+                                isRead={message.isRead}
+                                />
+                            )
+                        }
 
                         return (
                         
-                        <div key={message._id} className={`flex gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
-                            {!isMe && (
-                            selectedUser.pfp? (
-                                <Image
-                                height={300}
-                                width={300}
-                                src={selectedUser.pfp }
-                                alt={selectedUser.username}
-                                className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                                />
-                            ) : (
-                                <User className="h-10 w-10 rounded-full object-cover"/>
-                            )
-                            )}
-                            <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-                            <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
-                            <div
-                                className={`px-4 py-2 rounded-lg max-w-xs ${
-                                isMe
-                                    ? "bg-blue-500 text-white rounded-br-none"
-                                    : "bg-gray-100 text-gray-900 rounded-bl-none"
-                                }`}
-                            >
-                                <p className="text-sm whitespace-pre-line">{message.message}</p>
-                            </div>
-                            {isMe && (
-                                <div className="flex items-center gap-1 mt-1">
-                                {message.isRead ? (
-                                    <CheckCheck className="h-4 w-4 text-green-500" />
+                            <div key={message._id} className={`flex gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
+                                {!isMe && (
+                                selectedUser.pfp? (
+                                    <Image
+                                    height={300}
+                                    width={300}
+                                    src={selectedUser.pfp }
+                                    alt={selectedUser.username}
+                                    className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                                    />
                                 ) : (
-                                    <CheckCheck className="h-4 w-4 text-blue-500" />
+                                    <User className="h-10 w-10 rounded-full object-cover"/>
+                                )
                                 )}
-                                <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
+                                <div
+                                    className={`px-4 py-2 rounded-lg max-w-xs ${
+                                    isMe
+                                        ? "bg-blue-500 text-white rounded-br-none"
+                                        : "bg-gray-100 text-gray-900 rounded-bl-none"
+                                    }`}
+                                >
+                                    <p className="text-sm whitespace-pre-line">{message.message}</p>
                                 </div>
-                            )}
+                                {isMe && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                    {message.isRead ? (
+                                        <CheckCheck className="h-4 w-4 text-green-500" />
+                                    ) : (
+                                        <CheckCheck className="h-4 w-4 text-blue-500" />
+                                    )}
+                                    <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                    </div>
+                                )}
+                                </div>
+                                {isMe && (
+                                companyDetails.logo ? (
+                                    <Image
+                                        height={40}
+                                        width={40}
+                                        src={companyDetails.logo}
+                                        alt="You"
+                                        className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+                                    />
+                                    ) : (
+                                    <User className="h-10 w-10 rounded-full object-cover"/>
+                                    )
+                                )}
                             </div>
-                            {isMe && (
-                            companyDetails.logo ? (
-                            <Image
-                                height={40}
-                                width={40}
-                                src={companyDetails.logo}
-                                alt="You"
-                                className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                            />
-                            ) : (
-                            <User className="h-10 w-10 rounded-full object-cover"/>
-                            )
-                        )}
-                        </div>
                         )})
                     ) : (
                         <div className="text-center text-gray-400 mt-10">

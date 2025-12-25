@@ -21,15 +21,18 @@ export class ChatRepository implements IChatRepository {
         const contents=newMessage.content.map((item)=> new Content (
             item._id, 
             item.sendBy, 
-            item.message, 
             item.isRead, 
-            item.sendAt
+            item.sendAt,
+            item.time,
+            item.date,
+            item.message, 
+            item.isScheduleMessage
         ) )
         return new Chat (
             newMessage._id,
             newMessage.conversation,
             contents,
-            newMessage.createdAt
+            newMessage.createdAt,
         )
     }
 
@@ -39,15 +42,18 @@ export class ChatRepository implements IChatRepository {
         const contents=messages?.content.map((item) => new Content (
             item._id, 
             item.sendBy, 
-            item.message, 
             item.isRead, 
-            item.sendAt
+            item.sendAt,
+            item.time,
+            item.date,
+            item.message, 
+            item.isScheduleMessage
         ))
         return new Chat (
             messages._id,
             messages.conversation,
             contents,
-            messages.createdAt
+            messages.createdAt,
         )
     }
 
@@ -99,7 +105,6 @@ export class ChatRepository implements IChatRepository {
     }
 
     async getReportedMessage(convo: string, chatId:string): Promise<Chat> {
-        console.log(chatId)
         const chats = await ChatModel.aggregate([
             {
                 $match: {
@@ -150,15 +155,54 @@ export class ChatRepository implements IChatRepository {
         const contents=chats[0]?.content?.map((item) => new Content (
             item._id, 
             item.sendBy, 
-            item.message, 
             item.isRead, 
-            item.sendAt
+            item.sendAt,
+            item.time,
+            item.date,
+            item.message, 
+            item.isScheduleMessage
         ))
         return new Chat (
             chats._id,
             chats.conversation,
             contents,
-            chats.createdAt
+            chats.createdAt,
+        )
+    }
+
+    async scheduleCall(data: { convoId: string; date: Date; time: string; }, companyId: string): Promise<Chat> {
+        const {convoId, date, time}=data
+        const newMessage=await ChatModel.findOneAndUpdate(
+            {conversation:convoId},
+            {$push:{
+                content:{
+                    isScheduleMessage:true,
+                    sendBy:companyId,
+                    date:date,
+                    time:time,
+                }
+            }},
+            {
+                upsert:true,
+                new: true
+            },
+        )
+        console.log('a',newMessage)
+        const contents=newMessage.content.map((item)=> new Content (
+            item._id, 
+            item.sendBy, 
+            item.isRead, 
+            item.sendAt,
+            item.time,
+            item.date,
+            item.message, 
+            item.isScheduleMessage
+        ) )
+        return new Chat (
+            newMessage._id,
+            newMessage.conversation,
+            contents,
+            newMessage.createdAt,
         )
     }
 

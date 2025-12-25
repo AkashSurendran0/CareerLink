@@ -71,5 +71,6 @@ router.get("/getConnectionDetails", connectionController.getConnectionDetails);
 router.post("/sendWarningMail", userController.sendWarningMail);
 router.get("/getUserAnalytics", userController.getUserAnalytics);
 router.get("/getTotalUserCount", userController.getTotalUserCount);
+router.delete("/userLogout", userController.userLogout);
 
 export default router;

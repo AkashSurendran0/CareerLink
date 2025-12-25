@@ -4,7 +4,10 @@ export interface ChatDto {
     content:[{
         _id:string,
         sendBy:string,
-        message:string,
+        isScheduleMessage?:boolean,
+        time?:string,
+        date?:string,
+        message?:string,
         isRead:boolean,
         sendAt:Date
     }],

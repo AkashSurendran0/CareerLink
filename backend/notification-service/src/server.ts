@@ -18,6 +18,7 @@ const rabbitmqService = container.get<RabbitMqService>(TYPES.RabbitMqService);
     await rabbitmqService.consumeNotification() 
 })()
  
+app.use(express.json())
 app.use('/v1', NotificationRouter)
 
 server.listen(5004, ()=>{

@@ -7,5 +7,6 @@ export const TYPES = {
     ISendMessage:'ISendMessage',
     IGetChats:'IGetChats',
     IReadMessages:'IReadMessages',
-    IGetReportedMessage:'IGetReportedMessage'
+    IGetReportedMessage:'IGetReportedMessage',
+    IScheduleCall:'IScheduleCall'
 }

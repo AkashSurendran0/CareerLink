@@ -1,9 +1,11 @@
 import express from 'express';
 import ChatRoutes from './routes/ChatRoutes'
 import { dbConnect } from './infrastructure/database/Mongoose';
+import { rabbitmqService } from './utils/Rabbitmq';
 
 const app=express()
 dbConnect()
+rabbitmqService.connect()
 
 app.use(express.json())
 

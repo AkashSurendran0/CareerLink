@@ -12,5 +12,7 @@ router.patch('/markAllRead', notificationController.markAllRead)
 router.delete('/deleteAll', notificationController.deleteAll)
 router.delete('/deleteOne', notificationController.deleteOne)
 router.patch('/readOne', notificationController.readOne)
+router.post('/sendScheduleMail', notificationController.sendScheduleMail)
+router.post('/sendRemindMail', notificationController.sendRemindMail)
 
 export default router

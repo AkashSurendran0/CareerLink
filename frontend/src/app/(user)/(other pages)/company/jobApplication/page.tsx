@@ -16,6 +16,8 @@ export default function JobDetailsPage() {
     const [showLetter, setShowLetter]=useState(false)
     const [letter, setLetter]=useState('')
     const [jobId, setJobId]=useState()
+    const [currentFilter, setCurrentFilter]=useState('All')
+    const [totalCount, setTotalCount]=useState(0)
 
     useEffect(()=>{
         const fetchDetails = async () => {
@@ -30,12 +32,24 @@ export default function JobDetailsPage() {
         }
 
         const fetchApplicants = async (id:string) => {
-            const result=await getJobApplicants(id)
+            const result=await getJobApplicants(id, 'All')
+            if(result.result){
+                const totalCount=result.result.totalCount.reduce((acc:number, val:number) => acc + val.count , 0)
+                setTotalCount(totalCount)
+            }
+            console.log(result.result)
             setApplicants(result.result)
         }
 
         fetchDetails()
     }, [])
+
+    const filterByQuery = async (filter:string) => {
+        setCurrentFilter(filter)
+        const result=await getJobApplicants(jobId, filter)
+        console.log(result.result)
+        setApplicants(result.result)
+    }
 
     const displayLetter = async (letter:string) => {
         setLetter(letter)
@@ -45,6 +59,12 @@ export default function JobDetailsPage() {
     const removeLetter = async () => {
         setLetter('')
         setShowLetter(false)
+    }
+
+    const getCount = (filter) => {
+        const item=applicants.totalCount.find((i) => i._id == filter)
+        console.log(item)
+        return item? item.count : 0
     }
 
     const acceptUser = async (userId:string) => {
@@ -86,6 +106,28 @@ export default function JobDetailsPage() {
                 }
             })
             enqueueSnackbar('User has been rejected', {variant:'success'})
+        }else{
+            enqueueSnackbar('Something went wrong, please refresh the page and try again', {variant:'error'})
+        }
+    }
+
+    const hireUser = async (userId:string) => {
+        if(!jobId) return
+        setLoading(true)
+        const result=await alterUserApplication(jobId, userId, companyDetails.id, 'hire')
+        setLoading(false)
+        if(result.result.success){
+            setApplicants((prev)=>{
+                return {
+                    ...prev,
+                    applicants:prev.applicants.map((user)=>
+                        user.user == userId
+                        ? {...user, status:'Hired'}
+                        : user
+                    )
+                }
+            })
+            enqueueSnackbar('User has been hired', {variant:'success'})
         }else{
             enqueueSnackbar('Something went wrong, please refresh the page and try again', {variant:'error'})
         }
@@ -210,6 +252,26 @@ export default function JobDetailsPage() {
                         Find Best Match
                         </button> */}
                     </div>
+                    {applicants && (
+                        <div className="gap-3">
+                            {["All", "Pending", "Accepted", "Rejected" , "Hired"].map((status) => (
+                                    <button
+                                    key={status}
+                                    disabled={currentFilter==status}
+                                    onClick={() => filterByQuery(status)}
+                                    className={`ml-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                                        currentFilter === status
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    }`}
+                                    >
+                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                        <span className="mr-2 ml-2">|</span>
+                                        {status == 'All' ? totalCount : getCount(status)}
+                                    </button>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Table - Desktop */}
                     <div className="hidden sm:block overflow-x-auto">
@@ -222,40 +284,58 @@ export default function JobDetailsPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {applicants && applicants.applicants?.map((applicant) => (
-                            <tr key={applicant._id} 
-                            className={` ${applicant.status == 'Pending' && 'border-gray-100 hover:bg-gray-50'} ${applicant.status == 'Accepted' && 'bg-green-400 hover:bg-green-500'} ${applicant.status == 'Rejected' && 'bg-red-400 hover:bg-red-500'}`}
+                            {applicants && applicants.result && applicants.result.map((applicant) => (
+                            <tr key={applicant.applicants._id} 
+                            className={` ${applicant.applicants.status == 'Pending' && 'border-gray-100 hover:bg-gray-50'} ${applicant.applicants.status == 'Accepted' && 'bg-green-400 hover:bg-green-500'} ${applicant.applicants.status == 'Rejected' && 'bg-red-400 hover:bg-red-500'} ${applicant.applicants.status == 'Hired' && 'bg-yellow-400 hover:bg-yellow-500'}`}
                             >
-                                <td className="px-4 py-4 text-sm text-gray-900">{applicant.userName}</td>
-                                <td className="px-4 py-4 text-sm text-gray-600">{new Date(applicant.createdAt).toLocaleDateString()}</td>
+                                <td className="px-4 py-4 text-sm text-gray-900">{applicant.applicants.userName}</td>
+                                <td className="px-4 py-4 text-sm text-gray-600">{new Date(applicant.applicants.createdAt).toLocaleDateString()}</td>
                                 <td className="px-4 py-4 text-sm">
                                 <div className="flex flex-wrap gap-2">
                                     <button 
                                     className="cursor-pointer text-blue-600 hover:underline"
-                                    onClick={()=>window.open(applicant.resume)}
+                                    onClick={()=>window.open(applicant.applicants.resume)}
                                     >
                                     View Resume
                                     </button>
                                     <span className="text-gray-300">|</span>
                                     <button 
                                     className="cursor-pointer text-blue-600 hover:underline"
-                                    onClick={()=>displayLetter(applicant.coverLetter)}
+                                    onClick={()=>displayLetter(applicant.applicants.coverLetter)}
                                     >
                                     View Cover Letter
                                     </button>
-                                    {applicant.status == 'Pending' && (
+                                    {applicant.applicants.status == 'Pending' && (
                                         <>
                                             <span className="text-gray-300">|</span>
                                             <button 
                                             className="cursor-pointer text-blue-600 hover:underline"
-                                            onClick={()=>acceptUser(applicant.user)}
+                                            onClick={()=>acceptUser(applicant.applicants.user)}
                                             >
                                             Accept
                                             </button>
                                             <span className="text-gray-300">|</span>
                                             <button 
                                             className="cursor-pointer text-blue-600 hover:underline"
-                                            onClick={()=>rejectUser(applicant.user)}
+                                            onClick={()=>rejectUser(applicant.applicants.user)}
+                                            >
+                                            Reject
+                                            </button>
+                                        </>
+                                    )}
+                                    {applicant.applicants.status == 'Accepted' && (
+                                        <>
+                                            <span className="text-gray-300">|</span>
+                                            <button 
+                                            className="cursor-pointer text-blue-600 hover:underline"
+                                            onClick={()=>hireUser(applicant.applicants.user)}
+                                            >
+                                            Hire
+                                            </button>
+                                            <span className="text-gray-300">|</span>
+                                            <button 
+                                            className="cursor-pointer text-blue-600 hover:underline"
+                                            onClick={()=>rejectUser(applicant.applicants.user)}
                                             >
                                             Reject
                                             </button>
@@ -271,26 +351,61 @@ export default function JobDetailsPage() {
 
                     {/* Cards - Mobile */}
                     <div className="sm:hidden space-y-4">
-                        {applicants && applicants.applicants?.map((applicant) => (
-                        <div key={applicant.id} className="border border-gray-200 rounded-lg p-4">
-                            <h3 className="font-semibold text-gray-900">{applicant.name}</h3>
-                            <p className="text-sm text-gray-600 mt-1">Applied: {applicant.date}</p>
+                        {applicants && applicants.result && applicants.result.map((applicant) => (
+                        <div key={applicant.applicants.id} className="border border-gray-200 rounded-lg p-4">
+                            <h3 className="font-semibold text-gray-900">{applicant.applicants.name}</h3>
+                            <p className="text-sm text-gray-600 mt-1">Applied: {applicant.applicants.date}</p>
                             <div className="mt-3 flex flex-wrap gap-2">
-                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
+                            <button 
+                            className="cursor-pointer text-blue-600 hover:underline text-sm"
+                            onClick={()=>window.open(applicant.applicants.resume)}
+                            >
                                 View Resume
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
+                            <button 
+                            className="cursor-pointer text-blue-600 hover:underline text-sm"
+                            onClick={()=>displayLetter(applicant.applicants.coverLetter)}
+                            >
                                 View Cover Letter
                             </button>
                             <span className="text-gray-300">|</span>
-                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
-                                Accept
-                            </button>
-                            <span className="text-gray-300">|</span>
-                            <button className="cursor-pointer text-blue-600 hover:underline text-sm">
-                                Reject
-                            </button>
+                            {applicant.applicants.status == 'Pending' && (
+                                <>
+                                    <span className="text-gray-300">|</span>
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>acceptUser(applicant.applicants.user)}
+                                    >
+                                    Accept
+                                    </button>
+                                    <span className="text-gray-300">|</span>
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>rejectUser(applicant.applicants.user)}
+                                    >
+                                    Reject
+                                    </button>
+                                </>
+                            )}
+                            {applicant.applicants.status == 'Accepted' && (
+                                <>
+                                    <span className="text-gray-300">|</span>
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>hireUser(applicant.applicants.user)}
+                                    >
+                                    Hire
+                                    </button>
+                                    <span className="text-gray-300">|</span>
+                                    <button 
+                                    className="cursor-pointer text-blue-600 hover:underline"
+                                    onClick={()=>rejectUser(applicant.applicants.user)}
+                                    >
+                                    Reject
+                                    </button>
+                                </>
+                            )}
                             </div>
                         </div>
                         ))}
