@@ -128,6 +128,7 @@ async function handleCompanyRoutes(req: NextRequest, token: string, pathname: st
       "http://localhost:5000/company/v1/getCompanyRegistrationInfo",
       token
     );
+    console.log(companyData.result)
 
     if (pathname.startsWith('/company/registrationPage') && companyData?.result?.success) {
       return NextResponse.redirect(new URL("/company/registeredCompany", req.url));
@@ -211,7 +212,7 @@ async function fetchWithCache(url: string, token: string) {
   if(url != 'http://localhost:5000/user/v1/check'){
     // Cache for 30 seconds
     userStatusCache.set(cacheKey, data);
-    setTimeout(() => userStatusCache.delete(cacheKey), 10000);
+    setTimeout(() => userStatusCache.delete(cacheKey), 5000);
   }
   
   return data;
