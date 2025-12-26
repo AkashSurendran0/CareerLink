@@ -163,12 +163,12 @@ export default function SubscriptionsPage() {
                                             Activate
                                         </button>
                                     )}
-                                    <span className="text-gray-300">|</span>
-                                    <button onClick={() => goToEditPage(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                    <span className="text-gray-300 ml-1">|</span>
+                                    <button onClick={() => goToEditPage(plan._id)} className="text-blue-600 hover:underline font-medium ml-1">
                                         Edit Plan
                                     </button>
-                                    <span className="text-gray-300">|</span>
-                                    <button onClick={()=>deletePlan(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                    <span className="text-gray-300 ml-1">|</span>
+                                    <button onClick={()=>deletePlan(plan._id)} className="text-blue-600 hover:underline font-medium ml-1">
                                         Delete Plan
                                     </button>
                                 </td>
@@ -219,6 +219,14 @@ export default function SubscriptionsPage() {
                                         Activate
                                     </button>
                                 )}
+                                <span className="text-gray-300">|</span>
+                                <button onClick={() => goToEditPage(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                    Edit Plan
+                                </button>
+                                <span className="text-gray-300">|</span>
+                                <button onClick={()=>deletePlan(plan._id)} className="text-blue-600 hover:underline font-medium">
+                                    Delete Plan
+                                </button>
                             </div>
                             </div>
                         ))}

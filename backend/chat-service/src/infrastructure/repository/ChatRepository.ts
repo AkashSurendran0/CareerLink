@@ -206,4 +206,15 @@ export class ChatRepository implements IChatRepository {
         )
     }
 
+    async deleteChat(id: string): Promise<{ success: boolean; }> {
+        console.log(id)
+        const chatExist=await ChatModel.findOne({conversation:id})
+        console.log(chatExist)
+        if(chatExist){
+            const result=await ChatModel.deleteOne({conversation:id})
+            console.log(result)
+        }
+        return {success:true}
+    }
+
 }

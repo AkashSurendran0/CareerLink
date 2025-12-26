@@ -33,3 +33,7 @@ export interface IGetReportedMessage {
 export interface IScheduleCall {
     scheduleCall(data:Data, companyId:any): Promise<ChatDto>
 }
+
+export interface IDeleteConversation {
+    deleteConversation(user1:string, user2:string): Promise<{success:boolean}>
+}

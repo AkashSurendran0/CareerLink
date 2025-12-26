@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 
 @injectable()
@@ -15,7 +15,8 @@ export class ChatController {
         @inject(TYPES.IGetChats) private _getChats:IGetChats,
         @inject(TYPES.IReadMessages) private _readMessages:IReadMessages,
         @inject(TYPES.IGetReportedMessage) private _getReportedMessages:IGetReportedMessage,
-        @inject(TYPES.IScheduleCall) private _scheduleCall:IScheduleCall
+        @inject(TYPES.IScheduleCall) private _scheduleCall:IScheduleCall,
+        @inject(TYPES.IDeleteConversation) private _deleteConversation:IDeleteConversation
     ){}
 
     startUserConversation = async (req:Request, res:Response) => {
@@ -147,7 +148,11 @@ export class ChatController {
 
     deleteConversation = async (req:Request, res:Response) => {
         try {
-            
+            console.log('here')
+            const {user1, user2}=req.query
+            console.log(user1, user2)
+            const result=await this._deleteConversation.deleteConversation(user1, user2)
+            res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });

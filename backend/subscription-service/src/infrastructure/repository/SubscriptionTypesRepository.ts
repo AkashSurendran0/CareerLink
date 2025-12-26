@@ -94,4 +94,18 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
         return {success:true}
     }
 
+    async editPlan(data: { planName: string; amount: number; features: { text: string; code: string; }[]; status: boolean; }): Promise<{ success: boolean; }> {
+        await SubscriptionTypesModel.findByIdAndUpdate(
+            data._id,
+            {$set:{
+                name:data.name,
+                amount:data.amount,
+                billingCycle:data.billingCycle,
+                features:data.features,
+                active:data.active
+            }}
+        )
+        return {success:true}
+    }
+
 }

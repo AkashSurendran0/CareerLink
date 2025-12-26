@@ -13,4 +13,5 @@ export interface IChatRepository {
     getLastMessageAndCount(convo:string, id:string): Promise<any>
     getReportedMessage(convo:string, chatId:string): Promise<Chat>
     scheduleCall(data:Data, companyId:string): Promise<Chat> 
+    deleteChat(id:string): Promise<{success:boolean}>
 }
