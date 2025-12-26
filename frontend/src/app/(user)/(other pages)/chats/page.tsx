@@ -511,7 +511,7 @@ export default function ChatsPage() {
                             </div>
                           )}
                         </div>
-                        {isMe && (
+                        {/* {isMe && (
                           userDetails.profilePicture ? (
                           <Image
                             height={300}
@@ -523,7 +523,7 @@ export default function ChatsPage() {
                         ) : (
                           <User className="h-8 w-8 rounded-full object-cover flex-shrink-0"/>
                         )
-                      )}
+                      )} */}
                       </div>
                     </div>
                     )})

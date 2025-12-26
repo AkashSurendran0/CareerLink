@@ -16,6 +16,8 @@ import { DeletePlanType } from "./application/user-cases/DeletePlanType";
 import { GetSubscriptionAnalysis } from "./application/user-cases/GetSubscriptionAnalysis";
 import { GetSubscriptionTypeAnalytics } from "./application/user-cases/GetSubscriptionTypeAnalytics";
 import { GetPremiumUserCount } from "./application/user-cases/GetPremiumUserCount";
+import { GetPlanDetails } from "./application/user-cases/GetPlanDetails";
+import { EditSubscription } from "./application/user-cases/EditSubscription";
 
 const container=new Container()
 
@@ -35,6 +37,8 @@ container.bind(TYPES.IDeletePlanType).to(DeletePlanType).inSingletonScope()
 container.bind(TYPES.IGetSubscriptionAnalysis).to(GetSubscriptionAnalysis).inSingletonScope()
 container.bind(TYPES.IGetSubscriptionTypeAnalytics).to(GetSubscriptionTypeAnalytics).inSingletonScope()
 container.bind(TYPES.IGetPremiumUserCount).to(GetPremiumUserCount).inSingletonScope()
+container.bind(TYPES.IGetPlanDetails).to(GetPlanDetails).inSingletonScope()
+container.bind(TYPES.IEditSubscription).to(EditSubscription).inSingletonScope()
 
 container.bind(TYPES.SubscriptionController).to(SubscriptionController).inSingletonScope()
 

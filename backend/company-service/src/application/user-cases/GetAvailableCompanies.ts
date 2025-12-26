@@ -9,7 +9,6 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
 
     async getAvailableCompanies(email: string, query: string): Promise<CompanyDTO[]> {
         let esQuery:any
-        
         if (!query || query.trim() === "") {
             esQuery = {
                 bool: {
@@ -37,7 +36,13 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
                 }
             };
         }
-        
+        const indexExists = await elasticClient.indices.exists({
+            index: 'companies'
+        });
+        if (!indexExists) {
+            console.log("companies index not found, returning empty array");
+            return [];
+        }
         const companies=await elasticClient.search({
             index:'companies',
             query:esQuery
@@ -47,7 +52,7 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
         console.log(hits)
         hits=hits.filter((comp)=>comp.registeredBy != email)
         const result=hits.map((company:any)=>CompanyMapper.toDTO(company))
-        return { result }
+        return result 
     }
 
-}
+} 

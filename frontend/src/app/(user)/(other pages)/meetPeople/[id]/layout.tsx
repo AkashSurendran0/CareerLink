@@ -77,6 +77,7 @@ export default function ConnectionLayout({
 
         const fetchConnectionDetails = async () => {
             const result=await getConnectionDetails(id)
+            console.log('conn',result)
             setConnection(result.result.connection)
         }
 

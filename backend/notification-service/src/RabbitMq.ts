@@ -136,21 +136,27 @@ The CareerLink Team
 
                 case 'upgraded':
                     await this._addNotification.saveNotification(data.user, 'Upgraded to Vip Member 👑', '/settings')
+                    break
 
                 case 'sendRequest':
                     await this._addNotification.saveNotification(data.reciever, `${data.sender} send you a connection request`, '/meetPeople/requests')
+                    break
 
                 case 'acceptRequest':
                     await this._addNotification.saveNotification(data.reciever, `${data.sender} accepted your connection request`, '/meetPeople/myConnections')
+                    break
 
                 case 'applicationAccepted':
                     await this._addNotification.saveNotification(data.userEmail, `You have been shortlisted !!`, '/profile/user/jobsApplied')
+                    break
 
                 case 'applicationRejected':
                     await this._addNotification.saveNotification(data.userEmail, 'Update on your job application', '/profile/user/jobsApplied')
+                    break
 
                 case 'applicationHired':
                     await this._addNotification.saveNotification(data.userEmail, 'You have been hired !!', '/profile/user/jobsApplied')
+                    break
 
                 case 'sendWarningMail':
                     await this._mailer.sendMail(data.reciever, 'Warning Regarding Reported Activity on Your Account', 

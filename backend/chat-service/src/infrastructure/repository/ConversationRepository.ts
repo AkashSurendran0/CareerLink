@@ -60,4 +60,11 @@ export class ConversationRepository implements IConversationRepository {
         return {success:true, conversation:convo}
     }
 
+    async deleteConversation(id: string): Promise<{ success: boolean; }> {
+        console.log(id)
+        const result=await ConversationModel.deleteOne({_id:id})
+        console.log(result)
+        return {success:true}
+    }
+
 }

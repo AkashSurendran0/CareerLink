@@ -23,8 +23,8 @@ export class CompanyModel extends Model {
 CompanyModel.init(
     {
         id:{
-            type:DataTypes.INTEGER,
-            autoIncrement:true,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey:true
         },
         registeredBy:{
@@ -44,7 +44,7 @@ CompanyModel.init(
             allowNull:false
         },
         foundedYear:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.STRING,
             allowNull:false
         },
         industry:{
@@ -60,7 +60,7 @@ CompanyModel.init(
             allowNull:false
         },
         aboutCompany:{
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
             allowNull:false
         },
         approved:{

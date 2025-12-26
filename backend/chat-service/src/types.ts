@@ -8,5 +8,6 @@ export const TYPES = {
     IGetChats:'IGetChats',
     IReadMessages:'IReadMessages',
     IGetReportedMessage:'IGetReportedMessage',
-    IScheduleCall:'IScheduleCall'
+    IScheduleCall:'IScheduleCall',
+    IDeleteConversation:'IDeleteConversation'
 }

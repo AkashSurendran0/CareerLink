@@ -35,3 +35,11 @@ export interface IDeletePlanType {
 export interface IGetSubscriptionTypeAnalytics {
   getSubscriptionTypeAnalytics(): Promise<any>
 }
+
+export interface IGetPlanDetails {
+  getPlanDetails(id:string): Promise<SubscriptionTypeDto>
+}
+
+export interface IEditSubscription {
+  editSubscription(data:SubscriptionData): Promise<{success:boolean}>
+}

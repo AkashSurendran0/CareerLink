@@ -7,6 +7,7 @@ import { enqueueSnackbar } from 'notistack';
 import { addComment, alterPostLike, getAllPosts, loadSinglePostDetails, postContent } from '@/services/userService';
 import { useLoading } from '../../template';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface Comment {
   _id: string
@@ -19,6 +20,7 @@ interface Comment {
 interface Post {
   _id: string
   pfp?: string
+  createdBy: string
   userName: string
   text?: string
   image?: string
@@ -35,6 +37,7 @@ interface SinglePostUserDetails {
 
 export default function FeedsPage() {
   const setLoading=useLoading()
+  const router=useRouter()
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [singlePostUserDetails, setSinglePostUserDetails]=useState<SinglePostUserDetails | null>(null)
   const [emojiPicker, setEmojiPicker]=useState(false)
@@ -151,6 +154,11 @@ export default function FeedsPage() {
     const result=await loadSinglePostDetails(post._id)
     setLoading(false)
     setSelectedPost(result.result)
+  }
+
+  const routeToUserProfile = async (id:string) => {
+    setLoading(true)
+    router.push(`/meetPeople/${id}`)
   }
 
   if (isLoading) {
@@ -356,7 +364,10 @@ export default function FeedsPage() {
                   <div key={post._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
+                        <div 
+                        onClick={() => routeToUserProfile (post.createdBy)}
+                        className="cursor-pointer flex items-center space-x-3"
+                        >
                           {post.pfp? (
                             <Image src={post.pfp} width={300} height={300} alt={post.userName} className="h-10 w-10 rounded-full object-cover" />
                           ) : (

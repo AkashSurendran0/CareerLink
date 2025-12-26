@@ -3,6 +3,7 @@ import { STATUS_CODES } from "../../utils/StatusCodes";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
 import { IAlterConnectionRequest, IEvaluateRequest, IGetConnectedUsers, IGetConnectionDetails, IGetConnections, IGetUserRequests, IRemoveConnection } from "../../domain/use-cases/IConnectionUseCase";
+import axios from "axios";
 
 @injectable()
 export class ConnectionController {
@@ -100,6 +101,7 @@ export class ConnectionController {
             const id=req.headers["user-id"] as string;
             const {user}=req.query;
             const result=await this._removeConnection.removeConnection(id, user);
+            await axios.delete(`http://localhost:5000/chat/v1/deleteConversation?user1=${id}&user2=${user}`);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -114,7 +116,7 @@ export class ConnectionController {
         try {
             const {user}=req.query;
             const id=req.headers["user-id"] as string;
-            const result=await this._getConnectionDetails.getConnectionDetails(user, id);
+            const result=await this._getConnectionDetails.getConnectionDetails(id, user);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {

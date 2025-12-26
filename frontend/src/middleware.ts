@@ -4,7 +4,6 @@ import { jwtVerify, SignJWT } from "jose";
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 // Cache for user status to avoid repeated API calls
-const userStatusCache = new Map();
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
@@ -190,12 +189,7 @@ async function checkUserStatus(req: NextRequest, token: string, pathname: string
 }
 
 // Cached fetch function to avoid duplicate API calls
-async function fetchWithCache(url: string, token: string) {
-  const cacheKey = `${url}:${token}`;
-  
-  if (userStatusCache.has(cacheKey)) {
-    return userStatusCache.get(cacheKey);
-  }
+async function fetchWithCache(url: string, token: string) {  
 
   const res = await fetch(url, {
     method: "GET",
@@ -209,11 +203,6 @@ async function fetchWithCache(url: string, token: string) {
   }
 
   const data = await res.json();
-  if(url != 'http://localhost:5000/user/v1/check'){
-    // Cache for 30 seconds
-    userStatusCache.set(cacheKey, data);
-    setTimeout(() => userStatusCache.delete(cacheKey), 5000);
-  }
   
   return data;
 }

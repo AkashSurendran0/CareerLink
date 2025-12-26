@@ -52,7 +52,7 @@ export default function ProfileDashboard() {
                             <h2 className="text-xl font-semibold text-gray-900 mb-4">
                                 About
                             </h2>
-                            <p className="text-gray-700 leading-relaxed">
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                                 {userDetails && userDetails.aboutMe}
                             </p>
                             </div>

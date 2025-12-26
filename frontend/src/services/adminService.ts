@@ -200,3 +200,13 @@ export const adminLogout = async () => {
     const res=await api.delete(`${ADMIN_V1_ROUTE}/adminLogout`)
     return res.data
 }
+
+export const getPlanDetails = async (id:string) => {
+    const res=await api.get(`${SUBSCRIPTION_V1_ROUTE}/getPlanDetails?id=${id}`)
+    return res.data
+}
+
+export const editSubscriptionPlan = async (data:SubscriptionData) => {
+    const res=await api.patch(`${SUBSCRIPTION_V1_ROUTE}/editSubscriptionPlan`, data)
+    return res.data
+}
