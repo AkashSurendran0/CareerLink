@@ -39,7 +39,6 @@ export default function SubscriptionsPage() {
         setStatusLoading(true)
         const result=await alterPlanStatus(id)
         if(result.result.success){
-            console.log(ind)
             setPlans((prev)=>
                 prev.map((plan, num)=>
                     num==ind? {...plan, active:!plan.active}:plan

@@ -58,12 +58,10 @@ export default function BecomeVIPPage() {
 
     const getPlans = async () => {
         const result=await getActivePlans()
-        console.log(result)
         setPlans(result.result)
     }
 
     const getDuration = (duration:number) => {
-        console.log(duration)
         if(duration==7) return 'Week'
         if(duration==30) return 'Month'
         if(duration==365) return 'Year'

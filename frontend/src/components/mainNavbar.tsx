@@ -1,6 +1,6 @@
 "use client"
 
-import {notificationSocket, userSocket} from "@/lib/socket"
+import { notificationSocket, userSocket } from "@/lib/socket"
 import { deleteAllNotifications, deleteOneNotification, getAllNotifications, getUserDetails, markAllNotificationsRead, markOneRead } from "@/services/userService"
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -16,6 +16,7 @@ interface NavbarProps {
   setSidebarOpen: (open: boolean) => void
 }
 
+
 interface Notification {
   _id: string
   content: string,
@@ -23,36 +24,53 @@ interface Notification {
   createdAt: Date
 }
 
+interface IncomingCall {
+  from: string;
+  caller: string;
+  callerImage: string;
+  callType: string;
+}
+
+interface OutgoingCall {
+  reciever: string;
+  callType: string;
+}
+
+interface UserDetails {
+  username: string;
+  profilePicture?: string;
+  // Add other properties as needed
+}
+
 function MainNavbar({ setSidebarOpen }: NavbarProps) {
-  const setLoading=useLoading()
-  const router=useRouter()
+  const setLoading = useLoading()
+  const router = useRouter()
   const [notificationOpen, setNotificationOpen] = useState(false)
   const notificationRef = useRef<HTMLDivElement>(null)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [userEmail, setUserEmail] = useState<string>()
   const [userId, setUserId] = useState<string>()
-  const [callerId, setCallerId] = useState()
-  const [isVip, setIsVip]=useState(false)
-  const [incomingCall, setIncomingCall] = useState(null)
-  const [outgoingCall, setOutgoingCall] = useState(null)
+  const [callerId, setCallerId] = useState<string>()
+  const [isVip, setIsVip] = useState(false)
+  const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null)
+  const [outgoingCall, setOutgoingCall] = useState<OutgoingCall | null>(null)
   const [callDeclined, setCallDeclined] = useState(false)
-  const [userDetails, setUserDetails] = useState()
+  const [userDetails, setUserDetails] = useState<UserDetails>()
 
-  useEffect(()=>{
+  useEffect(() => {
     getDetails()
   }, [])
 
   const getDetails = async () => {
-    const result=await getUserDetails()
-    console.log(result)
+    const result = await getUserDetails()
     setUserDetails(result.userDetails)
   }
 
-  useEffect(()=>{
-    userSocket.on('incoming-call', ({from, caller, callerImage, callType}) => {
+  useEffect(() => {
+    userSocket.on('incoming-call', ({ from, caller, callerImage, callType }) => {
       setCallerId(from)
-      const data={
+      const data = {
         from,
         caller,
         callerImage,
@@ -62,18 +80,18 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     })
   }, [])
 
-  useEffect(()=>{
-    userSocket.on('user-disconnected', ()=>{
+  useEffect(() => {
+    userSocket.on('user-disconnected', () => {
       setOutgoingCall(null)
       setIncomingCall(null)
     })
   }, [])
 
-  useEffect(()=>{
-    userSocket.on('ringing', ({reciever, callType}) => {
+  useEffect(() => {
+    userSocket.on('ringing', ({ reciever, callType }) => {
       setCallDeclined(false)
-      const data={
-        reciever, 
+      const data = {
+        reciever,
         callType
       }
       setOutgoingCall(data)
@@ -100,11 +118,11 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  useEffect(()=>{
-    const fetchUserId=async()=>{
+  useEffect(() => {
+    const fetchUserId = async () => {
       try {
-        const res=await fetch('/api/me')
-        const data=await res.json()
+        const res = await fetch('/api/me')
+        const data = await res.json()
         setUserEmail(data.userEmail)
         setUserId(data.userId)
       } catch (error) {
@@ -115,33 +133,32 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     fetchUserId()
   }, [])
 
-  useEffect(()=>{
-    if(!userEmail) return
-    userSocket.emit('user-online', userId)  
+  useEffect(() => {
+    if (!userEmail) return
+    userSocket.emit('user-online', userId)
     notificationSocket.emit('join', userEmail)
-    notificationSocket.on('notification', (data)=>{
-      console.log(data)
+    notificationSocket.on('notification', (data) => {
       setNotifications([data, ...notifications])
-      setUnreadCount(unreadCount+1)
+      setUnreadCount(unreadCount + 1)
     })
 
-    return()=>{
+    return () => {
       notificationSocket.off('notification')
     }
   }, [userEmail])
 
-  useEffect(()=>{
-    userSocket.on("call-accepted", ({callId, name, image}) => {
+  useEffect(() => {
+    userSocket.on("call-accepted", ({ callId, name, image }) => {
       sessionStorage.setItem(
         `${callId}`,
         JSON.stringify({
-          name,  
+          name,
           image
         })
       )
-      if(incomingCall?.callType == 'voice-call' || outgoingCall?.callType == 'voice-call'){
+      if (incomingCall?.callType == 'voice-call' || outgoingCall?.callType == 'voice-call') {
         router.push(`/chat/voice-call/${callId}`)
-      }else{
+      } else {
         router.push(`/chat/video-call/${callId}`)
       }
     })
@@ -152,14 +169,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }, [incomingCall, outgoingCall])
 
   const getNotifications = async () => {
-    const result=await getAllNotifications()
+    const result = await getAllNotifications()
     setNotifications(result.notifications)
-    const unreadCount=result.notifications.filter((noti)=>!noti.isRead).length
+    const unreadCount = result.notifications.filter((noti: Notification) => !noti.isRead).length
     setUnreadCount(unreadCount)
   }
 
   const vipStatus = async () => {
-    const result=await getSubscriptionInfo()
+    const result = await getSubscriptionInfo()
     setIsVip(result.result.success)
   }
 
@@ -167,17 +184,17 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const markAsRead = async (id: string) => {
     setNotifications(notifications.map((n) => (n._id === id ? { ...n, isRead: true } : n)))
-    setUnreadCount(unreadCount-1)
+    setUnreadCount(unreadCount - 1)
     await markOneRead(id)
   }
 
   const deleteNotification = async (id: string) => {
     setNotifications(notifications.filter((n) => n._id !== id))
-    setUnreadCount(unreadCount-1)
+    setUnreadCount(unreadCount - 1)
     await deleteOneNotification(id)
   }
 
-  const markAllAsRead =async () => {
+  const markAllAsRead = async () => {
     setNotifications(notifications!.map((n) => ({ ...n, isRead: true })))
     setUnreadCount(0)
     await markAllNotificationsRead()
@@ -196,7 +213,6 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
 
   const handleRejectCall = async () => {
     setCallDeclined(false)
-    console.log(userId, callerId)
     userSocket.emit('reject-call', {
       userId,
       callerId
@@ -205,14 +221,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }
 
   const handleAcceptCall = async () => {
-    const callId=window.crypto.randomUUID()
+    const callId = window.crypto.randomUUID()
     userSocket.emit('accept-call', {
       callId,
       callerId,
-      calleeName: userDetails.username,
-      calleeImage: userDetails.profilePicture || null,
-      callerName: incomingCall.caller,
-      callerImage: incomingCall.callerImage
+      calleeName: userDetails?.username,
+      calleeImage: userDetails?.profilePicture || null,
+      callerName: incomingCall?.caller,
+      callerImage: incomingCall?.callerImage
     })
   }
 
@@ -221,10 +237,10 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     <>
       <header className="bg-white shadow-sm border-b border-gray-200 relative">
         {incomingCall && (
-          <CallPopup name={incomingCall.caller} callType={incomingCall.callType} handleRejectCall={handleRejectCall} handleAcceptCall={handleAcceptCall}/>
+          <CallPopup name={incomingCall.caller} callType={incomingCall.callType} handleRejectCall={handleRejectCall} handleAcceptCall={handleAcceptCall} />
         )}
         {outgoingCall && (
-          <RingingPopup name={outgoingCall.reciever} callType={outgoingCall.callType} callDeclined={callDeclined}/>
+          <RingingPopup name={outgoingCall.reciever} callType={outgoingCall.callType} callDeclined={callDeclined} />
         )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -242,14 +258,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-            {!isVip && (
-              <button 
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md text-sm"
-              onClick={routeToVip}
-              >
-                Become VIP
-              </button>
-            )}
+              {!isVip && (
+                <button
+                  className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md text-sm"
+                  onClick={routeToVip}
+                >
+                  Become VIP
+                </button>
+              )}
 
               <div className="relative" ref={notificationRef}>
                 <button
@@ -277,9 +293,8 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                         notifications!.map((notification) => (
                           <div
                             key={notification._id}
-                            className={`cursor-pointer px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
-                              !notification.isRead ? "bg-blue-50" : ""
-                            }`}
+                            className={`cursor-pointer px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${!notification.isRead ? "bg-blue-50" : ""
+                              }`}
                           >
                             <div className="flex items-start gap-3">
                               {!notification.isRead && (
@@ -332,19 +347,19 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
                   </div>
                 )}
               </div>
-                {userDetails && (
-                  userDetails.profilePicture ? (
-                      <Image
-                      height={300}
-                      width={300}
-                      className="h-8 w-8 rounded-full flex items-center justify-center"
-                      src={userDetails.profilePicture}
-                      alt="User Image"
-                      />
-                  ):(
-                    <User className="h-8 w-8 rounded-full object-cover"/>
-                  )
-                )}
+              {userDetails && (
+                userDetails.profilePicture ? (
+                  <Image
+                    height={300}
+                    width={300}
+                    className="h-8 w-8 rounded-full flex items-center justify-center"
+                    src={userDetails.profilePicture}
+                    alt="User Image"
+                  />
+                ) : (
+                  <User className="h-8 w-8 rounded-full object-cover" />
+                )
+              )}
             </div>
           </div>
         </div>

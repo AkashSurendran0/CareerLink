@@ -23,10 +23,8 @@ export default function ResumePreview() {
 
     useEffect(()=>{
         const pdf=sessionStorage.getItem('resumePdf')
-        console.log(pdf)
         if(!pdf) return router.push('/createResume')
         const html=sessionStorage.getItem('resumeHtml')
-        console.log(html)
         if(!html) return router.push('/createResume')
 
         setHtml(html)
@@ -37,10 +35,6 @@ export default function ResumePreview() {
         const url=URL.createObjectURL(blob)
         setPdf(url)
     }, [])  
-
-    const handleEditDetails = () => {
-        console.log("Edit details clicked")
-    }
 
     const handleSaveToProfile = async () => {
         resetErrors()
@@ -146,13 +140,6 @@ export default function ResumePreview() {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 max-w-md mx-auto">
-            <button
-                onClick={handleEditDetails}
-                className="cursor-pointer w-full bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-            >
-                <span>✏️</span>
-                Edit Details
-            </button>
 
             <button
                 onClick={()=>setIsOpen(true)}

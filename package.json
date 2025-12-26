@@ -1,0 +1,9 @@
+{
+    "name": "careerlink-monorepo",
+    "private": true,
+    "workspaces": [
+        "backend/*",
+        "frontend",
+        "shared"
+    ]
+}

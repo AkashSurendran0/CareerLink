@@ -1,7 +1,7 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
-import {inject, injectable} from "inversify";
+import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 
@@ -12,39 +12,39 @@ type Education = {
 };
 
 type Experience = {
-    position:string;
+    position: string;
     company: string;
     experience: string;
 };
 
 type Details = {
     username: string;
-    profilePicture?: string;
-    gender:string;
-    aboutMe: string;
-    location: string,
-    proficiency: string,
-    skills: string[];
-    education: Education[];
-    experience: Experience[];
-    linkedinLink: string;
-    githubLink:string
+    profilePicture?: string | undefined;
+    gender?: string | undefined;
+    aboutMe?: string | undefined;
+    location?: string | undefined,
+    proficiency?: string | undefined,
+    skills?: string[] | undefined;
+    education?: Education[] | undefined;
+    experience?: Experience[] | undefined;
+    linkedinLink?: string | undefined;
+    githubLink?: string | undefined
 };
 
 @injectable()
 export class EditUserDetails implements IEditUserDetails {
 
-    constructor(@inject(TYPES.IUserRepository) private _userRepository:IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository:IUserDetailsRepository){}
+    constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository: IUserDetailsRepository) { }
 
-    async editUserDetails (details:Details, id:string): Promise<{success:boolean}> {
+    async editUserDetails(details: Details, id: string): Promise<{ success: boolean }> {
         console.log(1)
         await this._userRepository.editUserName(id, details.username);
         console.log(5, id)
         await elasticClient.update({
-            index:"users",
-            id:id,
-            doc:{
-                username:details.username
+            index: "users",
+            id: id,
+            doc: {
+                username: details.username
             }
         });
         console.log(2)
@@ -63,7 +63,7 @@ export class EditUserDetails implements IEditUserDetails {
         console.log(3)
         await this._userDetailsRepository.editUserDetails(id, updationDetails);
         console.log(4)
-        return {success:true};
+        return { success: true };
     }
 
 }

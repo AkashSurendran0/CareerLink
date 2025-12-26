@@ -320,7 +320,6 @@ export class SubscriptionController {
     getActivePlanUsers = async (req:Request, res:Response) => {
         try {
             const {plan}=req.query
-            console.log(plan)
             const result=await this._getActivePlanUsers.getActiveUsers(plan)
             res.json({result})
         } catch (error: unknown) {

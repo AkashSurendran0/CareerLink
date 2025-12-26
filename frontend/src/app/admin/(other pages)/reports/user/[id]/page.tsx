@@ -8,25 +8,56 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface Props {
-  params:{
-    id:string
+  params: {
+    id: string
   },
-  searchParams:{
-    reportId:string
+  searchParams: {
+    reportId: string
   }
 }
 
-export default function ReportedUserAccountPage({params, searchParams}:Props) {
-  const router=useRouter()
-  const {id}=params
-  const {reportId}=searchParams
-  const [userDetails, setUserDetails]=useState()
-  const [userPosts, setUserPosts]=useState()
-  const [userReports, setUserReports]=useState()
-  const [reportCount, setReportCount]=useState(1)
-  const [reportDetails, setReportDetails]=useState()
+interface UserDetails {
+  result: {
+    username: string;
+    email: string;
+    suspended?: boolean;
+  };
+  pfp?: string;
+}
 
-  useEffect(()=>{
+interface Post {
+  _id: string;
+  image?: string;
+  text?: string;
+}
+
+interface Report {
+  id: string;
+  createdAt: string;
+  reason: string;
+  status: string;
+}
+
+interface ReportDetails {
+  reportedUserProfile?: string;
+  reportedUserName: string;
+  reportedUserEmail: string;
+  reason: string;
+  createdAt: string;
+  status: string;
+}
+
+export default function ReportedUserAccountPage({ params, searchParams }: Props) {
+  const router = useRouter()
+  const { id } = params
+  const { reportId } = searchParams
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+  const [userPosts, setUserPosts] = useState<Post[]>([])
+  const [userReports, setUserReports] = useState<Report[]>([])
+  const [reportCount, setReportCount] = useState(1)
+  const [reportDetails, setReportDetails] = useState<ReportDetails | null>(null)
+
+  useEffect(() => {
     getUserDetails()
     getPosts()
     getPreviousReports()
@@ -34,42 +65,41 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
   }, [])
 
   const getUserDetails = async () => {
-    const result=await getDetailsByQuery(id)
+    const result = await getDetailsByQuery(id)
     setUserDetails(result.result)
   }
 
   const getPosts = async () => {
-    const result=await viewOtherUserPosts(id)
-    const posts=result.result.slice(0, 3)
+    const result = await viewOtherUserPosts(id)
+    const posts = result.result.slice(0, 3)
     setUserPosts(posts)
   }
 
   const getPreviousReports = async () => {
-    const result=await getPreviousUserReports(id)
-    const finalReports=result.result.filter((i:any)=>i.id != reportId)
+    const result = await getPreviousUserReports(id)
+    const finalReports = result.result.filter((i: any) => i.id != reportId)
     setUserReports(finalReports)
-    setReportCount((prev)=> prev+=finalReports.length)
+    setReportCount((prev) => prev += finalReports.length)
   }
 
   const fetchReportDetails = async () => {
-    const result=await getReportDetails(reportId)
-    if(result.result.success){
+    const result = await getReportDetails(reportId)
+    if (result.result.success) {
       setReportDetails(result.result.report)
-    }else{
+    } else {
       enqueueSnackbar('Report not available, please try again later')
     }
-    console.log(result)
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-    case "Pending":
+      case "Pending":
         return "bg-gray-100 text-gray-700"
-    case "Resolved":
+      case "Resolved":
         return "bg-green-100 text-green-700"
-    case "Dismissed":
+      case "Dismissed":
         return "bg-red-100 text-red-700"
-    default:
+      default:
         return "bg-gray-100 text-gray-700"
     }
   }
@@ -80,8 +110,8 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
   }
 
   const suspendUser = async () => {
-    const user={
-      id:id
+    const user = {
+      id: id
     }
     await changeUserStatus(user)
     await alterReportStatus()
@@ -89,9 +119,11 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
   }
 
   const sendMail = async () => {
-    await sendWarningMail(userDetails.result.email)
-    await alterReportStatus()
-    router.push('/admin/reports')
+    if (userDetails) {
+      await sendWarningMail(userDetails.result.email)
+      await alterReportStatus()
+      router.push('/admin/reports')
+    }
   }
 
   const alterReportStatus = async () => {
@@ -120,16 +152,16 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                 <div className="flex flex-col sm:flex-row items-start gap-6">
                   {/* Avatar */}
                   <div className="flex-shrink-0">
-                    {userDetails.pfp? (
+                    {userDetails.pfp ? (
                       <Image
-                      width={300}
-                      height={300}
+                        width={300}
+                        height={300}
                         src={userDetails.pfp}
                         alt={userDetails.result.username}
                         className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover bg-orange-100"
                       />
                     ) : (
-                      <User className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"/>
+                      <User className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover" />
                     )}
                   </div>
 
@@ -146,7 +178,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
             {/* Recent Activity Preview */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity Preview</h2>
-              {userPosts && userPosts.length>0 ? (
+              {userPosts && userPosts.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {userPosts.map((post) => (
                     <div
@@ -156,8 +188,8 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                       <div className="flex items-center gap-3">
                         {post.image && (
                           <Image
-                          width={300}
-                          height={300}
+                            width={300}
+                            height={300}
                             src={post.image}
                             alt="User post"
                             className="w-12 h-12 rounded-full object-cover"
@@ -183,7 +215,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
               {/* Desktop Table View */}
               <div className="hidden md:block overflow-x-auto">
-                {userReports && userReports.length>0 ? (
+                {userReports && userReports.length > 0 ? (
                   <table className="w-full">
                     <thead className="border-b border-gray-200">
                       <tr>
@@ -215,23 +247,23 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
 
               {/* Mobile Card View */}
               <div className="md:hidden space-y-4">
-                  {userReports && userReports.length>0 ? (
-                    userReports.map((report, ind)=>(
-                      <div key={ind} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-sm text-gray-900">{new Date(report.createdAt).toLocaleDateString()}</span>
-                          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(report.status)}`}>
-                            {report.status}
-                          </span>
-                        </div>
-                        <p className="text-sm text-blue-600">{report.reason}</p>
+                {userReports && userReports.length > 0 ? (
+                  userReports.map((report, ind) => (
+                    <div key={ind} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-sm text-gray-900">{new Date(report.createdAt).toLocaleDateString()}</span>
+                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(report.status)}`}>
+                          {report.status}
+                        </span>
                       </div>
-                    ))
-                  ) : (
-                    <div>
-                      User has no previous reports
+                      <p className="text-sm text-blue-600">{report.reason}</p>
                     </div>
-                  )}
+                  ))
+                ) : (
+                  <div>
+                    User has no previous reports
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -246,18 +278,18 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                 <>
                   <div className="mb-6">
                     <div className="flex items-center gap-3 mb-4">
-                      {reportDetails.reportedUserProfile? (
+                      {reportDetails.reportedUserProfile ? (
                         <Image
-                        width={300}
-                        height={300}
+                          width={300}
+                          height={300}
                           src={reportDetails.reportedUserProfile}
                           alt="User Profile"
                           className="w-12 h-12 rounded-full object-cover "
                         />
                       ) : (
-                        <User className="w-12 h-12 md:w-20 md:h-20 rounded-full object-cover"/>
+                        <User className="w-12 h-12 md:w-20 md:h-20 rounded-full object-cover" />
                       )}
-                     <div>
+                      <div>
                         <h3 className="text-sm font-semibold text-gray-900">{reportDetails.reportedUserName}</h3>
                         <p className="text-xs text-blue-600">{reportDetails.reportedUserEmail}</p>
                       </div>
@@ -287,7 +319,7 @@ export default function ReportedUserAccountPage({params, searchParams}:Props) {
                       <button onClick={markAsReviewed} className="cursor-pointer w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                         Mark as Reviewed
                       </button>
-                      {userDetails && !userDetails.suspended && (
+                      {userDetails && !userDetails.result.suspended && (
                         <button onClick={suspendUser} className="cursor-pointer w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition-colors">
                           Suspend Account
                         </button>

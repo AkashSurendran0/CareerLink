@@ -6,15 +6,22 @@ import { userSocket } from "@/lib/socket"
 import Image from "next/image"
 
 interface Props {
-    callId:string
+    params: {
+        callId: string
+    }
 }
 
-export default function VoiceCall({params}: Props) {
-    const {callId}=params
+interface CallDetails {
+    name: string;
+    image: string;
+}
+
+export default function VoiceCall({ params }: Props) {
+    const { callId } = params
     const [callDuration, setCallDuration] = useState(0)
     const [userLeft, setUserLeft] = useState(false)
     const [muteSpeaker, setMuteSpeaker] = useState(false)
-    const [callDetails, setCallDetails] = useState(null)
+    const [callDetails, setCallDetails] = useState<CallDetails | null>(null)
     const [mikeMuted, setMikeMuted] = useState(false)
     const pcRef = useRef<RTCPeerConnection | null>(null)
     const localStreamRef = useRef<MediaStream | null>(null)
@@ -23,13 +30,13 @@ export default function VoiceCall({params}: Props) {
     const isNegotiating = useRef(false)
     const isInitialized = useRef(false);
 
-    useEffect(()=>{
-        if(!callId) return
+    useEffect(() => {
+        if (!callId) return
 
-        const raw=sessionStorage.getItem(`${callId}`)
-        if(!raw) return
-        const {name, image}=JSON.parse(raw)
-        const data={
+        const raw = sessionStorage.getItem(`${callId}`)
+        if (!raw) return
+        const { name, image } = JSON.parse(raw)
+        const data = {
             name,
             image
         }
@@ -41,19 +48,19 @@ export default function VoiceCall({params}: Props) {
     }, [callId])
 
     const initializeWebRTC = useCallback(async () => {
-        if(pcRef.current || !callId) return
+        if (pcRef.current || !callId) return
 
         console.log('Inititalizing webrtc..')
 
         try {
-            const pc=new RTCPeerConnection({
-                iceServers:[
+            const pc = new RTCPeerConnection({
+                iceServers: [
                     { urls: "stun:stun.l.google.com:19302" },
                     { urls: "stun:stun1.l.google.com:19302" },
                     { urls: "stun:stun2.l.google.com:19302" }
                 ]
             })
-            pcRef.current=pc
+            pcRef.current = pc
 
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -74,7 +81,7 @@ export default function VoiceCall({params}: Props) {
                 if (remoteAudioRef.current) {
                     remoteAudioRef.current.srcObject = event.streams[0];
                     remoteAudioRef.current.muted = false;
-                    
+
                     remoteAudioRef.current.play().catch(err => {
                         console.log('Auto-play blocked, user interaction required:', err);
                     });
@@ -115,7 +122,7 @@ export default function VoiceCall({params}: Props) {
         }
     }, [callId])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (callId && !isInitialized.current) {
             initializeWebRTC();
         }
@@ -134,14 +141,14 @@ export default function VoiceCall({params}: Props) {
         };
     }, [callId, initializeWebRTC])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (!callId || !pcRef.current) return;
 
         const pc = pcRef.current;
 
         const handleCreateOffer = async () => {
             console.log('Creating offer...');
-            
+
             if (pc.signalingState !== 'stable' || isNegotiating.current) {
                 console.warn('Cannot create offer, state:', pc.signalingState);
                 return;
@@ -154,10 +161,10 @@ export default function VoiceCall({params}: Props) {
                     offerToReceiveVideo: false
                 });
                 await pc.setLocalDescription(offer);
-                
+
                 console.log('Sending offer');
                 userSocket.emit("webrtc-offer", { callId, offer });
-                
+
             } catch (error) {
                 console.error('Error creating offer:', error);
                 isNegotiating.current = false;
@@ -166,7 +173,7 @@ export default function VoiceCall({params}: Props) {
 
         const handleWebRTCOffer = async ({ offer }: { offer: RTCSessionDescriptionInit }) => {
             console.log('Received offer');
-            
+
             if (pc.signalingState !== 'stable') {
                 console.warn('Cannot handle offer, state:', pc.signalingState);
                 return;
@@ -193,7 +200,7 @@ export default function VoiceCall({params}: Props) {
                 console.log('Created and set local answer');
 
                 userSocket.emit("webrtc-answer", { callId, answer });
-                
+
             } catch (error) {
                 console.error('Error handling offer:', error);
                 isNegotiating.current = false;
@@ -202,7 +209,7 @@ export default function VoiceCall({params}: Props) {
 
         const handleWebRTCAnswer = async ({ answer }: { answer: RTCSessionDescriptionInit }) => {
             console.log('Received answer');
-            
+
             if (pc.signalingState !== 'have-local-offer') {
                 console.warn('Unexpected answer, state:', pc.signalingState);
                 return;
@@ -222,7 +229,7 @@ export default function VoiceCall({params}: Props) {
                         console.warn('Failed to add ICE candidate:', err);
                     }
                 }
-                
+
             } catch (error) {
                 console.error('Error handling answer:', error);
             }
@@ -230,7 +237,7 @@ export default function VoiceCall({params}: Props) {
 
         const handleIceCandidate = async ({ candidate }: { candidate: RTCIceCandidateInit }) => {
             console.log('Received ICE candidate');
-            
+
             try {
                 if (pc.remoteDescription) {
                     await pc.addIceCandidate(candidate);
@@ -246,7 +253,7 @@ export default function VoiceCall({params}: Props) {
 
         const handleEndCall = ({ reason }: { reason: string }) => {
             console.log('Call ended:', reason);
-            
+
             if (reason === 'USER_LEFT') {
                 setUserLeft(true);
             }
@@ -265,7 +272,7 @@ export default function VoiceCall({params}: Props) {
         return () => {
             userSocket.off("create-offer", handleCreateOffer);
             userSocket.off("webrtc-offer", handleWebRTCOffer);
-            userSocket.off("webrtc-answer", handleWebRTCAnswer); 
+            userSocket.off("webrtc-answer", handleWebRTCAnswer);
             userSocket.off("ice-candidate", handleIceCandidate);
             userSocket.off("end-call", handleEndCall);
         };
@@ -282,9 +289,11 @@ export default function VoiceCall({params}: Props) {
         // Create audio element for remote audio
         const audioEl = new Audio();
         audioEl.autoplay = true;
+        audioEl.autoplay = true;
+        // @ts-expect-error playsInline might not be in definition
         audioEl.playsInline = true;
         audioEl.muted = false;
-        
+
         // Store in ref
         (remoteAudioRef as any).current = audioEl;
 
@@ -292,7 +301,7 @@ export default function VoiceCall({params}: Props) {
             if (audioEl) {
                 audioEl.pause();
                 audioEl.srcObject = null;
-            } 
+            }
         };
     }, []);
 
@@ -314,8 +323,8 @@ export default function VoiceCall({params}: Props) {
     }, []);
 
     const toggleMic = () => {
-        const tracks=localStreamRef.current?.getAudioTracks()
-        if(!tracks) return
+        const tracks = localStreamRef.current?.getAudioTracks()
+        if (!tracks) return
 
         tracks.forEach(track => {
             track.enabled = mikeMuted
@@ -334,7 +343,7 @@ export default function VoiceCall({params}: Props) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-        setCallDuration((prev) => prev + 1)
+            setCallDuration((prev) => prev + 1)
         }, 1000)
 
         return () => clearInterval(interval)
@@ -343,7 +352,7 @@ export default function VoiceCall({params}: Props) {
     const handleEndCall = () => {
         localStreamRef.current?.getTracks().forEach(t => t.stop())
         pcRef.current?.close()
-        userSocket.emit("end-call", {callId})
+        userSocket.emit("end-call", { callId })
         sessionStorage.removeItem(`${callId}`)
         window.history.back()
     }
@@ -359,11 +368,11 @@ export default function VoiceCall({params}: Props) {
                 {callDetails && (
                     callDetails.image ? (
                         <Image
-                        height={300}
-                        width={300}
-                        src={callDetails.image}
-                        className="mb-6 flex h-40 w-40 items-center justify-center rounded-full shadow-2xl md:h-48 md:w-48"
-                        alt={callDetails.name}
+                            height={300}
+                            width={300}
+                            src={callDetails.image}
+                            className="mb-6 flex h-40 w-40 items-center justify-center rounded-full shadow-2xl md:h-48 md:w-48"
+                            alt={callDetails.name}
                         />
                     ) : (
                         <div className="mb-6 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-2xl md:h-48 md:w-48">
@@ -382,35 +391,33 @@ export default function VoiceCall({params}: Props) {
             </div>
 
             <div className="flex items-center gap-4 md:gap-6">
-            <button
-                onClick={toggleMic}
-                className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${
-                mikeMuted
-                    ? "border-red-500 bg-red-500 text-white hover:bg-red-600"
-                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-            >
-                {mikeMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
-            </button>
+                <button
+                    onClick={toggleMic}
+                    className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${mikeMuted
+                            ? "border-red-500 bg-red-500 text-white hover:bg-red-600"
+                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                >
+                    {mikeMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+                </button>
 
-            <button
-                onClick={handleEndCall}
-                className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600 md:h-20 md:w-20"
-            >
-                <Phone className="h-6 w-6 rotate-[135deg] md:h-8 md:w-8" />
-            </button>
+                <button
+                    onClick={handleEndCall}
+                    className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600 md:h-20 md:w-20"
+                >
+                    <Phone className="h-6 w-6 rotate-[135deg] md:h-8 md:w-8" />
+                </button>
 
-            <button
-                onClick={() => setMuteSpeaker(!muteSpeaker)}
-                className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${
-                muteSpeaker
-                    ? "border-blue-500 bg-blue-500 text-white hover:bg-blue-600"
-                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-            >
-                {muteSpeaker ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
-            </button>
+                <button
+                    onClick={() => setMuteSpeaker(!muteSpeaker)}
+                    className={`flex h-14 w-14 items-center justify-center rounded-full border-2 transition-colors ${muteSpeaker
+                            ? "border-blue-500 bg-blue-500 text-white hover:bg-blue-600"
+                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                >
+                    {muteSpeaker ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
+                </button>
             </div>
         </main>
-    ) 
+    )
 }   

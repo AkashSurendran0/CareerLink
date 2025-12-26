@@ -31,7 +31,6 @@ export default function SettingsPage() {
     const [confirmBox, setConfirmBox]=useState(false)
 
     useEffect(()=>{
-        console.log('here')
         getPlan()
     }, [])
 

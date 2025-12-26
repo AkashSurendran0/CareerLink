@@ -215,7 +215,6 @@ export default function ResumeBuilder() {
 
         setLoading(true)
         const result=await createResume(data)
-        // return console.log(result)
         if(!result.result.success){
             setLoading(false)
             return enqueueSnackbar(result.result.message, {variant:'error'})

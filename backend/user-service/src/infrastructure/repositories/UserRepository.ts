@@ -1,49 +1,49 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
-import { User } from "../../domain/entities/User";
+import { User } from "@careerlink/types";
 import { UserModel } from "../models/UserModel";
-import {injectable} from "inversify";
+import { injectable } from "inversify";
 import { Op, QueryTypes } from "sequelize";
 import { sequelize } from "../database/Sequelize";
 
-type UserType={
-    id:string,
-    username:string,
-    email:string,
-    password:string | null,
-    googleId:string | null,
-    suspended:boolean,
-    createdAt:string
+type UserType = {
+    id: string,
+    username: string,
+    email: string,
+    password: string | null,
+    googleId: string | null,
+    suspended: boolean,
+    createdAt: string
 }
 
 @injectable()
 export class UserRepository implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
-        const userDoc=await UserModel.findOne({where: {email}, raw:true});
-        if(!userDoc) return null;
+        const userDoc = await UserModel.findOne({ where: { email }, raw: true });
+        if (!userDoc) return null;
         return new User(
-            userDoc.id.toString(), 
-            userDoc.username, 
-            userDoc.email, 
+            userDoc.id.toString(),
+            userDoc.username,
+            userDoc.email,
             userDoc.password,
-            userDoc.googleId, 
+            userDoc.googleId,
             userDoc.suspended,
             userDoc.createdAt
         );
     }
 
     async create(user: User): Promise<User> {
-        const userDoc=await UserModel.create({
-            username:user.username, 
-            email: user.email, 
-            password:user.password,
+        const userDoc = await UserModel.create({
+            username: user.username,
+            email: user.email,
+            password: user.password,
         });
-        const userData=userDoc.get({plain:true});
+        const userData = userDoc.get({ plain: true });
         return new User(
-            userData.id.toString(), 
-            userData.username, 
-            userData.email, 
-            userData.password, 
+            userData.id.toString(),
+            userData.username,
+            userData.email,
+            userData.password,
             userData.googleId,
             userData.suspended,
             userData.createdAt
@@ -51,37 +51,37 @@ export class UserRepository implements IUserRepository {
     }
 
     async createUserWithGoogle(email: string, googleId: string, username: string): Promise<User> {
-        const user=await UserModel.create({
-            username: username, 
+        const user = await UserModel.create({
+            username: username,
             email: email,
             googleId: googleId
         });
-        const userData=user.get({plain:true});
+        const userData = user.get({ plain: true });
         return new User(
-            userData.id.toString(), 
-            userData.username, 
-            userData.email, 
-            userData.password, 
+            userData.id.toString(),
+            userData.username,
+            userData.email,
+            userData.password,
             userData.googleId,
             userData.suspended,
             userData.createdAt
         );
     }
 
-    async updateUserPassword(email:string, password:string): Promise<User> {
-        const [rowsUpdated, updatedUsers]= await UserModel.update(
-            {password},
+    async updateUserPassword(email: string, password: string): Promise<User> {
+        const [rowsUpdated, updatedUsers] = await UserModel.update(
+            { password },
             {
-                where:{email},
-                returning:true
+                where: { email },
+                returning: true
             }
         );
-        const updatedUser=updatedUsers[0]!.get({plain:true});
+        const updatedUser = updatedUsers[0]!.get({ plain: true });
         return new User(
-            updatedUser.id.toString(), 
-            updatedUser.username, 
-            updatedUser.email, 
-            updatedUser.password, 
+            updatedUser.id.toString(),
+            updatedUser.username,
+            updatedUser.email,
+            updatedUser.password,
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
@@ -89,75 +89,75 @@ export class UserRepository implements IUserRepository {
     }
 
     async getAllUsersCount(): Promise<number> {
-        const users=await UserModel.findAll({raw:true});
+        const users = await UserModel.findAll({ raw: true });
         return users.length;
     }
 
     async getUsers(page: number, limit: number): Promise<User[]> {
-        const offset=(page-1)*limit;     
-        const users=await UserModel.findAll({raw:true, offset, limit}); 
-        return users.map((user:any)=> 
-            new User( 
-                user.id.toString(), 
-                user.username, 
-                user.email, 
-                user.password, 
-                user.googleId, 
+        const offset = (page - 1) * limit;
+        const users = await UserModel.findAll({ raw: true, offset, limit });
+        return users.map((user: any) =>
+            new User(
+                user.id.toString(),
+                user.username,
+                user.email,
+                user.password,
+                user.googleId,
                 user.suspended,
                 user.createdAt
-            ) 
+            )
         );
     }
-    
-    async editUserName(id:string, username:string): Promise<User> {
-        const [rowsUpdated, updatedUsers]=await UserModel.update(
-            {username},
+
+    async editUserName(id: string, username: string): Promise<User> {
+        const [rowsUpdated, updatedUsers] = await UserModel.update(
+            { username },
             {
-                where:{id},
-                returning:true
+                where: { id },
+                returning: true
             }
         );
-        const updatedUser=updatedUsers[0]!.get({plain:true});
+        const updatedUser = updatedUsers[0]!.get({ plain: true });
         return new User(
-            updatedUser.id.toString(), 
-            updatedUser.username, 
-            updatedUser.email, 
-            updatedUser.password, 
+            updatedUser.id.toString(),
+            updatedUser.username,
+            updatedUser.email,
+            updatedUser.password,
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
         );
-        
+
     }
 
     async findById(id: string): Promise<User | null> {
-        const user=await UserModel.findByPk(id, {raw:true});
-        if(!user) return null;
-        return new User (
-            user.id.toString(), 
-            user.username, 
-            user.email, 
-            user.password, 
-            user.googleId, 
+        const user = await UserModel.findByPk(id, { raw: true });
+        if (!user) return null;
+        return new User(
+            user.id.toString(),
+            user.username,
+            user.email,
+            user.password,
+            user.googleId,
             user.suspended,
             user.createdAt
         );
     }
 
-    async alterUserStatus(user:UserType): Promise<User> {
-        const [rowsUpdated, updatedUsers]=await UserModel.update(
-            {suspended: !user.suspended},
+    async alterUserStatus(user: User): Promise<User> {
+        const [rowsUpdated, updatedUsers] = await UserModel.update(
+            { suspended: !user.suspended },
             {
-                where:{id:user.id}, 
-                returning:true
+                where: { id: user.id },
+                returning: true
             }
         );
-        const updatedUser=updatedUsers[0]!.get({plain:true});
+        const updatedUser = updatedUsers[0]!.get({ plain: true });
         return new User(
-            updatedUser.id.toString(), 
-            updatedUser.username, 
-            updatedUser.email, 
-            updatedUser.password, 
+            updatedUser.id.toString(),
+            updatedUser.username,
+            updatedUser.email,
+            updatedUser.password,
             updatedUser.googleId,
             updatedUser.suspended,
             updatedUser.createdAt
@@ -165,14 +165,14 @@ export class UserRepository implements IUserRepository {
     }
 
     async getAllUsers(): Promise<User[]> {
-        const users=await UserModel.findAll({raw:true});
-        return users.map((user: any) => 
+        const users = await UserModel.findAll({ raw: true });
+        return users.map((user: any) =>
             new User(
-                user.id.toString(), 
-                user.username, 
-                user.email, 
-                user.password, 
-                user.googleId, 
+                user.id.toString(),
+                user.username,
+                user.email,
+                user.password,
+                user.googleId,
                 user.suspended,
                 user.createdAt
             )
@@ -180,14 +180,14 @@ export class UserRepository implements IUserRepository {
     }
 
     async findByName(name: string): Promise<User[]> {
-        const users=await UserModel.findAll({where:{username:{[Op.iLike]:`%${name}%`}}, raw:true});
-        return users.map((user: any) => 
+        const users = await UserModel.findAll({ where: { username: { [Op.iLike]: `%${name}%` } }, raw: true });
+        return users.map((user: any) =>
             new User(
-                user.id.toString(), 
-                user.username, 
-                user.email, 
-                user.password, 
-                user.googleId, 
+                user.id.toString(),
+                user.username,
+                user.email,
+                user.password,
+                user.googleId,
                 user.suspended,
                 user.createdAt
             )

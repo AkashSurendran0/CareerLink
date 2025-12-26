@@ -18,38 +18,35 @@ injectable()
 export class CompanyController {
 
     constructor(
-        @inject(TYPES.IAddCompany) private _addCompany:IAddCompany,
-        @inject(TYPES.ICheckCompanyRegistrationInfo) private _checkCompanyRegistrationInfo:ICheckCompanyRegistrationInfo,
-        @inject(TYPES.IGetCompanyDetails) private _getCompanyDetails:IGetCompanyDetails,
-        @inject(TYPES.IEditCompany) private _editCompany:IEditCompany,
-        @inject(TYPES.IGetAllCompanies) private _getAllCompanies:IGetAllCompanies,
-        @inject(TYPES.IAlterCompanyStatus) private _alterCompanyStatus:IAlterCompanyStatus,
-        @inject(TYPES.ICheckCompanyDetails) private _checkCompanyDetails:ICheckCompanyDetails,
-        @inject(TYPES.IAlterCompanyRegistrationStatus) private _alterCompanyRegistrationStatus:IAlterCompanyRegistrationStatus,
-        @inject(TYPES.IReapplyCompany) private _reapplyCompany:IReapplyCompany,
-        @inject(TYPES.IDeleteCompany) private _deleteCompany:IDeleteCompany,
-        @inject(TYPES.IGetAvailableCompanies) private _getAvailableCompanies:IGetAvailableCompanies,
-        @inject(TYPES.IGetCompanyDetailsByQuery) private _getCompanyDetailsByQuery:IGetCompanyDetailsByQuery,
-        @inject(TYPES.IGetActiveCompanyCount) private _getActiveCompanyCount:IGetActiveCompanyCount
-    ){}
+        @inject(TYPES.IAddCompany) private _addCompany: IAddCompany,
+        @inject(TYPES.ICheckCompanyRegistrationInfo) private _checkCompanyRegistrationInfo: ICheckCompanyRegistrationInfo,
+        @inject(TYPES.IGetCompanyDetails) private _getCompanyDetails: IGetCompanyDetails,
+        @inject(TYPES.IEditCompany) private _editCompany: IEditCompany,
+        @inject(TYPES.IGetAllCompanies) private _getAllCompanies: IGetAllCompanies,
+        @inject(TYPES.IAlterCompanyStatus) private _alterCompanyStatus: IAlterCompanyStatus,
+        @inject(TYPES.ICheckCompanyDetails) private _checkCompanyDetails: ICheckCompanyDetails,
+        @inject(TYPES.IAlterCompanyRegistrationStatus) private _alterCompanyRegistrationStatus: IAlterCompanyRegistrationStatus,
+        @inject(TYPES.IReapplyCompany) private _reapplyCompany: IReapplyCompany,
+        @inject(TYPES.IDeleteCompany) private _deleteCompany: IDeleteCompany,
+        @inject(TYPES.IGetAvailableCompanies) private _getAvailableCompanies: IGetAvailableCompanies,
+        @inject(TYPES.IGetCompanyDetailsByQuery) private _getCompanyDetailsByQuery: IGetCompanyDetailsByQuery,
+        @inject(TYPES.IGetActiveCompanyCount) private _getActiveCompanyCount: IGetActiveCompanyCount
+    ) { }
 
-    addCompany = async (req:Request, res:Response): Promise<void> => {
+    addCompany = async (req: Request, res: Response): Promise<void> => {
         try {
-            console.log(1)
-            const user=req.headers["user-email"] as string
-            let imageUrl:string | undefined
-            if(req.file){
-                imageUrl=await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1])
+            const user = req.headers["user-email"] as string
+            let imageUrl: string | undefined
+            if (req.file) {
+                imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1] || "jpeg")
             }
-            console.log(2)
-            const details=req.body
-            if(imageUrl){
-                details.logo=imageUrl
+            const details = req.body
+            if (imageUrl) {
+                details.logo = imageUrl
             }
-            console.log(3)
             await this._addCompany.addCompany(user, details)
-            res.json({success:true})
-        } catch (error: unknown) {  
+            res.json({ success: true })
+        } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: error.message });
             } else {
@@ -58,11 +55,11 @@ export class CompanyController {
         }
     }
 
-    getRegistrationInfo = async (req:Request, res:Response):Promise<void> => {
+    getRegistrationInfo = async (req: Request, res: Response): Promise<void> => {
         try {
-            const user=req.headers["user-email"] as string
-            const result=await this._checkCompanyRegistrationInfo.checkCompanyRegistrationInfo(user)
-            res.json({result})
+            const user = req.headers["user-email"] as string
+            const result = await this._checkCompanyRegistrationInfo.checkCompanyRegistrationInfo(user)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -72,11 +69,11 @@ export class CompanyController {
         }
     }
 
-    getCompanyInfo = async (req:Request, res:Response):Promise<void> => {
+    getCompanyInfo = async (req: Request, res: Response): Promise<void> => {
         try {
-            const user=req.headers["user-email"] as string
-            const result=await this._getCompanyDetails.getCompanyDetails(user)
-            res.json({result})
+            const user = req.headers["user-email"] as string
+            const result = await this._getCompanyDetails.getCompanyDetails(user)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -86,20 +83,19 @@ export class CompanyController {
         }
     }
 
-    editCompany = async  (req:Request, res:Response):Promise<void> => {
+    editCompany = async (req: Request, res: Response): Promise<void> => {
         try {
-            console.log(1)
-            const user=req.headers["user-email"] as string
-            let imageUrl:string | undefined
-            if(req.file){
-                imageUrl=await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1])
+            const user = req.headers["user-email"] as string
+            let imageUrl: string | undefined
+            if (req.file) {
+                imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1] || "jpeg")
             }
-            const details=req.body
-            if(imageUrl){
-                details.logo=imageUrl
+            const details = req.body
+            if (imageUrl) {
+                details.logo = imageUrl
             }
             await this._editCompany.editCompany(user, details)
-            res.json({success:true})
+            res.json({ success: true })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -109,29 +105,13 @@ export class CompanyController {
         }
     }
 
-    getApprovedCompanies = async (req:Request, res:Response): Promise<void> => {
+    getApprovedCompanies = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {page, limit, query}=req.query;
-            const pageNum=parseInt(page as string, 10) || 1;
-            const limitNum=parseInt(limit as string, 5) || 5;
-            const companies=await this._getAllCompanies.getApprovedCompanies(pageNum, limitNum, query)
-            res.json({companies})
-        } catch (error:unknown) {
-            if (error instanceof Error) {
-                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
-            } else {
-                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
-            }
-        }
-    }
-
-    getPendingCompanies = async (req:Request, res:Response): Promise<void> => {
-        try {
-            const {page, limit, query}=req.query;
-            const pageNum=parseInt(page as string, 10) || 1;
-            const limitNum=parseInt(limit as string, 5) || 5;
-            const companies=await this._getAllCompanies.getPendingCompanies(pageNum, limitNum, query)
-            res.json({companies})
+            const { page, limit, query } = req.query;
+            const pageNum = parseInt(page as string, 10) || 1;
+            const limitNum = parseInt(limit as string, 5) || 5;
+            const companies = await this._getAllCompanies.getApprovedCompanies(pageNum, limitNum, query as string)
+            res.json({ companies })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -141,11 +121,27 @@ export class CompanyController {
         }
     }
 
-    changeCompanyStatus = async (req:Request, res:Response): Promise<void> => {
+    getPendingCompanies = async (req: Request, res: Response): Promise<void> => {
         try {
-            const company=req.body
-            const companies=await this._alterCompanyStatus.changeCompanyStatus(company.id)
-            res.json({companies})
+            const { page, limit, query } = req.query;
+            const pageNum = parseInt(page as string, 10) || 1;
+            const limitNum = parseInt(limit as string, 5) || 5;
+            const companies = await this._getAllCompanies.getPendingCompanies(pageNum, limitNum, query as string)
+            res.json({ companies })
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    }
+
+    changeCompanyStatus = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const company = req.body
+            const companies = await this._alterCompanyStatus.changeCompanyStatus(company.id)
+            res.json({ companies })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -155,11 +151,11 @@ export class CompanyController {
         }
     }
 
-    checkCompanyDetails = async (req:Request, res:Response): Promise<void> => {
+    checkCompanyDetails = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {id}=req.query
-            const company=await this._checkCompanyDetails.getCompanyInfo(id)
-            res.json({company})
+            const { id } = req.query
+            const company = await this._checkCompanyDetails.getCompanyInfo(id as string)
+            res.json({ company })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -169,12 +165,12 @@ export class CompanyController {
         }
     }
 
-    rejectCompany = async (req:Request, res:Response): Promise<void> => {
+    rejectCompany = async (req: Request, res: Response): Promise<void> => {
         try {
-            const reason=req.body
-            const {id}=req.query
-            const result=await this._alterCompanyRegistrationStatus.rejectCompany(id, reason)
-            res.json({result}) 
+            const reason = req.body
+            const { id } = req.query
+            const result = await this._alterCompanyRegistrationStatus.rejectCompany(id as string, reason)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -184,11 +180,11 @@ export class CompanyController {
         }
     }
 
-    acceptCompany = async (req:Request, res:Response): Promise<void> => {
+    acceptCompany = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {id}=req.query
-            const result=await this._alterCompanyRegistrationStatus.acceptCompany(id)
-            res.json({result})
+            const { id } = req.query
+            const result = await this._alterCompanyRegistrationStatus.acceptCompany(id as string)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -198,11 +194,11 @@ export class CompanyController {
         }
     }
 
-    reapplyCompany = async (req:Request, res:Response) => {
+    reapplyCompany = async (req: Request, res: Response) => {
         try {
-            const user=req.headers['user-email'] as string
-            const company=await this._reapplyCompany.reapplyCompany(user)
-            res.json({company})
+            const user = req.headers['user-email'] as string
+            const company = await this._reapplyCompany.reapplyCompany(user)
+            res.json({ company })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -212,11 +208,11 @@ export class CompanyController {
         }
     }
 
-    deleteCompany = async (req:Request, res:Response) => {
+    deleteCompany = async (req: Request, res: Response) => {
         try {
-            const {id}=req.query
-            const result=await this._deleteCompany.deleteCompany(id)
-            res.json({result})
+            const { id } = req.query
+            const result = await this._deleteCompany.deleteCompany(id as string)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -226,13 +222,13 @@ export class CompanyController {
         }
     }
 
-    getAvailableCompanies = async (req:Request, res:Response) => {
+    getAvailableCompanies = async (req: Request, res: Response) => {
         try {
-            const email=req.headers['user-email'] as string
-            const {name}=req.query
-            const query=name || null
-            const result=await this._getAvailableCompanies.getAvailableCompanies(email, query)
-            res.json({result})
+            const email = req.headers['user-email'] as string
+            const { name } = req.query
+            const query = name || null
+            const result = await this._getAvailableCompanies.getAvailableCompanies(email, query as string)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -242,11 +238,11 @@ export class CompanyController {
         }
     }
 
-    getCompanyDetailsByQuery = async (req:Request, res:Response) => {
+    getCompanyDetailsByQuery = async (req: Request, res: Response) => {
         try {
-            const {id}=req.query
-            const result=await this._getCompanyDetailsByQuery.getCompanyDetails(id)
-            res.json({result})
+            const { id } = req.query
+            const result = await this._getCompanyDetailsByQuery.getCompanyDetails(id as string)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -256,10 +252,10 @@ export class CompanyController {
         }
     }
 
-    getActiveCompanyCount = async (req:Request, res:Response) => {
+    getActiveCompanyCount = async (req: Request, res: Response) => {
         try {
-            const result=await this._getActiveCompanyCount.getActiveCompanyCount()
-            res.json({result})
+            const result = await this._getActiveCompanyCount.getActiveCompanyCount()
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

@@ -43,7 +43,6 @@ function UserManagement() {
     useEffect(()=>{
         const fetchUsers= async () => {
             const result=await getUsers(STARTING_PAGE, LIMIT, query)
-            console.log(result)
             if(result.users.result.length<LIMIT){
                 setPageLimit(1)
             }else{

@@ -64,7 +64,6 @@ export default function FeedsPage() {
     if(shownRef.current>=result.result.count) setFinished(true)
     setPosts([...result.result.allPost])
     setIsLoading(false)
-    console.log(result)
   }
 
   const fetchUserId=async()=>{
@@ -97,7 +96,6 @@ export default function FeedsPage() {
     setLoading(false)
     setPosts([result.result, ...posts])
     shownRef.current+=1
-    console.log(result)
   }
 
   const handleLike = async (postId: string) => {
@@ -148,7 +146,6 @@ export default function FeedsPage() {
   }
 
   const loadSinglePost = async (post: Post) => {
-    console.log(post)
     setLoading(true)
     setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
     const result=await loadSinglePostDetails(post._id)
