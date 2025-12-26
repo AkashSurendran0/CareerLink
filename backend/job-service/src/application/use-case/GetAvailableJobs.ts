@@ -17,12 +17,12 @@ export class GetAvailableJobs implements IGetAvailableJobs {
     async getAvailableJobs(query:string, user:string): Promise<JobDTO[]> {
         let jobs=await this._jobRepository.getAvailableJobs(query)
         let result=[]
-        console.log(user)
         for(let job of jobs){
             let include=false
-            const application=await this._jobApplicationRepository.getJobApplicants(job._id)
-            if(application){
-                for (const app of application.applicants){
+            const application=await this._jobApplicationRepository.getJobApplicants(job._id, 'All')
+            console.log(application)
+            if(application.result.length>0){
+                for (const app of application.result){
                     if(app.user==user){
                         include=true
                     }

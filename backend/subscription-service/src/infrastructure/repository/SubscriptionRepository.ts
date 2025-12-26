@@ -11,6 +11,10 @@ import { Op, QueryTypes } from "sequelize";
 export class SubscriptionRepository implements ISubscriptionRepository {
 
     async addSubscription(id: string, user: string, validity:number): Promise<{ success: boolean; }> {
+        const existingSubscription=await SubscriptionModel.findOne({where:{user:user}, raw:true})
+        if(existingSubscription){
+            await SubscriptionModel.destroy({where:{user:user}})
+        }
         const date=getNthDay(validity)
         await SubscriptionModel.create({
             user,

@@ -125,10 +125,13 @@ export class JobController {
 
     getAvailableJobs = async (req:Request, res:Response) => {
         try {
+            console.log('as')
             const user=req.headers['user-id'] as string
-            console.log(user)
+            console.log(1, 'a')
             const {query}=req.query
             const jobs=await this._getAvailableJobs.getAvailableJobs(query, user)
+            console.log(jobs)
+            console.log(2)
             const filledJobs=await Promise.all(
                 jobs.map(async job=>{
                     const result=await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job.company}`)
@@ -138,6 +141,7 @@ export class JobController {
                     }
                 })
             )
+            console.log(3, 'd')
             res.json({jobs:filledJobs})
         } catch (error: unknown) {
             if (error instanceof Error) {

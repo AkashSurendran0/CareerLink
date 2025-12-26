@@ -4,9 +4,11 @@ import { adminLogout } from '@/services/adminService'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ConfirmModal from '@/reusable-components/confirmModal'
+import { usePathname } from 'next/navigation'
 
 function AdminNavbar() {
   const router=useRouter()
+  const pathname=usePathname()
   const [logoutConfirmation, setLogoutConfirmation] = useState(false)
 
   const logoutAdmin = async () => {
@@ -26,13 +28,15 @@ function AdminNavbar() {
         <div className="flex items-center space-x-3">
           <h1 className="text-xl font-semibold text-gray-900">CareerLink Admin Panel</h1>
         </div>
-        <div className="flex items-center space-x-3">
-          <button 
-          onClick={()=>setLogoutConfirmation(true)}
-          className='cursor-pointer bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-full transition-colors'
-          >Logout
-          </button>
-        </div>
+        {pathname!='/admin/login' && (
+          <div className="flex items-center space-x-3">
+            <button 
+            onClick={()=>setLogoutConfirmation(true)}
+            className='cursor-pointer bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-full transition-colors'
+            >Logout
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   )
