@@ -147,14 +147,12 @@ export default function ResumeBuilder() {
             finalCertifications,
             finalInterests
         }
-        console.log(data)
         setLoading(true)
         const result=await createCoverLetter(data)
         if(!result.result.success){
             setLoading(false)
             return enqueueSnackbar(result.result.message, {variant:'error'})
         } 
-        console.log(result)
         sessionStorage.setItem('coverLetter', result.result.content)
 
         router.push('/createCoverletter/coverLetterPreview')

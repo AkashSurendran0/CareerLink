@@ -71,9 +71,7 @@ export default function JobDetailsPage({params}:Props) {
     const onSelectFromSaved = async () => {
         setLoading(true)
         const result=await getAllUserResumes()
-        console.log(result)
         if(result.resumes.success){
-            console.log(result)
             setLoading(false)
             setOpenOptions(false)
             setOpenSavedResumes(true)
@@ -116,7 +114,6 @@ export default function JobDetailsPage({params}:Props) {
         setResumeName(file!.name)
         setResumeFile(file!)
         setOpenOptions(false)
-        console.log(file)
     }
 
     const handleSubmitApplication = async () => {
@@ -154,7 +151,6 @@ export default function JobDetailsPage({params}:Props) {
             router.push('/profile/user/jobsApplied')
         }else{
             const {id}=params
-            // return console.log(tailoredResume.pdf)
             // const byteCharacters=atob(tailoredResume.pdf.data)
             // const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
             if (!tailoredResume.pdf) return enqueueSnackbar('Something went wrong', {variant:'error'})
@@ -184,7 +180,6 @@ export default function JobDetailsPage({params}:Props) {
         setTailoredResumeConfirmation(false)
         const {id}=params
         const result=await getTailoredResume(id)
-        console.log(result)
         if(result.result.success){
             setTailoredResume({html:result.result.html, pdf:result.result.pdf})
             setOpenResumePreview(true)

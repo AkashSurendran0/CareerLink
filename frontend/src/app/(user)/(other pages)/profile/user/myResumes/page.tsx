@@ -22,7 +22,6 @@ function MyResumes() {
 
         async function getResumes () {
             const result=await getAllUserResumes()
-            console.log(result)
             if(result.resumes.success){
                 setAllResumes(result.resumes.resume)
             }

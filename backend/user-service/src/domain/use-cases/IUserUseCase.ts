@@ -1,53 +1,53 @@
-import { UserDTO } from "../../dto/UserDTO";
+import { UserDTO } from "@careerlink/types";
 
 export interface IChangePass {
-    changePass(email:string, password:string): Promise<{token: string, refreshToken:String}>
+    changePass(email: string, password: string): Promise<{ token: string, refreshToken: String }>
 }
 
 export interface ISendResetOtp {
-    mailOtp(email:string): Promise<{success:boolean, message:string} | {success:boolean, otp:number}>
+    mailOtp(email: string): Promise<{ success: boolean, message: string } | { success: boolean, otp: number }>
 }
 
 export interface IGoogleLogin {
-    googleSignin(email:string, googleId:string, username:string) : Promise<UserDTO>
+    googleSignin(email: string, googleId: string, username: string): Promise<UserDTO>
 }
 
 export interface ILoginUser {
-    execute(email:string, password:string): Promise<{success:boolean, token:string, refreshToken:string} | {success:boolean, message:string}>
+    execute(email: string, password: string): Promise<{ success: boolean, token: string, refreshToken: string } | { success: boolean, message: string }>
 }
 
 export interface ISignupUser {
-    createUser(username:string, email:string, password:string): Promise<{success:boolean, token:string, refreshToken:String} | {success:boolean, message:string}> 
+    createUser(username: string, email: string, password: string): Promise<{ success: boolean, token: string, refreshToken: String } | { success: boolean, message: string }>
 }
 
 export interface ISendOTP {
-    mailOtp(email:string):Promise<{success:boolean, otp:number} | {success:boolean, message:string}>
+    mailOtp(email: string): Promise<{ success: boolean, otp: number } | { success: boolean, message: string }>
 }
 
 export interface IGetAllUsers {
-    getUsers(page:number, limit:number, query:string | undefined):Promise<{result: {id:string, username:string, email:string, status:boolean, createdAt:Date|undefined}[], pageLimit:number }>
+    getUsers(page: number, limit: number, query: string | undefined): Promise<{ result: { id: string, username: string, email: string, status?: boolean, createdAt: Date | undefined }[], pageLimit: number }>
 }
 
 export interface IVerifyOTP {
-    verifyOtp(email:string): Promise<{success:boolean, otp:string} | {success:boolean, message:string}>
+    verifyOtp(email: string): Promise<{ success: boolean, otp: string } | { success: boolean, message: string }>
 }
 
 export interface IAlterUserStatus {
-    changeUserStatus (id:string):Promise<UserDTO>
+    changeUserStatus(id: string): Promise<UserDTO>
 }
 
 export interface ICheckUserBlock {
-    checkUserBlock (id:string): Promise<{success:boolean} | null>
+    checkUserBlock(id: string): Promise<{ success: boolean } | null>
 }
 
 export interface IGetUserNames {
-    getUserNames (id:string) : Promise<any>
-    getUserNamesByEmail(email:string): Promise<any>
-    getUserInfo(email:string): Promise<any>
+    getUserNames(id: string): Promise<any>
+    getUserNamesByEmail(email: string): Promise<any>
+    getUserInfo(email: string): Promise<any>
 }
 
 export interface ISendWarningMail {
-    sendWarningMail(email: string): Promise<{success:boolean}>
+    sendWarningMail(email: string): Promise<{ success: boolean }>
 }
 
 export interface IGetUserAnalytics {

@@ -5,9 +5,9 @@ import { X, Calendar, Clock } from "lucide-react"
 import { enqueueSnackbar } from "notistack"
 
 interface ScheduleCallModalProps {
-  userName: string
-  onConfirm: (date: Date, time: string) => void
-  onClose: () => void
+    userName: string
+    onConfirm: (date: Date, time: string) => void
+    onClose: () => void
 }
 
 export function ScheduleCallModal({ userName, onConfirm, onClose }: ScheduleCallModalProps) {
@@ -16,21 +16,21 @@ export function ScheduleCallModal({ userName, onConfirm, onClose }: ScheduleCall
 
     const handleConfirm = () => {
         if (selectedDate && selectedTime) {
-        
-        const [hour, minute]=selectedTime.split(':').map(Number)
-        
-        const scheduledDate=new Date(selectedDate)
-        scheduledDate.setHours(hour, minute, 0, 0)
-        
-        const now=new Date()
-        
-        if(scheduledDate <= now) {
-            return enqueueSnackbar('Scheduled date must be in the future.', {variant:'error'})
-        }
 
-        onConfirm(selectedDate, selectedTime)
-        setSelectedDate("")
-        setSelectedTime("")
+            const [hour, minute] = selectedTime.split(':').map(Number)
+
+            const scheduledDate = new Date(selectedDate)
+            scheduledDate.setHours(hour, minute, 0, 0)
+
+            const now = new Date()
+
+            if (scheduledDate <= now) {
+                return enqueueSnackbar('Scheduled date must be in the future.', { variant: 'error' })
+            }
+
+            onConfirm(new Date(selectedDate), selectedTime)
+            setSelectedDate("")
+            setSelectedTime("")
         }
     }
 
@@ -47,51 +47,51 @@ export function ScheduleCallModal({ userName, onConfirm, onClose }: ScheduleCall
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        Select Date
+                            <Calendar className="h-4 w-4" />
+                            Select Date
                         </label>
                         <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                         />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Select Time
+                            <Clock className="h-4 w-4" />
+                            Select Time
                         </label>
                         <input
-                        type="time"
-                        value={selectedTime}
-                        onChange={(e) => setSelectedTime(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            type="time"
+                            value={selectedTime}
+                            onChange={(e) => setSelectedTime(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                         />
                     </div>
 
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                         <p className="text-sm text-gray-700">
-                        {selectedDate && selectedTime
-                            ? `Call scheduled for ${new Date(selectedDate).toLocaleDateString()} at ${selectedTime}`
-                            : "Select both date and time to proceed"}
+                            {selectedDate && selectedTime
+                                ? `Call scheduled for ${new Date(selectedDate).toLocaleDateString()} at ${selectedTime}`
+                                : "Select both date and time to proceed"}
                         </p>
                     </div>
 
                     <div className="flex gap-3 pt-2">
                         <button
-                        onClick={onClose}
-                        className="cursor-pointer flex-1 px-4 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                            onClick={onClose}
+                            className="cursor-pointer flex-1 px-4 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                         >
-                        Cancel
+                            Cancel
                         </button>
                         <button
-                        onClick={handleConfirm}
-                        disabled={!selectedDate || !selectedTime}
-                        className="cursor-pointer flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded-lg transition-colors font-medium"
+                            onClick={handleConfirm}
+                            disabled={!selectedDate || !selectedTime}
+                            className="cursor-pointer flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded-lg transition-colors font-medium"
                         >
-                        Confirm Schedule
+                            Confirm Schedule
                         </button>
                     </div>
                 </div>

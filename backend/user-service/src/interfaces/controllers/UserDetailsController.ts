@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IAddUserDetails, IGetGithubDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import { IGetUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
 import { IEditUserDetails } from "../../domain/use-cases/IUserDetailsUseCase";
-import {inject, injectable} from "inversify";
+import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
 import { uploadImageToS3 } from "../../config/upload";
 import { STATUS_CODES } from "../../utils/StatusCodes";
@@ -12,18 +12,18 @@ import { STATUS_CODES } from "../../utils/StatusCodes";
 export class UserDetailsController {
 
     constructor(
-        @inject(TYPES.IAddUserDetails) private _addUserDetails:IAddUserDetails,
-        @inject(TYPES.IGetUserDetails) private _getUserDetails:IGetUserDetails,
-        @inject(TYPES.IEditUserDetails) private _editUserDetails:IEditUserDetails,
-        @inject(TYPES.IGetGithubDetails) private _getGithubDetails:IGetGithubDetails
-    ){}
+        @inject(TYPES.IAddUserDetails) private _addUserDetails: IAddUserDetails,
+        @inject(TYPES.IGetUserDetails) private _getUserDetails: IGetUserDetails,
+        @inject(TYPES.IEditUserDetails) private _editUserDetails: IEditUserDetails,
+        @inject(TYPES.IGetGithubDetails) private _getGithubDetails: IGetGithubDetails
+    ) { }
 
-    insertUserDetails = async (req:Request, res:Response): Promise<void> => {
+    insertUserDetails = async (req: Request, res: Response): Promise<void> => {
         try {
-            const details=req.body;
-            const userEmail=req.headers["user-email"] as string;
+            const details = req.body;
+            const userEmail = req.headers["user-email"] as string;
             await this._addUserDetails.addUserDetails(details, userEmail);
-            res.json({success:true});
+            res.json({ success: true });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -33,13 +33,13 @@ export class UserDetailsController {
         }
     };
 
-    queryUserDetails = async (req:Request, res:Response): Promise<void> => {
+    queryUserDetails = async (req: Request, res: Response): Promise<void> => {
         try {
-            const {user}=req.query
-            const userId=req.headers["user-id"] as string;
-            const id=user || userId
-            const userDetails=await this._getUserDetails.getUserDetails(id);
-            res.json({userDetails}); 
+            const { user } = req.query as { user: string }
+            const userId = req.headers["user-id"] as string;
+            const id = user || userId
+            const userDetails = await this._getUserDetails.getUserDetails(id);
+            res.json({ userDetails });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -49,23 +49,20 @@ export class UserDetailsController {
         }
     };
 
-    modifyUserDetails = async (req:Request, res:Response): Promise<void> => {
+    modifyUserDetails = async (req: Request, res: Response): Promise<void> => {
         try {
-            console.log(1) 
-            const userId=req.headers["user-id"] as string;
+            const userId = req.headers["user-id"] as string;
             let imageUrl: string | undefined;
             if (req.file) {
+                // @ts-ignore
                 imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
             }
-            console.log(2)
-            const details=req.body;
-            if(imageUrl){
-                details.profilePicture=imageUrl;
+            const details = req.body;
+            if (imageUrl) {
+                details.profilePicture = imageUrl;
             }
-            console.log(3)
             await this._editUserDetails.editUserDetails(details, userId);
-            console.log(4)
-            res.json({success:true});
+            res.json({ success: true });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -75,11 +72,11 @@ export class UserDetailsController {
         }
     };
 
-    getGithubData = async (req:Request, res:Response) => {
+    getGithubData = async (req: Request, res: Response) => {
         try {
-            const {user}=req.query
-            const result=await this._getGithubDetails.getGithubDetails(user)
-            res.json({result})
+            const { user } = req.query as { user: string }
+            const result = await this._getGithubDetails.getGithubDetails(user)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -89,11 +86,11 @@ export class UserDetailsController {
         }
     }
 
-    getGithubActivity = async (req:Request, res:Response) => {
+    getGithubActivity = async (req: Request, res: Response) => {
         try {
-            const {user}=req.query
-            const result=await this._getGithubDetails.getGithubHeatmap(user)
-            res.json({result})
+            const { user } = req.query as { user: string }
+            const result = await this._getGithubDetails.getGithubHeatmap(user)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -103,13 +100,13 @@ export class UserDetailsController {
         }
     }
 
-    getGithubRepo = async (req:Request, res:Response) => {
+    getGithubRepo = async (req: Request, res: Response) => {
         try {
-            const {page, user, limit}=req.query
-            const current_page=Number(page)
-            const lim=Number(limit)
-            const result=await this._getGithubDetails.getGithubRepoDetails(current_page, user, lim)
-            res.json({result})
+            const { page, user, limit } = req.query as { page: string, user: string, limit: string }
+            const current_page = Number(page)
+            const lim = Number(limit)
+            const result = await this._getGithubDetails.getGithubRepoDetails(current_page, user, lim)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

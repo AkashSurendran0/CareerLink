@@ -120,7 +120,6 @@ function Signup() {
 
 
     const sendOTP = async () =>{
-        console.log(signupForm)
         if (!signupForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             setErrors({email:'Please enter a valid email address'})
             return 

@@ -8,22 +8,22 @@ import { IJobRepository } from "../../domain/repositories/IJobRepository";
 export class GetUserAppliedJobs implements IGetUserAppliedJobs {
 
     constructor(
-        @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository,
-        @inject(TYPES.IJobRepository) private _jobRepository:IJobRepository
-    ){}
+        @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository: IJobApplicationsRepository,
+        @inject(TYPES.IJobRepository) private _jobRepository: IJobRepository
+    ) { }
 
     async getJobs(user: string): Promise<{ success: boolean; } | { success: boolean; jobs: any[]; }> {
-        let jobs=await this._jobApplicationRepository.getUserApplications(user)
-        if(jobs.success){
-            const details=new Set()
-            jobs.jobs.forEach(i=>{
+        let jobs = await this._jobApplicationRepository.getUserApplications(user)
+        if ('jobs' in jobs && jobs.success) {
+            const details = new Set<string>()
+            jobs.jobs.forEach((i: any) => {
                 details.add(i.jobPost)
             })
-            for(let id of details){
-                let result=await this._jobRepository.findDetails(id)
-                for(let i=0;i<jobs.jobs.length;i++){
-                    if(jobs.jobs[i].jobPost==id){
-                        jobs.jobs[i].details=result
+            for (let id of details) {
+                let result = await this._jobRepository.findDetails(id)
+                for (let i = 0; i < jobs.jobs.length; i++) {
+                    if (jobs.jobs[i].jobPost == id) {
+                        jobs.jobs[i].details = result
                     }
                 }
             }

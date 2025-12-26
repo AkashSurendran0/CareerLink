@@ -9,22 +9,22 @@ import axios from "axios";
 export class ConnectionController {
 
     constructor(
-        @inject(TYPES.IAlterConnectionRequest) private _alterConnectionRequest:IAlterConnectionRequest,
-        @inject(TYPES.IGetConnections) private _getConnections:IGetConnections,
-        @inject(TYPES.IGetUserRequests) private _getUserRequests:IGetUserRequests,
-        @inject(TYPES.IEvaluateRequest) private _evaluateRequest:IEvaluateRequest,
-        @inject(TYPES.IGetConnectedUsers) private _getConnectedUsers:IGetConnectedUsers,
-        @inject(TYPES.IRemoveConnection) private _removeConnection:IRemoveConnection,
-        @inject(TYPES.IGetConnectionDetails) private _getConnectionDetails:IGetConnectionDetails
-    ) {}
+        @inject(TYPES.IAlterConnectionRequest) private _alterConnectionRequest: IAlterConnectionRequest,
+        @inject(TYPES.IGetConnections) private _getConnections: IGetConnections,
+        @inject(TYPES.IGetUserRequests) private _getUserRequests: IGetUserRequests,
+        @inject(TYPES.IEvaluateRequest) private _evaluateRequest: IEvaluateRequest,
+        @inject(TYPES.IGetConnectedUsers) private _getConnectedUsers: IGetConnectedUsers,
+        @inject(TYPES.IRemoveConnection) private _removeConnection: IRemoveConnection,
+        @inject(TYPES.IGetConnectionDetails) private _getConnectionDetails: IGetConnectionDetails
+    ) { }
 
-    getUnconnectedUsers = async (req:Request, res:Response) => {
+    getUnconnectedUsers = async (req: Request, res: Response) => {
         try {
-            const id=req.headers["user-id"] as string;
-            const {name}=req.query;
-            const query=name || null;
-            const user=await this._getConnections.getUnconnectedUsers(id, query);
-            res.json({user});
+            const id = req.headers["user-id"] as string;
+            const { name } = req.query as { name: string };
+            const query = name || undefined;
+            const user = await this._getConnections.getUnconnectedUsers(id, query);
+            res.json({ user });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -34,12 +34,12 @@ export class ConnectionController {
         }
     };
 
-    alterConnectionRequest = async (req:Request, res:Response) => {
+    alterConnectionRequest = async (req: Request, res: Response) => {
         try {
-            const {user, action}=req.query;
-            const id=req.headers["user-id"] as string;
-            const result=await this._alterConnectionRequest.alterConnectionRequest(user, id, action);
-            res.json({result});
+            const { user, action } = req.query as { user: string, action: string };
+            const id = req.headers["user-id"] as string;
+            const result = await this._alterConnectionRequest.alterConnectionRequest(user, id, action);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -49,13 +49,13 @@ export class ConnectionController {
         }
     };
 
-    getUserRequests = async (req:Request, res:Response) => {
+    getUserRequests = async (req: Request, res: Response) => {
         try {
-            const id=req.headers["user-id"] as string;
-            const {name}=req.query;
-            const query=name || null;
-            const result=await this._getUserRequests.getUserRequests(id, query);
-            res.json({result});
+            const id = req.headers["user-id"] as string;
+            const { name } = req.query as { name: string };
+            const query = name || undefined;
+            const result = await this._getUserRequests.getUserRequests(id, query);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -65,12 +65,12 @@ export class ConnectionController {
         }
     };
 
-    evaluateRequest = async (req:Request, res:Response) => {
+    evaluateRequest = async (req: Request, res: Response) => {
         try {
-            const id=req.headers["user-id"] as string;
-            const {user, action}=req.query;
-            const result=await this._evaluateRequest.evaluateRequest(user, id, action);
-            res.json({result});
+            const id = req.headers["user-id"] as string;
+            const { user, action } = req.query as { user: string, action: string };
+            const result = await this._evaluateRequest.evaluateRequest(user, id, action);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -80,13 +80,13 @@ export class ConnectionController {
         }
     };
 
-    getConnectedUsers = async (req:Request, res:Response) => {
+    getConnectedUsers = async (req: Request, res: Response) => {
         try {
-            const id=req.headers["user-id"] as string;
-            const {name}=req.query;
-            const query=name || null;
-            const result=await this._getConnectedUsers.getConnectedUsers(id, query);
-            res.json({result});
+            const id = req.headers["user-id"] as string;
+            const { name } = req.query as { name: string };
+            const query = name || undefined;
+            const result = await this._getConnectedUsers.getConnectedUsers(id, query);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -96,13 +96,13 @@ export class ConnectionController {
         }
     };
 
-    removeConnection = async (req:Request, res:Response) => {
+    removeConnection = async (req: Request, res: Response) => {
         try {
-            const id=req.headers["user-id"] as string;
-            const {user}=req.query;
-            const result=await this._removeConnection.removeConnection(id, user);
+            const id = req.headers["user-id"] as string;
+            const { user } = req.query as { user: string };
+            const result = await this._removeConnection.removeConnection(id, user);
             await axios.delete(`http://localhost:5000/chat/v1/deleteConversation?user1=${id}&user2=${user}`);
-            res.json({result});
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -112,12 +112,12 @@ export class ConnectionController {
         }
     };
 
-    getConnectionDetails = async (req:Request, res:Response) => {
+    getConnectionDetails = async (req: Request, res: Response) => {
         try {
-            const {user}=req.query;
-            const id=req.headers["user-id"] as string;
-            const result=await this._getConnectionDetails.getConnectionDetails(id, user);
-            res.json({result});
+            const { user } = req.query as { user: string };
+            const id = req.headers["user-id"] as string;
+            const result = await this._getConnectionDetails.getConnectionDetails(id, user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });

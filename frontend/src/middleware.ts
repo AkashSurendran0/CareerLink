@@ -59,7 +59,6 @@ export async function middleware(req: NextRequest) {
 // Helper functions for better organization and performance
 async function handleAdminRoutes(req: NextRequest, token: string | undefined, refreshToken: string | undefined, pathname: string) {
   let isAdmin=false
-  console.log(1)
   if (!token && refreshToken) {
     const refreshResult = await handleTokenRefresh(req, refreshToken, 'token');
     if (refreshResult.redirect) return refreshResult.response;
@@ -74,9 +73,7 @@ async function handleAdminRoutes(req: NextRequest, token: string | undefined, re
       "http://localhost:5000/admin/v1/checkAdmin",
       token
     );
-    console.log(result)
     isAdmin = result.result?.success == true;
-    console.log(isAdmin)
     if(!isAdmin && !pathname.startsWith("/admin/login")){
       return NextResponse.redirect(new URL("/admin/login", req.url))
     }
@@ -127,7 +124,6 @@ async function handleCompanyRoutes(req: NextRequest, token: string, pathname: st
       "http://localhost:5000/company/v1/getCompanyRegistrationInfo",
       token
     );
-    console.log(companyData.result)
 
     if (pathname.startsWith('/company/registrationPage') && companyData?.result?.success) {
       return NextResponse.redirect(new URL("/company/registeredCompany", req.url));
@@ -151,7 +147,6 @@ async function handleVipPage(req:NextRequest, token:string, pathname:string) {
   )
 
   const isVip=result?.result?.success
-  console.log(isVip)
   if(isVip && pathname.startsWith('/becomeVip')){
     return NextResponse.redirect(new URL("/settings", req.url));
   }
@@ -170,7 +165,6 @@ async function checkUserStatus(req: NextRequest, token: string, pathname: string
 
   try {
     const userData = await fetchWithCache("http://localhost:5000/user/v1/check", token);
-    console.log('checkkk', userData)
     if (userData?.result?.success) {
       return {
         redirect: true,

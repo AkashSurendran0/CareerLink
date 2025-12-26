@@ -29,7 +29,6 @@ function JobsApplied() {
     useEffect(() => {
         async function getJobs() {
             const jobsApplied=await getUserAppliedJobs()
-            console.log(jobsApplied)
             if(jobsApplied.jobs.success) setJobs(jobsApplied.jobs.jobs)
         }
 

@@ -3,10 +3,14 @@
 import { useState } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
-import {Tooltip} from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 
-export default function Heatmap({ heatMap }) {
-    const year=new Date().getFullYear()
+interface HeatmapProps {
+    heatMap: any[];
+}
+
+export default function Heatmap({ heatMap }: HeatmapProps) {
+    const year = new Date().getFullYear()
 
     return (
         <div className="w-full max-w-[900px] overflow-x-auto p-4 bg-white rounded-xl shadow-sm">
@@ -22,17 +26,18 @@ export default function Heatmap({ heatMap }) {
                     return `custom-${val.color.replace("#", "")}`;
                 }}
 
-                tooltipDataAttrs={(value) => {
-                    if (!value?.date) return null;
-
+                tooltipDataAttrs={(value: any) => {
+                    if (!value || !value.date) {
+                        return { "data-tooltip-id": "heatmap-tooltip", "data-tooltip-content": "" }
+                    }
                     return {
-                        "data-tooltip-id": "heatmap-tip",
-                        "data-tooltip-content": `${value.date} – ${value.count} contributions`,
-                    };
+                        "data-tooltip-id": "heatmap-tooltip",
+                        "data-tooltip-content": `${value.date} has count: ${value.count}`,
+                    } as any
                 }}
                 showWeekdayLabels={true}
             />
-            <Tooltip id="heatmap-tip" />
+            <Tooltip id="heatmap-tooltip" />
         </div>
     );
 }

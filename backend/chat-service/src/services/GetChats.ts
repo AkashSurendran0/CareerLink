@@ -13,7 +13,6 @@ export class GetChats implements IGetChats {
     ){}
 
     async getChats(convo: string, user:string): Promise<ChatDto | null> {
-        console.log(convo, user)
         await this._chatRepository.readMessages(convo, user)
         const result=await this._chatRepository.getByConvo(convo)
         if(!result) return null

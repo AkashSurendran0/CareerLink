@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
     folder: "profile_pictures", // all images will go to this folder
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
     transformation: [{ width: 500, height: 500, crop: "limit" }], // optional resize
-  },
+  } as any,
 });
 
 const upload = multer({ storage });

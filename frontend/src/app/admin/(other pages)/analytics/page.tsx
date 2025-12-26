@@ -4,48 +4,6 @@ import { getCompanyAnalytics, getJobApplicationAnalytics, getReportAnalytics, ge
 import { useEffect, useState } from "react"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
-// Sample data for charts
-const userRegistrationsData = [
-  { month: "Jan", value: 230 },
-  { month: "Feb", value: 280 },
-  { month: "Mar", value: 240 },
-  { month: "Apr", value: 330 },
-  { month: "May", value: 310 },
-  { month: "Jun", value: 450 },
-  { month: "Jul", value: 380 },
-]
-
-const subscriptionsData = [
-  { month: "Jan", value: 190 },
-  { month: "Feb", value: 250 },
-  { month: "Mar", value: 220 },
-  { month: "Apr", value: 280 },
-]
-
-const companyEngagementData = [
-  { company: "Company A", value: 85 },
-  { company: "Company B", value: 72 },
-  { company: "Company C", value: 68 },
-  { company: "Company D", value: 54 },
-  { company: "Company E", value: 48 },
-]
-
-
-const applicationsData = [
-  { week: "Week 1", value: 320 },
-  { week: "Week 2", value: 280 },
-  { week: "Week 3", value: 350 },
-  { week: "Week 4", value: 450 },
-]
-
-const activeCompaniesData = [
-  { company: "Company A", value: 92 },
-  { company: "Company B", value: 78 },
-  { company: "Company C", value: 65 },
-  { company: "Company D", value: 88 },
-  { company: "Company E", value: 71 },
-]
-
 export default function AnalyticsPage() {
     const [reportAnalytics, setReportAnalytics] = useState()
     const [companyAnalytics, setCompanyAnalytics] = useState()

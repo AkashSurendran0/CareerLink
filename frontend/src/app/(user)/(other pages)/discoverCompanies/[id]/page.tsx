@@ -33,7 +33,6 @@ function AboutCompany({params}:Props) {
     useEffect(()=>{
         async function getCompanyDetails () {
             const result=await discoverCompanyInfo(id)
-            console.log(result)
             setCompanyDetails(result.result)
         }
     

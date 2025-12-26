@@ -20,7 +20,6 @@ export class GetAvailableJobs implements IGetAvailableJobs {
         for(let job of jobs){
             let include=false
             const application=await this._jobApplicationRepository.getJobApplicants(job._id, 'All')
-            console.log(application)
             if(application.result.length>0){
                 for (const app of application.result){
                     if(app.user==user){

@@ -45,11 +45,8 @@ export class AdminController {
 
     checkAdmin = async (req:Request, res:Response) => {
         try {
-            console.log(1)
             const user=req.headers['user-email'] as string
-            console.log(2, user)
             const result=await this._checkAdmin.checkAdmin(user)
-            console.log(3)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
