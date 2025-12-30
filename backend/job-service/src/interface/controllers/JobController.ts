@@ -259,6 +259,7 @@ Thank you for your interest in joining our company`;
                 res.json({ result })
             } else if (action == 'reject') {
                 const result = await this._alterUserApplication.rejectApplication(jobId as string, user as string)
+                await axios.delete(`http://localhost:5000/chat/v1/deleteConversation?user1=${company}&user2=${user}`);
                 await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.rejected", {
                     userEmail: userDetails.data?.result?.result?.email,
                     action: 'applicationRejected'

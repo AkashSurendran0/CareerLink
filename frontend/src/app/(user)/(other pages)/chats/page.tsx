@@ -201,10 +201,12 @@ export default function ChatsPage() {
 
   const getUserConversations = async () => {
     const result = await getConversations()
+    console.log(result)
     setConversations(result.result)
   }
 
   const setUserAndConvo = async (convo: Conversation) => {
+    console.log(convo)
     setChatLoading(true)
     setSelectedConvo(convo._id)
     setSelectedUserId(convo.user)
