@@ -31,8 +31,7 @@ export default function MeetPeoplePage() {
 
     const getCompanies = async (val: string) => {
         const result = await getAvailableCompanies(val)
-        console.log(result.result)
-        setCompanies(result.result)
+        setCompanies(result.result.result)
         setCompanyLoading(false)
     }
 

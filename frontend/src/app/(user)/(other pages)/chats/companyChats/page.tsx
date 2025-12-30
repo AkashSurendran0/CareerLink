@@ -267,7 +267,7 @@ export default function ChatsPage() {
 
     const videoCallUser = async () => {
         if (!selectedUser) return
-        
+
         userSocket.emit('ring-call', {
             from: companyOwnerId,
             caller: companyDetails?.name || "Unknown",

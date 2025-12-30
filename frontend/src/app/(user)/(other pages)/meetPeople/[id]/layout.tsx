@@ -45,14 +45,14 @@ type Tab = {
 }
 
 
-export default function ConnectionLayout({
+export default async function ConnectionLayout({
     children,
     params
 }: {
     children: React.ReactNode,
     params: Promise<{ id: string }>
 }) {
-    const { id } = params
+    const { id } = await params
     const setLoading = useLoading()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState("About");
