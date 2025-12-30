@@ -39,6 +39,7 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
         const indexExists = await elasticClient.indices.exists({
             index: 'companies'
         });
+        console.log(indexExists)
         if (!indexExists) {
             console.log("companies index not found, returning empty array");
             return [];
@@ -47,7 +48,7 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
             index: 'companies',
             query: esQuery
         })
-
+        console.log(companies)
         let hits = companies.hits.hits.map((hit: any) => hit._source)
         hits = hits.filter((comp) => comp.registeredBy != email)
         const result = hits.map((company: any) => CompanyMapper.toDTO(company))
