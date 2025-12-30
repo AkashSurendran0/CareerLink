@@ -37,9 +37,7 @@ export class EditUserDetails implements IEditUserDetails {
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository: IUserDetailsRepository) { }
 
     async editUserDetails(details: Details, id: string): Promise<{ success: boolean }> {
-        console.log(1)
         await this._userRepository.editUserName(id, details.username);
-        console.log(5, id)
         await elasticClient.update({
             index: "users",
             id: id,
@@ -47,7 +45,6 @@ export class EditUserDetails implements IEditUserDetails {
                 username: details.username
             }
         });
-        console.log(2)
         const updationDetails = {
             profilePicture: details.profilePicture,
             gender: details.gender,
@@ -60,9 +57,7 @@ export class EditUserDetails implements IEditUserDetails {
             linkedinLink: details.linkedinLink,
             githubLink: details.githubLink,
         };
-        console.log(3)
         await this._userDetailsRepository.editUserDetails(id, updationDetails);
-        console.log(4)
         return { success: true };
     }
 

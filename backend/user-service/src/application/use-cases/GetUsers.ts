@@ -11,7 +11,6 @@ export class GetAllUsers implements IGetAllUsers {
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository) { }
 
     async getUsers(page: number, limit: number, query: string | undefined): Promise<{ result: { id: string, username: string, email: string, status?: boolean, createdAt: Date | undefined }[], pageLimit: number }> {
-        console.log(query)
         const countResponse = await elasticClient.count({
             index: "users",
             query: {
@@ -41,7 +40,6 @@ export class GetAllUsers implements IGetAllUsers {
         });
 
         const hits = users.hits.hits.map((hit: any) => hit._source);
-        console.log(hits)
         const result = hits.map((user: any) => UserMapper.toDTO(user))
         return {
             result: result,

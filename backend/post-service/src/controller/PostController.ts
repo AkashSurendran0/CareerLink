@@ -119,7 +119,6 @@ export class PostController {
     getAllUserPosts = async (req:Request, res:Response) => {
         try {
             const {user}=req.query
-            console.log(user)
             const userId=req.headers['user-id'] as string
             const id=user || userId
             const result=await this._getAllUserPosts.getAllPosts(id)

@@ -42,7 +42,7 @@ export class ConversationRepository implements IConversationRepository {
             new Conversation(
                 convo._id,
                 convo.isCompany,
-                [convo.users],
+                convo.users,
                 convo.createdAt
             )
         ))

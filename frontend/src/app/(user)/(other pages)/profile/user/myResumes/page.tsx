@@ -1,5 +1,6 @@
 'use client';
 
+import ResumeViewer from '@/reusable-components/resumeModal';
 import { getAllUserResumes } from '@/services/userService'
 import React, { useEffect, useState } from 'react'
 
@@ -16,6 +17,7 @@ interface AllResumes {
 
 function MyResumes() {
     const [allResumes, setAllResumes]=useState<AllResumes | null>(null)
+    const [selectedResume, setSelectedResume]=useState(null)
 
     useEffect(()=>{
         getResumes()
@@ -31,6 +33,9 @@ function MyResumes() {
     return (
         <div>
             <div className="space-y-4">
+                {selectedResume && (
+                    <ResumeViewer resumeUrl={selectedResume} onClose={()=>setSelectedResume(null)}/>
+                )}
                 {allResumes ? (
                     allResumes.resumes.map(resume => (
                         <div key={resume._id} className="bg-white rounded-lg p-4 mt-3 md:p-6 border border-gray-200 hover:shadow-sm transition-shadow">
@@ -42,7 +47,7 @@ function MyResumes() {
                                 </p>
                             </div>
                             <button 
-                            onClick={()=>window.open(resume.url)}
+                            onClick={()=>setSelectedResume(resume.url)}
                             className="cursor-pointer self-start md:self-auto flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md transition-colors whitespace-nowrap">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path

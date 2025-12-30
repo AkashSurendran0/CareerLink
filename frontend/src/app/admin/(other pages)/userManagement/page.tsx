@@ -294,8 +294,6 @@ function UserManagement() {
                         </td>
                         <td className="py-4 px-6">
                             <div className="flex items-center gap-1 text-sm">
-                            <button className="text-blue-600 hover:text-blue-800 cursor-pointer">View</button>
-                            <span className="text-gray-300">|</span>
                             <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={()=>alterUserStatus(user.id)}>
                                 {user.suspended? "Make Active" : "Suspend"}
 

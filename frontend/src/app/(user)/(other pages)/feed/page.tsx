@@ -155,7 +155,11 @@ export default function FeedsPage() {
 
   const routeToUserProfile = async (id:string) => {
     setLoading(true)
-    router.push(`/meetPeople/${id}`)
+    if(id==userId){
+      router.push(`/profile/user`)
+    }else{
+      router.push(`/meetPeople/${id}`)
+    }
   }
 
   if (isLoading) {

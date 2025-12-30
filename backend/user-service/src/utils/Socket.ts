@@ -21,7 +21,7 @@ export const initUserSocket = (server: http.Server) => {
         console.log("User socket connected:", socket.id);
 
         socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType }) => {
-
+            console.log(from, caller, callerImage, to, reciever, callType)
             if ((!onlineUsers.has(to))) {
                 io.to(socket.id).emit("call-failed", {
                     reason: "USER_OFFLINE"

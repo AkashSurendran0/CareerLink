@@ -14,7 +14,7 @@ import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMe
 
 interface Conversation {
   _id: string;
-  user: string;
+  users: string;
   username: string;
   pfp?: string;
   online?: boolean;
@@ -158,7 +158,7 @@ export default function ChatsPage() {
     const handler = (onlineUsers: string[]) => {
       setConversations((prev) =>
         prev.map((user) =>
-          onlineUsers.includes(user.user)
+          onlineUsers.includes(user.users)
             ? { ...user, online: true }
             : { ...user, online: false }
         )
@@ -207,14 +207,14 @@ export default function ChatsPage() {
   const setUserAndConvo = async (convo: Conversation) => {
     setChatLoading(true)
     setSelectedConvo(convo._id)
-    setSelectedUserId(convo.user)
+    setSelectedUserId(convo.users)
     const result = await getUserChats(convo._id)
     setUserChats(result.result)
     setChatLoading(false)
   }
 
   const selectedUser = conversations?.find(
-    (c) => c.user === selectedUserId
+    (c) => c.users === selectedUserId
   );
 
   const handleSendMessage = async () => {
@@ -309,7 +309,7 @@ export default function ChatsPage() {
       from: userId,
       caller: userDetails?.username || "Unknown",
       callerImage: userDetails?.profilePicture || null,
-      to: selectedUser?.user,
+      to: selectedUser?.users,
       reciever: selectedUser?.username,
       callType: 'voice-call'
     })
@@ -322,7 +322,7 @@ export default function ChatsPage() {
       from: userId,
       caller: userDetails?.username || "Unknown",
       callerImage: userDetails?.profilePicture || null,
-      to: selectedUser?.user,
+      to: selectedUser?.users,
       reciever: selectedUser?.username,
       callType: 'video-call'
     })

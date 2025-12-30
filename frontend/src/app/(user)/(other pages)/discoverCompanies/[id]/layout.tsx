@@ -35,14 +35,14 @@ interface Props {
     }
 }
 
-export default async function CompanyLayout({
+export default function CompanyLayout({
     children,
     params
 }: {
     children: React.ReactNode;
     params: Promise<{ id: string }>
 }) {
-    const { id } = await params
+    const { id } = params
     const setLoading = useLoading();
     const router = useRouter();
     const [companyDetails, setCompanyDetails] = useState<Company>();

@@ -11,9 +11,7 @@ export class GetConnectionDetails implements IGetConnectionDetails {
     ) {}
 
     async getConnectionDetails(id: string, user: string): Promise<{connection:string}> {
-        console.log(id, user)
         const connection=await this._connectionRepository.findByUser(id);
-        console.log(connection)
         if(connection?.pendings.includes(user)) return {connection:"pending"};
         if(connection?.connections.includes(user)) return {connection:"connection"};
         return {connection:"none"};

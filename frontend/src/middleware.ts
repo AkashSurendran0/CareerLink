@@ -165,6 +165,7 @@ async function checkUserStatus(req: NextRequest, token: string, pathname: string
 
   try {
     const userData = await fetchWithCache("http://localhost:5000/user/v1/check", token);
+    console.log('check', userData.result.success)
     if (userData?.result?.success) {
       return {
         redirect: true,

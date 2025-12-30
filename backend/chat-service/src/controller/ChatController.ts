@@ -43,13 +43,13 @@ export class ChatController {
             let result = await this._getConversations.getConversations(id)
             for (let i = 0; i < result.length; i++) {
                 if (result[i].isCompany) {
-                    const companyDetails = await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${result[i].users[0]}`)
+                    const companyDetails = await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${result[i].users}`)
                     // @ts-ignore
                     result[i].username = companyDetails.data.result.name
                     // @ts-ignore
                     result[i].pfp = companyDetails.data.result.logo
                 } else {
-                    const userDetails = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].users[0]}`)
+                    const userDetails = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].users}`)
                     // @ts-ignore
                     result[i].email = userDetails.data.result.result.email
                     // @ts-ignore

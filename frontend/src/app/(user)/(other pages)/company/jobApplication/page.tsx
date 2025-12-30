@@ -6,6 +6,7 @@ import { alterUserApplication, getCompanyInfo, getJobApplicants, getJobDetails }
 import Image from "next/image"
 import { enqueueSnackbar } from "notistack"
 import { useLoading } from "@/app/(user)/template"
+import ResumeViewer from "@/reusable-components/resumeModal"
 
 interface JobDetails {
     jobTitle: string;
@@ -55,6 +56,8 @@ export default function JobDetailsPage() {
     const [jobId, setJobId] = useState<string>('')
     const [currentFilter, setCurrentFilter] = useState('All')
     const [totalCount, setTotalCount] = useState(0)
+    const [showResume, setShowResume] = useState(false)
+    const [selectedResume, setSelectedResume] = useState(null)
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -171,6 +174,16 @@ export default function JobDetailsPage() {
         }
     }
 
+    const viewResume = (resume: any) => {
+        setShowResume(true)
+        setSelectedResume(resume)
+    }
+
+    const closeResume = () => {
+        setShowResume(false)
+        setSelectedResume(null)
+    }
+
     return (
         <>
             {jobDetails && companyDetails && (
@@ -197,16 +210,9 @@ export default function JobDetailsPage() {
                                 </div>
                             </div>
                         </div>
-                        // <div className="fixed inset-0 z-50 flex items-center justify-center">
-                        //     <div
-                        //         className="absolute inset-0 bg-black/50"
-                        //         onClick={removeLetter}
-                        //     />
-
-                        //     <div className="whitespace-pre-line relative bg-white rounded-xl shadow-lg p-6 w-full z-10 mx-10">
-                        //         {letter}
-                        //     </div>
-                        // </div>
+                    )}
+                    {showResume && selectedResume && (
+                        <ResumeViewer resumeUrl={selectedResume} onClose={closeResume}/>
                     )}
                     {/* Job Header */}
                     <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
@@ -331,7 +337,7 @@ export default function JobDetailsPage() {
                                                 <div className="flex flex-wrap gap-2">
                                                     <button
                                                         className="cursor-pointer text-blue-600 hover:underline"
-                                                        onClick={() => window.open(applicant.applicants.resume)}
+                                                        onClick={() => viewResume(applicant.applicants.resume)}
                                                     >
                                                         View Resume
                                                     </button>
@@ -395,7 +401,7 @@ export default function JobDetailsPage() {
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         <button
                                             className="cursor-pointer text-blue-600 hover:underline text-sm"
-                                            onClick={() => window.open(applicant.applicants.resume)}
+                                            onClick={() => viewResume(applicant.applicants.resume)}
                                         >
                                             View Resume
                                         </button>
