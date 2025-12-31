@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { UserMapper } from "../../mappers/UserMapper";
-import { UserDTO } from "@careerlink/types";
+import { UserDTO } from "../../dto/UserDTO";
 
 @injectable()
 export class GoogleLogin implements IGoogleLogin {

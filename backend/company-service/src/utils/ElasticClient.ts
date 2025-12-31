@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const elasticClient=new Client({
-    node:"http://localhost:9200",
+    node:`${process.env.ELASTIC_CLIENT_ROUTE}`,
     auth:{
         username:"elastic",
         password:"akash1"

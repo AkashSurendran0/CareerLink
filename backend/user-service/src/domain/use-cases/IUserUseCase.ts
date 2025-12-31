@@ -1,4 +1,4 @@
-import { UserDTO } from "@careerlink/types";
+import { UserDTO } from "../../dto/UserDTO"
 
 export interface IChangePass {
     changePass(email: string, password: string): Promise<{ token: string, refreshToken: String }>

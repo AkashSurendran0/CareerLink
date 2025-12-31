@@ -5,6 +5,9 @@ import { ICheckNormalVersion, ICheckTailoredVersion, ICreateCoverLetter, ICreate
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { uploadResume } from "../config/upload";
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 @injectable()
 export class ResumeController {
@@ -25,7 +28,7 @@ export class ResumeController {
         try {
             const data=req.body
             const id=req.headers['user-id'] as string
-            const subscription=await axios.get(`http://localhost:5000/subscription/v1/getUserPlan?user=${id}`)
+            const subscription=await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getUserPlan?user=${id}`)
             let result=await this._checkNormalVersion.checkResume(subscription?.data?.result, id)
             if(!result.success){
                 return res.json({result})
@@ -81,7 +84,7 @@ export class ResumeController {
         try {
             const data=req.body
             const id=req.headers['user-id'] as string
-            const subscription=await axios.get(`http://localhost:5000/subscription/v1/getUserPlan?user=${id}`)
+            const subscription=await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getUserPlan?user=${id}`)
             let result=await this._checkNormalVersion.checkResume(subscription?.data?.result, id)
             if(!result.success){
                 return res.json({result})
@@ -104,14 +107,14 @@ export class ResumeController {
             const id=req.headers['user-id'] as string
             const {job}=req.query
             const token=req.cookies?.token
-            const subscription=await axios.get(`http://localhost:5000/subscription/v1/getUserPlan?user=${id}`)
+            const subscription=await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getUserPlan?user=${id}`)
             let result=await this._checkTailoredVersion.checkTailoredResume(subscription.data.result, id)
             if(!result.success){
                 return res.json({result})
             }
-            const jobDetails=await axios.get(`http://localhost:5000/job/v1/getJobDetails?id=${job}`)
-            const userDetails=await axios.get(`http://localhost:5000/user/v1/getUserInfo?user=${email}`)
-            const details=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
+            const jobDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/job/v1/getJobDetails?id=${job}`)
+            const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getUserInfo?user=${email}`)
+            const details=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getUserDetails`, {
                 headers:{
                     Cookie:`token=${token}`
                 }
@@ -139,14 +142,14 @@ export class ResumeController {
             const email=req.headers['user-email'] as string
             const id=req.headers['user-id'] as string
             const token=req.cookies?.token
-            const subscription=await axios.get(`http://localhost:5000/subscription/v1/getUserPlan?user=${id}`)
+            const subscription=await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getUserPlan?user=${id}`)
             let result=await this._checkTailoredVersion.checkTailoredCoverLetter(subscription.data.result, id)
             if(!result.success){
                 return res.json({result})
             }
-            const jobDetails=await axios.get(`http://localhost:5000/job/v1/getJobDetails?id=${job}`)
-            const userDetails=await axios.get(`http://localhost:5000/user/v1/getUserInfo?user=${email}`)
-            const details=await axios.get('http://localhost:5000/user/v1/getUserDetails', {
+            const jobDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/job/v1/getJobDetails?id=${job}`)
+            const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getUserInfo?user=${email}`)
+            const details=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getUserDetails`, {
                 headers:{
                     Cookie:`token=${token}`
                 }

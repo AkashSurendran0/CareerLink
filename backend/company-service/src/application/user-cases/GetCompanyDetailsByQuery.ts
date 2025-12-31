@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { IGetCompanyDetailsByQuery } from "../../domain/use-cases/ICompanyUserCase";
 import { TYPES } from "../../types";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
-import { CompanyDTO } from "@careerlink/types";
+import { CompanyDTO } from "../../dto/CompanyDTO";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
 
 @injectable()

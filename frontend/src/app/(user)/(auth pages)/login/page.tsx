@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useLoading } from "../../template";
 import { loginUser } from "@/services/userService";
 
+const apiGatewayRoute=process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE
+
 function Login() {
     const setLoading=useLoading()
     const router=useRouter()
@@ -56,7 +58,7 @@ function Login() {
     }
 
     const googleLogin = async () =>{
-        window.location.href='http://localhost:5000/user/v1/google'
+        window.location.href=`${apiGatewayRoute}/user/v1/google`
     }
  
     return (

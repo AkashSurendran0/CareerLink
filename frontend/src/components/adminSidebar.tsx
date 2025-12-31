@@ -1,20 +1,44 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react"; // for hamburger icons
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function AdminSidebar() {
+    const router=useRouter()
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("Dashboard")
+  const pathname = usePathname()
 
   const sidebarItems = [
-    { icon: "🏠", label: "Dashboard", active: false, value:"/admin/dashboard" },
-    { icon: "👥", label: "Users", active: true, value:"/admin/userManagement" },
-    { icon: "🏢", label: "Companies", active: false, value:"/admin/companyManagement" },
-    { icon: "📄", label: "Reports", active: false, value:"/admin/reports" },
-    { icon: "📊", label: "Analytics", active: false, value:"/admin/analytics" },
-    { icon: "💳", label: "Subscriptions", active: false, value:"/admin/subscriptionManagement" },
+    { icon: "🏠", label: "Dashboard",  value:"/admin/dashboard" },
+    { icon: "👥", label: "Users", value:"/admin/userManagement" },
+    { icon: "🏢", label: "Companies",  value:"/admin/companyManagement" },
+    { icon: "📄", label: "Reports",  value:"/admin/reports" },
+    { icon: "📊", label: "Analytics",  value:"/admin/analytics" },
+    { icon: "💳", label: "Subscriptions",  value:"/admin/subscriptionManagement" },
   ];
+
+    useEffect(()=>{
+      getSidebarTab()
+    }, [])
+  
+    const getSidebarTab = () => {
+        for(const item of sidebarItems) {
+            if(pathname == item.value){
+            setActiveTab(item.label)
+            }
+        }
+    }
+
+    const handleSidebarClick = (label:string, value:string) => {
+        if(pathname==value) return 
+        setActiveTab(label)
+        setIsOpen(false)
+        router.push(value)
+    }
 
   return (
     <div className="flex z-40">
@@ -39,19 +63,31 @@ function AdminSidebar() {
             >
                 {isOpen? <X className="h-6 w-6"/> : ''}
             </button>
-            {sidebarItems.map((item) => (
-                <Link
-                href={item.value}
-                key={item.label}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
-                    item.active
-                    ? "bg-blue-50 text-blue-700 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
+            {sidebarItems.map((item, index) => (
+                <button
+                  key={index}
+                  className={`cursor-pointer w-full group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    activeTab==item.label
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                  onClick={()=>handleSidebarClick(item.label, item.value)}
                 >
-                <span className="w-4 h-4 text-center">{item.icon}</span>
-                {item.label}
-                </Link>
+                  <span className="mr-3 text-lg">{item.icon}</span>
+                  {item.label}
+                </button>
+                // <Link
+                // href={item.value}
+                // key={item.label}
+                // className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
+                //     activeTab == item.label
+                //     ? "bg-blue-50 text-blue-700 font-medium"
+                //     : "text-gray-700 hover:bg-gray-100"
+                // }`}
+                // >
+                // <span className="w-4 h-4 text-center">{item.icon}</span>
+                // {item.label}
+                // </Link>
             ))}
             </nav>
         </div>

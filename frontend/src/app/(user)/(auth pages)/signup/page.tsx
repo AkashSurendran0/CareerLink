@@ -9,6 +9,8 @@ import { useLoading } from "../../template";
 import {LoaderIcon} from 'lucide-react'
 import { getSignupOtp, sendSignupOtp, signUp } from "@/services/userService";
 
+const apiGatewayRoute=process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE
+
 function Signup() {
     const [loadOTP, setLoadOTP]=useState(false)
     const setLoading=useLoading()
@@ -193,7 +195,7 @@ function Signup() {
     }
 
     const googleSignup = async () =>{
-        window.location.href='http://localhost:5000/user/v1/google'
+        window.location.href=`${apiGatewayRoute}/user/v1/google`
     }
 
 

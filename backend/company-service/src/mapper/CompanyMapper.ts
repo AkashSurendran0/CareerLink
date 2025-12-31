@@ -1,4 +1,4 @@
-import { CompanyDTO } from "@careerlink/types";
+import { CompanyDTO } from "../dto/CompanyDTO"
 
 export class CompanyMapper {
     static toDTO(company: any): CompanyDTO {

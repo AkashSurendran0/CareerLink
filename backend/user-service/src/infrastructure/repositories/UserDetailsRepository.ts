@@ -1,5 +1,5 @@
 import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
-import { UserDetailsEntity } from "@careerlink/types";
+import { UserDetailsEntity } from "../../domain/entities/UserDetails";
 import { UserDetailsModel } from "../models/UserDetailsModel";
 import { injectable } from "inversify";
 

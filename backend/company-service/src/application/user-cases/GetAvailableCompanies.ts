@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { IGetAvailableCompanies } from "../../domain/use-cases/ICompanyUserCase";
-import { CompanyDTO } from "@careerlink/types";
+import { CompanyDTO } from "../../dto/CompanyDTO";
 import { elasticClient } from "../../utils/ElasticClient";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
 

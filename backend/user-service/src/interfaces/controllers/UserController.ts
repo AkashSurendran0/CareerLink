@@ -154,7 +154,7 @@ export class UserController {
             for (let i = 0; i < users.result.length; i++) {
                 const user = users.result[i];
                 if (!user) continue;
-                const result = await axios.get(`http://localhost:5000/subscription/v1/getSubscriptionInfo?user=${user.id}`);
+                const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getSubscriptionInfo?user=${user.id}`);
                 // @ts-ignore
                 user.isVip = result?.data?.result?.success
             }

@@ -101,7 +101,7 @@ export class ConnectionController {
             const id = req.headers["user-id"] as string;
             const { user } = req.query as { user: string };
             const result = await this._removeConnection.removeConnection(id, user);
-            await axios.delete(`http://localhost:5000/chat/v1/deleteConversation?user1=${id}&user2=${user}`);
+            await axios.delete(`${process.env.API_GATEWAY_ROUTE}/chat/v1/deleteConversation?user1=${id}&user2=${user}`);
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {

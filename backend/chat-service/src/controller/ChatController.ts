@@ -4,6 +4,9 @@ import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
 import { IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 @injectable()
 export class ChatController {
@@ -43,13 +46,13 @@ export class ChatController {
             let result = await this._getConversations.getConversations(id)
             for (let i = 0; i < result.length; i++) {
                 if (result[i].isCompany) {
-                    const companyDetails = await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${result[i].users}`)
+                    const companyDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${result[i].users}`)
                     // @ts-ignore
                     result[i].username = companyDetails.data.result.name
                     // @ts-ignore
                     result[i].pfp = companyDetails.data.result.logo
                 } else {
-                    const userDetails = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].users}`)
+                    const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users}`)
                     // @ts-ignore
                     result[i].email = userDetails.data.result.result.email
                     // @ts-ignore
@@ -121,7 +124,7 @@ export class ChatController {
             const { company } = req.query as { company: string }
             let result = await this._getConversations.getConversations(company)
             for (let i = 0; i < result.length; i++) {
-                const userDetails = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result[i].users[0]}`)
+                const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users[0]}`)
                 // @ts-ignore
                 result[i].email = userDetails.data.result.result.email
                 // @ts-ignore

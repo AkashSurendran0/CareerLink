@@ -4,6 +4,9 @@ import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
 import { ICloseReport, IGetPaginatedReports, IGetPreviousUserReports, IGetReportAnalytics, IGetReportDetails, IGetTodayReportCount, IReportCompany, IReportMessage, IReportUser } from "../domain/service/IReportService";
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 @injectable()
 export class ReportController {
@@ -57,13 +60,13 @@ export class ReportController {
             const lim=Number(limit)
             let result=await this._getPaginatedReports.getReports(startPage, lim, status)
             for(let i=0;i<result.reports.length;i++){
-                const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.reports[i]?.reportedBy}`);
+                const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.reports[i]?.reportedBy}`);
                 result.reports[i].reportedUserName = userDetails?.data?.result?.result?.username
                 if(result.reports[i]?.reportedAccount){
-                    const reportedAccountDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.reports[i]?.reportedAccount}`)
+                    const reportedAccountDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.reports[i]?.reportedAccount}`)
                     result.reports[i].reportedAccountName = reportedAccountDetails?.data?.result?.result?.username
                 }else if(result.reports[i]?.reportedCompany){
-                    const reportedCompanyDetails=await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${result.reports[i]?.reportedCompany}`)
+                    const reportedCompanyDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${result.reports[i]?.reportedCompany}`)
                     result.reports[i].reportedCompanyName = reportedCompanyDetails?.data?.result?.name
                 }
             }
@@ -96,7 +99,7 @@ export class ReportController {
             const {reportId}=req.query
             let result=await this._getReportDetails.getReportDetails(reportId)
             if(result.success){
-                const userDetails=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result?.report?.reportedBy}`);
+                const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result?.report?.reportedBy}`);
                 console.log(userDetails.data.result)
                 result.report.reportedUserName = userDetails?.data?.result?.result?.username
                 result.report.reportedUserProfile = userDetails?.data?.result?.pfp

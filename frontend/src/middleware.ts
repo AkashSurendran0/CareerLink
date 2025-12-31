@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify, SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+const gateway = process.env.API_GATEWAY_ROUTE;
 
 // Cache for user status to avoid repeated API calls
 
@@ -70,7 +71,7 @@ async function handleAdminRoutes(req: NextRequest, token: string | undefined, re
 
   if(token){
     const result = await fetchWithCache(
-      "http://localhost:5000/admin/v1/checkAdmin",
+      `${gateway}/admin/v1/checkAdmin`,
       token
     );
     isAdmin = result.result?.success == true;
@@ -121,7 +122,7 @@ async function handleTokenRefresh(req: NextRequest, refreshToken: string, tokenN
 async function handleCompanyRoutes(req: NextRequest, token: string, pathname: string) {
   try {
     const companyData = await fetchWithCache(
-      "http://localhost:5000/company/v1/getCompanyRegistrationInfo",
+      `${gateway}/company/v1/getCompanyRegistrationInfo`,
       token
     );
 
@@ -142,7 +143,7 @@ async function handleCompanyRoutes(req: NextRequest, token: string, pathname: st
 
 async function handleVipPage(req:NextRequest, token:string, pathname:string) {
   const result = await fetchWithCache(
-    "http://localhost:5000/subscription/v1/getSubscriptionInfo",
+    `${gateway}/subscription/v1/getSubscriptionInfo`,
     token
   )
 
@@ -164,7 +165,7 @@ async function checkUserStatus(req: NextRequest, token: string, pathname: string
   }
 
   try {
-    const userData = await fetchWithCache("http://localhost:5000/user/v1/check", token);
+    const userData = await fetchWithCache(`${gateway}/user/v1/check`, token);
     console.log('check', userData.result.success)
     if (userData?.result?.success) {
       return {

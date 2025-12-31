@@ -1,4 +1,4 @@
-import { UserDTO } from "@careerlink/types";
+import { UserDTO } from "../dto/UserDTO";
 
 export class UserMapper {
     static toDTO(user: any): UserDTO {

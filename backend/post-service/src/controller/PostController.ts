@@ -5,6 +5,7 @@ import { TYPES } from "../types";
 import { IAddComment, IAlterPostLike, IDeletePost, IGetAllPosts, IGetAllUserPosts, IGetSinglePostDetails, IPostContent } from "../domain/use-cases/IPostUseCase";
 import { uploadPost } from "../config/upload";
 import axios from "axios";
+import dotenv from "dotenv";
 
 @injectable()
 export class PostController {
@@ -49,7 +50,7 @@ export class PostController {
             const SHOWN=parseInt(shown)
             let result=await this._getAllPosts.getAllPosts(LIMIT, SHOWN)
             for(let i=0;i<result.allPost.length;i++){
-                const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.allPost[i].createdBy}`)
+                const user=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.allPost[i].createdBy}`)
                 result.allPost[i].userName=user.data.result.result.username
                 result.allPost[i].pfp=user.data.result.pfp?? null
             }
@@ -101,7 +102,7 @@ export class PostController {
             const {post}=req.query
             let result=await this._getSinglePostDetails.getDetails(post)
             for(let i=0;i<result.comments.length;i++){
-                const user=await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.comments[i].by}`)
+                const user=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.comments[i].by}`)
                 result.comments[i].userName=user.data.result.result.username
                 result.comments[i].pfp=user.data.result.pfp?? null
             }

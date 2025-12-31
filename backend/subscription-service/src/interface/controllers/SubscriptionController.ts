@@ -155,8 +155,8 @@ export class SubscriptionController {
             const session = await stripe.checkout.sessions.create({
                 payment_method_types:["card"],
                 mode:'payment',
-                success_url:'http://localhost:3000/settings',
-                cancel_url:'http://localhost:3000/becomeVip',
+                success_url:`${process.env.FRONTEND_ROUTE}/settings`,
+                cancel_url:`${process.env.FRONTEND_ROUTE}/becomeVip`,
                 line_items:[
                     {
                         price_data:{
@@ -256,7 +256,7 @@ export class SubscriptionController {
     deletePlan = async (req:Request, res:Response) => {
         try {
             const user=req.headers['user-id'] as string
-            await axios.delete(`http://localhost:5000/resume/v1/deletePlan?user=${user}`)
+            await axios.delete(`${process.env.API_GATEWAY_ROUTE}/resume/v1/deletePlan?user=${user}`)
             const result=await this._deletePlan.deletePlan(user)
             res.json({result}) 
         } catch (error: unknown) {
@@ -304,7 +304,7 @@ export class SubscriptionController {
     adminDowngradeUser = async (req:Request, res:Response) => {
         try {
             const {id}=req.query
-            await axios.delete(`http://localhost:5000/resume/v1/deletePlan?user=${id}`)
+            await axios.delete(`${process.env.API_GATEWAY_ROUTE}/resume/v1/deletePlan?user=${id}`)
             const result=await this._deletePlan.deletePlan(id)
             res.json({result})
         } catch (error: unknown) {

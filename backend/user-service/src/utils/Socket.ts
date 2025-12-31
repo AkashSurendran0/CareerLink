@@ -184,7 +184,7 @@ export const initUserSocket = (server: http.Server) => {
         socket.on("join-conversation", async ({ convoId, userId }) => {
             socket.join(convoId);
 
-            await axios.patch(`http://localhost:5000/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
+            await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
 
             socket.to(convoId).emit("messages-read", {
                 convoId,
@@ -203,7 +203,7 @@ export const initUserSocket = (server: http.Server) => {
             const roomsSize = room ? room.size : 0;
 
             if (roomsSize > 1) {
-                await axios.patch(`http://localhost:5000/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
+                await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/readMessages?convo=${convoId}&user=${userId}`);
                 io.in(convoId).emit("messages-read", { convoId, readBy: userId });
             }
         });

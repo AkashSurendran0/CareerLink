@@ -1,5 +1,5 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
-import { User } from "@careerlink/types";
+import { User } from "../../domain/entities/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Mailer } from "../../utils/MailHelper";

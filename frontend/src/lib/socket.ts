@@ -1,11 +1,14 @@
 import {io} from 'socket.io-client'
 
-export const notificationSocket=io('http://localhost:5004', {
+const notificationRoute=process.env.NEXT_PUBLIC_NOTIFICATION_SERVICE_ROUTE
+const userRoute=process.env.NEXT_PUBLIC_USER_SERVICE_ROUTE
+
+export const notificationSocket=io(notificationRoute, {
     transports:['websocket'],
     withCredentials:true
 })
 
-export const userSocket=io('http://localhost:5001', {
+export const userSocket=io(userRoute, {
     transports:['websocket'],
     withCredentials:true
 })

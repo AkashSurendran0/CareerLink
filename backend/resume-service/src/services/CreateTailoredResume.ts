@@ -185,7 +185,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                         headers: {
                             'Authorization': `Bearer ${OPENROUTER_KEY}`,
                             'Content-Type': 'application/json',
-                            'HTTP-Referer': 'http://localhost:3000',
+                            'HTTP-Referer': process.env.FRONTEND_ROUTE,
                             'X-Title': 'CareerLink Resume Generator'
                         },
                     }

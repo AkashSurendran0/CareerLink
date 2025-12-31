@@ -1,4 +1,4 @@
-import { UserDetailsEntity } from "@careerlink/types";
+import { UserDetailsEntity } from "../entities/UserDetails"
 
 type details = {
     gender?: string | undefined,

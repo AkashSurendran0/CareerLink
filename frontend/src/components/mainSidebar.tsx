@@ -44,6 +44,18 @@ function MainSidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     { icon: "⚙️", label: "Settings", value:"/settings" },
   ];
 
+  useEffect(()=>{
+    getSidebarTab()
+  }, [])
+
+  const getSidebarTab = () => {
+    for(const item of sidebarItems) {
+      if(pathname == item.value){
+        setActiveBar(item.label)
+      }
+    }
+  }
+
   const handleSidebarClick = (label:string, value:string) => {
     if(pathname==value) return 
     setLoading(true)

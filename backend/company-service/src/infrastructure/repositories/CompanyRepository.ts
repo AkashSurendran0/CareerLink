@@ -1,4 +1,4 @@
-import { Company } from "@careerlink/types";
+import { Company } from "../../domain/entities/Company";
 import { CompanyModel } from "../models/CompanyModel";
 import { injectable } from "inversify";
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";

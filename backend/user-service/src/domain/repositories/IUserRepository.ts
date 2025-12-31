@@ -1,4 +1,4 @@
-import { User } from "@careerlink/types";
+import { User } from "../entities/User"
 
 type UserType = {
     id: string,

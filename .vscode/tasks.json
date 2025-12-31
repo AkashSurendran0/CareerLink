@@ -185,5 +185,23 @@
                 "run report-service"
             ],
         }
+        ,
+        {
+            "label": "watch all services",
+            "dependsOn":[
+                "watch frontend",
+                "watch api-gateway",
+                "watch user-service",
+                "watch admin-service",
+                "watch company-service",
+                "watch notification-service",
+                "watch job-service",
+                "watch resume-service",
+                "watch post-service",
+                "watch subscription-service",
+                "watch chat-service",
+                "watch report-service"
+            ],
+        }
     ]
 }

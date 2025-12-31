@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { UserController } from "../interfaces/controllers/UserController";
-import { User } from "@careerlink/types";
 import passport from "passport";
 import { UserDetailsController } from "../interfaces/controllers/UserDetailsController";
 import container from "../inversify.config";
@@ -29,7 +28,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   async (req, res) => {
-    const user = req.user as User;
+    const user = req.user;
     const accessToken = await createAccessToken(user!.id, user!.email);
     const refreshToken = await createRefreshToken(user!.id, user!.email);
     res.cookie("token", accessToken, {
@@ -44,7 +43,7 @@ router.get(
       sameSite: "lax",
       maxAge: Number(process.env.MAX_AGE_1_WEEK),
     });
-    res.redirect("http://localhost:3000/feed");
+    res.redirect(`${process.env.FRONTEND_ROUTE}/feed`);
   }
 );
 router.post("/changePassword", userController.changePassword);

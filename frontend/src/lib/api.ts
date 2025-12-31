@@ -1,7 +1,10 @@
 import axios from 'axios'
 
-const api=await axios.create({
-    baseURL:"http://localhost:5000",
+const apiGatewayRoute=process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE
+const frontedRoute=process.env.NEXT_PUBLIC_FRONTEND_ROUTE
+
+const api=axios.create({
+    baseURL:apiGatewayRoute,
     withCredentials:true
 })
 
@@ -36,7 +39,7 @@ api.interceptors.response.use(
 
             if (status === 440 || data?.message === "session_over") {
                 if (typeof window !== "undefined") {
-                    window.location.href = "http://localhost:3000/sessionOver";
+                    window.location.href = `${frontedRoute}/sessionOver`;
                 }
                 return; 
             }

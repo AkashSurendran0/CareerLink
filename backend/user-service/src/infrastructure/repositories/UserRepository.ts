@@ -1,5 +1,5 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
-import { User } from "@careerlink/types";
+import { User } from "../../domain/entities/User";
 import { UserModel } from "../models/UserModel";
 import { injectable } from "inversify";
 import { Op, QueryTypes } from "sequelize";

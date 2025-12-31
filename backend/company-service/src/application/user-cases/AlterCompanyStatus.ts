@@ -3,7 +3,7 @@ import { injectable, inject } from "inversify";
 import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
-import { CompanyDTO } from "@careerlink/types";
+import { CompanyDTO } from "../../dto/CompanyDTO";
 import { IAlterCompanyStatus } from "../../domain/use-cases/ICompanyUserCase";
 import { rabbitmqService } from "../../utils/Rabbitmq";
 

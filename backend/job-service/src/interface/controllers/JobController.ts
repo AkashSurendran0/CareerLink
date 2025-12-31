@@ -6,6 +6,9 @@ import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, 
 import axios from "axios"
 import { uploadResume } from "../../config/upload"
 import { rabbitmqService } from "../../utils/Rabbitmq"
+import dotenv from "dotenv";
+
+dotenv.config()
 
 @injectable()
 export class JobController {
@@ -29,7 +32,7 @@ export class JobController {
         try {
             const jobDetails = req.body
             const token = req.cookies?.token
-            const company = await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
+            const company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetails`, {
                 headers: {
                     Cookie: `token=${token}`
                 }
@@ -52,13 +55,13 @@ export class JobController {
             const { id } = req.query
             let company;
             if (id != 'null') {
-                company = await axios.get(`http://localhost:5000/company/v1/getCompanyDetailsByQuery?id=${id}`, {
+                company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${id}`, {
                     headers: {
                         Cookie: `token=${token}`
                     }
                 })
             } else {
-                company = await axios.get('http://localhost:5000/company/v1/getCompanyDetails', {
+                company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetails`, {
                     headers: {
                         Cookie: `token=${token}`
                     }
@@ -130,7 +133,7 @@ export class JobController {
             const jobs = await this._getAvailableJobs.getAvailableJobs(query as string, user)
             const filledJobs = await Promise.all(
                 jobs.map(async job => {
-                    const result = await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job.company}`)
+                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job.company}`)
                     return {
                         ...job,
                         company: result.data.company
@@ -194,7 +197,7 @@ export class JobController {
                     companyDetails.add(i.details.company)
                 })
                 for (let id of companyDetails) {
-                    let result = await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${id}`)
+                    let result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${id}`)
                     for (let i = 0; i < jobs.jobs.length; i++) {
                         if (jobs.jobs[i].details.company == id) {
                             jobs.jobs[i].companyName = result.data.company.name
@@ -219,7 +222,7 @@ export class JobController {
             let result = await this._getJobApplicants.getApplicants(job as string, filter as string)
             if (result && result.result.length > 0) {
                 for (let i = 0; i < result.result.length; i++) {
-                    const user = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${result.result[i].applicants.user}`)
+                    const user = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.result[i].applicants.user}`)
                     result.result[i].applicants.userName = user.data.result.result.username
                 }
             }
@@ -236,11 +239,11 @@ export class JobController {
     alterUserApplication = async (req: Request, res: Response) => {
         try {
             const { jobId, user, company, action } = req.query
-            const userDetails = await axios.get(`http://localhost:5000/user/v1/getDetailsByQuery?id=${user}`)
+            const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${user}`)
             if (action == 'accept') {
                 const result = await this._alterUserApplication.acceptApplication(jobId as string, user as string)
                 if (result.success) {
-                    const conversation = await axios.post(`http://localhost:5000/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`)
                     const message = `Congratulations,
 Your application has been shortlisted by our hiring team.
 Our team will review your profile in detail and contact you with the next steps shortly.
@@ -250,7 +253,7 @@ Thank you for your interest in joining our company`;
                         convoId: conversation.data.result.id,
                         message
                     }
-                    await axios.patch(`http://localhost:5000/chat/v1/sendMessage?company=${company}`, data)
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data)
                     await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.accepted", {
                         userEmail: userDetails.data?.result?.result?.email,
                         action: 'applicationAccepted'
@@ -267,7 +270,7 @@ Thank you for your interest in joining our company`;
             } else if (action == 'hire') {
                 const result = await this._alterUserApplication.hireUser(jobId as string, user as string)
                 if (result.success) {
-                    const conversation = await axios.post(`http://localhost:5000/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`)
                     const message = `Congratulations,
 We are pleased to inform you that you have been selected to join our team.
 Our hiring team will reach out shortly with details regarding onboarding and next steps.
@@ -278,7 +281,7 @@ Thank you for choosing to be a part of our company.
                         convoId: conversation.data.result.id,
                         message
                     }
-                    await axios.patch(`http://localhost:5000/chat/v1/sendMessage?company=${company}`, data)
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data)
                     await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.hired", {
                         userEmail: userDetails.data?.result?.result?.email,
                         action: 'applicationHired'
@@ -303,7 +306,7 @@ Thank you for choosing to be a part of our company.
             const result = await this._getCompanyAnalytics.getCompanyAnalytics()
             const companyDetails = await Promise.all(
                 result.map(async (job: any) => {
-                    const result = await axios.get(`http://localhost:5000/company/v1/checkCompanyDetails?id=${job._id}`)
+                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job._id}`)
                     return {
                         ...job,
                         name: result.data.company.name

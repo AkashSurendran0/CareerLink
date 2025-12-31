@@ -124,7 +124,7 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
                         headers: {
                             'Authorization': `Bearer ${OPENROUTER_KEY}`,
                             'Content-Type': 'application/json',
-                            'HTTP-Referer': 'http://localhost:3000', // Required by OpenRouter
+                            'HTTP-Referer': process.env.FRONTEND_ROUTE, // Required by OpenRouter
                             'X-Title': 'CareerLink Cover Letter Generator' // Optional but good
                         },
                         timeout: 30000 // 30 seconds

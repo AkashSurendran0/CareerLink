@@ -1,4 +1,4 @@
-import { Company } from "@careerlink/types";
+import { Company } from "../entities/Company"
 
 type Details = {
     registeredBy: string,
