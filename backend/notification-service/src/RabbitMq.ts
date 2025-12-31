@@ -3,6 +3,11 @@ import { Mailer } from './utils/MailHelper'
 import { IAddNotification } from './domain/services/INotificationServices'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
+import dotenv from "dotenv"
+
+dotenv.config()
+
+dotenv.config()
 
 @injectable()
 export class RabbitMqService {
@@ -17,7 +22,7 @@ export class RabbitMqService {
 
     public async connect(): Promise<void> {
         try {
-            this.connection=await amqp.connect('amqp://achu:akash1@localhost:5672')
+            this.connection=await amqp.connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`)
             this.channel=await this.connection.createChannel()
 
             for(const exchange of this.exchange){

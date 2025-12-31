@@ -1,11 +1,14 @@
 import amqp, {Channel, ChannelModel} from "amqplib";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 class RabbitMqService {
     private connection: ChannelModel | null=null;
     private channel: Channel | null=null;
 
     constructor(
-        private readonly url:string = "amqp://achu:akash1@localhost:5672"
+        private readonly url:string = `amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`
     ){}
 
     public async connect(): Promise<void> {

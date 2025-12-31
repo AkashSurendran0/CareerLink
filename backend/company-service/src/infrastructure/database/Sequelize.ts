@@ -1,11 +1,14 @@
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export const sequelize = new Sequelize(
     "careerlink",
     "postgres",
     "akash1",
     {
-        host: "localhost",
+        host: `${process.env.SEQUALIZE_HOST}`,
         port: 5432,
         dialect: "postgres",
         logging: false
