@@ -10,6 +10,7 @@ import "reflect-metadata";
 import { rabbitmqService } from "./utils/Rabbitmq";
 import { initUserSocket } from "./utils/Socket";
 import http from "http";
+import { logger } from "./utils/logger";
 
 const app = express();
 const server=http.createServer(app);
@@ -31,5 +32,5 @@ app.use(express.json());
 app.use("/v1", V1UserRouter);
 
 server.listen(5001, ()=>{
-    console.log("User service running");
+    logger.info("User service running");
 });     

@@ -4,6 +4,7 @@ import { redisClient } from "../../utils/RedisClient";
 import dotenv from 'dotenv'
 import { RepoDTO } from "../../dto/RepoDTO";
 import { RepoMapper } from "../../mappers/RepoMapper";
+import { logger } from "../../utils/logger";
 
 dotenv.config()
 
@@ -47,7 +48,7 @@ export class GetGithubDetails implements IGetGithubDetails {
             }
             return { success: true, details };
         } catch (error: any) {
-            console.log("Error getting details", error);
+            logger.error({error}, "Error getting details" );
             return { success: false };
         }
     }
@@ -106,7 +107,7 @@ export class GetGithubDetails implements IGetGithubDetails {
             }
             return { success: true, heatmap };
         } catch (error: any) {
-            console.log("Error getting details", error);
+            logger.error({error}, "Error getting details" );
             return { success: false };
         }
     }
@@ -126,7 +127,7 @@ export class GetGithubDetails implements IGetGithubDetails {
             }
             return { success: true, data }
         } catch (error: any) {
-            console.log("Error getting details", error);
+            logger.error({error}, "Error getting details" );
             return { success: false };
         }
     }

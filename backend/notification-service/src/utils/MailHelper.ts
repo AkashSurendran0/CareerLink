@@ -1,5 +1,6 @@
 import nodemailer,{Transporter} from "nodemailer";
 import { injectable } from "inversify";
+import { logger } from "./logger";
 
 @injectable()
 export class Mailer {
@@ -24,7 +25,7 @@ export class Mailer {
         };
 
         const info=await this._transporter.sendMail(mailOptions);
-        console.log("Mail send");
+        logger.info("Mail send");
         return info;
     }
 }

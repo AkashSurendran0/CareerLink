@@ -1,5 +1,6 @@
 import {Server} from 'socket.io'
 import http from 'http'
+import { logger } from './logger'
 
 let io:Server
 
@@ -9,10 +10,10 @@ export function initSocket(server:http.Server) {
     })
 
     io.on('connection', (socket)=>{
-        console.log('User connected:', socket.id)
+        logger.info(`User connected: ${socket.id}`)
         socket.on('join', (userId)=>{
             socket.join(userId)
-            console.log(`User ${userId} joined the room`)
+            logger.info(`User ${userId} joined the room`)
         })
     })
 }  

@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import axios from "axios";
+import { logger } from "./logger";
 
 export const initUserSocket = (server: http.Server) => {
     const io = new Server(server, {
@@ -18,10 +19,9 @@ export const initUserSocket = (server: http.Server) => {
     const callRooms = new Map<string, CallRoom>();
 
     io.on("connection", (socket) => {
-        console.log("User socket connected:", socket.id);
+        logger.info(`User socket connected: ${socket.id}`);
 
         socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType }) => {
-            console.log(from, caller, callerImage, to, reciever, callType)
             if ((!onlineUsers.has(to))) {
                 io.to(socket.id).emit("call-failed", {
                     reason: "USER_OFFLINE"
@@ -106,11 +106,11 @@ export const initUserSocket = (server: http.Server) => {
                     users: new Set([socket.id]),
                     offerSent: false
                 });
-                console.log(`User ${socket.id} created room ${callId}`);
+                logger.info(`User ${socket.id} created room ${callId}`);
             } else {
                 const room = callRooms.get(callId)!;
                 room.users.add(socket.id);
-                console.log(`User ${socket.id} joined room ${callId}`);
+                logger.info(`User ${socket.id} joined room ${callId}`);
             }
 
             if (!callRooms.has(callId)) return;
@@ -124,7 +124,7 @@ export const initUserSocket = (server: http.Server) => {
                     // Send create-offer to ALL users in the room
                     io.to(offerer).emit("create-offer");
                     room.offerSent = true;
-                    console.log(`Sent create-offer to room ${callId}`);
+                    logger.info(`Sent create-offer to room ${callId}`);
                 }
             }
         });
@@ -172,7 +172,7 @@ export const initUserSocket = (server: http.Server) => {
 
         socket.on("user-online", (userId: string) => {
             onlineUsers.set(userId, socket.id);
-            console.log("User online:", userId);
+            logger.info(`User online: ${userId}`);
 
             io.emit("online-users", Array.from(onlineUsers.keys()));
         });

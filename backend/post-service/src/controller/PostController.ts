@@ -6,6 +6,7 @@ import { IAddComment, IAlterPostLike, IDeletePost, IGetAllPosts, IGetAllUserPost
 import { uploadPost } from "../config/upload";
 import axios from "axios";
 import dotenv from "dotenv";
+import { logger } from "../utils/logger";
 
 @injectable()
 export class PostController {
@@ -35,7 +36,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -57,7 +58,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -73,7 +74,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -89,7 +90,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -109,7 +110,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -126,7 +127,7 @@ export class PostController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -141,7 +142,7 @@ export class PostController {
             res.json({success:true})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });

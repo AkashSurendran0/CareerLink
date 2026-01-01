@@ -9,6 +9,7 @@ import crypto from 'crypto'
 import { stripe } from "../../config/stripe";
 import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetPremiumUserCount, IGetSubscriptionAnalysis, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 import axios from "axios";
+import { logger } from "../../utils/logger";
 
 dotenv.config()
 
@@ -45,7 +46,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -59,7 +60,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -74,7 +75,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -88,7 +89,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -113,7 +114,7 @@ export class SubscriptionController {
             })
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -138,7 +139,7 @@ export class SubscriptionController {
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -180,7 +181,7 @@ export class SubscriptionController {
             res.json({success:true, id:session.id, url:session.url})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -191,7 +192,6 @@ export class SubscriptionController {
     controlWebhook = async (req:Request, res:Response) => {
         try {
             const sig=req.headers['stripe-signature']
-            // console.log(sig)
             let event
 
             try {
@@ -203,13 +203,12 @@ export class SubscriptionController {
 
             if(event.type == 'checkout.session.completed'){
                 const session=event.data.object 
-                // return console.log(session)
                 this._buySubscription.buySubscription(session?.metadata?.id, session?.metadata?.user, session?.metadata?.validity, session?.metadata?.email)
-                console.log('Payment successfull')
+                logger.info('Payment successfull')
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -227,7 +226,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -245,7 +244,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -261,7 +260,7 @@ export class SubscriptionController {
             res.json({result}) 
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -278,7 +277,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -293,7 +292,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -309,7 +308,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -324,7 +323,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -339,7 +338,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -353,7 +352,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -367,7 +366,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -381,7 +380,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -396,7 +395,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -411,7 +410,7 @@ export class SubscriptionController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });

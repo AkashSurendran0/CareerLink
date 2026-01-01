@@ -1,5 +1,6 @@
 import amqp, {Channel, ChannelModel} from "amqplib";
 import dotenv from "dotenv"
+import { logger } from "./logger";
 
 dotenv.config()
 
@@ -16,9 +17,9 @@ class RabbitMqService {
             if(this.connection) return;
             this.connection=await amqp.connect(this.url);
             this.channel=await this.connection.createChannel();
-            console.log("RabbitMq connected");
+            logger.info("RabbitMq connected");
         } catch (error) {
-            console.log("RabbitMq conneciton failed", error);
+            logger.error({error}, "RabbitMq conneciton failed");
             throw error;
         } 
     }
@@ -32,9 +33,9 @@ class RabbitMqService {
                 routingKey,
                 Buffer.from(JSON.stringify(message))
             )
-            console.log(`Published event ${routingKey}`);
+            logger.info(`Published event ${routingKey}`);
         } catch (error) {
-            console.log("connection error", error);
+            logger.error({error} ,"connection error");
         }
     }
 }

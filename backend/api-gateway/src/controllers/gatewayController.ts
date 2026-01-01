@@ -1,4 +1,5 @@
 import { GatewayService } from "../services/gatewayService";
+import { logger } from "../utils/logger";
 
 export class GatewayController {
     private _gatewayService:GatewayService
@@ -8,7 +9,7 @@ export class GatewayController {
     }
 
     getPath(path:string){
-        console.log('PROXY FUNCTION HIT')
+        logger.info('PROXY FUNCTION HIT')
         return this._gatewayService.getProxy(path)
     }
 

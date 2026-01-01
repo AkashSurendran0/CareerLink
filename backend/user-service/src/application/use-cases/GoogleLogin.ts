@@ -6,6 +6,7 @@ import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { UserMapper } from "../../mappers/UserMapper";
 import { UserDTO } from "../../dto/UserDTO";
+import { logger } from "../../utils/logger";
 
 @injectable()
 export class GoogleLogin implements IGoogleLogin {
@@ -31,7 +32,7 @@ export class GoogleLogin implements IGoogleLogin {
 
                 await elasticClient.indices.refresh({ index: "users" });
             } catch (error: any) {
-                console.log("Cant insert into elasticsearch", error);
+                logger.error({error} , "Cant insert into elasticsearch");
             }
         }
 

@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv"
+import { logger } from "../../utils/logger";
 
 dotenv.config()
 
@@ -19,8 +20,8 @@ export const connectDB = async () =>{
     try {
         await sequelize.authenticate();
         await sequelize.sync({ alter: true });
-        console.log("PSQL database connected successfully!");
+        logger.info("PSQL database connected successfully!");
     } catch (error) {
-        console.log("Database connection failed", error);
+        logger.error({error} ,"Database connection failed");
     }
 }; 

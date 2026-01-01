@@ -15,6 +15,7 @@ logs/
 
 # Environment files
 .env
+.env*
 .env.local
 .env.*.local
 

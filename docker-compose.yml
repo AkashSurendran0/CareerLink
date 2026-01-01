@@ -1,0 +1,270 @@
+version: "3.9"
+
+networks:
+  careerlink-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  postgres_data:
+  elastic_data:
+
+services:
+  # ===================== INFRA =====================
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - careerlink-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    networks:
+      - careerlink-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: careerlink
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: akash1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - careerlink-network
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    container_name: elastic
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=akash1
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      - careerlink-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: achu
+      RABBITMQ_DEFAULT_PASS: akash1
+    ports:
+      - "15672:15672" 
+    networks:
+      - careerlink-network
+
+  # ===================== BACKEND =====================
+
+  api-gateway:
+    build: ./backend/api-gateway
+    container_name: api-gateway
+    restart: always
+    env_file:
+      - ./backend/api-gateway/.env.production
+    depends_on:
+      - mongo
+      - redis
+      - postgres
+      - rabbitmq
+      - elastic
+    ports:
+      - "5000:5000"
+    networks:
+      - careerlink-network
+
+  user-service:
+    build: ./backend/user-service
+    container_name: user-service
+    restart: always
+    env_file:
+      - ./backend/user-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5001:5001"
+    networks:
+      - careerlink-network
+
+  admin-service:
+    build: ./backend/admin-service
+    container_name: admin-service
+    restart: always
+    env_file:
+      - ./backend/admin-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5002:5002"
+    networks:
+      - careerlink-network
+
+  company-service:
+    build: ./backend/company-service
+    container_name: company-service
+    restart: always
+    env_file:
+      - ./backend/company-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5003:5003"
+    networks:
+      - careerlink-network
+
+  notification-service:
+    build: ./backend/notification-service
+    container_name: notification-service
+    restart: always
+    env_file:
+      - ./backend/notification-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5004:5004"
+    networks:
+      - careerlink-network
+
+  job-service:
+    build: ./backend/job-service
+    container_name: job-service
+    restart: always
+    env_file:
+      - ./backend/job-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5005:5005"
+    networks:
+      - careerlink-network
+
+  resume-service:
+    build: ./backend/resume-service
+    container_name: resume-service
+    restart: always
+    env_file:
+      - ./backend/resume-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5006:5006"
+    networks:
+      - careerlink-network
+
+  post-service:
+    build: ./backend/post-service
+    container_name: post-service
+    restart: always
+    env_file:
+      - ./backend/post-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5007:5007"
+    networks:
+      - careerlink-network
+
+  subscription-service:
+    build: ./backend/subscription-service
+    container_name: subscription-service
+    restart: always
+    env_file:
+      - ./backend/subscription-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5008:5008"
+    networks:
+      - careerlink-network
+
+  chat-service:
+    build: ./backend/chat-service
+    container_name: chat-service
+    restart: always
+    env_file:
+      - ./backend/chat-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5009:5009"
+    networks:
+      - careerlink-network
+
+  report-service:
+    build: ./backend/report-service
+    container_name: report-service
+    restart: always
+    env_file:
+      - ./backend/report-service/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "5010:5010"
+    networks:
+      - careerlink-network
+
+  # ===================== FRONTEND =====================
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: always
+    env_file:
+      - ./frontend/.env.production
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:3000"
+    networks:
+      - careerlink-network
+
+  # ===================== LOGGING =====================
+
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+    networks:
+      - careerlink-network
+
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - careerlink-network
+
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    depends_on:
+      - loki
+    networks:
+      - careerlink-network
+

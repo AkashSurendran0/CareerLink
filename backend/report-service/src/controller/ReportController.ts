@@ -100,7 +100,6 @@ export class ReportController {
             let result=await this._getReportDetails.getReportDetails(reportId)
             if(result.success){
                 const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result?.report?.reportedBy}`);
-                console.log(userDetails.data.result)
                 result.report.reportedUserName = userDetails?.data?.result?.result?.username
                 result.report.reportedUserProfile = userDetails?.data?.result?.pfp
                 result.report.reportedUserEmail = userDetails?.data?.result?.result?.email
@@ -119,7 +118,6 @@ export class ReportController {
     closeReport = async (req:Request, res:Response) => {
         try {
             const {reportId}=req.query
-            console.log(reportId)
             const result=await this._closeReport.closeReport(reportId)
             res.json({result})
         } catch (error: unknown) {

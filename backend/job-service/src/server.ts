@@ -3,6 +3,7 @@ import { dbConnect } from './infrastructure/database/Mongoose'
 import JobRoutes from './routes/JobRoutes'
 import cookieParser from 'cookie-parser'
 import { rabbitmqService } from './utils/Rabbitmq'
+import { logger } from './utils/logger'
 
 const app=express()
 dbConnect()
@@ -15,5 +16,5 @@ rabbitmqService.connect()
 app.use('/v1', JobRoutes)
 
 app.listen(5005, ()=>{
-    console.log('Job service is running')
+    logger.info('Job service is running')
 })

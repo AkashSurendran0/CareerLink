@@ -4,6 +4,7 @@ import { IAddNotification } from './domain/services/INotificationServices'
 import { inject, injectable } from 'inversify'
 import { TYPES } from './types'
 import dotenv from "dotenv"
+import { logger } from './utils/logger'
 
 dotenv.config()
 
@@ -29,9 +30,9 @@ export class RabbitMqService {
                 await this.channel.assertExchange(exchange, "topic", {durable:true})
             }
 
-            console.log('RabbitMq connected and exchanges asserted')
+            logger.info('RabbitMq connected and exchanges asserted')
         } catch (error) {
-            console.log('RabbitMq connection failed', error)
+            logger.error({error}, 'RabbitMq connection failed')
             throw error 
         }
     }
@@ -53,7 +54,7 @@ export class RabbitMqService {
         await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.applicationHired")
         await this.channel.bindQueue(queue.queue, "mail.events", "mail.sendWarningMail")
 
-        console.log('Notification service is listening for messages...')
+        logger.info('Notification service is listening for messages...')
 
         this.channel.consume(queue.queue, async (msg) => await this.handleMessages(msg), {noAck:false})
     }
@@ -182,12 +183,12 @@ The CareerLink Team
                 break
                 
                 default:
-                    console.log('Unknown type event', data.action)
+                    logger.info('Unknown type event', data.action)
             }
 
             this.channel.ack(msg)
         }catch(error){
-            console.log('Error processing message', error)
+            logger.info({error}, 'Error processing message')
             this.channel.nack(msg, false, false)
         }
     } 

@@ -6,6 +6,7 @@ import { RabbitMqService } from "./RabbitMq";
 import NotificationRouter from './routes/NotificationRoutes'
 import { initSocket } from "./utils/Socket";
 import http from 'http'
+import { logger } from "./utils/logger";
 
 const app=express()
 const server=http.createServer(app)
@@ -22,5 +23,5 @@ app.use(express.json())
 app.use('/v1', NotificationRouter)
 
 server.listen(5004, ()=>{
-    console.log('Notification service running')
+    logger.info('Notification service running')
 })

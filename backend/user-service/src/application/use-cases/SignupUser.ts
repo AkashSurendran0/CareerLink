@@ -10,6 +10,7 @@ import { TYPES } from "../../types";
 import { elasticClient } from "../../utils/ElasticClient";
 import { redisClient } from "../../utils/RedisClient";
 import { createAccessToken, createRefreshToken } from "../../utils/SetToken";
+import { logger } from "../../utils/logger";
 
 @injectable()
 export class SignupUser implements ISignupUser {
@@ -43,7 +44,7 @@ export class SignupUser implements ISignupUser {
 
                 await elasticClient.indices.refresh({ index: "users" });
             } catch (error: any) {
-                console.log("Cant insert into elasticsearch", error);
+                logger.error({error}, "Cant insert into elasticsearch");
             }
         })()
 

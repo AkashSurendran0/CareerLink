@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import pdf from 'html-pdf-node'
 import {GoogleGenerativeAI} from '@google/generative-ai'
 import axios from "axios";
+import { logger } from "../utils/logger";
 
 dotenv.config()
 
@@ -119,7 +120,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
             };
 
         } catch (error: any) {
-            console.log('Error generating resume with gemini', error)
+            logger.error('Error generating resume with gemini', error)
             return {success:false, message:'Error generating resume, please try again later'}
         }
         
@@ -128,19 +129,19 @@ export class CreateTailoredResume implements ICreateTailoredResume {
     private async generateResume (prompt:string): Promise<string> {
 
         try {
-            console.log('Trying resume generation with Gemini...');
+            logger.info('Trying resume generation with Gemini...');
             const geminiHtml=await this.callGeminiForResume(prompt)
-            console.log('Successfully generated resume with Gemini');
+            logger.info('Successfully generated resume with Gemini');
             return geminiHtml
         } catch (error: any) {
-            console.log('Gemini failed, moving to OpenRouter free models:', error.message);
+            logger.info('Gemini failed, moving to OpenRouter free models:', error.message);
             try {
-                console.log('Trying resume generation with Grok...');
+                logger.info('Trying resume generation with Grok...');
                 const grokHtml = await this.callGrokForResume(prompt);
-                console.log('Successfully generated resume with Grok');
+                logger.info('Successfully generated resume with Grok');
                 return grokHtml;
             } catch (GrokError: any) {
-                console.log('Grok failed, moving to OpenRouter free models:', GrokError.message);
+                logger.error('Grok failed, moving to OpenRouter free models:', GrokError.message);
             }
         }
 
@@ -159,7 +160,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
 
         for(const model of freeModels) {
             try {
-                console.log(`Trying resume generation with model: ${model}`);
+                logger.info(`Trying resume generation with model: ${model}`);
 
                 const response = await axios.post(
                     'https://openrouter.ai/api/v1/chat/completions',
@@ -197,10 +198,10 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                     throw new Error('No HTML content in response');
                 }
 
-                console.log(`Successfully generated resume with model: ${model}`);
+                logger.info(`Successfully generated resume with model: ${model}`);
                 return htmlContent;
             } catch (error: any) {
-                console.log(`Model ${model} failed:`, error.message);
+                logger.error(`Model ${model} failed:`, error.message);
                 continue;
             }
         }

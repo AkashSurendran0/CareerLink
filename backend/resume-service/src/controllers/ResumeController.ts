@@ -6,6 +6,7 @@ import { STATUS_CODES } from "../utils/StatusCodes";
 import { uploadResume } from "../config/upload";
 import axios from "axios";
 import dotenv from "dotenv";
+import { logger } from "../utils/logger";
 
 dotenv.config()
 
@@ -39,7 +40,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -57,7 +58,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -72,7 +73,7 @@ export class ResumeController {
             res.json({resumes})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -93,7 +94,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -119,7 +120,6 @@ export class ResumeController {
                     Cookie:`token=${token}`
                 }
             })
-            console.log(details.data)
             if(!details.data.userDetails){
                 res.json({success:false, message:'User doesnt have sufficient details'})
                 return
@@ -128,7 +128,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -162,7 +162,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -177,7 +177,7 @@ export class ResumeController {
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
-                console.log('error', error)
+                logger.error({error}, 'error')
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });

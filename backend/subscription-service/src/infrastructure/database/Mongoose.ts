@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv"
+import { logger } from "../../utils/logger";
 
 dotenv.config()
 
 export const connectMongo = async () =>{
     try {
         await mongoose.connect(`mongodb://${process.env.MONGO_HOST}:27017/careerLink`);
-        console.log("Mongodb connected successfully");
+        logger.info("Mongodb connected successfully");
     } catch (error: any) {
-        console.log("Mongodb connection failed", error);
+        logger.error("Mongodb connection failed", error);
     }
 };

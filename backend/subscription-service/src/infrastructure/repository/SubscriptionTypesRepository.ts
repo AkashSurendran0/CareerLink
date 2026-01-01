@@ -19,7 +19,7 @@ type SubscriptionData = {
 export class SubscriptionTypesRepository implements ISubscriptionTypesRepository {
 
     async addSubscription(data: SubscriptionData): Promise<{ success: boolean; }> {
-        await SubscriptionTypesModel.insertOne(data)
+        await SubscriptionTypesModel.insertOne(data as any)
         return {success:true}
     }
 

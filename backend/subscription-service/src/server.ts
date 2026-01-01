@@ -6,6 +6,7 @@ import container from "./inversify.config";
 import { SubscriptionController } from "./interface/controllers/SubscriptionController";
 import { TYPES } from "./types";
 import { rabbitmqService } from "./utils/Rabbitmq";
+import { logger } from "./utils/logger";
 
 const subscriptionController=container.get<SubscriptionController>(TYPES.SubscriptionController)
 const app=express()
@@ -23,5 +24,5 @@ app.use(express.json())
 app.use('/v1', SubscriptionRoutes)
  
 app.listen(5008, ()=>{
-    console.log('Subscription service is running')
+    logger.info('Subscription service is running')
 })

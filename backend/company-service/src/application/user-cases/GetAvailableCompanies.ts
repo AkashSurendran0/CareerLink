@@ -3,6 +3,7 @@ import { IGetAvailableCompanies } from "../../domain/use-cases/ICompanyUserCase"
 import { CompanyDTO } from "../../dto/CompanyDTO";
 import { elasticClient } from "../../utils/ElasticClient";
 import { CompanyMapper } from "../../mapper/CompanyMapper";
+import { logger } from "../../utils/logger";
 
 @injectable()
 export class GetAvailableCompanies implements IGetAvailableCompanies {
@@ -40,7 +41,7 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
             index: 'companies'
         });
         if (!indexExists) {
-            console.log("companies index not found, returning empty array");
+            logger.error("companies index not found, returning empty array");
             return [];
         }
         const companies = await elasticClient.search({

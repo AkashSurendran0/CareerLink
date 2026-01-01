@@ -3,6 +3,7 @@ import { ICreateTailoredCoverLetter } from "../domain/services/IResumeServices";
 import {GoogleGenerativeAI} from '@google/generative-ai'
 import dotenv from 'dotenv'
 import axios from "axios";
+import { logger } from "../utils/logger";
 
 dotenv.config()
 
@@ -82,7 +83,7 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
                 provider: 'openrouter' 
             };
         } catch (error: any) {
-            console.log('OpenRouter failed, trying fallback...', error.message);
+            logger.error('OpenRouter failed, trying fallback...', error.message);
             return {
                 success: false,
                 message: 'Error generating cover letter, please try again later'
@@ -105,7 +106,7 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
 
         for(const model of freeModels){
             try {
-                console.log(`Trying OpenRouter model: ${model}`);
+                logger.info(`Trying OpenRouter model: ${model}`);
 
                 const response = await axios.post(
                     'https://openrouter.ai/api/v1/chat/completions',
@@ -132,12 +133,12 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
                 )
 
                 if (response.data?.choices?.[0]?.message?.content) {
-                    console.log(`Success with model: ${model}`);
+                    logger.info(`Success with model: ${model}`);
                     return response.data.choices[0].message.content;
                 }
 
             } catch (modelError:any) {
-                console.log(`Model ${model} failed:`, modelError.message);
+                logger.error(`Model ${model} failed:`, modelError.message);
                 continue; // Try next model
             }
         }
