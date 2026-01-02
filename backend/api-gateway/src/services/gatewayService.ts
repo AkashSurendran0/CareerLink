@@ -7,6 +7,7 @@ dotenv.config()
 export class GatewayService {
     private _routes:{[key:string]:string}
     constructor(){
+        console.log(process.env.USER_SERVICE_ROUTE)
         this._routes={
             '/user':`${process.env.USER_SERVICE_ROUTE}`,
             '/admin':`${process.env.ADMIN_SERVICE_ROUTE}`,
