@@ -318,7 +318,7 @@ export default function ChatsPage() {
         setCallScheduleModal(false)
     }
 
-    const remindUser = async (date: any, time: any) => {
+    const remindUser = async (date: Date | string, time: string) => {
         const details = {
             userEmail: selectedUser?.email,
             userName: selectedUser?.username,
@@ -425,7 +425,7 @@ export default function ChatsPage() {
                                         <div className="hidden md:flex flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex-col items-center justify-center min-h-0">
                                             <div className="text-center">
                                                 <div className="text-6xl mb-4">💬</div>
-                                                <h3 className="text-xl font-semibold text-gray-900 mb-2">You dont have any conversations</h3>
+                                                <h3 className="text-xl font-semibold text-gray-900 mb-2">You don&apos;t have any conversations</h3>
                                                 <p className="text-gray-500">Start a conversation by messaging one of your connections</p>
                                             </div>
                                         </div>
@@ -436,7 +436,7 @@ export default function ChatsPage() {
                             <div className="hidden md:flex flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex-col items-center justify-center min-h-0">
                                 <div className="text-center">
                                     <div className="text-6xl mb-4">💬</div>
-                                    <h3 className="text-xl font-semibold text-gray-900 mb-2">You dont have a active company</h3>
+                                    <h3 className="text-xl font-semibold text-gray-900 mb-2">You don&apos;t have a active company</h3>
                                     <p className="text-gray-500">Please register a company</p>
                                 </div>
                             </div>

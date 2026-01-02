@@ -5,19 +5,20 @@ import { AdminModel } from "../models/AdminModel";
 export class AdminRepository implements IAdminRepository {
 
     async findAdmin (email:string, password:string): Promise<Admin | null> {
-        const admin=await AdminModel.findOne({where: {email:email, password:password}, raw:true})
-        if(!admin) return null
+        // raw:true returns plain object (DB boundary) - allow any
+        const admin: any = await AdminModel.findOne({ where: { email, password }, raw: true })
+        if (!admin) return null
         return new Admin(
-            admin.id.toString(),
+            String(admin.id),
             admin.email,
             admin.password
         )
     }
 
     async checkAdmin(user: string): Promise<{ success: boolean; }> {
-        const admin=await AdminModel.findOne({where:{email:user}})
-        if(!admin) return {success:false}
-        return {success:true}
+        // use raw query to avoid model instances
+        const admin: any = await AdminModel.findOne({ where: { email: user }, raw: true })
+        return { success: Boolean(admin) }
     }
 
 }

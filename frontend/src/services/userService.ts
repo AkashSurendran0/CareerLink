@@ -76,12 +76,12 @@ export const getCompanyInfo = async () => {
     return res.data
 }
 
-export const editCompany = async (formData: any) => {
+export const editCompany = async (formData: unknown) => {
     const res = await api.post(`${COMPANY_V1_ROUTE}/editCompany`, formData)
     return res.data
 }
 
-export const addCompany = async (formData: any) => {
+export const addCompany = async (formData: unknown) => {
     const res = await api.post(`${COMPANY_V1_ROUTE}/addCompany`, formData)
     return res.data
 }
@@ -91,12 +91,12 @@ export const getUserDetails = async () => {
     return res.data
 }
 
-export const editUserDetails = async (formData: any) => {
+export const editUserDetails = async (formData: unknown) => {
     const res = await api.patch(`${USER_V1_ROUTE}/editUserDetails`, formData)
     return res.data
 }
 
-export const addUserDetails = async (form: any) => {
+export const addUserDetails = async (form: unknown) => {
     const res = await api.post(`${USER_V1_ROUTE}/addUserDetails`, form)
     return res.data
 }
@@ -141,7 +141,7 @@ export const markOneRead = async (id: string) => {
     return res.data
 }
 
-export const addJob = async (jobDetails: any) => {
+export const addJob = async (jobDetails: unknown) => {
     const res = await api.post(`${JOB_V1_ROUTE}/addJob`, jobDetails)
     return res.data
 }
@@ -156,7 +156,7 @@ export const getJobDetails = async (id: string) => {
     return res.data
 }
 
-export const editJob = async (jobDetails: any) => {
+export const editJob = async (jobDetails: unknown) => {
     const res = await api.patch(`${JOB_V1_ROUTE}/editJob`, jobDetails)
     return res.data
 }
@@ -171,12 +171,12 @@ export const getAllJobs = async (query: string) => {
     return res.data
 }
 
-export const createResume = async (data: any) => {
+export const createResume = async (data: unknown) => {
     const res = await api.post(`${RESUME_V1_ROUTE}/createResume`, data)
     return res.data
 }
 
-export const saveResume = async (data: any) => {
+export const saveResume = async (data: FormData) => {
     const res = await api.post(`${RESUME_V1_ROUTE}/saveResume`, data, {
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -190,17 +190,17 @@ export const getAllUserResumes = async () => {
     return res.data
 }
 
-export const createCoverLetter = async (data: any) => {
+export const createCoverLetter = async (data: unknown) => {
     const res = await api.post(`${RESUME_V1_ROUTE}/createCoverLetter`, data)
     return res.data
 }
 
-export const applyJobWithUrl = async (data: any) => {
+export const applyJobWithUrl = async (data: unknown) => {
     const res = await api.post(`${JOB_V1_ROUTE}/applyJobWithUrl`, data)
     return res.data
 }
 
-export const applyJobWithFile = async (formData: any) => {
+export const applyJobWithFile = async (formData: FormData) => {
     const res = await api.post(`${JOB_V1_ROUTE}/applyJobWithFile`, formData, {
         headers: {
             "Content-Type": `multipart/form-data`
@@ -208,7 +208,6 @@ export const applyJobWithFile = async (formData: any) => {
     })
     return res.data
 }
-
 export const getUserAppliedJobs = async () => {
     const res = await api.get(`${JOB_V1_ROUTE}/getUserAppliedJobs`)
     return res.data
@@ -219,7 +218,7 @@ export const getJobApplicants = async (id: string, filter: string) => {
     return res.data
 }
 
-export const postContent = async (formData: any) => {
+export const postContent = async (formData: FormData) => {
     const res = await api.post(`${POST_V1_ROUTE}/postContent`, formData, {
         headers: {
             "Content-Type": `multipart/form-data`
@@ -238,7 +237,7 @@ export const alterPostLike = async (postId: string) => {
     return res.data
 }
 
-export const addComment = async (data: any) => {
+export const addComment = async (data: unknown) => {
     const res = await api.patch(`${POST_V1_ROUTE}/addComment`, data)
     return res.data
 }
@@ -293,7 +292,7 @@ export const getOrderId = async (data: Amount) => {
     return res.data
 }
 
-export const verifyPayment = async (response: any) => {
+export const verifyPayment = async (response: unknown) => {
     const res = await api.post(`${SUBSCRIPTION_V1_ROUTE}/verifyPayment`, response)
     return res.data
 }
@@ -388,7 +387,7 @@ export const getConversations = async () => {
     return res.data
 }
 
-export const sendMessage = async (data: any, companyId?: string | null) => {
+export const sendMessage = async (data: unknown, companyId?: string | null) => {
     const res = await api.patch(`${CHAT_V1_ROUTE}/sendMessage?company=${companyId}`, data)
     return res.data
 }
@@ -438,17 +437,17 @@ export const reportMessage = async (sendBy: string, chatId: string, type: string
     return res.data
 }
 
-export const scheduleCall = async (data: any, companyId?: string | null) => {
+export const scheduleCall = async (data: unknown, companyId?: string | null) => {
     const res = await api.patch(`${CHAT_V1_ROUTE}/scheduleCall?company=${companyId}`, data)
     return res.data
 }
 
-export const sendScheduleMail = async (data: any) => {
+export const sendScheduleMail = async (data: unknown) => {
     const res = await api.post(`${NOTIFICATION_V1_ROUTE}/sendScheduleMail`, data)
     return res.data
 }
 
-export const sendRemindMail = async (data: any) => {
+export const sendRemindMail = async (data: unknown) => {
     const res = await api.post(`${NOTIFICATION_V1_ROUTE}/sendRemindMail`, data)
     return res.data
 }

@@ -133,7 +133,7 @@ export default function SettingsPage() {
                     </>
                 ) : (
                     <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">You don't have any subscriptions</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">You don&apos;t have any subscriptions</h3>
                     <p className="text-gray-600 mb-6">Upgrade to Premium to unlock unlimited features and benefits.</p>
                     <button
                         onClick={handleUpgradePlan}

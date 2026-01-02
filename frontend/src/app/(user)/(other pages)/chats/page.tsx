@@ -65,8 +65,8 @@ export default function ChatsPage() {
   const [confirmModal, setConfirmModal] = useState(false)
   const [selectedReport, setSelectedReport] = useState<string | null>(null)
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
-  const hideTimerRef = useRef<any>(null)
-  const longPressTimer = useRef<any>(null)
+  const hideTimerRef = useRef<number | null>(null)
+  const longPressTimer = useRef<number | null>(null)
 
   useEffect(() => {
     getUserConversations()
@@ -415,7 +415,7 @@ export default function ChatsPage() {
               <div className="hidden md:flex flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex-col items-center justify-center min-h-0">
                 <div className="text-center">
                   <div className="text-6xl mb-4">💬</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">You dont have any conversations</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">You don&apos;t have any conversations</h3>
                   <p className="text-gray-500">Start a conversation by messaging one of your connections</p>
                 </div>
               </div>

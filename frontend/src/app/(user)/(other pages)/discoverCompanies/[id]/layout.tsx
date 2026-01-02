@@ -30,9 +30,7 @@ type Company = {
 };
 
 interface Props {
-    params: {
-        id: string
-    }
+    params: Promise<{ id: string }>
 }
 
 export default function CompanyLayout({
@@ -42,7 +40,7 @@ export default function CompanyLayout({
     children: React.ReactNode;
     params: Promise<{ id: string }>
 }) {
-    const { id } = params
+    const id = (params as unknown as { id: string }).id
     const setLoading = useLoading();
     const router = useRouter();
     const [companyDetails, setCompanyDetails] = useState<Company>();

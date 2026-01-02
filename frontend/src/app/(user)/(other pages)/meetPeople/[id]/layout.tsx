@@ -19,7 +19,7 @@ type Education = {
 interface Props {
     params: {
         id: string
-    }
+    } | Promise<{ id: string }>
 }
 
 type Experience = {
@@ -52,7 +52,7 @@ export default function ConnectionLayout({
     children: React.ReactNode,
     params: Promise<{ id: string }>
 }) {
-    const { id } = params
+    const id = (params as unknown as { id: string }).id
     const setLoading = useLoading()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState("About");
@@ -232,9 +232,9 @@ export default function ConnectionLayout({
                 <div className="mb-6">
                     <div className="border-b border-gray-200 bg-white rounded-lg shadow-sm">
                         <nav className="flex space-x-8 px-6">
-                            {tabs.map((tab, ind) => (
+                            {tabs.map((tab) => (
                                 <button
-                                    key={ind}
+                                    key={tab.label}
                                     onClick={() => setTab(tab)}
                                     className={`cursor-pointer py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.label
                                         ? "border-blue-500 text-blue-600"

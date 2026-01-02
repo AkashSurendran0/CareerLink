@@ -27,9 +27,7 @@ interface Repo {
 }
 
 interface Props {
-    params: {
-        id: string
-    }
+    params: Promise<{ id: string }>
 }
 
 interface HeatMapData {
@@ -37,7 +35,7 @@ interface HeatMapData {
 }
 
 function GitHubActivity({ params }: Props) {
-    const { id } = params
+    const id = (params as unknown as { id: string }).id
     const [loading, setLoading] = useState(true)
     const [valid, setValid] = useState(true)
     const [githubDetails, setGithubDetails] = useState<GithubDetails | null>(null)
@@ -151,7 +149,7 @@ function GitHubActivity({ params }: Props) {
                             {/* Contribution Heatmap */}
                             {heatMap && validHeatmap ? (
                                 <div>
-                                    <Heatmap heatMap={heatMap as unknown as any[]} />
+                                    <Heatmap heatMap={Object.entries(heatMap).map(([date, count]) => ({ date, count }))} />
                                 </div>
                             ) : (
                                 <div className="text-center mt-20">
@@ -209,7 +207,7 @@ function GitHubActivity({ params }: Props) {
                                     <div
                                         className="py-3 flex justify-center cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
                                     >
-                                        <p>User doesnt have public repos</p>
+                                        <p>User doesn&apos;t have public repos</p>
                                     </div>
                                 )}
 

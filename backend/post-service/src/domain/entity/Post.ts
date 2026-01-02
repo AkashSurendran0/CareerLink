@@ -15,6 +15,6 @@ export class Post {
         public comments:Comments[],
         public likes:number,
         public likedBy:string[],
-        public createdAt:string[]
+        public createdAt:Date
     ) {}
 }

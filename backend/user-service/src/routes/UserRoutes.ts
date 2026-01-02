@@ -29,8 +29,11 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   async (req, res) => {
     const user = req.user;
-    const accessToken = await createAccessToken(user!.id, user!.email);
-    const refreshToken = await createRefreshToken(user!.id, user!.email);
+    if (!user) {
+      return res.redirect("/login");
+    }
+    const accessToken = await createAccessToken(user.id, user.email);
+    const refreshToken = await createRefreshToken(user.id, user.email);
     res.cookie("token", accessToken, {
       httpOnly: true,
       secure: false,

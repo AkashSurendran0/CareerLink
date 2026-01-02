@@ -1,17 +1,17 @@
-import mongoose, {Document, Schema, Model} from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IJobApplications extends Document{
-    jobPost:string,
-    applicants:[{
-        user:string,
-        resume:string,
-        coverLetter:string,
-        status:string,
-        createdAt:Date
-    }]
+    jobPost: string,
+    applicants: Array<{
+        user: string,
+        resume?: string,
+        coverLetter?: string,
+        status?: string,
+        createdAt?: Date
+    }>
 }
 
-const jobApplicationSchema: Schema<IJobApplications>=new Schema(
+const jobApplicationSchema: Schema<IJobApplications> = new Schema(
     {
         jobPost:{
             type:String,
@@ -31,14 +31,8 @@ const jobApplicationSchema: Schema<IJobApplications>=new Schema(
                     type:String,
                     required:true
                 },
-                status:{
-                    type:String,
-                    default:'Pending'
-                },
-                createdAt:{
-                    type:Date,
-                    default:Date.now()
-                }
+                status: { type: String, default: 'Pending' },
+                createdAt: { type: Date, default: Date.now }
             }
         ]
     },

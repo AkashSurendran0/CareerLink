@@ -17,7 +17,7 @@ interface AllResumes {
 
 function MyResumes() {
     const [allResumes, setAllResumes]=useState<AllResumes | null>(null)
-    const [selectedResume, setSelectedResume]=useState(null)
+    const [selectedResume, setSelectedResume]=useState<string | null>(null)
 
     useEffect(()=>{
         getResumes()

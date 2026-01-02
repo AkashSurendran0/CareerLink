@@ -28,7 +28,7 @@ function AdminNavbar() {
         <div className="flex items-center space-x-3">
           <h1 className="text-xl font-semibold text-gray-900">CareerLink Admin Panel</h1>
         </div>
-        {pathname!='/admin/login' && (
+        {pathname !== '/admin/login' && (
           <div className="flex items-center space-x-3">
             <button 
             onClick={()=>setLogoutConfirmation(true)}

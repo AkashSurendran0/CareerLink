@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Post } from "../../domain/entity/Post";
+import { Post, Comments } from "../../domain/entity/Post";
 import { IPostRepository } from "../../domain/repository/IPostRepository";
 import { PostModel } from "../model/PostModel";
 
@@ -15,12 +15,16 @@ export class PostRepository implements IPostRepository {
                 likedBy:[]
             }
         )
+        // Database boundary: map comments from MongoDB format to Comments entities
+        const mappedComments = post.comments.map((c: any) => 
+            new Comments(c.comment, c.by, c.createdAt || new Date())
+        );
         return new Post (
-            post._id,
+            post._id.toString(),
             post.image,
             post.text,
             post.createdBy,
-            post.comments,
+            mappedComments,
             post.likes,
             post.likedBy,
             post.createdAt
@@ -30,18 +34,22 @@ export class PostRepository implements IPostRepository {
     async getAllPosts(limit:number, shown:number): Promise<{count:number, post:Post[]}> {
         const allPostCount=await PostModel.find().countDocuments()
         const allPosts=await PostModel.find().skip(shown).limit(limit).sort({createdAt:-1})
-        const post= allPosts.map(post=>
-            new Post (
-                post._id,
+        const post= allPosts.map(post=> {
+            // Database boundary: map comments from MongoDB format to Comments entities
+            const mappedComments = post.comments.map((c: any) => 
+                new Comments(c.comment, c.by, c.createdAt || new Date())
+            );
+            return new Post (
+                post._id.toString(),
                 post.image,
                 post.text,
                 post.createdBy,
-                post.comments,
+                mappedComments,
                 post.likes,
                 post.likedBy,
                 post.createdAt
-            )
-        )
+            );
+        })
         return {count:allPostCount, post}
     }
 
@@ -86,12 +94,16 @@ export class PostRepository implements IPostRepository {
             }},
             {new:true}
         )
+        // Database boundary: map comments from MongoDB format to Comments entities
+        const mappedComments = post!.comments.map((c: any) => 
+            new Comments(c.comment, c.by, c.createdAt || new Date())
+        );
         return new Post (
-            post!._id,
+            post!._id.toString(),
             post!.image,
             post!.text,
             post!.createdBy,
-            post!.comments,
+            mappedComments,
             post!.likes,
             post!.likedBy,
             post!.createdAt
@@ -100,12 +112,16 @@ export class PostRepository implements IPostRepository {
 
     async getById(id: string): Promise<Post> {
         const post=await PostModel.findOne({_id:id})
+        // Database boundary: map comments from MongoDB format to Comments entities
+        const mappedComments = post!.comments.map((c: any) => 
+            new Comments(c.comment, c.by, c.createdAt || new Date())
+        );
         return new Post (
-            post!._id,
+            post!._id.toString(),
             post!.image,
             post!.text,
             post!.createdBy,
-            post!.comments,
+            mappedComments,
             post!.likes,
             post!.likedBy,
             post!.createdAt
@@ -114,18 +130,22 @@ export class PostRepository implements IPostRepository {
 
     async getAllUserPosts(user: string): Promise<Post[]> {
         const posts=await PostModel.find({createdBy:user})
-        return posts.map(post=>
-            new Post (
-                post!._id,
+        return posts.map(post=> {
+            // Database boundary: map comments from MongoDB format to Comments entities
+            const mappedComments = post!.comments.map((c: any) => 
+                new Comments(c.comment, c.by, c.createdAt || new Date())
+            );
+            return new Post (
+                post!._id.toString(),
                 post!.image,
                 post!.text,
                 post!.createdBy,
-                post!.comments,
+                mappedComments,
                 post!.likes,
                 post!.likedBy,
                 post!.createdAt
-            )
-        )
+            );
+        })
     }
 
     async deletePost(id: string): Promise<any> {

@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation';
 
 interface CancellationReasonModalProps {
-    id: any;
-    removeCancelBox: any;
+    id: string;
+    removeCancelBox: () => void;
 }
 
 function CancellationReasonModal({ id, removeCancelBox }: CancellationReasonModalProps) {

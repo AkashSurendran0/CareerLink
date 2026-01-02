@@ -91,7 +91,7 @@ export const alterPlanStatus = async (id:string) => {
     return res.data
 }
 
-export const adminUpgradeUser = async (data:any) => {
+export const adminUpgradeUser = async (data: unknown) => {
     const res=await api.post(`${SUBSCRIPTION_V1_ROUTE}/adminUpgradeUser`, data)
     return res.data
 }
@@ -143,7 +143,7 @@ export const getReportedMessage = async (user1:string, user2:string, reportedCha
 
 export const sendWarningMail = async (email:string) => {
     const res=await api.post(`${USER_V1_ROUTE}/sendWarningMail?email=${email}`)
-    await res.data
+    return res.data
 }
 
 export const getReportAnalytics = async () => {

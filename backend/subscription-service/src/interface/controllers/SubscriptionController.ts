@@ -71,6 +71,9 @@ export class SubscriptionController {
     alterPlanStatus = async (req:Request, res:Response) => {
         try {
             const {plan}=req.query
+            if (typeof plan !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Plan parameter is required" });
+            }
             const result=await this._alterPlanStatus.alterPlanStatus(plan)
             res.json({result})
         } catch (error: unknown) {
@@ -203,8 +206,15 @@ export class SubscriptionController {
 
             if(event.type == 'checkout.session.completed'){
                 const session=event.data.object 
-                this._buySubscription.buySubscription(session?.metadata?.id, session?.metadata?.user, session?.metadata?.validity, session?.metadata?.email)
-                logger.info('Payment successfull')
+                const planId = typeof session?.metadata?.id === 'string' ? session.metadata.id : undefined;
+                const userId = typeof session?.metadata?.user === 'string' ? session.metadata.user : undefined;
+                const validityStr = typeof session?.metadata?.validity === 'string' ? session.metadata.validity : undefined;
+                const email = typeof session?.metadata?.email === 'string' ? session.metadata.email : undefined;
+                if (planId && userId && validityStr && email) {
+                    const validity = parseInt(validityStr);
+                    this._buySubscription.buySubscription(planId, userId, validity, email);
+                    logger.info('Payment successfull');
+                }
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -220,6 +230,9 @@ export class SubscriptionController {
         try {
             const email=req.headers['user-email'] as string
             const {id, time}=req.query
+            if (typeof id !== 'string' || typeof time !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id and time parameters are required" });
+            }
             const validity=parseInt(time)
             const user=req.headers['user-id'] as string
             const result=await this._buySubscription.buySubscription(id, user, validity, email)
@@ -238,7 +251,12 @@ export class SubscriptionController {
         try {
             let id=req.headers['user-id'] as string
             let {user}=req.query
-            let userId=user || id
+            let userId: string;
+            if (typeof user === 'string') {
+                userId = user;
+            } else {
+                userId = id;
+            }
             // const user=req.headers['user-id'] as string
             const result=await this._getUserSubscription.getSubscription(userId)
             res.json({result})
@@ -272,7 +290,12 @@ export class SubscriptionController {
         try {
             let id=req.headers['user-id'] as string
             let {user}=req.query
-            let userId=user || id
+            let userId: string;
+            if (typeof user === 'string') {
+                userId = user;
+            } else {
+                userId = id;
+            }
             const result=await this._getSubscriptionInfo.getInfo(userId)
             res.json({result})
         } catch (error: unknown) {
@@ -287,8 +310,15 @@ export class SubscriptionController {
 
     adminUpgradeUser = async (req:Request, res:Response) => {
         try {
-            const data=req.body
-            const result=await this._buySubscription.buySubscription(data?.selectedPlan?._id, data?.selectedUser, data?.selectedPlan?.billingCycle, data?.selectedEmail)
+            const data=req.body as any
+            const planId = data?.selectedPlan?._id;
+            const userId = data?.selectedUser;
+            const billingCycle = data?.selectedPlan?.billingCycle;
+            const email = data?.selectedEmail;
+            if (typeof planId !== 'string' || typeof userId !== 'string' || typeof billingCycle !== 'number' || typeof email !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request data" });
+            }
+            const result=await this._buySubscription.buySubscription(planId, userId, billingCycle, email)
             res.json({result})
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -303,6 +333,9 @@ export class SubscriptionController {
     adminDowngradeUser = async (req:Request, res:Response) => {
         try {
             const {id}=req.query
+            if (typeof id !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
+            }
             await axios.delete(`${process.env.API_GATEWAY_ROUTE}/resume/v1/deletePlan?user=${id}`)
             const result=await this._deletePlan.deletePlan(id)
             res.json({result})
@@ -319,6 +352,9 @@ export class SubscriptionController {
     getActivePlanUsers = async (req:Request, res:Response) => {
         try {
             const {plan}=req.query
+            if (typeof plan !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "plan parameter is required" });
+            }
             const result=await this._getActivePlanUsers.getActiveUsers(plan)
             res.json({result})
         } catch (error: unknown) {
@@ -334,6 +370,9 @@ export class SubscriptionController {
     deleteSubscriptionPlan = async (req:Request, res:Response) => {
         try {
             const {plan}=req.query
+            if (typeof plan !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "plan parameter is required" });
+            }
             const result=await this._deletePlanType.deletePlanType(plan)
             res.json({result})
         } catch (error: unknown) {
@@ -391,6 +430,9 @@ export class SubscriptionController {
     getPlanDetails = async (req:Request, res:Response) => {
         try {
             const {id}=req.query
+            if (typeof id !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
+            }
             const result=await this._getPlanDetails.getPlanDetails(id)
             res.json({result})
         } catch (error: unknown) {

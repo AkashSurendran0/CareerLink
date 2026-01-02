@@ -32,7 +32,7 @@ class RabbitMqService {
                 exchange, 
                 routingKey,
                 Buffer.from(JSON.stringify(message))
-            )
+            );
             logger.info(`Published event ${routingKey}`);
         } catch (error) {
             logger.error({error}, "connection error");

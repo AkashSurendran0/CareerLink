@@ -8,12 +8,8 @@ import { User } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface Props {
-  params: {
-    id: string
-  },
-  searchParams: {
-    reportId: string
-  }
+  params: Promise<{ id: string }>,
+  searchParams: Promise<{ reportId: string }>
 }
 
 interface UserDetails {
@@ -45,8 +41,8 @@ interface ReportDetails {
 
 export default function ReportedChatPage({ params, searchParams }: Props) {
   const router = useRouter()
-  const { id } = params
-  const { reportId } = searchParams
+  const id = (params as unknown as { id: string }).id
+  const reportId = (searchParams as unknown as { reportId: string }).reportId
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
   const [reportDetails, setReportDetails] = useState<ReportDetails | null>(null)
   const [reportedMessages, setReportedMessages] = useState<Message[]>([])

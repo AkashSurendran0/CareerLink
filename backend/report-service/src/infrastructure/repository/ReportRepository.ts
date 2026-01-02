@@ -105,13 +105,13 @@ export class ReportRepository implements IReportRepository {
         if(!existingReport) return {success:false}
         const report=new Report (
             existingReport.id,
-            existingReport.reportedBy,
-            existingReport.reportedChat,
-            existingReport.reportedAccount,
+            existingReport.reportedBy ?? null,
+            existingReport.reportedChat ?? null,
+            existingReport.reportedAccount ?? null,
             existingReport.reason,
             existingReport.status,
             existingReport.createdAt,
-            existingReport.reportedCompany
+            existingReport.reportedCompany ?? ''
         )
         return {success:true, report}
     }

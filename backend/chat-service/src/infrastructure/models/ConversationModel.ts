@@ -1,12 +1,12 @@
-import mongoose, {Document, Schema, Model, mongo} from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IConversation extends Document {
-    isCompany:boolean,
-    users: string[]
-    createdAt: Date
+    isCompany?: boolean;
+    users: string[];
+    createdAt?: Date;
 }
 
-const conversationSchema: Schema<IConversation>=new Schema (
+const conversationSchema: Schema<IConversation> = new Schema (
     {
         isCompany:{
             type:Boolean

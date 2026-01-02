@@ -1,19 +1,21 @@
-import mongoose, { Document, Schema, Model, mongo } from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
+
+export interface IChatContent {
+    _id?: mongoose.Types.ObjectId;
+    sendBy: string;
+    isScheduleMessage?: boolean;
+    time?: string;
+    date?: string;
+    message?: string;
+    isRead?: boolean;
+    sendAt?: Date;
+}
 
 export interface IChat extends Document {
-    conversation: string,
-    content: [{
-        _id: mongoose.Types.ObjectId,
-        sendBy: string,
-        isScheduleMessage: boolean,
-        time: string,
-        date: string,
-        message: string,
-        isRead: boolean,
-        sendAt: Date
-    }],
-    createdAt: Date,
-    updatedAt: Date
+    conversation: string;
+    content: IChatContent[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const chatSchema: Schema<IChat> = new Schema(
@@ -43,14 +45,8 @@ const chatSchema: Schema<IChat> = new Schema(
                 type: String,
                 required: false
             },
-            isRead: {
-                type: Boolean,
-                default: false
-            },
-            sendAt: {
-                type: Date,
-                default: Date.now()
-            }
+            isRead: { type: Boolean, default: false },
+            sendAt: { type: Date, default: Date.now }
         }]
     },
     { timestamps: true }

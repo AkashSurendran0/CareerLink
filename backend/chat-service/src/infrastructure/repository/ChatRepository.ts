@@ -2,60 +2,54 @@ import { injectable } from "inversify";
 import { IChatRepository } from "../../domain/repository/IChatRepository";
 import { Chat, Content } from "../../domain/entity/Chat";
 import { ChatModel } from "../models/ChatModel";
-import { ObjectId } from 'mongodb'
+import mongoose from 'mongoose'
 
 @injectable()
 export class ChatRepository implements IChatRepository {
 
     async sendMessage(sender: string, message: string, conversation: string): Promise<Chat> {
-        const newMessage = await ChatModel.findOneAndUpdate(
+        const newMessage: any | null = await ChatModel.findOneAndUpdate(
             { conversation },
-            {
-                $push: {
-                    content: { sendBy: sender, message: message }
-                }
-            },
-            {
-                upsert: true,
-                new: true
-            },
+            { $push: { content: { sendBy: sender, message: message } } },
+            { upsert: true, new: true }
         )
-        const contents = newMessage.content.map((item) => new Content(
-            item._id.toString(),
+        if (!newMessage) throw new Error('Failed to send message')
+        const contents = (newMessage.content ?? []).map((item: any) => new Content(
+            String(item._id),
             item.sendBy,
-            item.isRead,
+            Boolean(item.isRead),
             item.sendAt,
             item.time,
             item.date,
             item.message,
-            item.isScheduleMessage
+            Boolean(item.isScheduleMessage)
         ))
         return new Chat(
-            newMessage._id.toString(),
+            String(newMessage._id),
             newMessage.conversation,
             contents,
-            newMessage.createdAt,
+            newMessage.createdAt ?? new Date(),
         )
     }
 
     async getByConvo(convo: string): Promise<Chat | null> {
-        const messages = await ChatModel.findOne({ conversation: convo })
+        const messages: any | null = await ChatModel.findOne({ conversation: convo })
         if (!messages) return null
-        const contents = messages?.content.map((item) => new Content(
-            item._id.toString(),
+        const contents = (messages.content ?? []).map((item: any) => new Content(
+            String(item._id),
             item.sendBy,
-            item.isRead,
+            Boolean(item.isRead),
             item.sendAt,
             item.time,
             item.date,
             item.message,
-            item.isScheduleMessage
+            Boolean(item.isScheduleMessage)
         ))
         return new Chat(
-            messages._id.toString(),
+            String(messages._id),
             messages.conversation,
             contents,
-            messages.createdAt,
+            messages.createdAt ?? new Date(),
         )
     }
 
@@ -110,7 +104,7 @@ export class ChatRepository implements IChatRepository {
     }
 
     async getReportedMessage(convo: string, chatId: string): Promise<Chat> {
-        const chats = await ChatModel.aggregate([
+        const chats: any[] = await ChatModel.aggregate([
             {
                 $match: {
                     conversation: convo.toString()
@@ -118,9 +112,9 @@ export class ChatRepository implements IChatRepository {
             },
             {
                 $addFields: {
-                    targetIndex: {
-                        $indexOfArray: ["$content._id", new ObjectId(chatId)]
-                    },
+                        targetIndex: {
+                            $indexOfArray: ["$content._id", new mongoose.Types.ObjectId(chatId)]
+                        },
                     contentSize: { $size: "$content" }
                 }
             },
@@ -156,7 +150,7 @@ export class ChatRepository implements IChatRepository {
             }
         ]);
 
-        const contents = chats[0]?.content?.map((item: any) => new Content(
+        const contents = (chats[0]?.content ?? []).map((item: any) => new Content(
             item._id.toString(),
             item.sendBy,
             item.isRead,
@@ -167,13 +161,12 @@ export class ChatRepository implements IChatRepository {
             item.isScheduleMessage
         ))
 
-        const chatDoc = chats[0];
-
+        const chatDoc = chats[0]
         return new Chat(
-            (chatDoc?._id || new ObjectId()).toString(),
-            chatDoc?.conversation || '',
-            contents || [],
-            chatDoc?.createdAt || new Date(),
+            String(chatDoc?._id ?? new mongoose.Types.ObjectId()),
+            chatDoc?.conversation ?? '',
+            contents,
+            chatDoc?.createdAt ?? new Date(),
         )
     }
 
@@ -196,21 +189,21 @@ export class ChatRepository implements IChatRepository {
                 new: true
             },
         )
-        const contents = newMessage.content.map((item) => new Content(
-            item._id.toString(),
+        const contents = (newMessage.content ?? []).map((item: any) => new Content(
+            String(item._id),
             item.sendBy,
-            item.isRead,
+            Boolean(item.isRead),
             item.sendAt,
             item.time,
             item.date,
             item.message,
-            item.isScheduleMessage
+            Boolean(item.isScheduleMessage)
         ))
         return new Chat(
-            newMessage._id.toString(),
+            String(newMessage._id),
             newMessage.conversation,
             contents,
-            newMessage.createdAt,
+            newMessage.createdAt ?? new Date(),
         )
     }
 

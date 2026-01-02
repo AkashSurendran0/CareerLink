@@ -11,15 +11,12 @@ export class ConversationRepository implements IConversationRepository {
         if (existingConversation) return { success: true, id: existingConversation._id.toString() }
         let conversation
         if (isCompany) {
-            conversation = await ConversationModel.insertOne({
-                isCompany: true,
-                users: [user1, user2]
-            })
+            // use create() at DB boundary; result may be any
+            const created: any = await ConversationModel.create({ isCompany: true, users: [user1, user2] })
+            conversation = created
         } else {
-            conversation = await ConversationModel.insertOne({
-                isCompany: false,
-                users: [user1, user2]
-            })
+            const created: any = await ConversationModel.create({ isCompany: false, users: [user1, user2] })
+            conversation = created
         }
         return { success: true, id: conversation._id.toString() }
     }
@@ -40,28 +37,22 @@ export class ConversationRepository implements IConversationRepository {
         ])
         return userConversations.map((convo) => (
             new Conversation(
-                convo._id,
-                convo.isCompany,
+                String(convo._id),
+                Boolean(convo.isCompany),
                 convo.users,
-                convo.createdAt
+                convo.createdAt ?? new Date()
             )
         ))
     }
 
     async findByUsers(user1: string, user2: string): Promise<{ success: boolean; conversation?: Conversation; }> {
-        const conversation = await ConversationModel.findOne(
-            {
-                users: {
-                    $in: [user1, user2]
-                }
-            }
-        )
+        const conversation = await ConversationModel.findOne({ users: { $in: [user1, user2] } })
         if (!conversation) return { success: false }
         const convo = new Conversation(
             conversation._id.toString(),
-            conversation.isCompany,
+            Boolean(conversation.isCompany),
             conversation.users,
-            conversation.createdAt
+            conversation.createdAt ?? new Date()
         )
         return { success: true, conversation: convo }
     }

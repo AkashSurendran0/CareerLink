@@ -4,17 +4,17 @@ export class Company {
         public registeredBy: string,
         public logo: string,
         public name: string,
-        public companySize: number,
+        public companySize: string,
         public foundedYear: number,
         public industry: string,
-        public websiteURL: string,
         public location: string,
         public aboutCompany: string,
         public approved: boolean,
         public rejected: boolean,
         public suspended: boolean,
-        public createdAt: Date,
+        public createdAt?: Date,
 
-        public rejectReasons?: string[],
+        public websiteURL?: string | null,
+        public rejectReasons?: string[] | null,
     ) { }
 }

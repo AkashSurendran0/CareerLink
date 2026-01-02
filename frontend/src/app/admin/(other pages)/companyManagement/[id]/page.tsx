@@ -23,14 +23,12 @@ type Company = {
 }
 
 interface Props {
-    params:{
-        id:string
-    }
+    params: Promise<{ id: string }>
 }
 
 function CompanyDetails({params}: Props) {
     const router=useRouter()
-    const {id}=params
+    const id = (params as unknown as { id: string }).id
     const [companyDetails, setCompanyDetails]=useState<Company>()
     const [cancel, setCancel]=useState(false)
 

@@ -13,7 +13,7 @@ type JobDetails = {
     applicationDeadline:Date,
     finalQualifications:string[],
     finalResponsibilities:string[],
-    finalBenefits:string[] | null[]
+    finalBenefits:string[] | null
 }
 
 @injectable()

@@ -6,12 +6,12 @@ export interface CompanyDTO {
     companySize: string,
     foundedYear: number,
     industry: string,
-    websiteURL: string,
+    websiteURL?: string | null,
     location: string,
     aboutCompany: string,
     approved: boolean,
     suspended: boolean,
     rejected: boolean,
     createdAt: Date,
-    rejectReasons: string[]
+    rejectReasons?: string[] | null
 }

@@ -6,8 +6,8 @@ export class CompanyModel extends Model {
     public registeredBy!:string;
     public logo!:string;
     public name!:string;
-    public companySize!:number;
-    public foundedYear!:number;
+    public companySize!:string;
+    public foundedYear!:string;
     public industry!:string;
     public websiteURL!:string | null;
     public location!:string;
@@ -17,7 +17,7 @@ export class CompanyModel extends Model {
     public suspended!:boolean; 
     public rejectReasons!:string[] | null;
 
-    public readonly createdAt!:Date
+    public readonly createdAt?: Date
 }
 
 CompanyModel.init(

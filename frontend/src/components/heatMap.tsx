@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
+import type { ReactCalendarHeatmapValue, TooltipDataAttrs } from 'react-calendar-heatmap';
 import "react-calendar-heatmap/dist/styles.css";
 import { Tooltip } from 'react-tooltip'
 
+interface HeatmapValue {
+    date: string;
+    count?: number;
+    color?: string;
+}
+
 interface HeatmapProps {
-    heatMap: any[];
+    heatMap: HeatmapValue[];
 }
 
 export default function Heatmap({ heatMap }: HeatmapProps) {
@@ -21,19 +28,20 @@ export default function Heatmap({ heatMap }: HeatmapProps) {
                 endDate={new Date(`${year}-12-31`)}
                 values={heatMap}
 
-                classForValue={(val) => {
+                classForValue={(val: ReactCalendarHeatmapValue<string> | undefined) => {
                     if (!val) return "color-empty"; // tailwind override below
-                    return `custom-${val.color.replace("#", "")}`;
+                    return `custom-${(val as HeatmapValue).color?.replace("#", "") ?? "000"}`;
                 }}
 
-                tooltipDataAttrs={(value: any) => {
-                    if (!value || !value.date) {
-                        return { "data-tooltip-id": "heatmap-tooltip", "data-tooltip-content": "" }
+                tooltipDataAttrs={(value: ReactCalendarHeatmapValue<string> | undefined): TooltipDataAttrs => {
+                    if (!value || !(value as HeatmapValue).date) {
+                        return ({ "data-tooltip-id": "heatmap-tooltip", "data-tooltip-content": "" } as unknown) as TooltipDataAttrs;
                     }
-                    return {
+                    const hv = value as HeatmapValue;
+                    return ({
                         "data-tooltip-id": "heatmap-tooltip",
-                        "data-tooltip-content": `${value.date} has count: ${value.count}`,
-                    } as any
+                        "data-tooltip-content": `${hv.date} has count: ${hv.count ?? 0}`,
+                    } as unknown) as TooltipDataAttrs;
                 }}
                 showWeekdayLabels={true}
             />

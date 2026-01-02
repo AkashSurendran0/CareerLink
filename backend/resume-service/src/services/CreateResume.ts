@@ -87,7 +87,7 @@ export class CreateResume implements ICreateResume {
   
   Education:
   ${finalEducation
-  .map((e) => `${e.degree} - ${e.institute} (${e.passingYear})`)
+  .map((e: any) => `${e.degree} - ${e.institute} (${e.passingYear})`)
   .join("\n")}
   
   Skills:
@@ -98,12 +98,12 @@ export class CreateResume implements ICreateResume {
   
   Experience:
   ${finalExperiences
-  .map((ex) => `${ex.position} at ${ex.company} (${ex.span})`)
+  .map((ex: any) => `${ex.position} at ${ex.company} (${ex.span})`)
   .join("\n")}
   
   Projects:
   ${finalProjects
-  .map((p) => `${p.name} - ${p.description}`)
+  .map((p: any) => `${p.name} - ${p.description}`)
   .join("\n")}
   
   Languages:
@@ -217,6 +217,9 @@ export class CreateResume implements ICreateResume {
 
     private async callGeminiForResume (prompt:string): Promise<string> {
         const GEMINI_KEY = process.env.GEMINI_AI_API
+        if (!GEMINI_KEY) {
+            throw new Error('GEMINI_AI_API key is not configured');
+        }
 
         const genAI = new GoogleGenerativeAI(GEMINI_KEY);
       

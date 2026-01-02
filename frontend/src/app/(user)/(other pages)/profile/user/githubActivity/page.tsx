@@ -144,7 +144,7 @@ function GitHubActivity() {
                             {/* Contribution Heatmap */}
                             {heatMap && validHeatmap ? (
                                 <div>
-                                    <Heatmap heatMap={heatMap as unknown as any[]} />
+                                    <Heatmap heatMap={Object.entries(heatMap).map(([date, count]) => ({ date, count }))} />
                                 </div>
                             ) : (
                                 <div className="text-center mt-20">
@@ -202,7 +202,7 @@ function GitHubActivity() {
                                     <div
                                         className="py-3 flex justify-center cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
                                     >
-                                        <p>User doesnt have public repos</p>
+                                        <p>User doesn&apos;t have public repos</p>
                                     </div>
                                 )}
 

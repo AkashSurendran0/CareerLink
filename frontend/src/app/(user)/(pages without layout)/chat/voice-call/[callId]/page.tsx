@@ -6,9 +6,7 @@ import { userSocket } from "@/lib/socket"
 import Image from "next/image"
 
 interface Props {
-    params: {
-        callId: string
-    }
+    params: Promise<{ callId: string }>
 }
 
 interface CallDetails {
@@ -17,7 +15,7 @@ interface CallDetails {
 }
 
 export default function VoiceCall({ params }: Props) {
-    const { callId } = params
+    const callId = (params as unknown as { callId: string }).callId
     const [callDuration, setCallDuration] = useState(0)
     const [userLeft, setUserLeft] = useState(false)
     const [muteSpeaker, setMuteSpeaker] = useState(false)
@@ -295,7 +293,7 @@ export default function VoiceCall({ params }: Props) {
         audioEl.muted = false;
 
         // Store in ref
-        (remoteAudioRef as any).current = audioEl;
+        remoteAudioRef.current = audioEl;
 
         return () => {
             if (audioEl) {

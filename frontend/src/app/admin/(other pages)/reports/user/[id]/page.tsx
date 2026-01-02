@@ -8,12 +8,8 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface Props {
-  params: {
-    id: string
-  },
-  searchParams: {
-    reportId: string
-  }
+  params: Promise<{ id: string }>,
+  searchParams: Promise<{ reportId: string }>
 }
 
 interface UserDetails {
@@ -49,8 +45,8 @@ interface ReportDetails {
 
 export default function ReportedUserAccountPage({ params, searchParams }: Props) {
   const router = useRouter()
-  const { id } = params
-  const { reportId } = searchParams
+  const id = (params as unknown as { id: string }).id
+  const reportId = (searchParams as unknown as { reportId: string }).reportId
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
   const [userPosts, setUserPosts] = useState<Post[]>([])
   const [userReports, setUserReports] = useState<Report[]>([])
@@ -77,9 +73,9 @@ export default function ReportedUserAccountPage({ params, searchParams }: Props)
 
   const getPreviousReports = async () => {
     const result = await getPreviousUserReports(id)
-    const finalReports = result.result.filter((i: any) => i.id != reportId)
+    const finalReports = result.result.filter((i: Report) => i.id !== reportId)
     setUserReports(finalReports)
-    setReportCount((prev) => prev += finalReports.length)
+    setReportCount((prev) => prev + finalReports.length)
   }
 
   const fetchReportDetails = async () => {

@@ -56,7 +56,7 @@ export default function ReportsPage() {
         setTotalPages(result.result.pageLimit)
     }
 
-    const routeToViewSingleReportPage = async (report: any) => {
+    const routeToViewSingleReportPage = async (report: Report) => {
         if (report.reportedAccount && report.reportedChat) router.push(`/admin/reports/chat/${report.reportedAccount}?reportId=${report.id}`)
         else if (report.reportedAccount) router.push(`/admin/reports/user/${report.reportedAccount}?reportId=${report.id}`)
         else if (report.reportedCompany) router.push(`/admin/reports/company/${report.reportedCompany}?reportId=${report.id}`)

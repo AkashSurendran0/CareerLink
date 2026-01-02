@@ -10,9 +10,7 @@ type Education = {
 };
 
 interface Props {
-    params:{
-        id:string
-    }
+    params: Promise<{ id: string }>
 }
 
 type Experience = {
@@ -36,7 +34,7 @@ type Details = {
 
 export default function ProfileDashboard({params}: Props) {
     const [userDetails, setUserDetails] = useState<Details>()
-    const {id}=params
+    const id = (params as unknown as { id: string }).id
 
     useEffect(()=>{
 

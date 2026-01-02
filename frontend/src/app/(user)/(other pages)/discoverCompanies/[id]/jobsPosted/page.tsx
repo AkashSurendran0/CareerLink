@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { useLoading } from "@/app/(user)/template"
 import { closeJob, getAllCompanyJob } from "@/services/userService"
 import { LoaderIcon } from 'lucide-react'
@@ -15,14 +15,9 @@ type Job = {
     jobType: string
 }
 
-interface Props {
-    params: {
-        id: string
-    }
-}
-
-export default function CompanyJobsPage({ params }: Props) {
-    const { id } = params
+export default function CompanyJobsPage() {
+    const params = useParams()
+    const id = params?.id as string | undefined
     const setLoading = useLoading()
     const router = useRouter()
     const [jobs, setJobs] = useState<Job[]>([])
@@ -37,6 +32,7 @@ export default function CompanyJobsPage({ params }: Props) {
 
     useEffect(() => {
         const fetchJobs = async () => {
+            if (!id) return
             const result = await getAllCompanyJob(STARTING_PAGE, LIMIT, query, filter, id)
             setPageLimit(result.result.limit)
             setJobs(result.result.jobs)
@@ -44,9 +40,10 @@ export default function CompanyJobsPage({ params }: Props) {
         }
 
         fetchJobs()
-    }, [])
+    }, [id])
 
     const getPaginatedCompanies = async (i: number) => {
+        if (!id) return
         const result = await getAllCompanyJob(i, LIMIT, query, filter, id)
         setPage(i)
         setPageLimit(result.result.limit)
@@ -63,6 +60,7 @@ export default function CompanyJobsPage({ params }: Props) {
     }
 
     const fetchWithSearch = async (char: string) => {
+        if (!id) return
         const result = await getAllCompanyJob(STARTING_PAGE, LIMIT, char, filter, id)
         setPageLimit(result.result.limit)
         setJobs(result.result.jobs)
@@ -155,7 +153,7 @@ export default function CompanyJobsPage({ params }: Props) {
                 </div>
                 {/* Jobs Cards - Mobile */}
                 <div className="md:hidden space-y-4">
-                    `{jobs && jobs.map((job) => (
+                    {jobs && jobs.map((job) => (
                         <div key={job._id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                             <div className="flex justify-between items-start mb-3">
                                 <h3 className="font-bold text-gray-900">{job.jobTitle}</h3>
@@ -178,7 +176,7 @@ export default function CompanyJobsPage({ params }: Props) {
                                 <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">Apply</button>
                             </div>
                         </div>
-                    ))}`
+                    ))}
                 </div>
                 {jobs && jobs.length > 0 && (
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white rounded-lg shadow-sm p-4">

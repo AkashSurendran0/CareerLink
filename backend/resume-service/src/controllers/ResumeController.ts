@@ -34,10 +34,13 @@ export class ResumeController {
             if(!result.success){
                 return res.json({result})
             }
-            const {success,pdf, html}=await this._createResume.createResume(data)
-            const base64Pdf=pdf.toString('base64')
-            result={success, html, base64Pdf}
-            res.json({result})
+            const createResult = await this._createResume.createResume(data)
+            if (!createResult.success) {
+                return res.json({result: createResult})
+            }
+            const base64Pdf=createResult.pdf.toString('base64')
+            const finalResult = {success: createResult.success, html: createResult.html, base64Pdf}
+            res.json({result: finalResult})
         } catch (error: unknown) {
             if (error instanceof Error) {
                 logger.error({error}, 'error')
@@ -173,6 +176,9 @@ export class ResumeController {
     deletePlan = async (req:Request, res:Response) => {
         try {
             const {user}=req.query
+            if (typeof user !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "user parameter is required" });
+            }
             const result=await this._deleteCount.deleteCount(user)
             res.json({result})
         } catch (error: unknown) {

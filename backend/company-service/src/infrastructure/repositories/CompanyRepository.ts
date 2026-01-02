@@ -25,28 +25,30 @@ export class CompanyRepository implements ICompanyRepository {
             logo: details.logo,
             name: details.companyName,
             companySize: details.companySize,
-            foundedYear: details.foundedYear,
+            foundedYear: String(details.foundedYear),
             industry: details.industry,
             websiteURL: details.websiteURL,
             location: details.location,
             aboutCompany: details.aboutCompany
         })
         const companyData = newCompany.get({ plain: true })
+        const companySizeStr = String(companyData!.companySize)
+        const foundedYearNum = typeof companyData!.foundedYear === 'string' ? parseInt(companyData!.foundedYear, 10) || 0 : (companyData!.foundedYear ?? 0)
         return new Company(
             companyData!.id,
             companyData!.registeredBy,
             companyData!.logo,
             companyData!.name,
-            companyData!.companySize,
-            companyData!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             companyData!.industry,
-            companyData!.websiteURL,
             companyData!.location,
             companyData!.aboutCompany,
-            companyData!.approved,
-            companyData!.rejected,
-            companyData!.suspended,
-            companyData!.createdAt
+            Boolean(companyData!.approved),
+            Boolean(companyData!.rejected),
+            Boolean(companyData!.suspended),
+            companyData!.createdAt,
+            companyData!.websiteURL ?? null
         )
     }
 
@@ -58,21 +60,23 @@ export class CompanyRepository implements ICompanyRepository {
 
     async getCompanyDetails(user: string): Promise<Company> {
         const companyDetails = await CompanyModel.findOne({ where: { registeredBy: user }, raw: true })
+        const companySizeStr = String(companyDetails!.companySize)
+        const foundedYearNum = typeof companyDetails!.foundedYear === 'string' ? parseInt(companyDetails!.foundedYear, 10) || 0 : (companyDetails!.foundedYear ?? 0)
         return new Company(
             companyDetails!.id,
             companyDetails!.registeredBy,
             companyDetails!.logo,
             companyDetails!.name,
-            companyDetails!.companySize,
-            companyDetails!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             companyDetails!.industry,
-            companyDetails!.websiteURL || "",
             companyDetails!.location,
             companyDetails!.aboutCompany,
-            companyDetails!.approved,
-            companyDetails!.rejected,
-            companyDetails!.suspended,
+            Boolean(companyDetails!.approved),
+            Boolean(companyDetails!.rejected),
+            Boolean(companyDetails!.suspended),
             companyDetails!.createdAt,
+            companyDetails!.websiteURL ?? null,
             (companyDetails!.rejectReasons as string[]) || undefined
         )
     }
@@ -96,42 +100,46 @@ export class CompanyRepository implements ICompanyRepository {
             },
         )
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
+        const companySizeStr = String(updatedCompany!.companySize)
+        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
             updatedCompany!.logo,
             updatedCompany!.name,
-            updatedCompany!.companySize,
-            updatedCompany!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             updatedCompany!.industry,
-            updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
-            updatedCompany!.approved,
-            updatedCompany!.rejected,
-            updatedCompany!.suspended,
-            updatedCompany!.createdAt
+            Boolean(updatedCompany!.approved),
+            Boolean(updatedCompany!.rejected),
+            Boolean(updatedCompany!.suspended),
+            updatedCompany!.createdAt,
+            updatedCompany!.websiteURL ?? null
         )
     }
 
     async findById(id: string): Promise<Company | null> {
         const company = await CompanyModel.findByPk(id, { raw: true })
         if (!company) return null
+        const companySizeStr = String(company!.companySize)
+        const foundedYearNum = typeof company!.foundedYear === 'string' ? parseInt(company!.foundedYear, 10) || 0 : (company!.foundedYear ?? 0)
         return new Company(
             company!.id,
             company!.registeredBy,
             company!.logo,
             company!.name,
-            company!.companySize,
-            company!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             company!.industry,
-            company!.websiteURL || "",
             company!.location,
             company!.aboutCompany,
-            company!.approved,
-            company!.rejected,
-            company!.suspended,
-            company!.createdAt
+            Boolean(company!.approved),
+            Boolean(company!.rejected),
+            Boolean(company!.suspended),
+            company!.createdAt,
+            company!.websiteURL ?? null
         )
     }
 
@@ -144,21 +152,23 @@ export class CompanyRepository implements ICompanyRepository {
             }
         )
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
+        const companySizeStr = String(updatedCompany!.companySize)
+        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
             updatedCompany!.logo,
             updatedCompany!.name,
-            updatedCompany!.companySize,
-            updatedCompany!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             updatedCompany!.industry,
-            updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
-            updatedCompany!.approved,
-            updatedCompany!.rejected,
-            updatedCompany!.suspended,
-            updatedCompany!.createdAt
+            Boolean(updatedCompany!.approved),
+            Boolean(updatedCompany!.rejected),
+            Boolean(updatedCompany!.suspended),
+            updatedCompany!.createdAt,
+            updatedCompany!.websiteURL ?? null
         )
     }
 
@@ -174,21 +184,23 @@ export class CompanyRepository implements ICompanyRepository {
             }
         )
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
+        const companySizeStr = String(updatedCompany!.companySize)
+        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
             updatedCompany!.logo,
             updatedCompany!.name,
-            updatedCompany!.companySize,
-            updatedCompany!.foundedYear,
+            companySizeStr,
+            foundedYearNum,
             updatedCompany!.industry,
-            updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
-            updatedCompany!.approved,
-            updatedCompany!.rejected,
-            updatedCompany!.suspended,
-            updatedCompany!.createdAt
+            Boolean(updatedCompany!.approved),
+            Boolean(updatedCompany!.rejected),
+            Boolean(updatedCompany!.suspended),
+            updatedCompany!.createdAt,
+            updatedCompany!.websiteURL ?? null
         )
     }
 
@@ -212,13 +224,13 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.companySize,
             updatedCompany!.foundedYear,
             updatedCompany!.industry,
-            updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
             updatedCompany!.approved,
             updatedCompany!.rejected,
             updatedCompany!.suspended,
-            updatedCompany!.createdAt
+            updatedCompany!.createdAt,
+            updatedCompany!.websiteURL
         )
     }
 
@@ -242,13 +254,13 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.companySize,
             updatedCompany!.foundedYear,
             updatedCompany!.industry,
-            updatedCompany!.websiteURL,
             updatedCompany!.location,
             updatedCompany!.aboutCompany,
             updatedCompany!.approved,
             updatedCompany!.rejected,
             updatedCompany!.suspended,
-            updatedCompany!.createdAt
+            updatedCompany!.createdAt,
+            updatedCompany!.websiteURL
         )
     }
 

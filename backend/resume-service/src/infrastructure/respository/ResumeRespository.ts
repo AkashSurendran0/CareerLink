@@ -24,13 +24,13 @@ export class ResumeRepository implements IResumeRepository{
     }
 
     async getAllResumes(id: string): Promise<{success:boolean, resumes:Resume} | {success:false}> {
-        const doc=await ResumeModel.findOne({user:id})
+        const doc=await ResumeModel.findOne({user:id}).lean()
         if(!doc) return {success:false}
         const resumeItems=doc.resumes.map(
             r=>new ResumeItem(r.name, r.url, r.createdAt)
         )
         const resume = new Resume (
-            doc._id,
+            doc._id.toString(),
             doc.user,
             resumeItems
         )

@@ -18,6 +18,10 @@ FROM node:20-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_GATEWAY_ROUTE=http://localhost:5000
+ENV NEXT_PUBLIC_FRONTEND_ROUTE=http://localhost:3000
+ENV NEXT_PUBLIC_MAX_AGE_1_HOUR=3600
+ENV NEXT_PUBLIC_RAZORPAY_API_KEY=rzp_test_RlTalei3CXVNOp
 
 # Copy required files only
 COPY --from=builder /app/package*.json ./

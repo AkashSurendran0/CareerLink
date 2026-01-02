@@ -1,18 +1,19 @@
-import mongoose, {Document, Schema, Model} from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IJobDetails extends Document {
-    company:string,
-    open:boolean,
-    jobTitle:string,
-    department:string,
-    jobType:string,
-    location:string,
-    jobDescription:string,
-    qualifications:string[],
-    responsibilities:string[],
-    benefits:string[],
-    experienceLevel:string,
-    deadline:Date
+    company: string,
+    open: boolean,
+    jobTitle: string,
+    department: string,
+    jobType: string,
+    location: string,
+    jobDescription: string,
+    qualifications: string[],
+    responsibilities: string[],
+    benefits?: string[],
+    experienceLevel: string,
+    deadline?: Date,
+    createdAt?: Date
 }
 
 const jobSchema: Schema<IJobDetails> = new Schema (
@@ -23,7 +24,7 @@ const jobSchema: Schema<IJobDetails> = new Schema (
         },
         open:{
             type:Boolean,
-            requried:true
+            required:true
         },
         jobTitle:{
             type:String,
@@ -39,24 +40,15 @@ const jobSchema: Schema<IJobDetails> = new Schema (
         },
         location:{
             type:String,
-            requried:true
+            required:true
         },
         jobDescription:{
             type:String,
             required:true
         },
-        qualifications:[{
-            type:String,
-            required:true
-        }],
-        responsibilities:[{
-            type:String,
-            required:true
-        }],
-        benefits:[{
-            type:String,
-            rquired:false
-        }],
+        qualifications: [{ type: String, required: true }],
+        responsibilities: [{ type: String, required: true }],
+        benefits: [{ type: String }],
         experienceLevel:{
             type:String,
             required:true

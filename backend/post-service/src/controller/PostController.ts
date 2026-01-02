@@ -29,7 +29,15 @@ export class PostController {
             let url=null
             if(req.file){
                 const buffer=req.file?.buffer
+                if (!buffer) {
+                    res.status(STATUS_CODES.BAD_REQUEST).json({ message: "File buffer is required" });
+                    return;
+                }
                 const fileType=req.file.mimetype.split("/")[1]
+                if (!fileType) {
+                    res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid file type" });
+                    return;
+                }
                 url=await uploadPost(buffer, fileType)
             }  
             const result=await this._postContent.postContent(url, text, user)
@@ -47,13 +55,21 @@ export class PostController {
     getAllPosts = async (req:Request, res:Response) => {
         try {
             const {lim, shown}=req.query
+            if (typeof lim !== 'string' || typeof shown !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "lim and shown parameters are required" });
+            }
             const LIMIT=parseInt(lim)
             const SHOWN=parseInt(shown)
             let result=await this._getAllPosts.getAllPosts(LIMIT, SHOWN)
             for(let i=0;i<result.allPost.length;i++){
-                const user=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.allPost[i].createdBy}`)
-                result.allPost[i].userName=user.data.result.result.username
-                result.allPost[i].pfp=user.data.result.pfp?? null
+                const post = result.allPost[i];
+                if (!post) continue;
+                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${post.createdBy}`)
+                const username = userResponse.data?.result?.result?.username;
+                const pfp = userResponse.data?.result?.pfp ?? null;
+                // Controller boundary: using any to add dynamic properties to DTO
+                (post as any).userName = username;
+                (post as any).pfp = pfp;
             }
             res.json({result})
         } catch (error: unknown) {
@@ -69,6 +85,9 @@ export class PostController {
     alterPostLike = async (req:Request, res:Response) => {
         try {
             const {post}=req.query
+            if (typeof post !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "post parameter is required" });
+            }
             const user=req.headers['user-id'] as string
             const result=await this._alterPostLike.alterPostLike(post, user)
             res.json({result})
@@ -101,11 +120,19 @@ export class PostController {
     getSinglePostDetails = async (req:Request, res:Response) => {
         try {
             const {post}=req.query
+            if (typeof post !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "post parameter is required" });
+            }
             let result=await this._getSinglePostDetails.getDetails(post)
             for(let i=0;i<result.comments.length;i++){
-                const user=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.comments[i].by}`)
-                result.comments[i].userName=user.data.result.result.username
-                result.comments[i].pfp=user.data.result.pfp?? null
+                const comment = result.comments[i];
+                if (!comment) continue;
+                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${comment.by}`)
+                const username = userResponse.data?.result?.result?.username;
+                const pfp = userResponse.data?.result?.pfp ?? null;
+                // Controller boundary: using any to add dynamic properties to comment objects
+                (comment as any).userName = username;
+                (comment as any).pfp = pfp;
             }
             res.json({result})
         } catch (error: unknown) {
@@ -122,7 +149,12 @@ export class PostController {
         try {
             const {user}=req.query
             const userId=req.headers['user-id'] as string
-            const id=user || userId
+            let id: string;
+            if (typeof user === 'string') {
+                id = user;
+            } else {
+                id = userId;
+            }
             const result=await this._getAllUserPosts.getAllPosts(id)
             res.json({result})
         } catch (error: unknown) {
@@ -138,6 +170,9 @@ export class PostController {
     deletePost = async (req:Request, res:Response) => {
         try {
             const {id}=req.query
+            if (typeof id !== 'string') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
+            }
             await this._deletePost.deletePost(id)
             res.json({success:true})
         } catch (error: unknown) {

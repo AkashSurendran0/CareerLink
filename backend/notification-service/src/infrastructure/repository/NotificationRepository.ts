@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { INotificationRepository } from "../../domain/repository/INotificationRepository";
 import { NotificationModel } from "../models/NotificationModel";
 import { Notification } from "../../domain/entities/Notification";
@@ -5,62 +6,64 @@ import { Notification } from "../../domain/entities/Notification";
 export class NotificationRepository implements INotificationRepository {
 
     async insertNotification(user:string, content:string, routeTo:string) {
-        const data={
+        const data = {
             user,
             content,
             routeTo
         }
-        const noti=await NotificationModel.insertOne(data)
+
+        // using any at DB boundary
+        const noti: any = await NotificationModel.create(data)
+
         return new Notification(
-            noti._id,
+            noti._id?.toString(),
             noti.user,
             noti.content,
-            noti.routeTo,
-            noti.isRead,
+            String(noti.routeTo ?? ''),
+            Boolean(noti.isRead),
             noti.createdAt
         )
     }
 
     async getAllNotifications(user:string) {
-        const notification=await NotificationModel.find({user:user})
-        return notification.map((noti: any)=>
+        // return plain objects from mongoose using lean()
+        const notifications: any[] = await NotificationModel.find({user}).lean().exec()
+        return notifications.map((noti: any) =>
             new Notification(
-                noti._id,
+                noti._id?.toString(),
                 noti.user,
                 noti.content,
-                noti.routeTo,
-                noti.isRead,
+                String(noti.routeTo ?? ''),
+                Boolean(noti.isRead),
                 noti.createdAt
             )
         )
     }
 
     async deleteAllNotifications(user:string): Promise<{success:boolean}> {
-        await NotificationModel.deleteMany({user:user})
+        await NotificationModel.deleteMany({user})
         return {success:true}
     }
 
     async deleteOneNotification(id:string): Promise<{success:boolean}> {
-        await NotificationModel.deleteOne({_id:id})
+        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
+        await NotificationModel.deleteOne(filter)
         return {success:true}
     }
 
     async markOneAsRead (id:string): Promise<{success:boolean}> {
+        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
         await NotificationModel.updateOne(
-            {_id:id},
-            {$set:{
-                isRead:true
-            }}
+            filter,
+            { $set: { isRead:true } }
         )
         return {success:true}
     }
 
     async markAllRead (user:string): Promise<{success:boolean}> {
         await NotificationModel.updateMany(
-            {user:user},
-            {$set:{
-                isRead:true
-            }}
+            { user },
+            { $set: { isRead:true } }
         )
         return {success:true}
     }

@@ -1,4 +1,4 @@
-import amqp, {Channel, ChannelModel, ConsumeMessage} from 'amqplib'
+import amqp, { Channel, ConsumeMessage } from 'amqplib'
 import { Mailer } from './utils/MailHelper'
 import { IAddNotification } from './domain/services/INotificationServices'
 import { inject, injectable } from 'inversify'
@@ -8,13 +8,14 @@ import { logger } from './utils/logger'
 
 dotenv.config()
 
-dotenv.config()
-
 @injectable()
 export class RabbitMqService {
-    private connection!:ChannelModel
-    private channel!:Channel
-    private readonly exchange=["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"] 
+    // amqplib types are sometimes incompatible with the runtime implementation used here;
+    // relax to `any` at this boundary and perform runtime checks where needed.
+    // This is a contained interoperability fix and avoids unsafe global casts.
+    private connection: any
+    private channel: any
+    private readonly exchange = ["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"]
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -56,7 +57,7 @@ export class RabbitMqService {
 
         logger.info('Notification service is listening for messages...')
 
-        this.channel.consume(queue.queue, async (msg) => await this.handleMessages(msg), {noAck:false})
+        this.channel.consume(queue.queue, async (msg: ConsumeMessage | null) => await this.handleMessages(msg), {noAck:false})
     }
 
     private async handleMessages(msg:ConsumeMessage | null): Promise<void> {

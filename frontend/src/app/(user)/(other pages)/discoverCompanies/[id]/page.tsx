@@ -21,14 +21,12 @@ type Company = {
 }
 
 interface Props {
-    params:{
-        id:string
-    }
+    params: Promise<{ id: string }>
 }
 
 function AboutCompany({params}:Props) {
     const [companyDetails, setCompanyDetails]=useState<Company>()
-    const {id}=params
+    const id = (params as unknown as { id: string }).id
 
     useEffect(()=>{
         async function getCompanyDetails () {

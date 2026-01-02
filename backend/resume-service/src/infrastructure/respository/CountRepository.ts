@@ -4,8 +4,10 @@ import { CountModel } from "../models/GenerationCountModel";
 export class CountRepository implements ICountRepository {
   
     async updateCount(user: string, field:string): Promise<{ success: boolean; } | {success:boolean, message:string}> {
-        const count=await CountModel.findOne({user:user})
-        if(!count || (count[field] ?? 0) < 5){
+        const count=await CountModel.findOne({user:user}).lean()
+        // Database boundary: using any to access dynamic field name
+        const countValue = count ? (count as any)[field] ?? 0 : 0;
+        if(!count || countValue < 5){
             await CountModel.updateOne(
                 {user:user},
                 {$inc:{

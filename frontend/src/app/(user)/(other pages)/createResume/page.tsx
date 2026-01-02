@@ -325,9 +325,8 @@ export default function ResumeBuilder() {
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Education</h2>
                 <div className="space-y-4">
                     {educations.map((education, index) => (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2" key={index}>
                             <input
-                                key={index}
                                 type="text"
                                 value={education.degree}
                                 onChange={(e) => updateEducation(index, 'degree', e.target.value)}
@@ -335,7 +334,6 @@ export default function ResumeBuilder() {
                                 placeholder="Enter degree"
                             />
                             <input
-                                key={index}
                                 type="text"
                                 value={education.institute}
                                 onChange={(e) => updateEducation(index, 'institute', e.target.value)}
@@ -343,7 +341,6 @@ export default function ResumeBuilder() {
                                 placeholder="Enter Institution"
                             />
                             <input
-                                key={index}
                                 type="text"
                                 value={education.passingYear}
                                 onChange={(e) => updateEducation(index, 'passingYear', e.target.value)}
@@ -369,9 +366,8 @@ export default function ResumeBuilder() {
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Work Experience</h2>
                 <div className="space-y-4">
                     {experiences.map((experience, index) => (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2" key={index}>
                             <input
-                                key={index}
                                 type="text"
                                 value={experience.position}
                                 onChange={(e) => updateExperience(index, 'position', e.target.value)}
@@ -379,7 +375,6 @@ export default function ResumeBuilder() {
                                 placeholder="Enter the position"
                             />
                             <input
-                                key={index}
                                 type="text"
                                 value={experience.company}
                                 onChange={(e) => updateExperience(index, 'company', e.target.value)}
@@ -387,7 +382,6 @@ export default function ResumeBuilder() {
                                 placeholder="Enter company name"
                             />
                             <input
-                                key={index}
                                 type="text"
                                 value={experience.span}
                                 onChange={(e) => updateExperience(index, 'span', e.target.value)}

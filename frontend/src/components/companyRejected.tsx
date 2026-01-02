@@ -22,14 +22,14 @@ function CompanyRejected({ handleReapply, handleEdit, handleDelete, reasons }: {
                         <div className="flex-1">
                             <h1 className="text-balance text-xl md:text-2xl font-semibold">Company Request Rejected</h1>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Your submission didn’t meet our verification criteria. Please make the required
+                                Your submission didn&apos;t meet our verification criteria. Please make the required
                                 changes, and reapply.
                             </p>
                             <div className="mt-6 rounded-lg border border-red-200 bg-red-50/60 p-4 text-sm">
                                 <div className="font-medium text-red-700">Reason provided by admin</div>
                                 <ul className="mt-2 list-disc space-y-1 pl-5 text-red-700/90">
-                                    {reasons?.map((reason: string) => (
-                                        <li>{reason}</li>
+                                    {reasons?.map((reason: string, idx: number) => (
+                                        <li key={idx}>{reason}</li>
                                     ))}
                                 </ul>
                             </div>

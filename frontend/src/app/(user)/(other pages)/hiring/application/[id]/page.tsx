@@ -10,9 +10,7 @@ import { enqueueSnackbar } from "notistack"
 import ConfirmModal from "@/reusable-components/confirmModal"
 
 interface Props {
-    params:{
-        id:string
-    }
+    params: Promise<{ id: string }>
 }
 
 interface Resume {
@@ -34,11 +32,27 @@ interface TailoredResume {
 export default function JobDetailsPage({params}:Props) {
     const router=useRouter()
     const setLoading=useLoading()
-    const [jobDetails, setJobDetails]=useState<any>(null)
-    const [companyDetails, setCompanyDetails]=useState<any>(null)
+    interface JobDetails {
+        jobTitle: string
+        createdAt: string
+        open: boolean
+        jobType: string
+        jobDescription: string
+        responsibilities: string[]
+        qualifications: string[]
+        benefits?: string[]
+    }
+
+    interface CompanyInfo {
+        name: string
+        logo?: string
+    }
+
+    const [jobDetails, setJobDetails]=useState<JobDetails | null>(null)
+    const [companyDetails, setCompanyDetails]=useState<CompanyInfo | null>(null)
     const [resumeFile, setResumeFile] = useState<File | null>(null)
     const [coverLetter, setCoverLetter]=useState('')
-    const [resumeUrl, setResumeUrl]=useState<File | null | string>(null)
+    const [resumeUrl, setResumeUrl]=useState<string | File | null>(null)
     const [openOptions, setOpenOptions]=useState(false)
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [openSavedResumes, setOpenSavedResumes]=useState(false)
@@ -51,7 +65,7 @@ export default function JobDetailsPage({params}:Props) {
     const [openCoverLetterPreview, setOpenCoverLetterPreview]=useState(false)
     
     useEffect(()=>{
-        const {id}=params
+        const id = (params as unknown as { id: string }).id
         const fetchDetails = async () => {
             const job=await getJobDetails(id)
             const company=await checkCompanyDetails(job.details.company)
@@ -132,7 +146,7 @@ export default function JobDetailsPage({params}:Props) {
 
         setLoading(true)
         if(resumeUrl){
-            const {id}=params
+            const id = (params as unknown as { id: string }).id
             const data = {
                 id,
                 resumeUrl,
@@ -141,7 +155,7 @@ export default function JobDetailsPage({params}:Props) {
             await applyJobWithUrl(data)   
             router.push('/profile/user/jobsApplied')
         }else if(resumeFile){
-            const {id}=params
+            const id = (params as unknown as { id: string }).id
             const formData=new FormData()
             formData.append('resume', resumeFile)
             formData.append('coverLetter', coverLetter)
@@ -150,7 +164,7 @@ export default function JobDetailsPage({params}:Props) {
             await applyJobWithFile(formData)
             router.push('/profile/user/jobsApplied')
         }else{
-            const {id}=params
+            const id = (params as unknown as { id: string }).id
             // const byteCharacters=atob(tailoredResume.pdf.data)
             // const byteNumbers=new Array(byteCharacters.length).fill().map((_, i)=>byteCharacters.charCodeAt(i))
             if (!tailoredResume.pdf) return enqueueSnackbar('Something went wrong', {variant:'error'})
@@ -178,7 +192,7 @@ export default function JobDetailsPage({params}:Props) {
     const createTailoredResume = async () => {
         setLoading(true)
         setTailoredResumeConfirmation(false)
-        const {id}=params
+        const id = (params as unknown as { id: string }).id
         const result=await getTailoredResume(id)
         if(result.result.success){
             setTailoredResume({html:result.result.html, pdf:result.result.pdf})
@@ -193,7 +207,7 @@ export default function JobDetailsPage({params}:Props) {
     const createTailoredCoverLetter = async () => {
         setLoading(true)
         setTailoredCoverLetterConfirmation(false)
-        const {id}=params
+        const id = (params as unknown as { id: string }).id
         const result=await getTailoredCoverLetter(id)
         if(result.result.success){
             setOpenCoverLetterPreview(true)
@@ -406,12 +420,16 @@ export default function JobDetailsPage({params}:Props) {
                         {/* Right: Company Logo */}
                         <div className="flex-shrink-0">
                         <div className="h-32 w-40 rounded-lg flex items-center justify-center">
-                            <Image
-                                src={companyDetails.logo}
-                                height={300}
-                                width={300}
-                                alt="Company Logo"
-                            />
+                            {companyDetails?.logo ? (
+                                <Image
+                                    src={companyDetails.logo}
+                                    height={300}
+                                    width={300}
+                                    alt="Company Logo"
+                                />
+                            ) : (
+                                <div className="h-20 w-28 bg-gray-100 flex items-center justify-center text-gray-500">No Logo</div>
+                            )}
                         </div>
                         </div>
                     </div>

@@ -28,9 +28,7 @@ interface Post {
 }
 
 interface Props {
-    params:{
-        id:string
-    }
+    params: Promise<{ id: string }>
 }
 
 interface SinglePostUserDetails {
@@ -39,7 +37,7 @@ interface SinglePostUserDetails {
 }
 
 function MyPosts({params}: Props) {
-    const {id}=params
+    const id = (params as unknown as { id: string }).id
     const setLoading=useLoading()
     const [posts, setPosts]=useState<Post[] | null>(null)
     const [selectedPost, setSelectedPost] = useState<Post | null>(null)

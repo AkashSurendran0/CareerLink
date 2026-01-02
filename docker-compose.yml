@@ -221,9 +221,10 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
+    environment:
+      - JWT_SECRET=careerlinkJWT
+      - API_GATEWAY_ROUTE=http://localhost:5000
     restart: always
-    env_file:
-      - ./frontend/.env.production
     depends_on:
       - api-gateway
     ports:

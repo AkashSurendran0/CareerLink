@@ -57,7 +57,7 @@ export default function JobDetailsPage() {
     const [currentFilter, setCurrentFilter] = useState('All')
     const [totalCount, setTotalCount] = useState(0)
     const [showResume, setShowResume] = useState(false)
-    const [selectedResume, setSelectedResume] = useState(null)
+    const [selectedResume, setSelectedResume] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -174,7 +174,7 @@ export default function JobDetailsPage() {
         }
     }
 
-    const viewResume = (resume: any) => {
+    const viewResume = (resume: string) => {
         setShowResume(true)
         setSelectedResume(resume)
     }
@@ -253,12 +253,12 @@ export default function JobDetailsPage() {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900">Responsibilities</h2>
                         <ul className="mt-4 space-y-3 text-gray-600">
-                            {jobDetails.responsibilities.map(responsibility => (
-                                <li className="flex gap-3">
-                                    <span className="text-gray-400">•</span>
-                                    <span>{responsibility}</span>
-                                </li>
-                            ))}
+                            {jobDetails.responsibilities.map((responsibility, idx) => (
+                                    <li className="flex gap-3" key={idx}>
+                                        <span className="text-gray-400">•</span>
+                                        <span>{responsibility}</span>
+                                    </li>
+                                ))}
                         </ul>
                     </section>
 
@@ -266,8 +266,8 @@ export default function JobDetailsPage() {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900">Requirements/Skills</h2>
                         <ul className="mt-4 space-y-3 text-gray-600">
-                            {jobDetails.qualifications.map(qualification => (
-                                <li className="flex gap-3">
+                            {jobDetails.qualifications.map((qualification, idx) => (
+                                <li className="flex gap-3" key={idx}>
                                     <span className="text-gray-400">•</span>
                                     <span>{qualification}</span>
                                 </li>
@@ -279,8 +279,8 @@ export default function JobDetailsPage() {
                     <section className="mt-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
                         <h2 className="text-xl font-bold text-gray-900">Benefits</h2>
                         <ul className="mt-4 space-y-3 text-gray-600">
-                            {jobDetails.benefits?.map(benefit => (
-                                <li className="flex gap-3">
+                            {jobDetails.benefits?.map((benefit, idx) => (
+                                <li className="flex gap-3" key={idx}>
                                     <span className="text-gray-400">•</span>
                                     <span>{benefit}</span>
                                 </li>

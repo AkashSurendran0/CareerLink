@@ -26,11 +26,11 @@ function AdminSidebar() {
     }, [])
   
     const getSidebarTab = () => {
-        for(const item of sidebarItems) {
-            if(pathname == item.value){
-            setActiveTab(item.label)
-            }
+      for(const item of sidebarItems) {
+        if(pathname && pathname === item.value){
+          setActiveTab(item.label)
         }
+      }
     }
 
     const handleSidebarClick = (label:string, value:string) => {
@@ -44,10 +44,10 @@ function AdminSidebar() {
     <div className="flex z-40">
         {/* Mobile toggle button */}
         <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 m-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden p-2 m-2 rounded-lg bg-gray-100 hover:bg-gray-200"
         >
-            {isOpen ? '' : <Menu className="h-6 w-6" />}
+          {isOpen ? null : <Menu className="h-6 w-6" />}
         </button>
 
         {/* Sidebar */}
@@ -58,10 +58,10 @@ function AdminSidebar() {
             {/* Navigation */}
             <nav className="p-4 space-y-1">
             <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden p-2 m-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden p-2 m-2 rounded-lg bg-gray-100 hover:bg-gray-200"
             >
-                {isOpen? <X className="h-6 w-6"/> : ''}
+              {isOpen ? <X className="h-6 w-6"/> : null}
             </button>
             {sidebarItems.map((item, index) => (
                 <button

@@ -7,9 +7,7 @@ import { userSocket } from "@/lib/socket"
 import { Avatar } from "@mui/material"
 
 interface Props {
-    params: {
-        callId: string
-    }
+    params: Promise<{ callId: string }>
 }
 
 interface CallDetails {
@@ -18,7 +16,7 @@ interface CallDetails {
 }
 
 export default function VoiceCall({ params }: Props) {
-    const { callId } = params
+    const callId = (params as unknown as { callId: string }).callId
     const [callDuration, setCallDuration] = useState(0)
     const [userLeft, setUserLeft] = useState(false)
     const [muteSpeaker, setMuteSpeaker] = useState(false)
@@ -54,12 +52,12 @@ export default function VoiceCall({ params }: Props) {
     }, [callId])
 
     const initializeWebRTC = useCallback(async () => {
-        if (pcRef.current || !callId || isInitialized.current) return
+        if (!callId || isInitialized.current) return
 
         console.log('Inititalizing webrtc..')
 
         if (pcRef.current) {
-            (pcRef.current as any).close()
+            pcRef.current.close()
             pcRef.current = null
         }
 
@@ -398,7 +396,7 @@ export default function VoiceCall({ params }: Props) {
         // Create audio element for remote audio
         const audioEl = new Audio();
         audioEl.autoplay = true;
-        (remoteAudioRef as any).current = audioEl;
+        remoteAudioRef.current = audioEl;
 
         return () => {
             if (audioEl) {

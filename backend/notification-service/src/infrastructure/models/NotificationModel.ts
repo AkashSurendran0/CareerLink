@@ -1,14 +1,14 @@
-import mongoose, {Document, Schema, Model, mongo} from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface INotification extends Document {
-    user:string,
-    content:string,
-    routeTo:string,
-    isRead:boolean,
-    createdAt:Date
+    user: string,
+    content: string,
+    routeTo?: string,
+    isRead: boolean,
+    createdAt?: Date
 }
 
-const notificationSchema: Schema<INotification>=new Schema (
+const notificationSchema: Schema<INotification> = new Schema (
     {
         user:{
             type:String,

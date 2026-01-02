@@ -51,9 +51,9 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
     Proficiency: ${details.proficiency}
     Skills: ${details.skills.join(", ")}
     Education:
-    ${details.education.map(e => `${e.degree} - ${e.university} (${e.passingYear})`).join("\n")}
+    ${details.education.map((e: any) => `${e.degree} - ${e.university} (${e.passingYear})`).join("\n")}
     Experience:
-    ${details.experience.map(ex => `${ex.position} at ${ex.company} (${ex.experience} year(s))`).join("\n")}
+    ${details.experience.map((ex: any) => `${ex.position} at ${ex.company} (${ex.experience} year(s))`).join("\n")}
     LinkedIn: ${details.linkedinLink}
     GitHub: ${details.githubLink}
     

@@ -97,7 +97,7 @@ export default function DashboardPage() {
                             Welcome back, Admin 👋
                             <span className="text-blue-600">👥</span>
                         </h1>
-                        <p className="text-gray-600 mt-1">Here's an overview of what's happening today.</p>
+                        <p className="text-gray-600 mt-1">Here&apos;s an overview of what&apos;s happening today.</p>
                     </div>
                     <div className="text-right">
                     </div>

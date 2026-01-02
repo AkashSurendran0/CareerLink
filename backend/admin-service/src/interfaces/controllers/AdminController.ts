@@ -19,7 +19,7 @@ export class AdminController {
         try {
             const {email, password}=req.body
             const result=await this._adminLogin.findAdmin(email, password)
-            if(result.success){
+            if (result && 'accessToken' in result && 'refreshToken' in result) {
                 res.cookie("token", result.accessToken, {
                     httpOnly: true,
                     secure: false,
@@ -45,9 +45,14 @@ export class AdminController {
 
     checkAdmin = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-email'] as string
-            const result=await this._checkAdmin.checkAdmin(user)
-            res.json({result})
+            const userHeader = req.headers['user-email']
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            if(!user){
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'user-email header missing' })
+                return
+            }
+            const result = await this._checkAdmin.checkAdmin(user)
+            res.json({ result })
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });

@@ -24,7 +24,12 @@ export class NotificationController {
 
     getAllNotifications = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-email'] as string
+            const userHeader = req.headers['user-email']
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            if(!user){
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
+                return
+            }
             const notifications=await this._getAllNotifications.getAllNotifications(user)
             res.json({notifications}) 
         } catch (error: unknown) {
@@ -38,7 +43,12 @@ export class NotificationController {
 
     markAllRead = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-email'] as string
+            const userHeader = req.headers['user-email']
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            if(!user){
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
+                return
+            }
             const result=await this._markAllRead.markAllRead(user)
             res.json({result})
         } catch (error: unknown) {
@@ -52,7 +62,12 @@ export class NotificationController {
 
     deleteAll = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-email'] as string
+            const userHeader = req.headers['user-email']
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            if(!user){
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
+                return
+            }
             const result=await this._deleteAllNotifications.deleteAllNotifications(user)
             res.json({result}) 
         } catch (error: unknown) {
@@ -66,8 +81,13 @@ export class NotificationController {
 
     deleteOne = async (req:Request, res:Response) => {
         try {
-            const {id}=req.query
-            const result=await this._deleteOne.deleteOne(id)
+            const idRaw = req.query.id
+            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === 'string' ? idRaw : undefined)
+            if(!id){
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:'id is required'})
+                return
+            }
+            const result=await this._deleteOne.deleteOne(String(id))
             res.json({result}) 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -80,8 +100,13 @@ export class NotificationController {
 
     readOne = async (req:Request, res:Response) => {
         try {
-            const {id}=req.query
-            const result=await this._markOneRead.markOneRead(id)
+            const idRaw = req.query.id
+            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === 'string' ? idRaw : undefined)
+            if(!id){
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:'id is required'})
+                return
+            }
+            const result=await this._markOneRead.markOneRead(String(id))
             res.json({result}) 
         } catch (error: unknown) {
             if (error instanceof Error) {

@@ -64,7 +64,7 @@ export class CreateCoverLetter implements ICreateCoverLetter {
     HR Name: ${hrName}
     Education: ${finalEducation.join(", ")}
     Experience: ${finalExperiences
-    .map((ex) => `${ex.position} (${ex.span})`)
+    .map((ex: any) => `${ex.position} (${ex.span})`)
     .join(", ")}
     Skills: ${finalSkills.join(", ")}
     Certifications: ${finalCertifications.join(", ")}
