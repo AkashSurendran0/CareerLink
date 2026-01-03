@@ -14,7 +14,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     exposedHeaders: ['set-cookie']
 }))
-app.options('*', cors())
+app.options('/*', cors())
 app.use(cookieParser())
 
 app.use((req, _res, next) => {
