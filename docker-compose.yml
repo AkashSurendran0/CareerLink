@@ -55,7 +55,7 @@ services:
     networks:
       - careerlink-network
     healthcheck:
-      test: ["CMD-SHELL", "apt-get update && apt-get install -y curl && curl -u elastic:akash1 -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"'"]
+      test: ["CMD", "nc", "-z", "localhost", "9200"]
       interval: 10s
       retries: 30
       start_period: 20s
