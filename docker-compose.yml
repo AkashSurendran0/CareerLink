@@ -54,6 +54,13 @@ services:
       - elastic_data:/usr/share/elasticsearch/data
     networks:
       - careerlink-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:akash1 -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"'"]
+      interval: 5s
+      retries: 20
+      start_period: 10s
+      timeout: 5s
+
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -76,11 +83,16 @@ services:
     env_file:
       - ./backend/api-gateway/.env.production
     depends_on:
-      - mongo
-      - redis
-      - postgres
-      - rabbitmq
-      - elastic
+      elastic:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
     ports:
       - "127.0.0.1:5000:5000"
     networks:
@@ -94,6 +106,7 @@ services:
       - ./backend/user-service/.env.production
     depends_on:
       - api-gateway
+      - elastic
     ports:
       - "5001:5001"
     networks:
