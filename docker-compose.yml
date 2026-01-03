@@ -82,7 +82,7 @@ services:
       - rabbitmq
       - elastic
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     networks:
       - careerlink-network
 
@@ -228,7 +228,7 @@ services:
     depends_on:
       - api-gateway
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     networks:
       - careerlink-network
 
