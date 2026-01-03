@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const apiGatewayRoute = process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE || 'http://139.59.88.38:5000'
-const frontedRoute = process.env.NEXT_PUBLIC_FRONTEND_ROUTE || 'http://139.59.88.38:3000'
+const apiGatewayRoute = process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE
+const frontedRoute = process.env.NEXT_PUBLIC_FRONTEND_ROUTE
 
 const api=axios.create({
     baseURL:apiGatewayRoute,

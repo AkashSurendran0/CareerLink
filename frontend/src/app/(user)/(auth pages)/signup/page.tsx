@@ -339,7 +339,7 @@ function Signup() {
                 <div className="w-80 h-80 rounded-lg border-0 flex items-center justify-center">
                     <div className="text-center">
                     <div className="flex justify-center mb-4">
-                        <Image src="/logo.jpeg" alt="" width={300} height={300}/>
+                        <Image src="https://res.cloudinary.com/djhmcbiq9/image/upload/v1767428371/logo_na1hkt.jpg" alt="" width={300} height={300}/>
                     </div>
                     </div>
                 </div>
