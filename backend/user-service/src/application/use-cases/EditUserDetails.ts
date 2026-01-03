@@ -62,6 +62,7 @@ export class EditUserDetails implements IEditUserDetails {
             return { success: true };
         } catch (error) {
             console.log(error)
+             return { success: false}
         }
     }
 
