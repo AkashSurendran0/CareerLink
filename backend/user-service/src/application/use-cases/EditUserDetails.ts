@@ -37,28 +37,32 @@ export class EditUserDetails implements IEditUserDetails {
     constructor(@inject(TYPES.IUserRepository) private _userRepository: IUserRepository, @inject(TYPES.IUserDetailsRepository) private _userDetailsRepository: IUserDetailsRepository) { }
 
     async editUserDetails(details: Details, id: string): Promise<{ success: boolean }> {
-        await this._userRepository.editUserName(id, details.username);
-        await elasticClient.update({
-            index: "users",
-            id: id,
-            doc: {
-                username: details.username
-            }
-        });
-        const updationDetails = {
-            profilePicture: details.profilePicture,
-            gender: details.gender,
-            aboutMe: details.aboutMe,
-            location: details.location,
-            proficiency: details.proficiency,
-            skills: typeof details.skills === "string" ? JSON.parse(details.skills) : details.skills,
-            education: typeof details.education === "string" ? JSON.parse(details.education) : details.education,
-            experience: typeof details.experience === "string" ? JSON.parse(details.experience) : details.experience,
-            linkedinLink: details.linkedinLink,
-            githubLink: details.githubLink,
-        };
-        await this._userDetailsRepository.editUserDetails(id, updationDetails);
-        return { success: true };
+        try {
+            await this._userRepository.editUserName(id, details.username);
+            await elasticClient.update({
+                index: "users",
+                id: id,
+                doc: {
+                    username: details.username
+                }
+            });
+            const updationDetails = {
+                profilePicture: details.profilePicture,
+                gender: details.gender,
+                aboutMe: details.aboutMe,
+                location: details.location,
+                proficiency: details.proficiency,
+                skills: typeof details.skills === "string" ? JSON.parse(details.skills) : details.skills,
+                education: typeof details.education === "string" ? JSON.parse(details.education) : details.education,
+                experience: typeof details.experience === "string" ? JSON.parse(details.experience) : details.experience,
+                linkedinLink: details.linkedinLink,
+                githubLink: details.githubLink,
+            };
+            await this._userDetailsRepository.editUserDetails(id, updationDetails);
+            return { success: true };
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }
