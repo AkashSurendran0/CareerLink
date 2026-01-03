@@ -17,7 +17,7 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.896.0",
-    "@elastic/elasticsearch": "^9.1.1",
+    "@elastic/elasticsearch": "^8.19.1",
     "amqplib": "^0.10.9",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
