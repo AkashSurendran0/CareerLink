@@ -5,7 +5,11 @@ const frontedRoute = process.env.NEXT_PUBLIC_FRONTEND_ROUTE
 
 const api=axios.create({
     baseURL:apiGatewayRoute,
-    withCredentials:true
+    withCredentials:true,
+    headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+    }
 })
 
 api.interceptors.request.use(

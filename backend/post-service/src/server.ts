@@ -7,6 +7,7 @@ const app=express()
 
 dbConnect()
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/v1', PostRoutes)
 
