@@ -10,8 +10,8 @@ export class Mailer {
         this._transporter=nodemailer.createTransport({
             service:"gmail",
             auth:{
-                user:"achusnjr11@gmail.com",
-                pass:"vbwy yumg cwko hksa"
+                user:"akashsurendran.personal@gmail.com",
+                pass:"ymdh aajo yivn adir"
             }
         });
     }
