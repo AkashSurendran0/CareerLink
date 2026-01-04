@@ -27,7 +27,7 @@ export class Mailer {
             text
         };
         try {
-            
+            console.log("Sending mail...", mailOptions);
             const info=await this._transporter.sendMail(mailOptions);
             logger.info("Mail send");
             return info;
