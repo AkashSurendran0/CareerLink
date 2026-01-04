@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 
 const publicRoutes = ['/', '/login', '/signup', '/resetPassword']
+const authOnlyRoutes = ['/login', '/signup', '/resetPassword']
 
 export default function AuthGuard({
   children,
@@ -18,27 +19,36 @@ export default function AuthGuard({
     const checkAuth = async () => {
       const isPublicRoute = publicRoutes.includes(pathname)
 
+      if (isPublicRoute) {
+        if (authOnlyRoutes.includes(pathname)) {
+          try {
+            const res = await fetch('/api/me', { credentials: 'include' })
+            if (res.ok) {
+              router.replace('/feed')
+              return
+            }
+          } catch {}
+        }
+
+        setLoading(false)
+        return
+      }
+
       try {
         const res = await fetch('/api/me', {
           credentials: 'include',
         })
 
-        if (!res.ok && !isPublicRoute) {
+        if (!res.ok) {
           router.replace('/login')
-          return
-        }
-
-        if (res.ok && pathname !== '/' && ['/login', '/signup', '/resetPassword'].includes(pathname)) {
-          router.replace('/feed')
           return
         }
       } catch {
-        if (!isPublicRoute) {
-          router.replace('/login')
-        }
-      } finally {
-        setLoading(false)
+        router.replace('/login')
+        return
       }
+
+      setLoading(false)
     }
 
     checkAuth()

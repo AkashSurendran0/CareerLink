@@ -44,7 +44,7 @@ export default function SettingsPage() {
     const handleLogout = async () => {
         const result=await userLogout()
         if(result.success){
-            router.push('/login')
+            router.replace('/login')
         }
         console.log("User logged out")
     }
