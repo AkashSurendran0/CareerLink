@@ -214,6 +214,7 @@ export default function EditProfile() {
         if (detailsForm.profilePicture) {
             formData.append("profilePicture", detailsForm.profilePicture);
         }
+        console.log(updatedForm)
         setDetailsForm(updatedForm)
         const result=await editUserDetails(formData)
         if(result.success) router.push('/profile/user')
