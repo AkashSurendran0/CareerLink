@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import path from 'path'
 
 const publicRoutes = ['/', '/login', '/signup', '/resetPassword']
 const authOnlyRoutes = ['/login', '/signup', '/resetPassword']
@@ -18,7 +19,7 @@ export default function AuthGuard({
   useEffect(() => {
     const checkAuth = async () => {
       const isPublicRoute = publicRoutes.includes(pathname)
-
+        console.log(pathname)
       if (isPublicRoute) {
         if (authOnlyRoutes.includes(pathname)) {
           try {
