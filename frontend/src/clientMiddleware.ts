@@ -18,13 +18,11 @@ export default function AuthGuard({
     const token = Cookies.get('token')
     const isPublicRoute = publicRoutes.includes(pathname)
 
-    if (!token && !isPublicRoute) {
-      router.replace('/login')
+    if(!token && !isPublicRoute) {
+      router.push('/login')
       return
-    }
-
-    if (token && isPublicRoute) {
-      router.replace('/feed')
+    }else if(token && isPublicRoute) {
+      router.push('/feed')
       return
     }
 
