@@ -6,12 +6,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-console.log("CLIENT_ID:", CLIENT_ID);
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
-console.log("CLIENT_SECRET:", CLIENT_SECRET);
 const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN || "";
-console.log("REFRESH_TOKEN:", REFRESH_TOKEN);
 const SENDER_EMAIL = process.env.SENDER_EMAIL || "akashsurendran.personal@gmail.com";
 
 @injectable()
@@ -38,7 +35,6 @@ export class Mailer {
     private async initializeTransporter() {
         try {
             const tokenResponse = await this._oAuth2Client.getAccessToken();
-            console.log("Token Response:", tokenResponse);
             const accessToken = tokenResponse?.token || "";
 
             this._transporter = nodemailer.createTransport({
