@@ -39,7 +39,7 @@ export class UserController {
         try {
             const { email, password } = req.body;
             const result = await this._loginUser.execute(email, password);
-            if (result.success && 'token' in result) {
+            if (result.success && "token" in result) {
                 res.cookie("token", (result as any).token, {
                     httpOnly: true,
                     secure: false,
@@ -67,7 +67,7 @@ export class UserController {
         try {
             const { username, email, password } = req.body;
             const token = await this._signupUser.createUser(username, email, password);
-            if (token.success && 'token' in token) {
+            if (token.success && "token" in token) {
                 res.cookie("token", (token as any).token, {
                     httpOnly: true,
                     secure: false,
@@ -93,10 +93,8 @@ export class UserController {
 
     sendOtp = async (req: Request, res: Response): Promise<void> => {
         try {
-            console.log(10)
             const { email } = req.body;
             const result = await this._sendOTP.mailOtp(email);
-            console.log(11)
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -158,7 +156,7 @@ export class UserController {
                 if (!user) continue;
                 const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/subscription/v1/getSubscriptionInfo?user=${user.id}`);
                 // @ts-ignore
-                user.isVip = result?.data?.result?.success
+                user.isVip = result?.data?.result?.success;
             }
             res.json({ users });
         } catch (error: unknown) {
@@ -224,13 +222,13 @@ export class UserController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getUserDetailsByEmail = async (req: Request, res: Response) => {
         try {
-            const { email } = req.query as { email: string }
-            const result = await this._getUserNames.getUserNamesByEmail(email)
-            res.json({ result })
+            const { email } = req.query as { email: string };
+            const result = await this._getUserNames.getUserNamesByEmail(email);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -238,13 +236,13 @@ export class UserController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getUserInfo = async (req: Request, res: Response) => {
         try {
-            const { user } = req.query as { user: string }
-            const result = await this._getUserNames.getUserInfo(user)
-            res.json({ result })
+            const { user } = req.query as { user: string };
+            const result = await this._getUserNames.getUserInfo(user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -318,6 +316,6 @@ export class UserController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
 }
