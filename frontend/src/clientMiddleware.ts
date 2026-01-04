@@ -14,19 +14,23 @@ export default function AuthGuard({
   const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
-    const token = Cookies.get('token')
-    const isPublicRoute = publicRoutes.includes(pathname)
+  const token = Cookies.get('token')
 
-    if(!token && !isPublicRoute) {
-      router.push('/login')
-      return
-    }else if(token && isPublicRoute) {
-      router.push('/feed')
+  useEffect(() => {
+    const path = pathname ?? '/'
+    const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(route + '/'))
+
+    if (!token && !isPublicRoute) {
+      router.replace('/login')
       return
     }
 
-  }, [pathname, router])
+    if (token && isPublicRoute) {
+      router.replace('/feed')
+      return
+    }
+
+  }, [pathname, router, token])
 
   return children
 }
