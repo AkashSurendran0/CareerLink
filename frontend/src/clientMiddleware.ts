@@ -1,36 +1,43 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import Cookies from 'js-cookie'
 
-const publicRoutes = ['/login', '/resetPassword', '/signup']
+const publicRoutes = ['/login', '/signup', '/resetPassword']
 
-export default function AuthGuard({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-    const router = useRouter()
-    const pathname = usePathname()
+export default function AuthGuard({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        const token = Cookies.get('token')
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/me', {
+          credentials: 'include',
+        })
+
         const isPublicRoute = publicRoutes.includes(pathname)
-        console.log('debug', token, isPublicRoute, pathname)
-        if(token && !isPublicRoute) return
 
-        if (!token && !isPublicRoute) {
+        if (!res.ok && !isPublicRoute) {
+          router.replace('/login')
+          return
+        }
+
+        if (res.ok && isPublicRoute) {
+          router.replace('/feed')
+          return
+        }
+      } catch {
         router.replace('/login')
-        return
-        }
+      } finally {
+        setLoading(false)
+      }
+    }
 
-        if (token && isPublicRoute) {
-        router.replace('/feed')
-        return
-        }
+    checkAuth()
+  }, [pathname, router])
 
-    }, [pathname, router])
-
-    return children
+  if (loading) return null
+  return children
 }
