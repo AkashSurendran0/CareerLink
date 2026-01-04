@@ -107,8 +107,6 @@ services:
     depends_on:
       - api-gateway
       - elastic
-    ports:
-      - "5001:5001"
     networks:
       - careerlink-network
 
@@ -120,8 +118,6 @@ services:
       - ./backend/admin-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5002:5002"
     networks:
       - careerlink-network
 
@@ -133,8 +129,6 @@ services:
       - ./backend/company-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5003:5003"
     networks:
       - careerlink-network
 
@@ -146,8 +140,6 @@ services:
       - ./backend/notification-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5004:5004"
     networks:
       - careerlink-network
 
@@ -159,8 +151,6 @@ services:
       - ./backend/job-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5005:5005"
     networks:
       - careerlink-network
 
@@ -172,8 +162,6 @@ services:
       - ./backend/resume-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5006:5006"
     networks:
       - careerlink-network
 
@@ -185,8 +173,6 @@ services:
       - ./backend/post-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5007:5007"
     networks:
       - careerlink-network
 
@@ -198,8 +184,6 @@ services:
       - ./backend/subscription-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5008:5008"
     networks:
       - careerlink-network
 
@@ -211,8 +195,6 @@ services:
       - ./backend/chat-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5009:5009"
     networks:
       - careerlink-network
 
@@ -224,8 +206,6 @@ services:
       - ./backend/report-service/.env.production
     depends_on:
       - api-gateway
-    ports:
-      - "5010:5010"
     networks:
       - careerlink-network
 
