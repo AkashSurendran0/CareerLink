@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Cookies from 'js-cookie'
 
+const publicRoutes = ['/login', '/resetPassword', '/signup']
+
 export default function AuthGuard({
   children,
 }: {
@@ -14,14 +16,18 @@ export default function AuthGuard({
 
   useEffect(() => {
     const token = Cookies.get('token')
+    const isPublicRoute = publicRoutes.includes(pathname)
 
-    if (!token && pathname !== '/login') {
+    if (!token && !isPublicRoute) {
       router.replace('/login')
+      return
     }
 
-    if (token && pathname === '/login') {
+    if (token && isPublicRoute) {
       router.replace('/feed')
+      return
     }
+
   }, [pathname, router])
 
   return children
