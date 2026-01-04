@@ -53,7 +53,6 @@ export class UserDetailsController {
         try {
             const userId = req.headers["user-id"] as string;
             let imageUrl: string | undefined;
-            console.log(req.file);
             if (req.file) {
                 // @ts-ignore
                 imageUrl = await uploadImageToS3(req.file.buffer, req.file.mimetype.split("/")[1]);
@@ -62,7 +61,6 @@ export class UserDetailsController {
             if (imageUrl) {
                 details.profilePicture = imageUrl;
             }
-            return console.log(details);
             await this._editUserDetails.editUserDetails(details, userId);
             res.json({ success: true });
         } catch (error: unknown) {
