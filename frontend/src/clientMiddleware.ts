@@ -11,32 +11,26 @@ export default function AuthGuard({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
+    const router = useRouter()
+    const pathname = usePathname()
 
-  const token = Cookies.get('token')
+    useEffect(() => {
+        const token = Cookies.get('token')
+        const isPublicRoute = publicRoutes.includes(pathname)
 
-  useEffect(() => {
-    const path = pathname ?? '/'
-    const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(route + '/'))
+        if(token && !isPublicRoute) return
 
+        if (!token && !isPublicRoute) {
+        router.replace('/login')
+        return
+        }
 
-      console.debug('[AuthGuard]', { path, token: !!token, tokenValue: token, isPublicRoute })
+        if (token && isPublicRoute) {
+        router.replace('/feed')
+        return
+        }
 
-    // If already on feed, don't redirect away
-    if (path === '/feed') return
+    }, [pathname, router])
 
-    if (!token && !isPublicRoute) {
-      router.replace('/login')
-      return
-    }
-
-    if (token && isPublicRoute) {
-      router.replace('/feed')
-      return
-    }
-
-  }, [pathname, router, token])
-
-  return children
+    return children
 }
