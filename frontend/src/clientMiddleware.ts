@@ -20,6 +20,12 @@ export default function AuthGuard({
     const path = pathname ?? '/'
     const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(route + '/'))
 
+
+      console.debug('[AuthGuard]', { path, token: !!token, tokenValue: token, isPublicRoute })
+
+    // If already on feed, don't redirect away
+    if (path === '/feed') return
+
     if (!token && !isPublicRoute) {
       router.replace('/login')
       return
