@@ -17,7 +17,7 @@ export default function AuthGuard({
     useEffect(() => {
         const token = Cookies.get('token')
         const isPublicRoute = publicRoutes.includes(pathname)
-
+        console.log('debug', token, isPublicRoute, pathname)
         if(token && !isPublicRoute) return
 
         if (!token && !isPublicRoute) {
