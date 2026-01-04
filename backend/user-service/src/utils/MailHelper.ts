@@ -17,6 +17,7 @@ export class Mailer {
     }
 
     async sendMail(to:string, subject:string, text:string){
+        console.log(to, subject, text);
         const mailOptions={
             from: "CareerLink@gmail.com",
             to,
