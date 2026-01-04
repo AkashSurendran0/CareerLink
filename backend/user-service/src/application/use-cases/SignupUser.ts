@@ -64,6 +64,7 @@ export class SendOTP implements ISendOTP {
     constructor(@inject(TYPES.Mailer) private _mailer: Mailer, @inject(TYPES.IUserRepository) private _userRepository: IUserRepository) { }
 
     async mailOtp(email: string): Promise<{ success: boolean, otp: number } | { success: boolean, message: string }> {
+        console.log(1)
         const userExists = await this._userRepository.findByEmail(email);
         if (userExists) {
             return {
@@ -71,6 +72,7 @@ export class SendOTP implements ISendOTP {
                 message: "User already exists"
             };
         }
+        console.log(2)
         const otp = Math.floor(100000 + Math.random() * 900000);
         const data = {
             to: email,
@@ -83,9 +85,12 @@ export class SendOTP implements ISendOTP {
                     Thanks,  
                     The CareerLink Team 🚀`
         };
+        console.log(3)
         await this._mailer.sendMail(data.to, data.subject, data.text);
         const cacheKey = `keyFor${email}`;
+        console.log(4)
         await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60);
+        console.log(5)
         return {
             success: true,
             otp

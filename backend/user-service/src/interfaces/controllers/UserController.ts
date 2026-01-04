@@ -93,8 +93,10 @@ export class UserController {
 
     sendOtp = async (req: Request, res: Response): Promise<void> => {
         try {
+            console.log(10)
             const { email } = req.body;
             const result = await this._sendOTP.mailOtp(email);
+            console.log(11)
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
