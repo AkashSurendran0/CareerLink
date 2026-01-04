@@ -21,6 +21,25 @@ export class UserDetailsController {
     insertUserDetails = async (req: Request, res: Response): Promise<void> => {
         try {
             const details = req.body;
+            // Ensure profilePicture is a string. Some clients may send an object
+            // (for example an existing object or parsed JSON). Coerce safely
+            // to a URL string or fallback to JSON string.
+            if (details && details.profilePicture && typeof details.profilePicture !== "string") {
+                const pfp = details.profilePicture;
+                if (pfp.url) {
+                    details.profilePicture = pfp.url;
+                } else if (pfp.secure_url) {
+                    details.profilePicture = pfp.secure_url;
+                } else if (pfp.Location) {
+                    details.profilePicture = pfp.Location;
+                } else {
+                    try {
+                        details.profilePicture = JSON.stringify(pfp);
+                    } catch {
+                        details.profilePicture = String(pfp);
+                    }
+                }
+            }
             const userEmail = req.headers["user-email"] as string;
             await this._addUserDetails.addUserDetails(details, userEmail);
             res.json({ success: true });
