@@ -17,6 +17,7 @@
     "amqplib": "^0.10.9",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "googleapis": "^169.0.0",
     "inversify": "^7.10.3",
     "mongoose": "^8.19.1",
     "nodemailer": "^7.0.9",
