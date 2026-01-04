@@ -236,7 +236,7 @@ services:
     container_name: frontend
     environment:
       - JWT_SECRET=careerlinkJWT
-      - API_GATEWAY_ROUTE=https://careerlink.ddns.net/api
+      - API_GATEWAY_ROUTE=https://careerlink.ddns.net/backend
     restart: always
     depends_on:
       - api-gateway
