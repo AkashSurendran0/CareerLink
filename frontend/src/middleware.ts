@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Early return for public paths to avoid unnecessary processing
-  const publicPaths = ['/login', '/signup', '/resetPassword', '/sessionOver', '/blocked'];
+  const publicPaths = ['/','/login', '/signup', '/resetPassword', '/sessionOver', '/blocked'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
   
   // Handle admin routes separately
@@ -28,7 +28,7 @@ export async function middleware(req: NextRequest) {
 
   // Public paths don't need authentication checks
   if (isPublicPath) {
-    if (token && (pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/resetPassword"))) {
+    if (token && pathname!='/' && (pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/resetPassword"))) {
       return NextResponse.redirect(new URL("/feed", req.url));
     }
     return NextResponse.next();
