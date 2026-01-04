@@ -8,10 +8,12 @@ export class Mailer {
 
     constructor(){
         this._transporter=nodemailer.createTransport({
-            service:"gmail",
+            host: "smtp.gmail.com",
+            port: 465, // SSL port
+            secure: true,
             auth:{
                 user:"akashsurendran.personal@gmail.com",
-                pass:"ymdh aajo yivn adir"
+                pass:"spqk wnxi hmtj zznl"
             }
         });
     }
@@ -24,9 +26,13 @@ export class Mailer {
             subject,
             text
         };
-
-        const info=await this._transporter.sendMail(mailOptions);
-        logger.info("Mail send");
-        return info;
+        try {
+            
+            const info=await this._transporter.sendMail(mailOptions);
+            logger.info("Mail send");
+            return info;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

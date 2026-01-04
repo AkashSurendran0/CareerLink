@@ -11,7 +11,7 @@ export class Mailer {
             service:"gmail",
             auth:{
                 user:"akashsurendran.personal@gmail.com",
-                pass:"ymdh aajo yivn adir"
+                pass:"spqk wnxi hmtj zznl"
             }
         });
     }
