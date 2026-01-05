@@ -17,6 +17,12 @@ export default function AuthGuard({
 
   useEffect(() => {
     const checkAuth = async () => {
+
+      if (pathname.startsWith('/admin')) {
+        setLoading(false)
+        return
+      }
+
       const isPublicRoute = publicRoutes.includes(pathname)
       console.log('AuthGuard check:', pathname, isPublicRoute)
 
