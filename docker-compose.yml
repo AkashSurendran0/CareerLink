@@ -107,6 +107,8 @@ services:
     depends_on:
       - api-gateway
       - elastic
+    ports:
+      - "5001:5001"
     networks:
       - careerlink-network
 
@@ -140,6 +142,8 @@ services:
       - ./backend/notification-service/.env.production
     depends_on:
       - api-gateway
+    ports:
+      - "5004:5004"
     networks:
       - careerlink-network
 
