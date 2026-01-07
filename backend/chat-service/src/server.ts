@@ -1,18 +1,18 @@
-import express from 'express';
-import ChatRoutes from './routes/ChatRoutes'
-import { dbConnect } from './infrastructure/database/Mongoose';
-import { rabbitmqService } from './utils/Rabbitmq';
-import { logger } from './utils/logger';
+import express from "express";
+import ChatRoutes from "./routes/ChatRoutes";
+import { dbConnect } from "./infrastructure/database/Mongoose";
+import { rabbitmqService } from "./utils/Rabbitmq";
+import { logger } from "./utils/logger";
 
-const app=express()
-dbConnect()
-rabbitmqService.connect()
+const app=express();
+dbConnect();
+rabbitmqService.connect();
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/v1', ChatRoutes)
+app.use("/v1", ChatRoutes);
 
 app.listen(5009, ()=>{
-    logger.info('Chat service running')
-})
+    logger.info("Chat service running");
+});

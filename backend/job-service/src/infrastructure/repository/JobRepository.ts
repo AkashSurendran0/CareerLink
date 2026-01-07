@@ -1,7 +1,8 @@
-import mongoose from 'mongoose'
-import { Job } from "../../domain/enitity/Job"
-import { IJobRepository } from "../../domain/repositories/IJobRepository"
-import { JobModel } from "../model/JobModel"
+import mongoose from "mongoose";
+import { Job } from "../../domain/enitity/Job";
+import { IJobRepository } from "../../domain/repositories/IJobRepository";
+import { JobModel, IJobDetails } from "../model/JobModel";
+import mongoose from "mongoose";
 
 type JobDetails = {
     jobTitle: string,
@@ -19,8 +20,8 @@ type JobDetails = {
 export class JobRepository implements IJobRepository {
 
     async addJob(jobDetails: JobDetails, id: string): Promise<{ success: boolean }> {
-        // create() at DB boundary; using `any` for DB result
-        const created: any = await JobModel.create({
+        // create() at DB boundary; cast result to model type when needed
+        const created = await JobModel.create({
             company: id,
             open: true,
             jobTitle: jobDetails.jobTitle,
@@ -33,21 +34,21 @@ export class JobRepository implements IJobRepository {
             benefits: jobDetails.finalBenefits ?? [],
             experienceLevel: jobDetails.experienceLevel,
             deadline: jobDetails.applicationDeadline
-        })
+        });
         // created saved; return success
-        return { success: true }
+        return { success: true };
     }
 
     async getAllJobs(id: string, filter: string): Promise<Job[]> {
-        let jobs: any[]
-        if (filter == 'all') {
-            jobs = await JobModel.find({ company: id }).lean().exec()
-        } else if (filter == 'open') {
-            jobs = await JobModel.find({ company: id, open: true }).lean().exec()
+        let jobs: IJobDetails[];
+        if (filter == "all") {
+            jobs = await JobModel.find({ company: id }).lean().exec() as unknown as IJobDetails[];
+        } else if (filter == "open") {
+            jobs = await JobModel.find({ company: id, open: true }).lean().exec() as unknown as IJobDetails[];
         } else {
-            jobs = await JobModel.find({ company: id, open: false }).lean().exec()
+            jobs = await JobModel.find({ company: id, open: false }).lean().exec() as unknown as IJobDetails[];
         }
-        return jobs.map((job: any) =>
+        return jobs.map((job) =>
             new Job(
                 String(job._id),
                 job.company,
@@ -64,14 +65,14 @@ export class JobRepository implements IJobRepository {
                 job.deadline,
                 job.createdAt
             )
-        )
+        );
     }
 
     async findDetails(id: string): Promise<Job> {
-        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
-        const job: any = await JobModel.findOne(filter).lean().exec()
+        const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
+        const job = await JobModel.findOne(filter).lean().exec() as unknown as IJobDetails | null;
         if (!job) {
-            throw new Error("Job not found")
+            throw new Error("Job not found");
         }
         return new Job(
             String(job._id),
@@ -88,40 +89,40 @@ export class JobRepository implements IJobRepository {
             job.experienceLevel,
             job.deadline,
             job.createdAt
-        )
+        );
     }
 
-    async editJob(jobDetails: any): Promise<{ success: boolean; }> {
-        const filter: any = mongoose.Types.ObjectId.isValid(jobDetails._id) ? { _id: new mongoose.Types.ObjectId(jobDetails._id) } : { _id: jobDetails._id }
+    async editJob(jobDetails: Record<string, unknown> & { _id: string }): Promise<{ success: boolean; }> {
+        const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(jobDetails._id) ? { _id: new mongoose.Types.ObjectId(jobDetails._id) } : { _id: jobDetails._id };
         await JobModel.updateOne(
             filter,
             {
                 $set: jobDetails
             }
-        )
-        return { success: true }
+        );
+        return { success: true };
     }
 
     async closeJob(id: string): Promise<{ success: boolean; }> {
-        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
+        const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
         await JobModel.updateOne(
             filter,
             {
                 $set: { open: false }
             }
-        )
-        return { success: true }
+        );
+        return { success: true };
     }
 
     async getAvailableJobs(query: string): Promise<Job[]> {
-        let jobs: any[]
+        let jobs: IJobDetails[];
         if (query) {
             jobs = await JobModel.find({
                 open: true,
-                jobTitle: { $regex: new RegExp(query, 'i') }
-            }).lean().exec()
+                jobTitle: { $regex: new RegExp(query, "i") }
+            }).lean().exec() as unknown as IJobDetails[];
         } else {
-            jobs = await JobModel.find({ open: true }).lean().exec()
+            jobs = await JobModel.find({ open: true }).lean().exec() as unknown as IJobDetails[];
         }
         return jobs.map(job =>
             new Job(
@@ -140,21 +141,21 @@ export class JobRepository implements IJobRepository {
                 job.deadline,
                 job.createdAt
             )
-        )
+        );
     }
 
     async getQueryJobs(id: string, start: number, limit: number, query: string | undefined, filter: string): Promise<Job[]> {
-        let jobs: any[]
-        const matchBase: any = { company: `${id}` }
-        if (query) matchBase.jobTitle = { $regex: new RegExp(query, 'i') }
-        if (filter === 'open') matchBase.open = true
-        if (filter === 'closed') matchBase.open = false
+        let jobs: Array<Record<string, unknown>>;
+        const matchBase: Record<string, unknown> = { company: `${id}` };
+        if (query) matchBase.jobTitle = { $regex: new RegExp(query, "i") };
+        if (filter === "open") matchBase.open = true;
+        if (filter === "closed") matchBase.open = false;
 
         jobs = await JobModel.aggregate([
             { $match: matchBase },
             { $skip: (start - 1) * limit },
             { $limit: limit }
-        ])
+        ]);
 
         return jobs.map(job =>
             new Job(
@@ -173,19 +174,19 @@ export class JobRepository implements IJobRepository {
                 job.deadline,
                 job.createdAt
             )
-        )
+        );
     }
 
-    async getJobAnalytics(): Promise<any> {
+    async getJobAnalytics(): Promise<Array<{ _id: string; count: number }>> {
         const result = await JobModel.aggregate([
             {
                 $group: {
-                    _id: '$company',
+                    _id: "$company",
                     count: { $sum: 1 }
                 },
             }
-        ])
-        return result
+        ]);
+        return result;
     }
 
 }

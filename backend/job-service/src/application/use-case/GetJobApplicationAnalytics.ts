@@ -10,9 +10,9 @@ export class GetJobApplicationAnalytics implements IGetJobApplicationAnalytics {
         @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository
     ){}
 
-    async getJobApplicationAnalytics(): Promise<any> {
-        const result=await this._jobApplicationRepository.getJobApplicationAnalytics()
-        return result
+    async getJobApplicationAnalytics(): Promise<Array<{ month:number; count:number }>> {
+        const result=await this._jobApplicationRepository.getJobApplicationAnalytics();
+        return result;
     }
 
 }

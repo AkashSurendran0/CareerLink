@@ -1,11 +1,11 @@
-import { UserDTO } from "../../dto/UserDTO"
+import { UserDTO } from "../../dto/UserDTO";
 
 export interface IChangePass {
     changePass(email: string, password: string): Promise<{ token: string, refreshToken: String }>
 }
 
 export interface ISendResetOtp {
-    mailOtp(email: string): Promise<{ success: boolean, message: string } | { success: boolean, otp: number }>
+    mailOtp(email: string): Promise<{ success: boolean, message: string } | { success: boolean}>
 }
 
 export interface IGoogleLogin {
@@ -21,7 +21,7 @@ export interface ISignupUser {
 }
 
 export interface ISendOTP {
-    mailOtp(email: string): Promise<{ success: boolean, otp: number } | { success: boolean, message: string }>
+    mailOtp(email: string): Promise<{ success: boolean} | { success: boolean, message: string }>
 }
 
 export interface IGetAllUsers {
@@ -29,7 +29,7 @@ export interface IGetAllUsers {
 }
 
 export interface IVerifyOTP {
-    verifyOtp(email: string): Promise<{ success: boolean, otp: string } | { success: boolean, message: string }>
+    verifyOtp(email: string, otp:string): Promise<{ success: boolean, match: boolean } | { success: boolean, message: string }>
 }
 
 export interface IAlterUserStatus {
@@ -41,9 +41,9 @@ export interface ICheckUserBlock {
 }
 
 export interface IGetUserNames {
-    getUserNames(id: string): Promise<any>
-    getUserNamesByEmail(email: string): Promise<any>
-    getUserInfo(email: string): Promise<any>
+    getUserNames(id: string): Promise<{ result: import("../../domain/entities/User").User | null; pfp?: string | null }>
+    getUserNamesByEmail(email: string): Promise<{ result: import("../../domain/entities/User").User | null; pfp?: string | null }>
+    getUserInfo(email: string): Promise<import("../../domain/entities/User").User | null>
 }
 
 export interface ISendWarningMail {
@@ -51,7 +51,7 @@ export interface ISendWarningMail {
 }
 
 export interface IGetUserAnalytics {
-    getUserAnalytics(): Promise<any>
+    getUserAnalytics(): Promise<Array<{ month: string; count: number }>>
 }
 
 export interface IGetTotalUserCount {

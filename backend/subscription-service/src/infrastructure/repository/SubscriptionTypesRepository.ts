@@ -4,31 +4,32 @@ import { SubscriptionTypesModel } from "../models/SubscriptionTypeModel";
 import { Features, SubscriptionType } from "../../domain/entity/SubscriptionType";
 
 type Feature = {
-  text: string;
-  code: string;
+    text: string;
+    code: string;
 };
 
 type SubscriptionData = {
-    planName:string,
-    amount:number,
-    features:Feature[]
-    status:boolean
+        name: string;
+        amount: number;
+        billingCycle: number;
+        features: Feature[];
+        active: boolean;
 }
 
 @injectable()
 export class SubscriptionTypesRepository implements ISubscriptionTypesRepository {
 
     async addSubscription(data: SubscriptionData): Promise<{ success: boolean; }> {
-        await SubscriptionTypesModel.insertOne(data as any)
-        return {success:true}
+        await SubscriptionTypesModel.insertOne(data);
+        return {success:true};
     }
 
     async getAllPlans(): Promise<SubscriptionType[]> {
-        const plans=await SubscriptionTypesModel.find().lean()
+        const plans=await SubscriptionTypesModel.find().lean();
         const allPlans=plans.map(plan=>{
             const features=plan.features.map(
                 f=>new Features(f.text, f.code)
-            )
+            );
 
             return new SubscriptionType (
                 plan._id.toString(),
@@ -37,28 +38,28 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
                 plan.billingCycle,
                 features,
                 plan.active
-            )
-        })
+            );
+        });
 
-        return allPlans
+        return allPlans;
     }
 
     async alterPlanStatus(id: string): Promise<{ success: boolean; }> {
-        const plan=await SubscriptionTypesModel.findById(id)
-        if(!plan) return {success:false}
+        const plan=await SubscriptionTypesModel.findById(id);
+        if(!plan) return {success:false};
         await SubscriptionTypesModel.findByIdAndUpdate(
             id,
             {active:!plan.active}
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async getActivePlans(): Promise<SubscriptionType[]> {
-        const plans=await SubscriptionTypesModel.find({active:true}).lean()   
+        const plans=await SubscriptionTypesModel.find({active:true}).lean();   
         const allPlans=plans.map(plan=>{
             const features=plan.features.map(
                 f=>new Features(f.text, f.code)
-            )
+            );
 
             return new SubscriptionType (
                 plan._id.toString(),
@@ -67,20 +68,20 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
                 plan.billingCycle,
                 features,
                 plan.active
-            )
-        }) 
+            );
+        }); 
 
-        return allPlans
+        return allPlans;
     }
 
     async findById(id: string): Promise<SubscriptionType> {
-        const details=await SubscriptionTypesModel.findById(id).lean()
+        const details=await SubscriptionTypesModel.findById(id).lean();
         if(!details) {
             throw new Error("Subscription type not found");
         }
         const features=details.features.map(
             f=>new Features(f.text, f.code)
-        )
+        );
         return new SubscriptionType(
             details._id.toString(),
             details.name,
@@ -88,17 +89,16 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
             details.billingCycle,
             features,
             details.active
-        )
+        );
     }
 
     async deleteType(id: string): Promise<{ success: true; }> {
-        await SubscriptionTypesModel.deleteOne({_id:id})
-        return {success:true}
+        await SubscriptionTypesModel.deleteOne({_id:id});
+        return {success:true};
     }
 
-    async editPlan(data: { planName: string; amount: number; features: { text: string; code: string; }[]; status: boolean; }): Promise<{ success: boolean; }> {
-        // Database boundary: using any to handle runtime data structure
-        const editData = data as any;
+    async editPlan(data: { _id: string; name: string; amount: number; billingCycle: number; features: Feature[]; active: boolean; }): Promise<{ success: boolean; }> {
+        const editData = data;
         await SubscriptionTypesModel.findByIdAndUpdate(
             editData._id,
             {$set:{
@@ -108,8 +108,8 @@ export class SubscriptionTypesRepository implements ISubscriptionTypesRepository
                 features:editData.features,
                 active:editData.active
             }}
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
 }

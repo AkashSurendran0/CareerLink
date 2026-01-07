@@ -1,4 +1,4 @@
-import { Post } from "../entity/Post"
+import { Post } from "../entity/Post";
 
 export interface IPostRepository {
     addPost(url:string | null, content:string | null, user:string): Promise<Post>
@@ -7,5 +7,5 @@ export interface IPostRepository {
     addComment(data: { comment: string; post: string; }, user: string): Promise<Post>
     getById(id:string): Promise<Post>
     getAllUserPosts(user:string): Promise<Post[]>
-    deletePost(id:string): Promise<any>
+    deletePost(id:string): Promise<void>
 }

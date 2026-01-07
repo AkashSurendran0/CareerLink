@@ -13,8 +13,17 @@ export class GetPreviousUserReports implements IGetPreviousUserReports {
     ){}
 
     async getPreviousReports(id: string): Promise<ReportDto[]> {
-        const result=await this._reportRepository.getPreviousUserReports(id)
-        return result.map((report:any)=>ReportMapper.toDTO(report))
+        const result=await this._reportRepository.getPreviousUserReports(id);
+        return result.map((report)=>ReportMapper.toDTO({
+            id: report.id,
+            reportedBy: report.reportedBy ?? null,
+            reportedChat: report.reportedChat ?? null,
+            reportedAccount: report.reportedAccount ?? null,
+            reason: report.reason,
+            status: report.status,
+            createdAt: report.createdAt,
+            reportedCompany: report.reportedCompany ?? null
+        }));
     }
 
 }

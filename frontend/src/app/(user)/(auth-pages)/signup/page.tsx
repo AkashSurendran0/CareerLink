@@ -17,10 +17,8 @@ function Signup() {
     const router=useRouter()
     const {enqueueSnackbar}=useSnackbar()
     const [correctOtp, setCorrectOtp]=useState(false)
-    const [storedOtp, setStoredOtp]=useState(undefined)
     const [sendOtp, setSendOtp]=useState(false)
     const [timeLeft, setTimeLeft]=useState(0)
-    const [otp, setOtp]=useState<number>()
     const [signupForm, setSignupForm]=useState({
         username:'',
         email:'',
@@ -69,10 +67,8 @@ function Signup() {
                 setSendOtp(true)
                 signupForm.email=parsedDetails.email
                 handleTimer(parsedDetails.expiry)
-                getOtp()
                 const lock=localStorage.getItem('locked')
                 if(lock){
-                    setOtp(storedOtp)
                     setCorrectOtp(true)
                 }
             }else{
@@ -87,32 +83,19 @@ function Signup() {
         }
     }, [])
 
-    const getOtp = async () => {
-        const result=await getSignupOtp(signupForm.email)
-        if(result.result.success){
-            setStoredOtp(result.result.otp)
-            return result.result.otp
-        }else{
-            enqueueSnackbar(result.result.message, {variant:'error'})
-            return null
-        }
-    }
-
     const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
-        if(!storedOtp){
-            const result=await getSignupOtp(signupForm.email)
-            if(result.result.success){
-                setStoredOtp(result.result.otp)
-            }else{
-                enqueueSnackbar(result.result.message, {variant:'error'})
-            }
+        const result=await getSignupOtp(signupForm.email, e.target.value)
+        if(!result.result.success){
+            return enqueueSnackbar(result.result.message, {variant:'error'})
         }
-        if(e.target.value==storedOtp){
+        if(result.result.match){
             setCorrectOtp(true)
             const locked={
                 otp:true
             }
             localStorage.setItem('locked', JSON.stringify(locked))
+        }else{
+            setCorrectOtp(false)
         }
     }
 
@@ -142,7 +125,6 @@ function Signup() {
             email: signupForm.email,
             expiry,
         }
-        setStoredOtp(result.result.otp)
         handleTimer(emailDetails.expiry)
         localStorage.setItem('signinDetails', JSON.stringify(emailDetails))
         setLoadOTP(false)
@@ -249,7 +231,6 @@ function Signup() {
                         <input
                         type="number"
                         name="otp"
-                        value={otp}
                         onChange={handleOtpChange}
                         placeholder="Enter OTP"
                         className={`w-full h-12 px-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${sendOtp? '':'opacity-50'} ${correctOtp? 'opacity-50':''}`}

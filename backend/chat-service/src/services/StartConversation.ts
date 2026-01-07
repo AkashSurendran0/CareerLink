@@ -11,8 +11,8 @@ export class StartCoversation implements IStartConversation {
     ){}
 
     async startConversation(id: string, user: string, isCompany:boolean): Promise<{ success: boolean, id:string}> {
-        const result=await this._conversationRepository.addConversation(id, user, isCompany)
-        return result
+        const result=await this._conversationRepository.addConversation(id, user, isCompany);
+        return result;
     }
 
 }

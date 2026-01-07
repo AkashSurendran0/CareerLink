@@ -13,8 +13,8 @@ export class GetPlanDetails implements IGetPlanDetails {
     ){}
 
     async getPlanDetails(id: string): Promise<SubscriptionTypeDto> {
-        const result=await this._subscriptionTypesRepository.findById(id)
-        return SubscriptionTypesMapper.toDTO(result)
+        const result=await this._subscriptionTypesRepository.findById(id);
+        return SubscriptionTypesMapper.toDTO(result);
     }
 
 }

@@ -59,6 +59,6 @@ const jobSchema: Schema<IJobDetails> = new Schema (
         }
     },
     {timestamps:true}
-)
+);
 
-export const JobModel: Model<IJobDetails> = mongoose.model<IJobDetails>('JobDetails', jobSchema)
+export const JobModel: Model<IJobDetails> = mongoose.model<IJobDetails>("JobDetails", jobSchema);

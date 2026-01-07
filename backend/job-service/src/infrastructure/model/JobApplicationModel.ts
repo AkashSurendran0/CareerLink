@@ -31,12 +31,12 @@ const jobApplicationSchema: Schema<IJobApplications> = new Schema(
                     type:String,
                     required:true
                 },
-                status: { type: String, default: 'Pending' },
+                status: { type: String, default: "Pending" },
                 createdAt: { type: Date, default: Date.now }
             }
         ]
     },
     {timestamps:true}
-)
+);
 
-export const JobApplicationModel:Model<IJobApplications> = mongoose.model<IJobApplications>('JobApplications', jobApplicationSchema)
+export const JobApplicationModel:Model<IJobApplications> = mongoose.model<IJobApplications>("JobApplications", jobApplicationSchema);

@@ -30,10 +30,10 @@ export class CompanyRepository implements ICompanyRepository {
             websiteURL: details.websiteURL,
             location: details.location,
             aboutCompany: details.aboutCompany
-        })
-        const companyData = newCompany.get({ plain: true })
-        const companySizeStr = String(companyData!.companySize)
-        const foundedYearNum = typeof companyData!.foundedYear === 'string' ? parseInt(companyData!.foundedYear, 10) || 0 : (companyData!.foundedYear ?? 0)
+        });
+        const companyData = newCompany.get({ plain: true });
+        const companySizeStr = String(companyData!.companySize);
+        const foundedYearNum = typeof companyData!.foundedYear === "string" ? parseInt(companyData!.foundedYear, 10) || 0 : (companyData!.foundedYear ?? 0);
         return new Company(
             companyData!.id,
             companyData!.registeredBy,
@@ -49,19 +49,19 @@ export class CompanyRepository implements ICompanyRepository {
             Boolean(companyData!.suspended),
             companyData!.createdAt,
             companyData!.websiteURL ?? null
-        )
+        );
     }
 
     async checkCompany(user: string): Promise<{ success: boolean }> {
-        const company = await CompanyModel.findOne({ where: { registeredBy: user } })
-        if (company) return { success: true }
-        return { success: false }
+        const company = await CompanyModel.findOne({ where: { registeredBy: user } });
+        if (company) return { success: true };
+        return { success: false };
     }
 
     async getCompanyDetails(user: string): Promise<Company> {
-        const companyDetails = await CompanyModel.findOne({ where: { registeredBy: user }, raw: true })
-        const companySizeStr = String(companyDetails!.companySize)
-        const foundedYearNum = typeof companyDetails!.foundedYear === 'string' ? parseInt(companyDetails!.foundedYear, 10) || 0 : (companyDetails!.foundedYear ?? 0)
+        const companyDetails = await CompanyModel.findOne({ where: { registeredBy: user }, raw: true });
+        const companySizeStr = String(companyDetails!.companySize);
+        const foundedYearNum = typeof companyDetails!.foundedYear === "string" ? parseInt(companyDetails!.foundedYear, 10) || 0 : (companyDetails!.foundedYear ?? 0);
         return new Company(
             companyDetails!.id,
             companyDetails!.registeredBy,
@@ -78,7 +78,7 @@ export class CompanyRepository implements ICompanyRepository {
             companyDetails!.createdAt,
             companyDetails!.websiteURL ?? null,
             (companyDetails!.rejectReasons as string[]) || undefined
-        )
+        );
     }
 
     async editCompany(user: string, details: Details): Promise<Company> {
@@ -98,10 +98,10 @@ export class CompanyRepository implements ICompanyRepository {
                 where: { registeredBy: user },
                 returning: true
             },
-        )
+        );
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
-        const companySizeStr = String(updatedCompany!.companySize)
-        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
+        const companySizeStr = String(updatedCompany!.companySize);
+        const foundedYearNum = typeof updatedCompany!.foundedYear === "string" ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0);
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
@@ -117,14 +117,14 @@ export class CompanyRepository implements ICompanyRepository {
             Boolean(updatedCompany!.suspended),
             updatedCompany!.createdAt,
             updatedCompany!.websiteURL ?? null
-        )
+        );
     }
 
     async findById(id: string): Promise<Company | null> {
-        const company = await CompanyModel.findByPk(id, { raw: true })
-        if (!company) return null
-        const companySizeStr = String(company!.companySize)
-        const foundedYearNum = typeof company!.foundedYear === 'string' ? parseInt(company!.foundedYear, 10) || 0 : (company!.foundedYear ?? 0)
+        const company = await CompanyModel.findByPk(id, { raw: true });
+        if (!company) return null;
+        const companySizeStr = String(company!.companySize);
+        const foundedYearNum = typeof company!.foundedYear === "string" ? parseInt(company!.foundedYear, 10) || 0 : (company!.foundedYear ?? 0);
         return new Company(
             company!.id,
             company!.registeredBy,
@@ -140,7 +140,7 @@ export class CompanyRepository implements ICompanyRepository {
             Boolean(company!.suspended),
             company!.createdAt,
             company!.websiteURL ?? null
-        )
+        );
     }
 
     async changeCompanyStatus(company: Company): Promise<Company> {
@@ -150,10 +150,10 @@ export class CompanyRepository implements ICompanyRepository {
                 where: { id: company.id },
                 returning: true
             }
-        )
+        );
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
-        const companySizeStr = String(updatedCompany!.companySize)
-        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
+        const companySizeStr = String(updatedCompany!.companySize);
+        const foundedYearNum = typeof updatedCompany!.foundedYear === "string" ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0);
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
@@ -169,7 +169,7 @@ export class CompanyRepository implements ICompanyRepository {
             Boolean(updatedCompany!.suspended),
             updatedCompany!.createdAt,
             updatedCompany!.websiteURL ?? null
-        )
+        );
     }
 
     async approveCompany(id: string): Promise<Company> {
@@ -182,10 +182,10 @@ export class CompanyRepository implements ICompanyRepository {
                 where: { id: id },
                 returning: true,
             }
-        )
+        );
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
-        const companySizeStr = String(updatedCompany!.companySize)
-        const foundedYearNum = typeof updatedCompany!.foundedYear === 'string' ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0)
+        const companySizeStr = String(updatedCompany!.companySize);
+        const foundedYearNum = typeof updatedCompany!.foundedYear === "string" ? parseInt(updatedCompany!.foundedYear, 10) || 0 : (updatedCompany!.foundedYear ?? 0);
         return new Company(
             updatedCompany!.id,
             updatedCompany!.registeredBy,
@@ -201,7 +201,7 @@ export class CompanyRepository implements ICompanyRepository {
             Boolean(updatedCompany!.suspended),
             updatedCompany!.createdAt,
             updatedCompany!.websiteURL ?? null
-        )
+        );
     }
 
     async rejectCompany(id: string, reason: string[]): Promise<Company> {
@@ -214,7 +214,7 @@ export class CompanyRepository implements ICompanyRepository {
                 where: { id: id },
                 returning: true
             }
-        )
+        );
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
         return new Company(
             updatedCompany!.id,
@@ -231,7 +231,7 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.suspended,
             updatedCompany!.createdAt,
             updatedCompany!.websiteURL
-        )
+        );
     }
 
     async changeRejectedStatus(user: string): Promise<Company> {
@@ -244,7 +244,7 @@ export class CompanyRepository implements ICompanyRepository {
                 where: { registeredBy: user },
                 returning: true
             }
-        )
+        );
         const updatedCompany = updatedCompanies[0]!.get({ plain: true });
         return new Company(
             updatedCompany!.id,
@@ -261,14 +261,14 @@ export class CompanyRepository implements ICompanyRepository {
             updatedCompany!.suspended,
             updatedCompany!.createdAt,
             updatedCompany!.websiteURL
-        )
+        );
     }
 
     async deleteCompany(id: string): Promise<{ success: boolean; }> {
         await CompanyModel.destroy({
             where: { id: id }
-        })
-        return { success: true }
+        });
+        return { success: true };
     }
 
 }

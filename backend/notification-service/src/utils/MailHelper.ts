@@ -26,9 +26,9 @@ export class Mailer {
             const response = await sgMail.send(msg);
             logger.info("Mail sent");
             return response;
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error({ err }, "Failed to send mail via SendGrid");
-            throw err;
+            throw err as Error;
         }
     }
 }

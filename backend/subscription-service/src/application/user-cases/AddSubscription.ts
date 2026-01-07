@@ -23,8 +23,8 @@ export class AddSubscription implements IAddSubscription {
     ) {}
 
     async addSubscription(data: SubscriptionData): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionTypeRepository.addSubscription(data)
-        return result
+        const result=await this._subscriptionTypeRepository.addSubscription(data);
+        return result;
     }
 
 }

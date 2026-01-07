@@ -10,8 +10,8 @@ export class GetUserAnalytics implements IGetUserAnalytics {
         @inject(TYPES.IUserRepository) private _userRepository:IUserRepository
     ){}
 
-    async getUserAnalytics(): Promise<any> {
-        const result=await this._userRepository.getUserAnalytics();
+    async getUserAnalytics(): Promise<Array<{ month: string; count: number }>> {
+        const result = await this._userRepository.getUserAnalytics();
         return result;
     }
 

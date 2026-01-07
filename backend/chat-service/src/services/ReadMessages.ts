@@ -11,8 +11,8 @@ export class ReadMessages implements IReadMessages {
     ){}    
 
     async readMessages(convo: string, user: string): Promise<{ success: boolean; }> {
-        const result=await this._chatRepository.readMessages(convo, user)
-        return result
+        const result=await this._chatRepository.readMessages(convo, user);
+        return result;
     }
 
 }

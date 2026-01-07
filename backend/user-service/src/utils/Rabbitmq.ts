@@ -24,14 +24,15 @@ class RabbitMqService {
         } 
     }
 
-    public async publishEvent (exchange:string, routingKey:string, message:any): Promise<void> {
+    public async publishEvent (exchange:string, routingKey:string, message: unknown): Promise<void> {
         try {
             if(!this.channel) throw new Error("Rabbitmq channel not initialized");
             await this.channel.assertExchange(exchange, "topic", {durable:true});
+            const payload = JSON.stringify(message as Record<string, unknown>);
             this.channel.publish(
-                exchange, 
+                exchange,
                 routingKey,
-                Buffer.from(JSON.stringify(message))
+                Buffer.from(payload)
             );
             logger.info(`Published event ${routingKey}`);
         } catch (error) {

@@ -13,8 +13,8 @@ export class PostContent implements IPostContent {
     ){}
 
     async postContent(url: string | null, content: string | null, user:string): Promise<PostDto> {
-        const result=await this._postRepository.addPost(url, content, user)
-        return PostMapper.toDTO(result)
+        const result=await this._postRepository.addPost(url, content, user);
+        return PostMapper.toDTO(result);
     }
 
 }   

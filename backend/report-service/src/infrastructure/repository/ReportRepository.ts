@@ -11,18 +11,18 @@ export class ReportRepository implements IReportRepository {
             where:{
                 reportedBy:reporter,
                 reportedAccount:user,
-                status:'Pending'
+                status:"Pending"
             }
-        })
-        if(existingReport) return {success:false}
+        });
+        if(existingReport) return {success:false};
         await ReportModel.create(
             {
                 reportedBy:reporter,
                 reportedAccount:user,
                 reason:type
             }
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async reportCompany(reporter: string, company: string, type: string): Promise<{ success: boolean; }> {
@@ -30,46 +30,57 @@ export class ReportRepository implements IReportRepository {
             where:{
                 reportedBy:reporter,
                 reportedCompany:company,
-                status:'Pending'
+                status:"Pending"
             }
-        })
-        if(existingReport) return {success:false}
+        });
+        if(existingReport) return {success:false};
         await ReportModel.create(
             {
                 reportedBy:reporter,
                 reportedCompany:company,
                 reason:type
             }
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async getPaginatedReports(start: number, limit: number, filter: string): Promise<{reports:Report[], pageLimit:number}> {
         let totalCount;
         let pageLimit;
         let beginning=(start-1)*limit;
-        let reports
-        if(filter=='All'){
-            totalCount=await ReportModel.findAll({raw:true})
-            totalCount=totalCount.length
+        let reports;
+        if(filter=="All"){
+            totalCount=await ReportModel.findAll({raw:true});
+            totalCount=totalCount.length;
             reports=await ReportModel.findAll({
                 limit:limit,
                 offset:beginning,
                 raw:true
-            })
+            });
             pageLimit = Math.ceil(totalCount / limit);
         }else{
-            totalCount=await ReportModel.findAll({where:{status:filter}, raw:true})
-            totalCount=totalCount.length
+            totalCount=await ReportModel.findAll({where:{status:filter}, raw:true});
+            totalCount=totalCount.length;
             reports=await ReportModel.findAll({
                 where:{status:filter},
                 limit:limit,
                 offset:beginning,
                 raw:true
-            })
+            });
             pageLimit = Math.ceil(totalCount / limit);
         }
-        reports= reports.map((report:any)=>{
+        type ReportRecord = {
+            id: string;
+            reportedBy?: string | null;
+            reportedChat?: string | null;
+            reportedAccount?: string | null;
+            reason: string;
+            status: string;
+            createdAt: Date;
+            reportedCompany?: string | null;
+        };
+
+        reports= reports.map((report: ReportRecord)=>{
             return new Report(
                 report.id,
                 report.reportedBy,
@@ -79,14 +90,25 @@ export class ReportRepository implements IReportRepository {
                 report.status,
                 report.createdAt,
                 report.reportedCompany
-            )
-        })
-        return {reports, pageLimit}
+            );
+        });
+        return {reports, pageLimit};
     }
 
     async getPreviousUserReports(id: string): Promise<Report[]> {
-        const reports=await ReportModel.findAll({where:{reportedAccount:id}, raw:true})
-        return reports.map((report:any) => {
+        type ReportRecord = {
+            id: string;
+            reportedBy?: string | null;
+            reportedChat?: string | null;
+            reportedAccount?: string | null;
+            reason: string;
+            status: string;
+            createdAt: Date;
+            reportedCompany?: string | null;
+        };
+
+        const reports=await ReportModel.findAll({where:{reportedAccount:id}, raw:true}) as ReportRecord[];
+        return reports.map((report) => {
             return new Report(
                 report.id,
                 report.reportedBy,
@@ -96,13 +118,13 @@ export class ReportRepository implements IReportRepository {
                 report.status,
                 report.createdAt,
                 report.reportedCompany
-            )
-        })
+            );
+        });
     }
 
     async findById(id: string): Promise<{success:boolean, report?:Report}>{
-        const existingReport=await ReportModel.findOne({where:{id:id}, raw:true})
-        if(!existingReport) return {success:false}
+        const existingReport=await ReportModel.findOne({where:{id:id}, raw:true});
+        if(!existingReport) return {success:false};
         const report=new Report (
             existingReport.id,
             existingReport.reportedBy ?? null,
@@ -111,17 +133,17 @@ export class ReportRepository implements IReportRepository {
             existingReport.reason,
             existingReport.status,
             existingReport.createdAt,
-            existingReport.reportedCompany ?? ''
-        )
-        return {success:true, report}
+            existingReport.reportedCompany ?? ""
+        );
+        return {success:true, report};
     }
 
     async closeReport(id: string): Promise<{ success: boolean; }> {
         await ReportModel.update(
-            {status:'Closed'},
+            {status:"Closed"},
             {where:{id:id}}
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{ success: boolean; }> {
@@ -129,10 +151,10 @@ export class ReportRepository implements IReportRepository {
             where:{
                 reportedBy:reporter,
                 reportedAccount:sendBy,
-                status:'Pending'
+                status:"Pending"
             }
-        })
-        if(existingReport) return {success:false}
+        });
+        if(existingReport) return {success:false};
         await ReportModel.create(
             {
                 reportedBy:reporter,
@@ -140,11 +162,11 @@ export class ReportRepository implements IReportRepository {
                 reportedChat:chat,
                 reason:type
             }
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
-    async getReportAnalytics(): Promise<any> {
+    async getReportAnalytics(): Promise<Array<{ reason: string; count: number }>> {
         const result = await sequelize.query(
             `
             SELECT reason, COUNT(*) AS count
@@ -153,7 +175,7 @@ export class ReportRepository implements IReportRepository {
             `,
             { type: QueryTypes.SELECT }
         );
-        return result
+        return result as Array<{ reason: string; count: number }>;
     }
 
     async getTodayReportCount(): Promise<number> {

@@ -1,4 +1,4 @@
-import { User } from "../entities/User"
+import { User } from "../entities/User";
 
 type UserType = {
     id: string,
@@ -22,5 +22,5 @@ export interface IUserRepository {
     alterUserStatus(user: User): Promise<User>
     getAllUsers(): Promise<User[]>
     findByName(name: string): Promise<User[]>
-    getUserAnalytics(): Promise<any>
+    getUserAnalytics(): Promise<Array<{ month: string; count: number }>>
 }

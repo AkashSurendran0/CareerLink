@@ -17,6 +17,6 @@ const conversationSchema: Schema<IConversation> = new Schema (
         }]
     },
     {timestamps:true}
-)
+);
 
-export const ConversationModel: Model<IConversation> = mongoose.model<IConversation>("conversations", conversationSchema)
+export const ConversationModel: Model<IConversation> = mongoose.model<IConversation>("conversations", conversationSchema);

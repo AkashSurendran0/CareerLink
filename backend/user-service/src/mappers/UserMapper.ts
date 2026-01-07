@@ -1,15 +1,15 @@
 import { UserDTO } from "../dto/UserDTO";
 
 export class UserMapper {
-    static toDTO(user: any): UserDTO {
+    static toDTO(user: { id: string; username: string; email: string; suspended?: boolean; status?: boolean; isVip?: boolean; createdAt?: Date | string }): UserDTO {
         return {
             id: user.id,
             username: user.username,
             email: user.email,
-            suspended: user.suspended,
-            status: user.status,
-            isVip: user.isVip,
-            createdAt: user.createdAt,
+            suspended: Boolean(user.suspended),
+            status: Boolean(user.status),
+            isVip: Boolean(user.isVip),
+            createdAt: user.createdAt as Date | undefined,
         };
     }
 }

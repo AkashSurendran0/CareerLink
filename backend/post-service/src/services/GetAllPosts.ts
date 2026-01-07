@@ -13,9 +13,9 @@ export class GetAllPosts implements IGetAllPosts {
     ) {}
 
     async getAllPosts(limit:number, shown:number): Promise<{count:number, allPost:PostDto[]}> {
-        const posts=await this._postRepository.getAllPosts(limit, shown)
-        const allPost=posts.post.map(post=>PostMapper.toDTO(post))
-        return {count:posts.count, allPost}
+        const posts=await this._postRepository.getAllPosts(limit, shown);
+        const allPost=posts.post.map(post=>PostMapper.toDTO(post));
+        return {count:posts.count, allPost};
     }
 
 }

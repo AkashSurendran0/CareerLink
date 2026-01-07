@@ -11,8 +11,8 @@ export class CloseReport implements ICloseReport {
     ){}
 
     async closeReport(reportId: string): Promise<{ success: boolean; }> {
-        const result=await this._reportRepository.closeReport(reportId)
-        return result
+        const result=await this._reportRepository.closeReport(reportId);
+        return result;
     }
 
 }

@@ -14,15 +14,15 @@ export class ReapplyCompany implements IReapplyCompany {
     ) { }
 
     async reapplyCompany(user: string): Promise<CompanyDTO> {
-        const company = await this._companyRepository.changeRejectedStatus(user)
+        const company = await this._companyRepository.changeRejectedStatus(user);
         await elasticClient.update({
-            index: 'companies',
+            index: "companies",
             id: company.id,
             doc: {
                 rejected: false
             }
-        })
-        return CompanyMapper.toDTO(company)
+        });
+        return CompanyMapper.toDTO(company);
     }
 
 }

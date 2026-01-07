@@ -1,7 +1,7 @@
-import { ResumeDto } from "../../dto/ResumeDto"
+import { ResumeDto } from "../../dto/ResumeDto";
 
 export interface ICreateResume {
-    createResume(data:any):Promise<any>
+    createResume(data: Record<string, unknown>): Promise<unknown>
 }
 
 export interface IUploadResume {
@@ -13,20 +13,20 @@ export interface IGetAllUserResumes{
 }
 
 export interface ICreateCoverLetter{
-    createCoverLetter(data:any) : Promise<any>
+    createCoverLetter(data: Record<string, unknown>) : Promise<unknown>
 }
 
 export interface ICreateTailoredResume {
-    createTailoredResume(job:any, details:any, user:any): Promise<any>
+    createTailoredResume(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<unknown>
 }
 
 export interface ICreateTailoredCoverLetter {
-    createTailoredCoverLetter(job:any, details:any, user:any): Promise<any>
+    createTailoredCoverLetter(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<unknown>
 }
 
 export interface ICheckTailoredVersion {
-    checkTailoredResume(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
-    checkTailoredCoverLetter(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkTailoredResume(details: Record<string, unknown>, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkTailoredCoverLetter(details: Record<string, unknown>, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
 }
 
 export interface IDeleteCount {
@@ -34,6 +34,6 @@ export interface IDeleteCount {
 }
 
 export interface ICheckNormalVersion {
-    checkResume(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
-    checkCoverLetter(details:any, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkResume(details: Record<string, unknown>, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
+    checkCoverLetter(details: Record<string, unknown>, user:string): Promise<{success:boolean} | {success:boolean, message:string}>
 }

@@ -12,9 +12,9 @@ export class GetJobApplicants implements IGetJobApplicants {
         @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository
     ){}
 
-    async getApplicants(id: string, filter:string): Promise<any> {
-        let result=await this._jobApplicationRepository.getJobApplicants(id, filter)
-        return result
+    async getApplicants(id: string, filter:string): Promise<{ result: unknown[]; totalCount: unknown[] } | null> {
+        let result = await this._jobApplicationRepository.getJobApplicants(id, filter);
+        return result;
     }
 
 }

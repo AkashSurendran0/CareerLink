@@ -43,14 +43,12 @@ export class ConnectionsRepository implements IConnectionRepository {
         return {success:true};
     }
 
-    async getUserRequests(id: string): Promise<any> {
-        const users=await ConnectionModel.aggregate([
-            {$unwind:"$pending"},
-            {$match:{
-                pending:id
-            }}
+    async getUserRequests(id: string): Promise<Record<string, unknown>[]> {
+        const users = await ConnectionModel.aggregate([
+            { $unwind: "$pending" },
+            { $match: { pending: id } }
         ]);
-        return users;
+        return users as Record<string, unknown>[];
     }
 
     async acceptConnection(user1: string, user2: string): Promise<{ success: boolean; }> {

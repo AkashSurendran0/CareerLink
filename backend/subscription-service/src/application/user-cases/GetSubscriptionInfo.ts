@@ -11,8 +11,8 @@ export class GetSubscriptionInfo implements IGetSubscriptionInfo {
     ){}
 
     async getInfo(user: string): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionRepository.getInfo(user)
-        return result
+        const result=await this._subscriptionRepository.getInfo(user);
+        return result;
     }
 
 }

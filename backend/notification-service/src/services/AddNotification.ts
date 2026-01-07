@@ -15,11 +15,11 @@ export class AddNotification implements IAddNotification {
     ){}
 
     async saveNotification (user:string, content:string, routeTo:string): Promise<NotificationDto> {
-        const notification=await this._notificationRepository.insertNotification(user, content, routeTo)
-        logger.info('Notification saved')
-        const io=getIO()
-        io.to(user).emit('notification', notification)
-        return NotificationMapper.toDTO(notification)
+        const notification=await this._notificationRepository.insertNotification(user, content, routeTo);
+        logger.info("Notification saved");
+        const io=getIO();
+        io.to(user).emit("notification", notification);
+        return NotificationMapper.toDTO(notification);
     }
 
 }

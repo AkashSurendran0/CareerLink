@@ -13,10 +13,10 @@ export class GetChats implements IGetChats {
     ){}
 
     async getChats(convo: string, user:string): Promise<ChatDto | null> {
-        await this._chatRepository.readMessages(convo, user)
-        const result=await this._chatRepository.getByConvo(convo)
-        if(!result) return null
-        return ChatMapper.toDTO(result)
+        await this._chatRepository.readMessages(convo, user);
+        const result=await this._chatRepository.getByConvo(convo);
+        if(!result) return null;
+        return ChatMapper.toDTO(result);
     }
 
 }

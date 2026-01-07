@@ -13,12 +13,12 @@ export class GetReportDetails implements IGetReportDetails {
     ){}
 
     async getReportDetails(reportId: string): Promise<{ success: boolean; report?: ReportDto; }> {
-        const result=await this._reportRepository.findById(reportId)
+        const result=await this._reportRepository.findById(reportId);
         if(result.success){
-            const report=ReportMapper.toDTO(result.report)
-            return {success:true, report}
+            const report=ReportMapper.toDTO(result.report);
+            return {success:true, report};
         }else{
-            return result
+            return result;
         }
     }
 

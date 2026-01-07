@@ -14,8 +14,8 @@ export class GetCompanyDetails implements IGetCompanyDetails {
 
 
     async getCompanyDetails(user: string): Promise<CompanyDTO> {
-        const result = await this._companyRepository.getCompanyDetails(user)
-        const company = CompanyMapper.toDTO(result)
-        return company
+        const result = await this._companyRepository.getCompanyDetails(user);
+        const company = CompanyMapper.toDTO(result);
+        return company;
     }
 }

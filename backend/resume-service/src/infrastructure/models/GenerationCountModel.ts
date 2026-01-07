@@ -31,6 +31,6 @@ const countSchema: Schema<ICountModel>=new Schema(
             default:0
         }
     }
-)
+);
 
-export const CountModel:Model<ICountModel> = mongoose.model<ICountModel>('Count', countSchema)
+export const CountModel:Model<ICountModel> = mongoose.model<ICountModel>("Count", countSchema);

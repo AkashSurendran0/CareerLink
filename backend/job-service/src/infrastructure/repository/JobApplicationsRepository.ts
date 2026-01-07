@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { IJobApplicationsRepository } from "../../domain/repositories/IJobApplicationsRepository";
-import { JobApplicationModel } from "../model/JobApplicationModel";
+import { JobApplicationModel, IJobApplications } from "../model/JobApplicationModel";
 import { Applications } from "../../domain/enitity/JobApplications";
 import { JobApplications } from "../../domain/enitity/JobApplications";
 
@@ -20,65 +20,65 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
                 }
             },
             {upsert:true}
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
-    async getUserApplications(user: string): Promise<{ success: boolean; } | { success: boolean; jobs: any[]; }> {
-        const jobs=await JobApplicationModel.aggregate([
-            {$unwind: '$applicants'},
+    async getUserApplications(user: string): Promise<{ success: boolean; } | { success: boolean; jobs: unknown[]; }> {
+        const jobs = await JobApplicationModel.aggregate([
+            {$unwind: "$applicants"},
             {$match:{
-                'applicants.user':user
+                "applicants.user":user
             }}
-        ])
-        if(!jobs) return {success:false}
-        return {success:true, jobs}
+        ]);
+        if(!jobs) return {success:false};
+        return {success:true, jobs};
     }
 
     async getCount(id: string): Promise<number> {
-        const stringId=String(id)
+        const stringId=String(id);
         const docs=await JobApplicationModel.aggregate([
             {$match:
                 {jobPost:stringId}
             },
-            {$unwind: '$applicants'},
-        ])
-        return docs.length
+            {$unwind: "$applicants"},
+        ]);
+        return docs.length;
     }
 
-    async getJobApplicants(id: string, filter:string): Promise<any> {
+    async getJobApplicants(id: string, filter:string): Promise<{ result: unknown[]; totalCount: unknown[] } | null> {
         const totalCount = await JobApplicationModel.aggregate([
             {$match: {
                 jobPost:id
             }},
-            {$unwind:'$applicants'},
+            {$unwind:"$applicants"},
             {$group:{
-                _id:'$applicants.status',
+                _id:"$applicants.status",
                 count:{$sum:1}
             }}
-        ])
-        let result
-        if(filter == 'All'){
-            result=await JobApplicationModel.aggregate([
+        ]);
+        let result;
+        if(filter == "All"){
+            result = await JobApplicationModel.aggregate([
                 {$match: {
                     jobPost:id
                 }},
-                {$unwind:'$applicants'}
-            ])
-            if(!result) return null
+                {$unwind:"$applicants"}
+            ]);
+            if(!result) return null;
         }else{
-            result=await JobApplicationModel.aggregate([
+            result = await JobApplicationModel.aggregate([
                 {$match:{
                     jobPost:id
                 }},
-                {$unwind:'$applicants'},
+                {$unwind:"$applicants"},
                 {$match:{
-                    'applicants.status':filter
+                    "applicants.status":filter
                 }}
-            ])
-            if(!result) return null
+            ]);
+            if(!result) return null;
         }
-        return {result, totalCount}
+        return {result, totalCount};
         
     }
 
@@ -86,49 +86,49 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
         const result=await JobApplicationModel.updateOne(
             {
                 jobPost:job,
-                'applicants.user':user
+                "applicants.user":user
             },
             {$set:{
-                'applicants.$.status':'Accepted'
+                "applicants.$.status":"Accepted"
             }}
-        )
-        return {success: result.modifiedCount == 1}
+        );
+        return {success: result.modifiedCount == 1};
     }
 
     async rejectApplication(job: string, user: string): Promise<{ success: boolean; }> {
         const result=await JobApplicationModel.updateOne(
             {
                 jobPost:job,
-                'applicants.user':user
+                "applicants.user":user
             },
             {$set:{
-                'applicants.$.status':'Rejected'
+                "applicants.$.status":"Rejected"
             }}
-        )
-        return {success: result.modifiedCount == 1}
+        );
+        return {success: result.modifiedCount == 1};
     }
 
     async hireApplication(job: string, user: string): Promise<{ success: boolean; }> {
         const result=await JobApplicationModel.updateOne(
             {
                 jobPost:job,
-                'applicants.user':user
+                "applicants.user":user
             },
             {$set:{
-                'applicants.$.status':'Hired'
+                "applicants.$.status":"Hired"
             }}
-        )
-        return {success: result.modifiedCount == 1}
+        );
+        return {success: result.modifiedCount == 1};
     }
 
-    async getJobApplicationAnalytics(): Promise<any> {
-        const result=await JobApplicationModel.aggregate([
+    async getJobApplicationAnalytics(): Promise<Array<{ month:number; count:number }>> {
+        const result = await JobApplicationModel.aggregate([
             {
-                $unwind:'$applicants'
+                $unwind:"$applicants"
             },
             {
                 $match:{
-                    'applicants.createdAt':{
+                    "applicants.createdAt":{
                         $gt:new Date(new Date().getFullYear(), 0, 1),
                         $lt:new Date()
                     }
@@ -153,8 +153,8 @@ export class JobApplicationsRepository implements IJobApplicationsRepository {
             {
                 $sort:{month : 1}
             }
-        ])
-        return result
+        ]);
+        return result;
     }
 
 }

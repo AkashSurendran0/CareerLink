@@ -13,8 +13,8 @@ export class GetAllUserPosts implements IGetAllUserPosts {
     ) {}
 
     async getAllPosts(user: string): Promise<PostDto[]> {
-        const result=await this._postRepository.getAllUserPosts(user)
-        return result.map(i=>PostMapper.toDTO(i))
+        const result=await this._postRepository.getAllUserPosts(user);
+        return result.map(i=>PostMapper.toDTO(i));
     }
 
 }

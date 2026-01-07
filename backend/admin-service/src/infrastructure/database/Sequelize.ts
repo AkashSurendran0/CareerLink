@@ -1,27 +1,31 @@
-import {Sequelize} from 'sequelize'
-import dotenv from 'dotenv'
-import { logger } from '../../utils/logger'
+import {Sequelize} from "sequelize";
+import dotenv from "dotenv";
+import { logger } from "../../utils/logger";
 
-dotenv.config()
+dotenv.config();
 
 export const sequelize=new Sequelize(
-    'careerlink',
-    'postgres',
-    'akash1', 
+    "careerlink",
+    "postgres",
+    "akash1", 
     {
         host: `${process.env.SEQUALIZE_HOST}`,
         port: 5432,
-        dialect: 'postgres',
+        dialect: "postgres",
         logging: false
     }
-)
+);
 
 export const connectDB = async () =>{ 
     try {
-        await sequelize.authenticate()
-        await sequelize.sync({alter: true})
-        logger.info('Admin PSQL database connected successfully')
-    } catch (error: any) {
-        logger.error('Database connection failed', error)
+        await sequelize.authenticate();
+        await sequelize.sync({alter: true});
+        logger.info("Admin PSQL database connected successfully");
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            logger.error("Database connection failed", error);
+        } else {
+            logger.error("Database connection failed", { error });
+        }
     }
-} 
+}; 

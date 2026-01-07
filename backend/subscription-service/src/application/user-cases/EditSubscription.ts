@@ -11,8 +11,8 @@ export class EditSubscription implements IEditSubscription {
     ){}
 
     async editSubscription(data: { planName: string; amount: number; features: { text: string; code: string; }[]; status: boolean; }): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionTypesRepository.editPlan(data)
-        return result
+        const result=await this._subscriptionTypesRepository.editPlan(data);
+        return result;
     }
 
 }

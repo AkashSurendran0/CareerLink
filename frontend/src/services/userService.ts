@@ -41,8 +41,8 @@ export const loginUser = async (loginDetails: LoginDetails) => {
     return res.data
 }
 
-export const resetGetOtp = async (email: string) => {
-    const res = await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}`)
+export const resetGetOtp = async (email: string, otp: string) => {
+    const res = await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}&otp=${otp}`)
     return res.data
 }
 
@@ -56,8 +56,8 @@ export const changePassword = async (changePassForm: ChangePassForm) => {
     return res.data
 }
 
-export const getSignupOtp = async (email: string) => {
-    const res = await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}`)
+export const getSignupOtp = async (email: string, otp:string) => {
+    const res = await api.get(`${USER_V1_ROUTE}/getOTP?email=${email}&otp=${otp}`)
     return res.data
 }
 

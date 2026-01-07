@@ -1,21 +1,19 @@
-import amqp, { Channel, ConsumeMessage } from 'amqplib'
-import { Mailer } from './utils/MailHelper'
-import { IAddNotification } from './domain/services/INotificationServices'
-import { inject, injectable } from 'inversify'
-import { TYPES } from './types'
-import dotenv from "dotenv"
-import { logger } from './utils/logger'
+import amqp, { Channel, ConsumeMessage } from "amqplib";
+import { Mailer } from "./utils/MailHelper";
+import { IAddNotification } from "./domain/services/INotificationServices";
+import { inject, injectable } from "inversify";
+import { TYPES } from "./types";
+import dotenv from "dotenv";
+import { logger } from "./utils/logger";
 
-dotenv.config()
+dotenv.config();
 
 @injectable()
 export class RabbitMqService {
-    // amqplib types are sometimes incompatible with the runtime implementation used here;
-    // relax to `any` at this boundary and perform runtime checks where needed.
-    // This is a contained interoperability fix and avoids unsafe global casts.
-    private connection: any
-    private channel: any
-    private readonly exchange = ["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"]
+    // Use amqplib types for connection/channel and keep them nullable until connected.
+    private connection: amqp.Connection | null = null;
+    private channel: Channel | null = null;
+    private readonly exchange = ["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"];
 
     constructor(
         @inject(TYPES.Mailer) private _mailer:Mailer,
@@ -24,52 +22,52 @@ export class RabbitMqService {
 
     public async connect(): Promise<void> {
         try {
-            this.connection=await amqp.connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`)
-            this.channel=await this.connection.createChannel()
+            this.connection=await amqp.connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`);
+            this.channel=await this.connection.createChannel();
 
             for(const exchange of this.exchange){
-                await this.channel.assertExchange(exchange, "topic", {durable:true})
+                await this.channel.assertExchange(exchange, "topic", {durable:true});
             }
 
-            logger.info('RabbitMq connected and exchanges asserted')
-        } catch (error) {
-            logger.error({error}, 'RabbitMq connection failed')
-            throw error 
+            logger.info("RabbitMq connected and exchanges asserted");
+        } catch (error: unknown) {
+            logger.error({error}, "RabbitMq connection failed");
+            throw error;
         }
     }
 
     public async consumeNotification():Promise<void> {
-        if(!this.channel) throw new Error('RabbitMq channel not initialized')
+        if(!this.channel) throw new Error("RabbitMq channel not initialized");
 
-        const queue=await this.channel.assertQueue('notification-queue', {durable:true})
+        const queue=await this.channel.assertQueue("notification-queue", {durable:true});
 
-        await this.channel.bindQueue(queue.queue, "company.events", "company.approved")
-        await this.channel.bindQueue(queue.queue, "company.events", "company.rejected")
-        await this.channel.bindQueue(queue.queue, "company.events", "company.blocked")
-        await this.channel.bindQueue(queue.queue, "company.events", "company.unblocked")
-        await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded")
-        await this.channel.bindQueue(queue.queue, "connection.events", "connection.sendRequest")
-        await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest")
-        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.accepted")
-        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.rejected")
-        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.applicationHired")
-        await this.channel.bindQueue(queue.queue, "mail.events", "mail.sendWarningMail")
+        await this.channel.bindQueue(queue.queue, "company.events", "company.approved");
+        await this.channel.bindQueue(queue.queue, "company.events", "company.rejected");
+        await this.channel.bindQueue(queue.queue, "company.events", "company.blocked");
+        await this.channel.bindQueue(queue.queue, "company.events", "company.unblocked");
+        await this.channel.bindQueue(queue.queue, "subscription.events", "subscription.upgraded");
+        await this.channel.bindQueue(queue.queue, "connection.events", "connection.sendRequest");
+        await this.channel.bindQueue(queue.queue, "connection.events", "connection.acceptRequest");
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.accepted");
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.rejected");
+        await this.channel.bindQueue(queue.queue, "jobApplication.events", "jobApplication.applicationHired");
+        await this.channel.bindQueue(queue.queue, "mail.events", "mail.sendWarningMail");
 
-        logger.info('Notification service is listening for messages...')
+        logger.info("Notification service is listening for messages...");
 
-        this.channel.consume(queue.queue, async (msg: ConsumeMessage | null) => await this.handleMessages(msg), {noAck:false})
+        this.channel.consume(queue.queue, async (msg: ConsumeMessage | null) => await this.handleMessages(msg), {noAck:false});
     }
 
     private async handleMessages(msg:ConsumeMessage | null): Promise<void> {
-        if(!msg) return 
+        if(!msg) return; 
 
-        const data=JSON.parse(msg.content.toString())
+        const data=JSON.parse(msg.content.toString());
 
         try{
             switch(data.action){
                 case "approved":
-                    await this._addNotification.saveNotification(data.registeredBy, 'Your Company has been approved 🎉', '/company/registeredCompany')
-                    await this._mailer.sendMail(data.registeredBy, 'Your company has been approved on CareerLink! 🎉', 
+                    await this._addNotification.saveNotification(data.registeredBy, "Your Company has been approved 🎉", "/company/registeredCompany");
+                    await this._mailer.sendMail(data.registeredBy, "Your company has been approved on CareerLink! 🎉", 
                         `Hello ${data.companyName} team,
 
 We’re excited to let you know that your company registration on CareerLink has been approved!
@@ -81,12 +79,12 @@ Welcome aboard!
 Best regards,  
 The CareerLink Team
 `
-                    )
+                    );
                     break;
 
                 case "rejected":
-                    await this._addNotification.saveNotification(data.registeredBy, 'Update on your company registration', '/company/registeredCompany')
-                    await this._mailer.sendMail(data.registeredBy, 'Update on your CareerLink company registration ', 
+                    await this._addNotification.saveNotification(data.registeredBy, "Update on your company registration", "/company/registeredCompany");
+                    await this._mailer.sendMail(data.registeredBy, "Update on your CareerLink company registration ", 
                         `Hello ${data.companyName} team,
 Thank you for registering your company with CareerLink.  
 After reviewing your application, we regret to inform you that it was not approved at this time.
@@ -99,12 +97,12 @@ If you believe this decision was made in error, please contact our support team.
 Best regards,  
 The CareerLink Team
 `
-                    ) 
-                    break
+                    ); 
+                    break;
 
                 case "blocked":
-                    await this._addNotification.saveNotification(data.registeredBy, 'Company Account Temporarily Blocked', '/company/registeredCompany')
-                    await this._mailer.sendMail(data.registeredBy, 'Company Account Temporarily Blocked', 
+                    await this._addNotification.saveNotification(data.registeredBy, "Company Account Temporarily Blocked", "/company/registeredCompany");
+                    await this._mailer.sendMail(data.registeredBy, "Company Account Temporarily Blocked", 
                         `Hello ${data.companyName} Team,
 
 We wanted to inform you that your company account has been temporarily blocked by the admin due to policy or activity-related concerns.
@@ -120,12 +118,12 @@ Thank you for your understanding and cooperation.
 Best regards,  
 The CareerLink Team
 `
-                    )
-                break
+                    );
+                break;
 
                 case "unblocked":
-                    await this._addNotification.saveNotification(data.registeredBy, 'Company Account Reinstated Successfully', '/company/registeredCompany')
-                    await this._mailer.sendMail(data.registeredBy, 'Company Account Reinstated Successfully', 
+                    await this._addNotification.saveNotification(data.registeredBy, "Company Account Reinstated Successfully", "/company/registeredCompany");
+                    await this._mailer.sendMail(data.registeredBy, "Company Account Reinstated Successfully", 
                         `Hello ${data.companyName} Team,
 
 Good news! Your company account has been successfully unblocked by the admin.
@@ -138,35 +136,35 @@ If you face any issues logging in or using your account, please contact our supp
 Best regards,   
 The CareerLink Team
 `
-                    )
-                break
+                    );
+                break;
 
-                case 'upgraded':
-                    await this._addNotification.saveNotification(data.user, 'Upgraded to Vip Member 👑', '/settings')
-                    break
+                case "upgraded":
+                    await this._addNotification.saveNotification(data.user, "Upgraded to Vip Member 👑", "/settings");
+                    break;
 
-                case 'sendRequest':
-                    await this._addNotification.saveNotification(data.reciever, `${data.sender} send you a connection request`, '/meetPeople/requests')
-                    break
+                case "sendRequest":
+                    await this._addNotification.saveNotification(data.reciever, `${data.sender} send you a connection request`, "/meetPeople/requests");
+                    break;
 
-                case 'acceptRequest':
-                    await this._addNotification.saveNotification(data.reciever, `${data.sender} accepted your connection request`, '/meetPeople/myConnections')
-                    break
+                case "acceptRequest":
+                    await this._addNotification.saveNotification(data.reciever, `${data.sender} accepted your connection request`, "/meetPeople/myConnections");
+                    break;
 
-                case 'applicationAccepted':
-                    await this._addNotification.saveNotification(data.userEmail, `You have been shortlisted !!`, '/profile/user/jobsApplied')
-                    break
+                case "applicationAccepted":
+                    await this._addNotification.saveNotification(data.userEmail, "You have been shortlisted !!", "/profile/user/jobsApplied");
+                    break;
 
-                case 'applicationRejected':
-                    await this._addNotification.saveNotification(data.userEmail, 'Update on your job application', '/profile/user/jobsApplied')
-                    break
+                case "applicationRejected":
+                    await this._addNotification.saveNotification(data.userEmail, "Update on your job application", "/profile/user/jobsApplied");
+                    break;
 
-                case 'applicationHired':
-                    await this._addNotification.saveNotification(data.userEmail, 'You have been hired !!', '/profile/user/jobsApplied')
-                    break
+                case "applicationHired":
+                    await this._addNotification.saveNotification(data.userEmail, "You have been hired !!", "/profile/user/jobsApplied");
+                    break;
 
-                case 'sendWarningMail':
-                    await this._mailer.sendMail(data.reciever, 'Warning Regarding Reported Activity on Your Account', 
+                case "sendWarningMail":
+                    await this._mailer.sendMail(data.reciever, "Warning Regarding Reported Activity on Your Account", 
                         `Hello,
 
 We are writing to inform you that we have received a report concerning content or activity associated with your account.
@@ -180,17 +178,17 @@ Thank you for your cooperation.
 Best regards,   
 The CareerLink Team
 ` 
-                    )
-                break
+                    );
+                break;
                 
                 default:
-                    logger.info('Unknown type event', data.action)
+                    logger.info("Unknown type event", data.action);
             }
 
-            this.channel.ack(msg)
-        }catch(error){
-            logger.info({error}, 'Error processing message')
-            this.channel.nack(msg, false, false)
+            this.channel.ack(msg);
+        }catch(error: unknown){
+            logger.info({error}, "Error processing message");
+            this.channel?.nack(msg, false, false);
         }
     } 
 }

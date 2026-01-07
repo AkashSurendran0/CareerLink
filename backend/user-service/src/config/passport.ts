@@ -15,25 +15,26 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const googleUser={
+                const googleUser = {
                     email: profile.emails?.[0]?.value ?? "",
                     username: profile.displayName,
                     googleId: profile.id
                 };
-                const googleLogin=new GoogleLogin(new UserRepository());
-                const user=await googleLogin.googleSignin(googleUser.email, googleUser.googleId, googleUser.username);
+                const googleLogin = new GoogleLogin(new UserRepository());
+                const user = await googleLogin.googleSignin(googleUser.email, googleUser.googleId, googleUser.username);
                 return done(null, user);
-            } catch (error:any) {
-                return done(error, false);
+            } catch (error: unknown) {
+                if (error instanceof Error) return done(error, false);
+                return done(new Error("Unknown passport error"), false);
             }
         }
     )
 );
 
-passport.serializeUser((user: any, done) => {
+passport.serializeUser((user: unknown, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((obj: any, done) => {
+passport.deserializeUser((obj: unknown, done) => {
   done(null, obj);
 });

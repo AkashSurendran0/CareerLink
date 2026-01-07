@@ -19,27 +19,27 @@ import { GetPremiumUserCount } from "./application/user-cases/GetPremiumUserCoun
 import { GetPlanDetails } from "./application/user-cases/GetPlanDetails";
 import { EditSubscription } from "./application/user-cases/EditSubscription";
 
-const container=new Container()
+const container=new Container();
 
-container.bind(TYPES.ISubscriptionTypesRepository).to(SubscriptionTypesRepository).inSingletonScope()
-container.bind(TYPES.ISubscriptionRepository).to(SubscriptionRepository).inSingletonScope()
+container.bind(TYPES.ISubscriptionTypesRepository).to(SubscriptionTypesRepository).inSingletonScope();
+container.bind(TYPES.ISubscriptionRepository).to(SubscriptionRepository).inSingletonScope();
 
-container.bind(TYPES.IAddSubscription).to(AddSubscription).inSingletonScope()
-container.bind(TYPES.IGetAllPlans).to(GetAllPlans).inSingletonScope()
-container.bind(TYPES.IAlterPlanStatus).to(AlterPlanStatus).inSingletonScope()
-container.bind(TYPES.IGetActivePlans).to(GetActivePlans).inSingletonScope()
-container.bind(TYPES.IBuySubscription).to(BuySubscription).inSingletonScope()
-container.bind(TYPES.IGetUserSubscription).to(GetUserSubscription).inSingletonScope()
-container.bind(TYPES.IDeletePlan).to(DeletePlan).inSingletonScope()
-container.bind(TYPES.IGetSubscriptionInfo).to(GetSubscriptionInfo).inSingletonScope()
-container.bind(TYPES.IGetActivePlanUsers).to(GetActivePlanUsers).inSingletonScope()
-container.bind(TYPES.IDeletePlanType).to(DeletePlanType).inSingletonScope()
-container.bind(TYPES.IGetSubscriptionAnalysis).to(GetSubscriptionAnalysis).inSingletonScope()
-container.bind(TYPES.IGetSubscriptionTypeAnalytics).to(GetSubscriptionTypeAnalytics).inSingletonScope()
-container.bind(TYPES.IGetPremiumUserCount).to(GetPremiumUserCount).inSingletonScope()
-container.bind(TYPES.IGetPlanDetails).to(GetPlanDetails).inSingletonScope()
-container.bind(TYPES.IEditSubscription).to(EditSubscription).inSingletonScope()
+container.bind(TYPES.IAddSubscription).to(AddSubscription).inSingletonScope();
+container.bind(TYPES.IGetAllPlans).to(GetAllPlans).inSingletonScope();
+container.bind(TYPES.IAlterPlanStatus).to(AlterPlanStatus).inSingletonScope();
+container.bind(TYPES.IGetActivePlans).to(GetActivePlans).inSingletonScope();
+container.bind(TYPES.IBuySubscription).to(BuySubscription).inSingletonScope();
+container.bind(TYPES.IGetUserSubscription).to(GetUserSubscription).inSingletonScope();
+container.bind(TYPES.IDeletePlan).to(DeletePlan).inSingletonScope();
+container.bind(TYPES.IGetSubscriptionInfo).to(GetSubscriptionInfo).inSingletonScope();
+container.bind(TYPES.IGetActivePlanUsers).to(GetActivePlanUsers).inSingletonScope();
+container.bind(TYPES.IDeletePlanType).to(DeletePlanType).inSingletonScope();
+container.bind(TYPES.IGetSubscriptionAnalysis).to(GetSubscriptionAnalysis).inSingletonScope();
+container.bind(TYPES.IGetSubscriptionTypeAnalytics).to(GetSubscriptionTypeAnalytics).inSingletonScope();
+container.bind(TYPES.IGetPremiumUserCount).to(GetPremiumUserCount).inSingletonScope();
+container.bind(TYPES.IGetPlanDetails).to(GetPlanDetails).inSingletonScope();
+container.bind(TYPES.IEditSubscription).to(EditSubscription).inSingletonScope();
 
-container.bind(TYPES.SubscriptionController).to(SubscriptionController).inSingletonScope()
+container.bind(TYPES.SubscriptionController).to(SubscriptionController).inSingletonScope();
 
-export default container
+export default container;

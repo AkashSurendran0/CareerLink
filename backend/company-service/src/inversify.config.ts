@@ -16,24 +16,24 @@ import { GetAvailableCompanies } from "./application/user-cases/GetAvailableComp
 import { GetCompanyDetailsByQuery } from "./application/user-cases/GetCompanyDetailsByQuery";
 import { GetActiveCompanyCount } from "./application/user-cases/GetActiveCompanyCount";
 
-const container=new Container()
+const container=new Container();
 
-container.bind(TYPES.ICompanyRepository).to(CompanyRepository).inSingletonScope()
+container.bind(TYPES.ICompanyRepository).to(CompanyRepository).inSingletonScope();
 
-container.bind(TYPES.IAddCompany).to(AddCompany).inSingletonScope()
-container.bind(TYPES.ICheckCompanyRegistrationInfo).to(CheckCompanyRegistrationInfo).inSingletonScope()
-container.bind(TYPES.IGetCompanyDetails).to(GetCompanyDetails).inSingletonScope()
-container.bind(TYPES.IEditCompany).to(EditCompany).inSingletonScope()
-container.bind(TYPES.IGetAllCompanies).to(GetAllCompanies).inSingletonScope()
-container.bind(TYPES.IAlterCompanyStatus).to(AlterCompanyStatus).inSingletonScope()
-container.bind(TYPES.ICheckCompanyDetails).to(CheckCompanyDetails).inSingletonScope()
-container.bind(TYPES.IAlterCompanyRegistrationStatus).to(AlterCompanyRegistrationStatus).inSingletonScope()
-container.bind(TYPES.IReapplyCompany).to(ReapplyCompany).inSingletonScope()
-container.bind(TYPES.IDeleteCompany).to(DeleteCompany).inSingletonScope()
-container.bind(TYPES.IGetAvailableCompanies).to(GetAvailableCompanies).inSingletonScope()
-container.bind(TYPES.IGetCompanyDetailsByQuery).to(GetCompanyDetailsByQuery).inSingletonScope()
-container.bind(TYPES.IGetActiveCompanyCount).to(GetActiveCompanyCount).inSingletonScope()
+container.bind(TYPES.IAddCompany).to(AddCompany).inSingletonScope();
+container.bind(TYPES.ICheckCompanyRegistrationInfo).to(CheckCompanyRegistrationInfo).inSingletonScope();
+container.bind(TYPES.IGetCompanyDetails).to(GetCompanyDetails).inSingletonScope();
+container.bind(TYPES.IEditCompany).to(EditCompany).inSingletonScope();
+container.bind(TYPES.IGetAllCompanies).to(GetAllCompanies).inSingletonScope();
+container.bind(TYPES.IAlterCompanyStatus).to(AlterCompanyStatus).inSingletonScope();
+container.bind(TYPES.ICheckCompanyDetails).to(CheckCompanyDetails).inSingletonScope();
+container.bind(TYPES.IAlterCompanyRegistrationStatus).to(AlterCompanyRegistrationStatus).inSingletonScope();
+container.bind(TYPES.IReapplyCompany).to(ReapplyCompany).inSingletonScope();
+container.bind(TYPES.IDeleteCompany).to(DeleteCompany).inSingletonScope();
+container.bind(TYPES.IGetAvailableCompanies).to(GetAvailableCompanies).inSingletonScope();
+container.bind(TYPES.IGetCompanyDetailsByQuery).to(GetCompanyDetailsByQuery).inSingletonScope();
+container.bind(TYPES.IGetActiveCompanyCount).to(GetActiveCompanyCount).inSingletonScope();
 
-container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController)
+container.bind<CompanyController>(TYPES.CompanyController).to(CompanyController);
 
-export default container
+export default container;

@@ -10,9 +10,9 @@ export class AlterPostLike implements IAlterPostLike {
         @inject(TYPES.IPostRepository) private _postRepository:IPostRepository
     ) {}
 
-    async alterPostLike(post: string, user: string): Promise<any> {
-        await this._postRepository.alterPostLike(post, user)
-        return null
+    async alterPostLike(post: string, user: string): Promise<void> {
+        await this._postRepository.alterPostLike(post, user);
+        return;
     }
 
 }

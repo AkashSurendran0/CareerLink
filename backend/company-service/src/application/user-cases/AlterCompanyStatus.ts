@@ -15,33 +15,33 @@ export class AlterCompanyStatus implements IAlterCompanyStatus {
     ) { }
 
     async changeCompanyStatus(id: string): Promise<CompanyDTO> {
-        const company = await this._companyRepository.findById(id)
+        const company = await this._companyRepository.findById(id);
         if (!company) throw new Error("Company not found");
-        const updatedCompany = await this._companyRepository.changeCompanyStatus(company)
+        const updatedCompany = await this._companyRepository.changeCompanyStatus(company);
         await elasticClient.update({
-            index: 'companies',
+            index: "companies",
             id: updatedCompany.id.toString(),
             doc: {
                 suspended: updatedCompany.suspended
             }
-        })
+        });
         if (updatedCompany.suspended) {
             await rabbitmqService.publishEvent("company.events", "company.blocked", {
                 companyId: updatedCompany.id,
                 companyName: updatedCompany.name,
                 registeredBy: updatedCompany.registeredBy,
-                action: 'blocked'
-            })
+                action: "blocked"
+            });
         } else if (!updatedCompany.suspended) {
             await rabbitmqService.publishEvent("company.events", "company.unblocked", {
                 companyId: updatedCompany.id,
                 companyName: updatedCompany.name,
                 registeredBy: updatedCompany.registeredBy,
-                action: 'unblocked'
-            })
+                action: "unblocked"
+            });
         }
-        await elasticClient.indices.refresh({ index: 'companies' })
-        return CompanyMapper.toDTO(updatedCompany)
+        await elasticClient.indices.refresh({ index: "companies" });
+        return CompanyMapper.toDTO(updatedCompany);
     }
 
 }

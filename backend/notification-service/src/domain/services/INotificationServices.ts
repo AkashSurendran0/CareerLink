@@ -1,4 +1,4 @@
-import { NotificationDto } from "../../dto/NotificationDto"
+import { NotificationDto } from "../../dto/NotificationDto";
 
 export interface IAddNotification {
     saveNotification (user:string, content:string, routeTo:string): Promise<NotificationDto>

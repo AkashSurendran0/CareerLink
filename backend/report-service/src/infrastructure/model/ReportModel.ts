@@ -10,7 +10,7 @@ export class ReportModel extends Model {
     public reason!:string;
     public status!:string;
 
-    public readonly createdAt!:Date
+    public readonly createdAt!:Date;
 }
 
 ReportModel.init(
@@ -40,12 +40,12 @@ ReportModel.init(
         },
         status:{
             type:DataTypes.STRING,
-            defaultValue:'Pending'
+            defaultValue:"Pending"
         },
     },
     {
         sequelize,
-        tableName:'reports',
+        tableName:"reports",
         timestamps:true
     }
-)
+);

@@ -43,8 +43,9 @@ export class SignupUser implements ISignupUser {
                 });
 
                 await elasticClient.indices.refresh({ index: "users" });
-            } catch (error: any) {
-                logger.error({error}, "Cant insert into elasticsearch");
+            } catch (error: unknown) {
+                if (error instanceof Error) logger.error({ error }, "Cant insert into elasticsearch");
+                else logger.error({ error }, "Cant insert into elasticsearch");
             }
         })();
 
@@ -63,7 +64,7 @@ export class SendOTP implements ISendOTP {
 
     constructor(@inject(TYPES.Mailer) private _mailer: Mailer, @inject(TYPES.IUserRepository) private _userRepository: IUserRepository) { }
 
-    async mailOtp(email: string): Promise<{ success: boolean, otp: number } | { success: boolean, message: string }> {
+    async mailOtp(email: string): Promise<{ success: boolean} | { success: boolean, message: string }> {
         const userExists = await this._userRepository.findByEmail(email);
         if (userExists) {
             return {
@@ -88,7 +89,6 @@ export class SendOTP implements ISendOTP {
         await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60);
         return {
             success: true,
-            otp
         };
     }
 }

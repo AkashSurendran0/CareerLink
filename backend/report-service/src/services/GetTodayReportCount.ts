@@ -11,8 +11,8 @@ export class GetTodayReportCount implements IGetTodayReportCount {
     ){}
 
     async getTodayReportCount(): Promise<number> {
-        const result=await this._reportRepository.getTodayReportCount()
-        return result
+        const result=await this._reportRepository.getTodayReportCount();
+        return result;
     }
 
 }

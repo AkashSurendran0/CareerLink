@@ -10,18 +10,18 @@ import { GetSinglePostDetails } from "./services/GetSinglePostDetails";
 import { GetAllUserPosts } from "./services/GetAllUserPosts";
 import { DeletePost } from "./services/DeletePost";
 
-const container=new Container()
+const container=new Container();
 
-container.bind(TYPES.IPostRepository).to(PostRepository).inSingletonScope()
+container.bind(TYPES.IPostRepository).to(PostRepository).inSingletonScope();
 
-container.bind(TYPES.IPostContent).to(PostContent).inSingletonScope()
-container.bind(TYPES.IGetAllPosts).to(GetAllPosts).inSingletonScope()
-container.bind(TYPES.IAlterPostLike).to(AlterPostLike).inSingletonScope()
-container.bind(TYPES.IAddComment).to(AddComment).inSingletonScope()
-container.bind(TYPES.IGetSinglePostDetails).to(GetSinglePostDetails).inSingletonScope()
-container.bind(TYPES.IGetAllUserPosts).to(GetAllUserPosts).inSingletonScope()
-container.bind(TYPES.IDeletePost).to(DeletePost).inSingletonScope()
+container.bind(TYPES.IPostContent).to(PostContent).inSingletonScope();
+container.bind(TYPES.IGetAllPosts).to(GetAllPosts).inSingletonScope();
+container.bind(TYPES.IAlterPostLike).to(AlterPostLike).inSingletonScope();
+container.bind(TYPES.IAddComment).to(AddComment).inSingletonScope();
+container.bind(TYPES.IGetSinglePostDetails).to(GetSinglePostDetails).inSingletonScope();
+container.bind(TYPES.IGetAllUserPosts).to(GetAllUserPosts).inSingletonScope();
+container.bind(TYPES.IDeletePost).to(DeletePost).inSingletonScope();
 
-container.bind(TYPES.PostController).to(PostController).inSingletonScope()
+container.bind(TYPES.PostController).to(PostController).inSingletonScope();
 
-export default container
+export default container;

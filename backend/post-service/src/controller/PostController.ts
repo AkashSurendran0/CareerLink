@@ -23,166 +23,168 @@ export class PostController {
 
     postContent = async (req:Request, res:Response): Promise<void> => {
         try {
-            const user=req.headers['user-id'] as string
-            const {content}=req.body
-            let text=content?? null
-            let url=null
+            const user=req.headers["user-id"] as string;
+            const {content}=req.body;
+            let text=content?? null;
+            let url=null;
             if(req.file){
-                const buffer=req.file?.buffer
+                const buffer=req.file?.buffer;
                 if (!buffer) {
                     res.status(STATUS_CODES.BAD_REQUEST).json({ message: "File buffer is required" });
                     return;
                 }
-                const fileType=req.file.mimetype.split("/")[1]
+                const fileType=req.file.mimetype.split("/")[1];
                 if (!fileType) {
                     res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid file type" });
                     return;
                 }
-                url=await uploadPost(buffer, fileType)
+                url=await uploadPost(buffer, fileType);
             }  
-            const result=await this._postContent.postContent(url, text, user)
-            res.json({result})
+            const result=await this._postContent.postContent(url, text, user);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getAllPosts = async (req:Request, res:Response) => {
         try {
-            const {lim, shown}=req.query
-            if (typeof lim !== 'string' || typeof shown !== 'string') {
+            const {lim, shown}=req.query;
+            if (typeof lim !== "string" || typeof shown !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "lim and shown parameters are required" });
             }
-            const LIMIT=parseInt(lim)
-            const SHOWN=parseInt(shown)
-            let result=await this._getAllPosts.getAllPosts(LIMIT, SHOWN)
+            const LIMIT=parseInt(lim);
+            const SHOWN=parseInt(shown);
+            let result=await this._getAllPosts.getAllPosts(LIMIT, SHOWN);
             for(let i=0;i<result.allPost.length;i++){
                 const post = result.allPost[i];
                 if (!post) continue;
-                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${post.createdBy}`)
+                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${post.createdBy}`);
                 const username = userResponse.data?.result?.result?.username;
                 const pfp = userResponse.data?.result?.pfp ?? null;
-                // Controller boundary: using any to add dynamic properties to DTO
-                (post as any).userName = username;
-                (post as any).pfp = pfp;
+                // Controller boundary: extend DTO with optional display fields
+                const extended = post as (typeof post) & { userName?: string | null; pfp?: string | null };
+                extended.userName = username;
+                extended.pfp = pfp;
             }
-            res.json({result})
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     alterPostLike = async (req:Request, res:Response) => {
         try {
-            const {post}=req.query
-            if (typeof post !== 'string') {
+            const {post}=req.query;
+            if (typeof post !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "post parameter is required" });
             }
-            const user=req.headers['user-id'] as string
-            const result=await this._alterPostLike.alterPostLike(post, user)
-            res.json({result})
+            const user=req.headers["user-id"] as string;
+            const result=await this._alterPostLike.alterPostLike(post, user);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     addComment = async (req:Request, res:Response) => {
         try {
-            const user=req.headers['user-id'] as string
-            const data=req.body
-            const result=await this._addComment.addComment(data, user)
-            res.json({result})
+            const user=req.headers["user-id"] as string;
+            const data=req.body;
+            const result=await this._addComment.addComment(data, user);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getSinglePostDetails = async (req:Request, res:Response) => {
         try {
-            const {post}=req.query
-            if (typeof post !== 'string') {
+            const {post}=req.query;
+            if (typeof post !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "post parameter is required" });
             }
-            let result=await this._getSinglePostDetails.getDetails(post)
+            let result=await this._getSinglePostDetails.getDetails(post);
             for(let i=0;i<result.comments.length;i++){
                 const comment = result.comments[i];
                 if (!comment) continue;
-                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${comment.by}`)
+                const userResponse=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${comment.by}`);
                 const username = userResponse.data?.result?.result?.username;
                 const pfp = userResponse.data?.result?.pfp ?? null;
-                // Controller boundary: using any to add dynamic properties to comment objects
-                (comment as any).userName = username;
-                (comment as any).pfp = pfp;
+                // Controller boundary: extend comment DTO with optional display fields
+                const extendedComment = comment as (typeof comment) & { userName?: string | null; pfp?: string | null };
+                extendedComment.userName = username;
+                extendedComment.pfp = pfp;
             }
-            res.json({result})
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getAllUserPosts = async (req:Request, res:Response) => {
         try {
-            const {user}=req.query
-            const userId=req.headers['user-id'] as string
+            const {user}=req.query;
+            const userId=req.headers["user-id"] as string;
             let id: string;
-            if (typeof user === 'string') {
+            if (typeof user === "string") {
                 id = user;
             } else {
                 id = userId;
             }
-            const result=await this._getAllUserPosts.getAllPosts(id)
-            res.json({result})
+            const result=await this._getAllUserPosts.getAllPosts(id);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     deletePost = async (req:Request, res:Response) => {
         try {
-            const {id}=req.query
-            if (typeof id !== 'string') {
+            const {id}=req.query;
+            if (typeof id !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
             }
-            await this._deletePost.deletePost(id)
-            res.json({success:true})
+            await this._deletePost.deletePost(id);
+            res.json({success:true});
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, 'error')
+                logger.error({error}, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
  
 }

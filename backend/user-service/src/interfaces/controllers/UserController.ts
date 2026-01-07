@@ -40,13 +40,14 @@ export class UserController {
             const { email, password } = req.body;
             const result = await this._loginUser.execute(email, password);
             if (result.success && "token" in result) {
-                res.cookie("token", (result as any).token, {
+                const r = result as { token?: string; refreshToken?: string };
+                res.cookie("token", r.token ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
-                res.cookie("refreshToken", (result as any).refreshToken, {
+                res.cookie("refreshToken", r.refreshToken ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
@@ -68,13 +69,14 @@ export class UserController {
             const { username, email, password } = req.body;
             const token = await this._signupUser.createUser(username, email, password);
             if (token.success && "token" in token) {
-                res.cookie("token", (token as any).token, {
+                const t = token as { token?: String; refreshToken?: String };
+                res.cookie("token", t.token ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
-                res.cookie("refreshToken", (token as any).refreshToken, {
+                res.cookie("refreshToken", t.refreshToken ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
@@ -187,7 +189,7 @@ export class UserController {
             const userId = req.headers["user-id"] as string;
             const result = await this._checkUserBlock.checkUserBlock(userId);
             res.json({ result });
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
@@ -198,8 +200,8 @@ export class UserController {
 
     verifyOTP = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { email } = req.query as { email: string };
-            const result = await this._verifyOtp.verifyOtp(email);
+            const { email, otp } = req.query as { email: string, otp: string };
+            const result = await this._verifyOtp.verifyOtp(email, otp);
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {

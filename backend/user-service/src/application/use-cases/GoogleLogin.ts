@@ -31,8 +31,9 @@ export class GoogleLogin implements IGoogleLogin {
                 });
 
                 await elasticClient.indices.refresh({ index: "users" });
-            } catch (error: any) {
-                logger.error({error} , "Cant insert into elasticsearch");
+            } catch (error: unknown) {
+                if (error instanceof Error) logger.error({ error } , "Cant insert into elasticsearch");
+                else logger.error({ error } , "Cant insert into elasticsearch");
             }
         }
 

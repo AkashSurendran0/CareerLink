@@ -13,8 +13,8 @@ export class GetSinglePostDetails implements IGetSinglePostDetails {
     ) {}
 
     async getDetails(id: string): Promise<PostDto> {
-        const result=await this._postRepository.getById(id)
-        return PostMapper.toDTO(result)
+        const result=await this._postRepository.getById(id);
+        return PostMapper.toDTO(result);
     }
 
 }

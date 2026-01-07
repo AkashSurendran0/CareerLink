@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
-import { Request, Response, NextFunction } from 'express'
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -12,21 +12,27 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     }
 
     try {
-        const decoded: any = jwt.verify(accessToken, process.env.JWT_SECRET!);
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET! as string) as unknown;
 
-        req.headers['user-email'] = decoded.email;
-        req.headers['user-id'] = decoded.id;
+        if (typeof decoded === "object" && decoded !== null) {
+            const email = (decoded as { email?: unknown }).email;
+            const id = (decoded as { id?: unknown }).id;
+
+            if (typeof email === "string") req.headers["user-email"] = email;
+            if (typeof id === "string") req.headers["user-id"] = id;
+        }
 
         return next();
-    } catch (error: any) {
-        if (error.name === 'TokenExpiredError') {
+    } catch (error: unknown) {
+        const name = typeof error === "object" && error !== null && "name" in error ? (error as { name?: unknown }).name : undefined;
+        if (typeof name === "string" && name === "TokenExpiredError") {
             return res.status(440).json({
-                message: 'session_over'
+                message: "session_over"
             });
         }
 
         return res.status(401).json({
-            message: 'invalid_token'
+            message: "invalid_token"
         });
     }
 };

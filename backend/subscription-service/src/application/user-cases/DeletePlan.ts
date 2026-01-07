@@ -11,8 +11,8 @@ export class DeletePlan implements IDeletePlan {
     ) {}
 
     async deletePlan(user: string): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionRepository.deletePlan(user)
-        return result
+        const result=await this._subscriptionRepository.deletePlan(user);
+        return result;
     }
 
 }

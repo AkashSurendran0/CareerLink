@@ -10,32 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
       - name: Checkout
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Build frontend
       - name: Build frontend
         run: |
           cd frontend
           npm run build
 
-      # 5️⃣ Build backend
       - name: Build backend Docker images
         run: |
           docker compose -f docker-compose.yml build
 
-      # 6️⃣ Deploy to Droplet
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@v0.1.9
         with:

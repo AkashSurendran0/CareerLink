@@ -3,29 +3,29 @@ import container from "../inversify.config";
 import { SubscriptionController } from "../interface/controllers/SubscriptionController";
 import { TYPES } from "../types";
 
-const subscriptionController=container.get<SubscriptionController>(TYPES.SubscriptionController)
+const subscriptionController=container.get<SubscriptionController>(TYPES.SubscriptionController);
 
-const router=Router()
+const router=Router();
 
-router.post('/addSubscription', subscriptionController.addSubscription)
-router.get('/getAllPlans', subscriptionController.getAllPlans)
-router.patch('/alterPlanStatus', subscriptionController.alterPlanStatus)
-router.get('/getActivePlans', subscriptionController.getActivePlans)
-router.post('/create-order', subscriptionController.createOrder)
-router.post('/verifyPayment', subscriptionController.verifyPayment)
-router.post('/createStripePayment', subscriptionController.createStripePayment)
-router.post('/buyPremium', subscriptionController.buyPremium)
-router.get('/getUserPlan', subscriptionController.getUserPlan)
-router.delete('/deletePlan', subscriptionController.deletePlan)
-router.get('/getSubscriptionInfo', subscriptionController.getSubscriptionInfo)
-router.post('/adminUpgradeUser', subscriptionController.adminUpgradeUser)
-router.delete('/adminDowngradeUser', subscriptionController.adminDowngradeUser)
-router.get('/getActivePlanUsers', subscriptionController.getActivePlanUsers)
-router.delete('/deleteSubscriptionPlan', subscriptionController.deleteSubscriptionPlan)
-router.get('/getSubscriptionAnalytics', subscriptionController.getSubscriptionAnalytics)
-router.get('/getSubscriptionTypeAnalytics', subscriptionController.getSubscriptionTypeAnalytics)
-router.get('/getPremiumUserCount', subscriptionController.getPremiumUserCount)
-router.get('/getPlanDetails', subscriptionController.getPlanDetails)
-router.patch('/editSubscriptionPlan', subscriptionController.editSubscriptionPlan)
+router.post("/addSubscription", subscriptionController.addSubscription);
+router.get("/getAllPlans", subscriptionController.getAllPlans);
+router.patch("/alterPlanStatus", subscriptionController.alterPlanStatus);
+router.get("/getActivePlans", subscriptionController.getActivePlans);
+router.post("/create-order", subscriptionController.createOrder);
+router.post("/verifyPayment", subscriptionController.verifyPayment);
+router.post("/createStripePayment", subscriptionController.createStripePayment);
+router.post("/buyPremium", subscriptionController.buyPremium);
+router.get("/getUserPlan", subscriptionController.getUserPlan);
+router.delete("/deletePlan", subscriptionController.deletePlan);
+router.get("/getSubscriptionInfo", subscriptionController.getSubscriptionInfo);
+router.post("/adminUpgradeUser", subscriptionController.adminUpgradeUser);
+router.delete("/adminDowngradeUser", subscriptionController.adminDowngradeUser);
+router.get("/getActivePlanUsers", subscriptionController.getActivePlanUsers);
+router.delete("/deleteSubscriptionPlan", subscriptionController.deleteSubscriptionPlan);
+router.get("/getSubscriptionAnalytics", subscriptionController.getSubscriptionAnalytics);
+router.get("/getSubscriptionTypeAnalytics", subscriptionController.getSubscriptionTypeAnalytics);
+router.get("/getPremiumUserCount", subscriptionController.getPremiumUserCount);
+router.get("/getPlanDetails", subscriptionController.getPlanDetails);
+router.patch("/editSubscriptionPlan", subscriptionController.editSubscriptionPlan);
 
-export default router
+export default router;

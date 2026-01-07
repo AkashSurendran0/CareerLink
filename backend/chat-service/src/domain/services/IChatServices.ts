@@ -1,4 +1,5 @@
-import { ChatDto } from "../../dto/ChatDto"
+import { ChatDto } from "../../dto/ChatDto";
+import { Conversation } from "../entity/Conversation";
 
 type Data = {
     convoId:string,
@@ -11,7 +12,7 @@ export interface IStartConversation {
 }
 
 export interface IGetConversations {
-    getConversations(id:string): Promise<any>
+    getConversations(id:string): Promise<Conversation[]>
 }
 
 export interface ISendMessage {
@@ -31,7 +32,7 @@ export interface IGetReportedMessage {
 }
 
 export interface IScheduleCall {
-    scheduleCall(data:Data, companyId:any): Promise<ChatDto>
+    scheduleCall(data:Data, companyId:string): Promise<ChatDto>
 }
 
 export interface IDeleteConversation {

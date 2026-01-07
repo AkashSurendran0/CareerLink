@@ -1,4 +1,4 @@
-import { Resume } from "../entity/Resume"
+import { Resume } from "../entity/Resume";
 
 export interface IResumeRepository{
     addResume (url:string, user:string, name:string) : Promise<{success:boolean}>

@@ -11,8 +11,8 @@ export class GetPremiumUserCount implements IGetPremiumUserCount {
     ){}
 
     async getPremiumUserCount(): Promise<number> {
-        const result=await this._subscriptionRepository.getPremiumUserCount()
-        return result
+        const result=await this._subscriptionRepository.getPremiumUserCount();
+        return result;
     }
 
 }

@@ -10,9 +10,9 @@ export class GetSubscriptionAnalysis implements IGetSubscriptionAnalysis {
         @inject(TYPES.ISubscriptionRepository) private _subscriptionRepository:ISubscriptionRepository
     ){}
 
-    async getSubscriptionAnalysis(): Promise<any> {
-        const result=await this._subscriptionRepository.getSubscriptionAnalysis()
-        return result
+    async getSubscriptionAnalysis(): Promise<Array<{ month: string; count: number }>> {
+        const result=await this._subscriptionRepository.getSubscriptionAnalysis();
+        return result;
     }
 
 }

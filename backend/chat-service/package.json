@@ -8,7 +8,9 @@
     "dev": "nodemon dist/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +24,9 @@
     "@types/mongodb": "^4.0.6",
     "@types/mongoose": "^5.11.96",
     "inversify": "^7.10.6",
-    "typescript": "^5.9.3"
+    "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
     "amqplib": "^0.10.9",

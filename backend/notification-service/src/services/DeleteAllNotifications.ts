@@ -11,8 +11,8 @@ export class DeleteAllNotifications implements IDeleteAllNotifications {
     ){}
 
     async deleteAllNotifications (user:string): Promise<{success:boolean}> {
-        const result=await this._notificationRepository.deleteAllNotifications(user)
-        return result
+        const result=await this._notificationRepository.deleteAllNotifications(user);
+        return result;
     }
 
 }

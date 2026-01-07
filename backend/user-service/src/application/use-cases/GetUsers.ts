@@ -20,7 +20,7 @@ export class GetAllUsers implements IGetAllUsers {
         const totalUsers = countResponse.count;
         const pageLimit = Math.ceil(totalUsers / limit);
 
-        let esQuery: any;
+        let esQuery: Record<string, unknown>;
 
         if (!query || query.trim() === "") {
             esQuery = { match_all: {} };
@@ -39,8 +39,18 @@ export class GetAllUsers implements IGetAllUsers {
             query: esQuery
         });
 
-        const hits = users.hits.hits.map((hit: any) => hit._source);
-        const result = hits.map((user: any) => UserMapper.toDTO(user))
+        const hits = users.hits.hits.map((hit: { _source: unknown }) =>
+            hit._source as {
+                id: string;
+                username: string;
+                email: string;
+                suspended?: boolean;
+                status?: boolean;
+                isVip?: boolean;
+                createdAt?: Date | string;
+            }
+        );
+        const result = hits.map((user) => UserMapper.toDTO(user));
         return {
             result: result,
             pageLimit: pageLimit

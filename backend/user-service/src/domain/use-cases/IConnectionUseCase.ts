@@ -1,5 +1,9 @@
+export type SimpleUser = { id: string; name?: string; dp?: string | null; pending?: boolean };
+
+export type UsersWithCount = { users: SimpleUser[]; requestCount: number };
+
 export interface IGetConnections {
-    getUnconnectedUsers(id: string, name: string | undefined): Promise<any>
+    getUnconnectedUsers(id: string, name: string | undefined): Promise<UsersWithCount>
 }
 
 export interface IAlterConnectionRequest {
@@ -7,7 +11,7 @@ export interface IAlterConnectionRequest {
 }
 
 export interface IGetUserRequests {
-    getUserRequests(id: string, name: string | undefined): Promise<any>
+    getUserRequests(id: string, name: string | undefined): Promise<UsersWithCount>
 }
 
 export interface IEvaluateRequest {
@@ -15,7 +19,7 @@ export interface IEvaluateRequest {
 }
 
 export interface IGetConnectedUsers {
-    getConnectedUsers(id: string, name: string | undefined): Promise<any>
+    getConnectedUsers(id: string, name: string | undefined): Promise<UsersWithCount>
 }
 
 export interface IRemoveConnection {

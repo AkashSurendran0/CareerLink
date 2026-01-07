@@ -1,4 +1,4 @@
-import { Report } from "../entity/Report"
+import { Report } from "../entity/Report";
 
 export interface IReportRepository {
     reportUser(reporter: string, user: string, type: string): Promise<{success:boolean}>
@@ -8,6 +8,6 @@ export interface IReportRepository {
     findById(id:string): Promise<{success:boolean, report?:Report}>
     closeReport(id:string): Promise<{success:boolean}>
     reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{success:boolean}>
-    getReportAnalytics(): Promise<any>
+    getReportAnalytics(): Promise<Array<{ reason: string; count: number }>>
     getTodayReportCount(): Promise<number>
 }

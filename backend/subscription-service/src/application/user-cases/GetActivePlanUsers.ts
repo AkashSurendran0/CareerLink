@@ -11,8 +11,8 @@ export class GetActivePlanUsers implements IGetActivePlanUsers {
     ){}
 
     async getActiveUsers(plan: string): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionRepository.getActivePlanUsers(plan)
-        return result
+        const result=await this._subscriptionRepository.getActivePlanUsers(plan);
+        return result;
     }
 
 }

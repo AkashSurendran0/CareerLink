@@ -15,22 +15,22 @@ export class GetAvailableJobs implements IGetAvailableJobs {
     ){}
 
     async getAvailableJobs(query:string, user:string): Promise<JobDTO[]> {
-        let jobs=await this._jobRepository.getAvailableJobs(query)
-        let result=[]
+        let jobs=await this._jobRepository.getAvailableJobs(query);
+        let result=[];
         for(let job of jobs){
-            let include=false
-            const application=await this._jobApplicationRepository.getJobApplicants(job._id, 'All')
+            let include=false;
+            const application=await this._jobApplicationRepository.getJobApplicants(job._id, "All");
             if(application.result.length>0){
                 for (const app of application.result){
                     if(app.user==user){
-                        include=true
+                        include=true;
                     }
-                    if(include) break
+                    if(include) break;
                 }
             }
-            if(!include) result.push(job)
+            if(!include) result.push(job);
         }
-        return result.map(job=>JobMapper.toDTO(job))
+        return result.map(job=>JobMapper.toDTO(job));
     }
 
 }

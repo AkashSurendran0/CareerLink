@@ -13,8 +13,8 @@ export class SendMessage implements ISendMessage {
     ){}
 
     async sendMessage(sender: string, message: string, conversation: string): Promise<ChatDto> {
-        const result=await this._chatRepository.sendMessage(sender, message, conversation)
-        return ChatMapper.toDTO(result)
+        const result=await this._chatRepository.sendMessage(sender, message, conversation);
+        return ChatMapper.toDTO(result);
     }
 
 }

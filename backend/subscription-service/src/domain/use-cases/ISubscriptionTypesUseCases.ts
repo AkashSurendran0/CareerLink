@@ -6,10 +6,11 @@ type Feature = {
 };
 
 type SubscriptionData = {
-    planName:string,
-    amount:number,
-    features:Feature[]
-    status:boolean
+    name: string;
+    amount: number;
+    billingCycle: number;
+    features: Feature[];
+    active: boolean;
 }
 
 export interface IAddSubscription {
@@ -33,7 +34,7 @@ export interface IDeletePlanType {
 }
 
 export interface IGetSubscriptionTypeAnalytics {
-  getSubscriptionTypeAnalytics(): Promise<any>
+  getSubscriptionTypeAnalytics(): Promise<Array<{ subscriptionType: string; count: number; name?: string }>>
 }
 
 export interface IGetPlanDetails {

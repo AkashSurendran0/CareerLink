@@ -11,8 +11,8 @@ export class UploadResume implements IUploadResume {
     ){}
 
     async uploadResume(url: string, user:string, name:string): Promise<{ success: boolean; }> {
-        const result=await this._resumeRepository.addResume(url, user, name)
-        return result
+        const result=await this._resumeRepository.addResume(url, user, name);
+        return result;
     }
 
 }

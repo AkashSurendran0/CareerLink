@@ -12,18 +12,18 @@ export class AlterUserApplication implements IAlterUserApplication {
     ){}
 
     async acceptApplication(job: string, user: string): Promise<{ success: boolean; }> {
-        const result=await this._jobApplicationRepository.acceptApplication(job, user)
-        return result
+        const result=await this._jobApplicationRepository.acceptApplication(job, user);
+        return result;
     }
 
     async rejectApplication(job: string, user: string): Promise<{ success: boolean; }> {
-        const result=await this._jobApplicationRepository.rejectApplication(job, user)
-        return result
+        const result=await this._jobApplicationRepository.rejectApplication(job, user);
+        return result;
     }
 
     async hireUser(job: string, user: string): Promise<{ success: boolean; }> {
-        const result=await this._jobApplicationRepository.hireApplication(job, user)
-        return result
+        const result=await this._jobApplicationRepository.hireApplication(job, user);
+        return result;
     }
 
 }

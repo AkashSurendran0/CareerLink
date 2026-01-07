@@ -12,11 +12,11 @@ export class GetUserSubscription implements IGetUserSubscription {
         @inject(TYPES.ISubscriptionTypesRepository) private _subscriptionTypesRepository:ISubscriptionTypesRepository
     ) {}
 
-    async getSubscription(user:string): Promise<any> {
-        const plan=await this._subscriptionRepository.getByUser(user)
-        let planDetails=null
-        if(plan) planDetails = await this._subscriptionTypesRepository.findById(plan.subscriptionType)
-        return {plan, planDetails}
+    async getSubscription(user:string): Promise<{ plan: import("../../domain/entity/Subscription").Subscription | null; planDetails?: import("../../domain/entity/SubscriptionType").SubscriptionType | null }> {
+        const plan=await this._subscriptionRepository.getByUser(user);
+        let planDetails:null | import("../../domain/entity/SubscriptionType").SubscriptionType = null;
+        if(plan) planDetails = await this._subscriptionTypesRepository.findById(plan.subscriptionType);
+        return {plan, planDetails};
     }
 
 }

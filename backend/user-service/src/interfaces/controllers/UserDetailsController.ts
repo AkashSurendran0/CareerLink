@@ -35,9 +35,9 @@ export class UserDetailsController {
 
     queryUserDetails = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { user } = req.query as { user: string }
+            const { user } = req.query as { user: string };
             const userId = req.headers["user-id"] as string;
-            const id = user || userId
+            const id = user || userId;
             const userDetails = await this._getUserDetails.getUserDetails(id);
             res.json({ userDetails });
         } catch (error: unknown) {
@@ -74,9 +74,9 @@ export class UserDetailsController {
 
     getGithubData = async (req: Request, res: Response) => {
         try {
-            const { user } = req.query as { user: string }
-            const result = await this._getGithubDetails.getGithubDetails(user)
-            res.json({ result })
+            const { user } = req.query as { user: string };
+            const result = await this._getGithubDetails.getGithubDetails(user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -84,13 +84,13 @@ export class UserDetailsController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getGithubActivity = async (req: Request, res: Response) => {
         try {
-            const { user } = req.query as { user: string }
-            const result = await this._getGithubDetails.getGithubHeatmap(user)
-            res.json({ result })
+            const { user } = req.query as { user: string };
+            const result = await this._getGithubDetails.getGithubHeatmap(user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -98,15 +98,15 @@ export class UserDetailsController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getGithubRepo = async (req: Request, res: Response) => {
         try {
-            const { page, user, limit } = req.query as { page: string, user: string, limit: string }
-            const current_page = Number(page)
-            const lim = Number(limit)
-            const result = await this._getGithubDetails.getGithubRepoDetails(current_page, user, lim)
-            res.json({ result })
+            const { page, user, limit } = req.query as { page: string, user: string, limit: string };
+            const current_page = Number(page);
+            const lim = Number(limit);
+            const result = await this._getGithubDetails.getGithubRepoDetails(current_page, user, lim);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -114,6 +114,6 @@ export class UserDetailsController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
 }

@@ -13,39 +13,39 @@ export class AlterCompanyRegistrationStatus implements IAlterCompanyRegistration
     ){}
 
     async rejectCompany(id:string, reason:string[]):Promise<{success:boolean}> {
-            const company=await this._companyRepository.rejectCompany(id, reason)
+            const company=await this._companyRepository.rejectCompany(id, reason);
             await elasticClient.update({
-                index:'companies',
+                index:"companies",
                 id:id,
                 doc:{
                     rejected:true
                 }
-            })
+            });
             await rabbitmqService.publishEvent("company.events", "company.rejected", {
                 companyId:company.id,
                 companyName:company.name,
                 registeredBy:company.registeredBy,
-                action:'rejected'
-            })
-            return {success:true}
+                action:"rejected"
+            });
+            return {success:true};
     }
 
     async acceptCompany(id:string):Promise<{success:boolean}> {
-        const company=await this._companyRepository.approveCompany(id)
+        const company=await this._companyRepository.approveCompany(id);
         await elasticClient.update({
-            index:'companies',
+            index:"companies",
             id:id,
             doc:{
                 approved:true
             }
-        })
+        });
         await rabbitmqService.publishEvent("company.events", "company.approved", {
             companyId:company.id,
             companyName:company.name,
             registeredBy:company.registeredBy,
-            action:'approved'
-        })
-        return {success:true}
+            action:"approved"
+        });
+        return {success:true};
     }
 
 }

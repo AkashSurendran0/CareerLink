@@ -13,11 +13,11 @@ export class DeletePlanType implements IDeletePlanType {
     ){}
 
     async deletePlanType(id: string): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionRepository.getActivePlanUsers(id)
-        if(!result.success) return result
-        await this._subscriptionTypesRepository.deleteType(id)
-        await this._subscriptionRepository.deletePlans(id)
-        return result
+        const result=await this._subscriptionRepository.getActivePlanUsers(id);
+        if(!result.success) return result;
+        await this._subscriptionTypesRepository.deleteType(id);
+        await this._subscriptionRepository.deletePlans(id);
+        return result;
     }
 
 }

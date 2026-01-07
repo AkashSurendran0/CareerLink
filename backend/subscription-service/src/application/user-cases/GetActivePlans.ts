@@ -13,8 +13,8 @@ export class GetActivePlans implements IGetActivePlans{
     ){}
 
     async getActivePlans(): Promise<SubscriptionTypeDto[]> {
-        const result=await this._subscriptionTypesRepository.getActivePlans()
-        return result.map(plan=>SubscriptionTypesMapper.toDTO(plan))
+        const result=await this._subscriptionTypesRepository.getActivePlans();
+        return result.map(plan=>SubscriptionTypesMapper.toDTO(plan));
     }
 
 }

@@ -1,4 +1,4 @@
-import { CompanyDTO } from "../../dto/CompanyDTO"
+import { CompanyDTO } from "../../dto/CompanyDTO";
 
 type Details = {
     registeredBy: string,

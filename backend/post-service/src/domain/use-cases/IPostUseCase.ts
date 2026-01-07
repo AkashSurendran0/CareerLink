@@ -25,5 +25,5 @@ export interface IGetAllUserPosts {
 }
 
 export interface IDeletePost {
-    deletePost(id:string): Promise<any>
+    deletePost(id:string): Promise<void>
 }

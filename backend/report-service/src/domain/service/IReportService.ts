@@ -1,4 +1,4 @@
-import { ReportDto } from "../../dto/ReportDto"
+import { ReportDto } from "../../dto/ReportDto";
 
 export interface IReportUser {
     reportUser(reporter:string, user:string, type:string):Promise<{success:boolean}>
@@ -29,7 +29,7 @@ export interface IReportMessage {
 }
 
 export interface IGetReportAnalytics {
-    getReportAnalytics(): Promise<any>
+    getReportAnalytics(): Promise<Array<{ reason: string; count: number }>>
 }
 
 export interface IGetTodayReportCount {

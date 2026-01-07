@@ -50,6 +50,6 @@ const chatSchema: Schema<IChat> = new Schema(
         }]
     },
     { timestamps: true }
-)
+);
 
-export const ChatModel: Model<IChat> = mongoose.model<IChat>('chats', chatSchema)
+export const ChatModel: Model<IChat> = mongoose.model<IChat>("chats", chatSchema);

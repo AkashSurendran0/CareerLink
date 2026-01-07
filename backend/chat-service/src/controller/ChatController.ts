@@ -6,7 +6,7 @@ import { IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage,
 import axios from "axios";
 import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 @injectable()
 export class ChatController {
@@ -24,13 +24,13 @@ export class ChatController {
 
     startUserConversation = async (req: Request, res: Response) => {
         try {
-            const { company } = req.query as { company: string }
-            const id = req.headers['user-id'] as string
-            let sender = company || id
-            let isCompany = company ? true : false
-            const { user } = req.query as { user: string }
-            const result = await this._startConversation.startConversation(sender, user, isCompany)
-            res.json({ result })
+            const { company } = req.query as { company: string };
+            const id = req.headers["user-id"] as string;
+            let sender = company || id;
+            let isCompany = company ? true : false;
+            const { user } = req.query as { user: string };
+            const result = await this._startConversation.startConversation(sender, user, isCompany);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -38,30 +38,30 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getConversations = async (req: Request, res: Response) => {
         try {
-            const id = req.headers['user-id'] as string
-            let result = await this._getConversations.getConversations(id)
+            const id = req.headers["user-id"] as string;
+            let result = await this._getConversations.getConversations(id);
             for (let i = 0; i < result.length; i++) {
                 if (result[i].isCompany) {
-                    const companyDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${result[i].users}`)
+                    const companyDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${result[i].users}`);
                     // @ts-ignore
-                    result[i].username = companyDetails.data.result.name
+                    result[i].username = companyDetails.data.result.name;
                     // @ts-ignore
-                    result[i].pfp = companyDetails.data.result.logo
+                    result[i].pfp = companyDetails.data.result.logo;
                 } else {
-                    const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users}`)
+                    const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users}`);
                     // @ts-ignore
-                    result[i].email = userDetails.data.result.result.email
+                    result[i].email = userDetails.data.result.result.email;
                     // @ts-ignore
-                    result[i].username = userDetails.data.result.result.username
+                    result[i].username = userDetails.data.result.result.username;
                     // @ts-ignore
-                    result[i].pfp = userDetails.data.result?.pfp || null
+                    result[i].pfp = userDetails.data.result?.pfp || null;
                 }
             }
-            res.json({ result })
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -69,18 +69,18 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     sendMessage = async (req: Request, res: Response) => {
         try {
-            const { convoId, message } = req.body
-            const id = req.headers['user-id'] as string
-            const { company } = req.query as { company: string }
+            const { convoId, message } = req.body;
+            const id = req.headers["user-id"] as string;
+            const { company } = req.query as { company: string };
             let sender;
-            if (company === 'undefined') sender = id
-            else sender = company || id
-            const result = await this._sendMessage.sendMessage(sender, message, convoId)
-            res.json({ result })
+            if (company === "undefined") sender = id;
+            else sender = company || id;
+            const result = await this._sendMessage.sendMessage(sender, message, convoId);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -88,14 +88,14 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getChats = async (req: Request, res: Response) => {
         try {
-            const user = req.headers['user-id'] as string
-            const { convo } = req.query as { convo: string }
-            const result = await this._getChats.getChats(convo, user)
-            res.json({ result })
+            const user = req.headers["user-id"] as string;
+            const { convo } = req.query as { convo: string };
+            const result = await this._getChats.getChats(convo, user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -103,13 +103,13 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     readMessages = async (req: Request, res: Response) => {
         try {
-            const { convo, user } = req.query as { convo: string, user: string }
-            const result = await this._readMessages.readMessages(convo, user)
-            res.json({ result })
+            const { convo, user } = req.query as { convo: string, user: string };
+            const result = await this._readMessages.readMessages(convo, user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -117,22 +117,22 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getCompanyConversations = async (req: Request, res: Response) => {
         try {
-            const { company } = req.query as { company: string }
-            let result = await this._getConversations.getConversations(company)
+            const { company } = req.query as { company: string };
+            let result = await this._getConversations.getConversations(company);
             for (let i = 0; i < result.length; i++) {
-                const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users[0]}`)
+                const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i].users[0]}`);
                 // @ts-ignore
-                result[i].email = userDetails.data.result.result.email
+                result[i].email = userDetails.data.result.result.email;
                 // @ts-ignore
-                result[i].username = userDetails.data.result.result.username
+                result[i].username = userDetails.data.result.result.username;
                 // @ts-ignore
-                result[i].pfp = userDetails.data.result?.pfp || null
+                result[i].pfp = userDetails.data.result?.pfp || null;
             }
-            res.json({ result })
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -140,13 +140,13 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getReportedMessage = async (req: Request, res: Response) => {
         try {
-            const { user1, user2, chatId } = req.query as { user1: string, user2: string, chatId: string }
-            const result = await this._getReportedMessages.getReportedMessage(user1, user2, chatId)
-            res.json(result)
+            const { user1, user2, chatId } = req.query as { user1: string, user2: string, chatId: string };
+            const result = await this._getReportedMessages.getReportedMessage(user1, user2, chatId);
+            res.json(result);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -154,13 +154,13 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     deleteConversation = async (req: Request, res: Response) => {
         try {
-            const { user1, user2 } = req.query as { user1: string, user2: string }
-            const result = await this._deleteConversation.deleteConversation(user1, user2)
-            res.json({ result })
+            const { user1, user2 } = req.query as { user1: string, user2: string };
+            const result = await this._deleteConversation.deleteConversation(user1, user2);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -168,14 +168,14 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     scheduleCall = async (req: Request, res: Response) => {
         try {
-            const data = req.body
-            const { company } = req.query as { company: string }
-            const result = await this._scheduleCall.scheduleCall(data, company)
-            res.json({ result })
+            const data = req.body;
+            const { company } = req.query as { company: string };
+            const result = await this._scheduleCall.scheduleCall(data, company);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -183,6 +183,6 @@ export class ChatController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
 }

@@ -2,8 +2,11 @@ export interface IBuySubscription {
     buySubscription(id:string, user:string, validity:number, email:string): Promise<{success:boolean}>
 }
 
+import { Subscription } from "../entity/Subscription";
+import { SubscriptionType } from "../entity/SubscriptionType";
+
 export interface IGetUserSubscription {
-    getSubscription(user:string): Promise<any> 
+    getSubscription(user:string): Promise<{ plan: Subscription | null; planDetails?: SubscriptionType | null }>
 }
 
 export interface IDeletePlan {
@@ -19,7 +22,7 @@ export interface IGetActivePlanUsers {
 }
 
 export interface IGetSubscriptionAnalysis {
-    getSubscriptionAnalysis(): Promise<any>
+    getSubscriptionAnalysis(): Promise<Array<{ month: string; count: number }>>
 }
 
 export interface IGetPremiumUserCount {

@@ -24,9 +24,9 @@ export class AddCompany implements IAddCompany {
     ){}
 
     async addCompany (user:string, details:Details): Promise<{success:boolean}> {
-        const result=await this._companyRepository.addCompany(user, details)
+        const result=await this._companyRepository.addCompany(user, details);
         await elasticClient.index({
-            index:'companies',
+            index:"companies",
             id:result.id.toString(),
             document:{
                 id:result.id,
@@ -38,8 +38,8 @@ export class AddCompany implements IAddCompany {
                 approved:result.approved,
                 rejected:result.rejected
             }
-        })
-        return {success:true}
+        });
+        return {success:true};
     }
 
 }

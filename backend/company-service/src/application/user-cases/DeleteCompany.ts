@@ -12,12 +12,12 @@ export class DeleteCompany implements IDeleteCompany {
     ){}
 
     async deleteCompany (id:string):Promise<{success:boolean}> {
-        const result=await this._companyRepository.deleteCompany(id)
+        const result=await this._companyRepository.deleteCompany(id);
         await elasticClient.delete({
-            index:'companies',
+            index:"companies",
             id:id
-        })
-        return result
+        });
+        return result;
     }
 
 }

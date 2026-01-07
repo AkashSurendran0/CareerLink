@@ -1,11 +1,13 @@
 import { ChatDto } from "../dto/ChatDto";
+import { Chat, Content } from "../domain/entity/Chat";
+import { IChat, IChatContent } from "../infrastructure/models/ChatModel";
 
 export class ChatMapper {
-    static toDTO(chat: any): ChatDto {
+    static toDTO(chat: Chat | IChat): ChatDto {
         return {
             _id: String(chat._id),
             conversation: chat.conversation,
-            content: (chat.content ?? []).map((item: any) => ({
+            content: (chat.content ?? []).map((item: IChatContent | Content) => ({
                 _id: String(item._id),
                 sendBy: item.sendBy,
                 isScheduleMessage: Boolean(item.isScheduleMessage),
@@ -16,6 +18,6 @@ export class ChatMapper {
                 sendAt: item.sendAt
             })),
             createdAt: chat.createdAt
-        }
+        };
     }
 }

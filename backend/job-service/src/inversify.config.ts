@@ -16,24 +16,24 @@ import { AlterUserApplication } from "./application/use-case/AlterJobApplication
 import { GetCompanyAnalytics } from "./application/use-case/GetCompanyAnalytics";
 import { GetJobApplicationAnalytics } from "./application/use-case/GetJobApplicationAnalytics";
 
-const container=new Container()
+const container=new Container();
 
-container.bind(TYPES.IJobRepository).to(JobRepository).inSingletonScope()
-container.bind(TYPES.IJobApplicationsRepository).to(JobApplicationsRepository).inSingletonScope()
+container.bind(TYPES.IJobRepository).to(JobRepository).inSingletonScope();
+container.bind(TYPES.IJobApplicationsRepository).to(JobApplicationsRepository).inSingletonScope();
 
-container.bind(TYPES.IAddJob).to(AddJob).inSingletonScope()
-container.bind(TYPES.IGetAllJobs).to(GetAllJobs).inSingletonScope()
-container.bind(TYPES.IGetJobDetails).to(GetJobDetails).inSingletonScope()
-container.bind(TYPES.IEditJob).to(EditJob).inSingletonScope()
-container.bind(TYPES.ICloseJobApplication).to(CloseJobApplication).inSingletonScope()
-container.bind(TYPES.IGetAvailableJobs).to(GetAvailableJobs).inSingletonScope()
-container.bind(TYPES.IApplyJob).to(ApplyJob).inSingletonScope()
-container.bind(TYPES.IGetUserAppliedJobs).to(GetUserAppliedJobs).inSingletonScope()
-container.bind(TYPES.IGetJobApplicants).to(GetJobApplicants).inSingletonScope()
-container.bind(TYPES.IAlterUserApplication).to(AlterUserApplication).inSingletonScope()
-container.bind(TYPES.IGetCompanyAnalytics).to(GetCompanyAnalytics).inSingletonScope()
-container.bind(TYPES.IGetJobApplicationAnalytics).to(GetJobApplicationAnalytics).inSingletonScope()
+container.bind(TYPES.IAddJob).to(AddJob).inSingletonScope();
+container.bind(TYPES.IGetAllJobs).to(GetAllJobs).inSingletonScope();
+container.bind(TYPES.IGetJobDetails).to(GetJobDetails).inSingletonScope();
+container.bind(TYPES.IEditJob).to(EditJob).inSingletonScope();
+container.bind(TYPES.ICloseJobApplication).to(CloseJobApplication).inSingletonScope();
+container.bind(TYPES.IGetAvailableJobs).to(GetAvailableJobs).inSingletonScope();
+container.bind(TYPES.IApplyJob).to(ApplyJob).inSingletonScope();
+container.bind(TYPES.IGetUserAppliedJobs).to(GetUserAppliedJobs).inSingletonScope();
+container.bind(TYPES.IGetJobApplicants).to(GetJobApplicants).inSingletonScope();
+container.bind(TYPES.IAlterUserApplication).to(AlterUserApplication).inSingletonScope();
+container.bind(TYPES.IGetCompanyAnalytics).to(GetCompanyAnalytics).inSingletonScope();
+container.bind(TYPES.IGetJobApplicationAnalytics).to(GetJobApplicationAnalytics).inSingletonScope();
 
-container.bind<JobController>(TYPES.JobController).to(JobController)
+container.bind<JobController>(TYPES.JobController).to(JobController);
 
-export default container
+export default container;

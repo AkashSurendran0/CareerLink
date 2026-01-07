@@ -12,13 +12,13 @@ export class GetSubscriptionTypeAnalytics implements IGetSubscriptionTypeAnalyti
         @inject(TYPES.ISubscriptionRepository) private _subscriptionRepository:ISubscriptionRepository
     ){}
 
-    async getSubscriptionTypeAnalytics(): Promise<any> {
-        const result=await this._subscriptionRepository.groupByPlan()
+    async getSubscriptionTypeAnalytics(): Promise<Array<{ subscriptionType: string; count: number; name?: string }>> {
+        const result=await this._subscriptionRepository.groupByPlan();
         for(let i=0;i<result.length;i++){
-            const details=await this._subscriptionTypesRepository.findById(result[i].subscriptionType)
-            result[i].name=details.name
+            const details=await this._subscriptionTypesRepository.findById(result[i].subscriptionType);
+            result[i].name=details.name;
         }
-        return result
+        return result;
     }
 
 }

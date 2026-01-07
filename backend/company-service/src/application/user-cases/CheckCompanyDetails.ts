@@ -13,8 +13,8 @@ export class CheckCompanyDetails implements ICheckCompanyDetails {
     ) { }
 
     async getCompanyInfo(id: string): Promise<CompanyDTO> {
-        const result = await this._companyRepository.findById(id)
-        return CompanyMapper.toDTO(result)
+        const result = await this._companyRepository.findById(id);
+        return CompanyMapper.toDTO(result);
     }
 
 }

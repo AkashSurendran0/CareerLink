@@ -14,4 +14,4 @@ export const TYPES = {
     IGetAvailableCompanies:"IGetAvailableCompanies",
     IGetCompanyDetailsByQuery:"IGetCompanyDetailsByQuery",
     IGetActiveCompanyCount:"IGetActiveCompanyCount"
-}
+};

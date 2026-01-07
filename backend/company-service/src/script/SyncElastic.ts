@@ -18,10 +18,10 @@ async function syncUsers () {
     const response=await elasticClient.bulk({refresh:true, operations});
     
     if(response.errors){
-        console.error('Sync error', response)
+        console.error("Sync error", response);
     }else{
-        console.log(`synced ${companies.length}`)
+        console.log(`synced ${companies.length}`);
     }
 }
 
-syncUsers().catch(console.error)
+syncUsers().catch(console.error);

@@ -7,7 +7,9 @@
     "dev": "nodemon dist/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "keywords": [],
   "author": "",
@@ -32,8 +34,10 @@
     "@types/express": "^5.0.3",
     "@types/mongoose": "^5.11.96",
     "@types/nodemailer": "^7.0.2",
+    "jiti": "^2.6.1",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0"
   }
 }

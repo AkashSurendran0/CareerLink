@@ -1,6 +1,6 @@
-import Stripe from 'stripe'
-import dotenv from 'dotenv'
+import Stripe from "stripe";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-export const stripe=new Stripe(process.env.STRIPE_API_SECRET!)
+export const stripe=new Stripe(process.env.STRIPE_API_SECRET!);

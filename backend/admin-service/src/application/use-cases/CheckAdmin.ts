@@ -11,8 +11,8 @@ export class CheckAdmin implements ICheckAdmin {
     ) {}
 
     async checkAdmin(user: string): Promise<{ success: boolean; }> {
-        const result=await this._adminRepository.checkAdmin(user)
-        return result
+        const result=await this._adminRepository.checkAdmin(user);
+        return result;
     }
 
 }

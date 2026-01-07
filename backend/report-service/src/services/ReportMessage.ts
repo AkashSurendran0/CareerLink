@@ -11,8 +11,8 @@ export class ReportMessage implements IReportMessage {
     ){}
 
     async reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{ success: boolean; }> {
-        const result=await this._reportRepository.reportMessage(reporter, sendBy, chat, type)
-        return result
+        const result=await this._reportRepository.reportMessage(reporter, sendBy, chat, type);
+        return result;
     }
 
 }

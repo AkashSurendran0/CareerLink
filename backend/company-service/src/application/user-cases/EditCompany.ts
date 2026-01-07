@@ -24,26 +24,26 @@ export class EditCompany implements IEditCompany {
     ){}
 
     async editCompany (user:string, details:Details): Promise<{success:boolean}> {
-        const company=await this._companyRepository.editCompany(user, details)
+        const company=await this._companyRepository.editCompany(user, details);
         if(company.rejected){
-            await this._companyRepository.changeRejectedStatus(user)
+            await this._companyRepository.changeRejectedStatus(user);
             await elasticClient.update({
-                index:'companies',
+                index:"companies",
                 id:company.id,
                 doc:{
                     rejected:false
                 }
-            })
+            });
         }
         await elasticClient.update({
-            index:'companies',
+            index:"companies",
             id:company.id,
             doc:{
                 logo:company.logo,
                 name:company.name,
             }
-        })
-        return {success:true}
+        });
+        return {success:true};
     }
 
 }

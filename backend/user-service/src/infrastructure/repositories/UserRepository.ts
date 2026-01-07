@@ -96,7 +96,7 @@ export class UserRepository implements IUserRepository {
     async getUsers(page: number, limit: number): Promise<User[]> {
         const offset = (page - 1) * limit;
         const users = await UserModel.findAll({ raw: true, offset, limit });
-        return users.map((user: any) =>
+        return users.map((user: UserType) =>
             new User(
                 user.id.toString(),
                 user.username,
@@ -166,7 +166,7 @@ export class UserRepository implements IUserRepository {
 
     async getAllUsers(): Promise<User[]> {
         const users = await UserModel.findAll({ raw: true });
-        return users.map((user: any) =>
+        return users.map((user: UserType) =>
             new User(
                 user.id.toString(),
                 user.username,
@@ -181,7 +181,7 @@ export class UserRepository implements IUserRepository {
 
     async findByName(name: string): Promise<User[]> {
         const users = await UserModel.findAll({ where: { username: { [Op.iLike]: `%${name}%` } }, raw: true });
-        return users.map((user: any) =>
+        return users.map((user: UserType) =>
             new User(
                 user.id.toString(),
                 user.username,
@@ -194,7 +194,7 @@ export class UserRepository implements IUserRepository {
         );
     }
 
-    async getUserAnalytics(): Promise<any> {
+    async getUserAnalytics(): Promise<Array<{ month: string; count: number }>> {
         const result = await sequelize.query(
             `
             WITH months AS (
@@ -217,7 +217,7 @@ export class UserRepository implements IUserRepository {
                 type: QueryTypes.SELECT,
             }
         );
-        return result;
+        return result as Array<{ month: string; count: number }>;
     }
 
 }

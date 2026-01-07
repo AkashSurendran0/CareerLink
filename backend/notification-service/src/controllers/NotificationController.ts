@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
 import { IAddNotification, IGetAllNotifications } from "../domain/services/INotificationServices";
@@ -24,14 +24,14 @@ export class NotificationController {
 
     getAllNotifications = async (req:Request, res:Response) => {
         try {
-            const userHeader = req.headers['user-email']
-            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            const userHeader = req.headers["user-email"];
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === "string" ? userHeader : undefined);
             if(!user){
-                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
-                return
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:"user-email header missing"});
+                return;
             }
-            const notifications=await this._getAllNotifications.getAllNotifications(user)
-            res.json({notifications}) 
+            const notifications=await this._getAllNotifications.getAllNotifications(user);
+            res.json({notifications}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
@@ -39,18 +39,18 @@ export class NotificationController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             } 
         }
-    }
+    };
 
     markAllRead = async (req:Request, res:Response) => {
         try {
-            const userHeader = req.headers['user-email']
-            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            const userHeader = req.headers["user-email"];
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === "string" ? userHeader : undefined);
             if(!user){
-                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
-                return
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:"user-email header missing"});
+                return;
             }
-            const result=await this._markAllRead.markAllRead(user)
-            res.json({result})
+            const result=await this._markAllRead.markAllRead(user);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -58,18 +58,18 @@ export class NotificationController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     deleteAll = async (req:Request, res:Response) => {
         try {
-            const userHeader = req.headers['user-email']
-            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === 'string' ? userHeader : undefined)
+            const userHeader = req.headers["user-email"];
+            const user = Array.isArray(userHeader) ? userHeader[0] : (typeof userHeader === "string" ? userHeader : undefined);
             if(!user){
-                res.status(STATUS_CODES.BAD_REQUEST).json({message:'user-email header missing'})
-                return
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:"user-email header missing"});
+                return;
             }
-            const result=await this._deleteAllNotifications.deleteAllNotifications(user)
-            res.json({result}) 
+            const result=await this._deleteAllNotifications.deleteAllNotifications(user);
+            res.json({result}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -77,18 +77,18 @@ export class NotificationController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     deleteOne = async (req:Request, res:Response) => {
         try {
-            const idRaw = req.query.id
-            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === 'string' ? idRaw : undefined)
+            const idRaw = req.query.id;
+            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === "string" ? idRaw : undefined);
             if(!id){
-                res.status(STATUS_CODES.BAD_REQUEST).json({message:'id is required'})
-                return
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:"id is required"});
+                return;
             }
-            const result=await this._deleteOne.deleteOne(String(id))
-            res.json({result}) 
+            const result=await this._deleteOne.deleteOne(String(id));
+            res.json({result}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -96,18 +96,18 @@ export class NotificationController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     readOne = async (req:Request, res:Response) => {
         try {
-            const idRaw = req.query.id
-            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === 'string' ? idRaw : undefined)
+            const idRaw = req.query.id;
+            const id = Array.isArray(idRaw) ? idRaw[0] : (typeof idRaw === "string" ? idRaw : undefined);
             if(!id){
-                res.status(STATUS_CODES.BAD_REQUEST).json({message:'id is required'})
-                return
+                res.status(STATUS_CODES.BAD_REQUEST).json({message:"id is required"});
+                return;
             }
-            const result=await this._markOneRead.markOneRead(String(id))
-            res.json({result}) 
+            const result=await this._markOneRead.markOneRead(String(id));
+            res.json({result}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -115,14 +115,14 @@ export class NotificationController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     sendScheduleMail = async (req:Request, res:Response) => {
         try {
-            const {userEmail, userName, companyName, date, time}=req.body
-            const notiContent='Meeting Scheduled !!'
-            await this._addNotification.saveNotification(userEmail, notiContent, '/chats/companyChats')
-            await this._mailer.sendMail(userEmail, 'Call Scheduling for Further Proceedings', 
+            const {userEmail, userName, companyName, date, time}=req.body;
+            const notiContent="Meeting Scheduled !!";
+            await this._addNotification.saveNotification(userEmail, notiContent, "/chats/companyChats");
+            await this._mailer.sendMail(userEmail, "Call Scheduling for Further Proceedings", 
                 `Hello ${userName}
 Greetings from ${companyName}.
 
@@ -138,8 +138,8 @@ We look forward to speaking with you.
 Best regards,
 ${companyName}
                 `
-            )
-            res.json({success:true}) 
+            );
+            res.json({success:true}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -147,13 +147,13 @@ ${companyName}
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     sendRemindMail = async (req:Request, res:Response) => {
         try {
-            const {userEmail, userName, companyName, date, time}=req.body
-            const notiContent='Meeting Reminder !!'
-            await this._addNotification.saveNotification(userEmail, notiContent, '/chats/companyChats')
+            const {userEmail, userName, companyName, date, time}=req.body;
+            const notiContent="Meeting Reminder !!";
+            await this._addNotification.saveNotification(userEmail, notiContent, "/chats/companyChats");
             await this._mailer.sendMail(userEmail, `Reminder: Scheduled Call on ${date}`, 
                 `Dear ${userName},
 
@@ -169,8 +169,8 @@ We look forward to the discussion.
 Best regards,
 ${companyName}
                 `
-            )
-            res.json({success:true}) 
+            );
+            res.json({success:true}); 
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -178,6 +178,6 @@ ${companyName}
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
 }

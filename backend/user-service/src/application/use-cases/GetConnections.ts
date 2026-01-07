@@ -14,32 +14,24 @@ export class GetConnections implements IGetConnections {
         @inject(TYPES.IConnectionRepository) private _connectionRepository: IConnectionRepository
     ) { }
 
-    async getUnconnectedUsers(id: string, name: string | undefined): Promise<any> {
-        let result;
-        if (name) result = await this._userRepository.findByName(name);
-        else result = await this._userRepository.getAllUsers();
+    async getUnconnectedUsers(id: string, name: string | undefined): Promise<{ users: { id: string; name?: string; dp?: string | null; pending: boolean }[]; requestCount: number }> {
+        let result = name ? await this._userRepository.findByName(name) : await this._userRepository.getAllUsers();
         const connections = await this._connectionRepository.findByUser(id);
-        let requestCount = await this._connectionRepository.getUserRequests(id);
-        requestCount = requestCount.length;
-        let unconnectedUsers = result.filter(user => user.id != id);
-        unconnectedUsers = unconnectedUsers.filter(user => user.suspended == false);
+        let requestCountArr = await this._connectionRepository.getUserRequests(id);
+        const requestCount = requestCountArr.length;
+
+        let unconnectedUsers = result.filter(user => user.id !== id && user.suspended === false);
         if (connections && connections.connections) {
             unconnectedUsers = unconnectedUsers.filter(user => !connections.connections.includes(user.id));
         }
 
-        for (let user of unconnectedUsers) {
-            if (connections && connections.pendings && connections.pendings.includes(user.id)) {
-                user.pending = true;
-            } else {
-                user.pending = false;
-            }
-        }
-        let users = [];
-        for (let user of unconnectedUsers) {
+        const users: { id: string; name?: string; dp?: string | null; pending: boolean }[] = [];
+        for (const user of unconnectedUsers) {
             const details = await this._userDetailsRepository.getUserDetails(user.id);
-            // @ts-ignore
-            users.push({ id: user.id, name: user.username, dp: details?.profilePicture ?? null, pending: user.pending });
+            const pending = Boolean(connections && connections.pendings && connections.pendings.includes(user.id));
+            users.push({ id: user.id, name: user.username, dp: details?.profilePicture ?? null, pending });
         }
+
         return { users, requestCount };
     }
 

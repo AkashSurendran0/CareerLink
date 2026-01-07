@@ -12,8 +12,8 @@ export class GetAllPlans implements IGetAllPlans {
     ) {}
 
     async getAllPlans(): Promise<SubscriptionTypeDto[]> {
-        const plans=await this._subscriptionTypesRepository.getAllPlans()
-        return plans.map(plan=>SubscriptionTypesMapper.toDTO(plan))
+        const plans=await this._subscriptionTypesRepository.getAllPlans();
+        return plans.map(plan=>SubscriptionTypesMapper.toDTO(plan));
     }
 
 }

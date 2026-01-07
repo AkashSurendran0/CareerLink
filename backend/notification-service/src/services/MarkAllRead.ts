@@ -11,8 +11,8 @@ export class MarkAllRead implements IMarkAllRead {
     ){}
 
     async markAllRead (user:string): Promise<{success:boolean}> {
-        const result=await this._notificationRepository.markAllRead(user)
-        return result
+        const result=await this._notificationRepository.markAllRead(user);
+        return result;
     }
 
 }

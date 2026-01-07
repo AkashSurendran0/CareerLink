@@ -13,14 +13,14 @@ export class DeleteConversation implements IDeleteConversation {
     ) { }
 
     async deleteConversation(user1: string, user2: string): Promise<{ success: boolean; }> {
-        const convo = await this._conversationRepository.findByUsers(user1, user2)
+        const convo = await this._conversationRepository.findByUsers(user1, user2);
         if (convo.success) {
             if (convo && convo.conversation) {
-                await this._conversationRepository.deleteConversation(convo.conversation._id)
-                await this._chatRepository.deleteChat(convo.conversation._id)
+                await this._conversationRepository.deleteConversation(convo.conversation._id);
+                await this._chatRepository.deleteChat(convo.conversation._id);
             }
         }
-        return { success: true }
+        return { success: true };
     }
 
 }

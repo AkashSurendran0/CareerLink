@@ -12,9 +12,9 @@ export class ScheduleCall implements IScheduleCall {
         @inject(TYPES.IChatRepository) private _chatRepository:IChatRepository
     ){}
 
-    async scheduleCall(data: { convoId: string; date: Date; time: string; }, companyId: any): Promise<ChatDto> {
-        const result=await this._chatRepository.scheduleCall(data, companyId)
-        return ChatMapper.toDTO(result)
+    async scheduleCall(data: { convoId: string; date: Date; time: string; }, companyId: string): Promise<ChatDto> {
+        const result = await this._chatRepository.scheduleCall(data, companyId);
+        return ChatMapper.toDTO(result);
     }
 
 }

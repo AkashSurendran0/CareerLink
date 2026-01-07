@@ -15,10 +15,10 @@ export class GetReportedMessage implements IGetReportedMessage {
     ) { }
 
     async getReportedMessage(user1: string, user2: string, chatId: string): Promise<ChatDto> {
-        const convo = await this._conversationRepository.findByUsers(user1, user2)
+        const convo = await this._conversationRepository.findByUsers(user1, user2);
         if (!convo || !convo.conversation) return {} as ChatDto;
-        const chats = await this._chatRepository.getReportedMessage(convo.conversation._id, chatId)
-        return ChatMapper.toDTO(chats)
+        const chats = await this._chatRepository.getReportedMessage(convo.conversation._id, chatId);
+        return ChatMapper.toDTO(chats);
     }
 
 }

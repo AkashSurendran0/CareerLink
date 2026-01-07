@@ -19,23 +19,23 @@ export class ResumeRepository implements IResumeRepository{
                 }
             },
             {upsert:true}
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async getAllResumes(id: string): Promise<{success:boolean, resumes:Resume} | {success:false}> {
-        const doc=await ResumeModel.findOne({user:id}).lean()
-        if(!doc) return {success:false}
+        const doc=await ResumeModel.findOne({user:id}).lean();
+        if(!doc) return {success:false};
         const resumeItems=doc.resumes.map(
             r=>new ResumeItem(r.name, r.url, r.createdAt)
-        )
+        );
         const resume = new Resume (
             doc._id.toString(),
             doc.user,
             resumeItems
-        )
+        );
 
-        return {success:true, resumes:resume}
+        return {success:true, resumes:resume};
     }
 
 }

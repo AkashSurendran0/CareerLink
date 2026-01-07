@@ -11,8 +11,8 @@ export class ReportCompany implements IReportCompany {
     ){}
 
     async reportCompany(reporter: string, company: string, type: string): Promise<{ success: boolean; }> {
-        const result=await this._reportRepository.reportCompany(reporter, company, type)
-        return result
+        const result=await this._reportRepository.reportCompany(reporter, company, type);
+        return result;
     }
 
 }

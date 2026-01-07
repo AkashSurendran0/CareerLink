@@ -8,7 +8,9 @@
     "dev": "nodemon dist/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "keywords": [],
   "author": "",
@@ -22,8 +24,10 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.3.1",
+    "jiti": "^2.6.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",

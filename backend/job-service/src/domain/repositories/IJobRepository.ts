@@ -1,4 +1,4 @@
-import { Job } from "../enitity/Job"
+import { Job } from "../enitity/Job";
 
 type JobDetails = {
     jobTitle:string,
@@ -18,10 +18,10 @@ export interface IJobRepository {
     addJob(jobDetails: JobDetails, id:string):Promise<{success:boolean}>
     getAllJobs(id:string, filter:string): Promise<Job[]>
     findDetails(id:string): Promise<Job>
-    editJob(jobDetails:any): Promise<{success:boolean}>
+    editJob(jobDetails: Record<string, unknown> & { _id: string }): Promise<{success:boolean}>
     closeJob(id:string): Promise<{success:boolean}>
     getAvailableJobs(query:string):Promise<Job[]>
     getQueryJobs(id:string, start:number, limit:number, query:string|undefined, filter:string):Promise<Job[]>
-    getJobAnalytics(): Promise<any>
+    getJobAnalytics(): Promise<Array<{ _id: string; count: number }>>
 
 }

@@ -1,29 +1,28 @@
 import { injectable } from "inversify";
 import { ICreateCoverLetter } from "../domain/services/IResumeServices";
-import dotenv from 'dotenv'
-import {GoogleGenerativeAI} from '@google/generative-ai'
+import dotenv from "dotenv";
+import {GoogleGenerativeAI} from "@google/generative-ai";
 import axios from "axios";
 import { logger } from "../utils/logger";
 
-dotenv.config()
+dotenv.config();
 
 @injectable()
 export class CreateCoverLetter implements ICreateCoverLetter {
 
-    async createCoverLetter (data:any) {
+    async createCoverLetter (data: Record<string, unknown>) {
 
         try {
-            const {
-                fullName,
-                companyName,
-                position,
-                hrName,
-                finalEducation,
-                finalExperiences,
-                finalSkills,
-                finalCertifications,
-                finalInterests
-            }=data
+            const payload = data as Record<string, unknown>;
+            const fullName = String(payload.fullName ?? "");
+            const companyName = String(payload.companyName ?? "");
+            const position = String(payload.position ?? "");
+            const hrName = String(payload.hrName ?? "");
+            const finalEducation = Array.isArray(payload.finalEducation) ? payload.finalEducation as string[] : [];
+            const finalExperiences = Array.isArray(payload.finalExperiences) ? payload.finalExperiences as Array<Record<string, unknown>> : [];
+            const finalSkills = Array.isArray(payload.finalSkills) ? payload.finalSkills as string[] : [];
+            const finalCertifications = Array.isArray(payload.finalCertifications) ? payload.finalCertifications as string[] : [];
+            const finalInterests = Array.isArray(payload.finalInterests) ? payload.finalInterests as string[] : [];
             
             const prompt = `
     You are an expert cover-letter writer and a professional language editor.
@@ -64,7 +63,7 @@ export class CreateCoverLetter implements ICreateCoverLetter {
     HR Name: ${hrName}
     Education: ${finalEducation.join(", ")}
     Experience: ${finalExperiences
-    .map((ex: any) => `${ex.position} (${ex.span})`)
+    .map((ex) => `${String((ex as Record<string, unknown>).position ?? "")} (${String((ex as Record<string, unknown>).span ?? "")})`)
     .join(", ")}
     Skills: ${finalSkills.join(", ")}
     Certifications: ${finalCertifications.join(", ")}
@@ -72,47 +71,48 @@ export class CreateCoverLetter implements ICreateCoverLetter {
     
     Generate a polished, compelling cover letter using only the information above.
     
-    `
-            const content = await this.callOpenRouter(prompt)
+    `;
+            const content = await this.callOpenRouter(prompt);
     
             return { 
                 success: true, 
                 content: content,
-                provider: 'openrouter' 
+                provider: "openrouter" 
             };
-        } catch (error: any) {
-            logger.info('OpenRouter failed, trying fallback...', error.message);
+        } catch (error: unknown) {
+                if (error instanceof Error) logger.info("OpenRouter failed, trying fallback...", error.message);
+                else logger.info("OpenRouter failed, trying fallback...");
             return {
                 success: false,
-                message: 'Error generating cover letter, please try again later'
+                message: "Error generating cover letter, please try again later"
             };
         }
     }
 
     private async callOpenRouter (prompt:string): Promise<string> {
-        const OPENROUTER_KEY = process.env.OPENROUTER_AI_API
+        const OPENROUTER_KEY = process.env.OPENROUTER_AI_API;
 
         const freeModels = [
-            'google/gemini-2.0-flash-exp:free',
-            'google/gemma-3-27b-it:free',
-            'google/gemma-3-12b-it:free',
-            'qwen/qwen3-coder:free',
-            'qwen/qwen3-coder:free',
-            'mistralai/mistral-small-3.1-24b-instruct:free',
-            'meta-llama/llama-3.1-405b-instruct:free'
-        ]
+            "google/gemini-2.0-flash-exp:free",
+            "google/gemma-3-27b-it:free",
+            "google/gemma-3-12b-it:free",
+            "qwen/qwen3-coder:free",
+            "qwen/qwen3-coder:free",
+            "mistralai/mistral-small-3.1-24b-instruct:free",
+            "meta-llama/llama-3.1-405b-instruct:free"
+        ];
 
         for(const model of freeModels){
             try {
                 logger.info(`Trying OpenRouter model: ${model}`);
 
                 const response = await axios.post(
-                    'https://openrouter.ai/api/v1/chat/completions',
+                    "https://openrouter.ai/api/v1/chat/completions",
                     {
                         model: model,
                         messages: [
                             {
-                                role: 'user',
+                                role: "user",
                                 content: prompt
                             }
                         ],
@@ -121,27 +121,28 @@ export class CreateCoverLetter implements ICreateCoverLetter {
                     },
                     {
                         headers: {
-                            'Authorization': `Bearer ${OPENROUTER_KEY}`,
-                            'Content-Type': 'application/json',
-                            'HTTP-Referer': process.env.FRONTEND_ROUTE, // Required by OpenRouter
-                            'X-Title': 'CareerLink Cover Letter Generator' // Optional but good
+                            "Authorization": `Bearer ${OPENROUTER_KEY}`,
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": process.env.FRONTEND_ROUTE, // Required by OpenRouter
+                            "X-Title": "CareerLink Cover Letter Generator" // Optional but good
                         },
                         timeout: 30000 // 30 seconds
                     }
-                )
+                );
 
                 if (response.data?.choices?.[0]?.message?.content) {
                     logger.info(`Success with model: ${model}`);
                     return response.data.choices[0].message.content;
                 }
 
-            } catch (modelError:any) {
-                logger.error(modelError.message, `Model ${model} failed:`);
+            } catch (modelError: unknown) {
+                if (modelError instanceof Error) logger.error(modelError.message, `Model ${model} failed:`);
+                else logger.error(`Model ${model} failed`);
                 continue; // Try next model
             }
         }
 
-        throw new Error('All OpenRouter free models failed');
+        throw new Error("All OpenRouter free models failed");
     }
 
 }

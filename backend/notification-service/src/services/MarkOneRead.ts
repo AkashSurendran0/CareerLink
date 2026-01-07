@@ -11,8 +11,8 @@ export class MarkOneRead implements IMarkOneRead {
     ){}
 
     async markOneRead (id:string): Promise<{success:boolean}> {
-        const result=await this._notificationRepository.markOneAsRead(id)
-        return result
+        const result=await this._notificationRepository.markOneAsRead(id);
+        return result;
     }
 
 }

@@ -10,6 +10,6 @@ export class NotificationMapper {
             routeTo: notification.routeTo,
             isRead: notification.isRead,
             createdAt: notification.createdAt
-        }
+        };
     }
 }

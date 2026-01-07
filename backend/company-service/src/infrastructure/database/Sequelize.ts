@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import { logger } from "../../utils/logger";
 
-dotenv.config()
+dotenv.config();
 
 export const sequelize = new Sequelize(
     "careerlink",

@@ -4,7 +4,7 @@ export class Conversation {
         public isCompany: boolean,
         public users: string[],
         public createdAt: Date,
-        public lastMessage?: any,
+        public lastMessage?: unknown,
         public unreadCount?: number
     ) { }
 }

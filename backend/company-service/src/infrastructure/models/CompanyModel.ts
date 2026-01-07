@@ -17,7 +17,7 @@ export class CompanyModel extends Model {
     public suspended!:boolean; 
     public rejectReasons!:string[] | null;
 
-    public readonly createdAt?: Date
+    public readonly createdAt?: Date;
 }
 
 CompanyModel.init(
@@ -85,4 +85,4 @@ CompanyModel.init(
         tableName: "companies",
         timestamps: true
     }
-)
+);

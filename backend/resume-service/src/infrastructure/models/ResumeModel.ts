@@ -33,6 +33,6 @@ const resumeSchema: Schema<IResume>=new Schema(
             }
         ]
     }
-)
+);
 
-export const ResumeModel:Model<IResume> = mongoose.model<IResume>('Resume', resumeSchema)
+export const ResumeModel:Model<IResume> = mongoose.model<IResume>("Resume", resumeSchema);

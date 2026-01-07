@@ -11,8 +11,8 @@ export class DeleteCount implements IDeleteCount {
     ){}
 
     async deleteCount(id: string): Promise<{ success: boolean; }> {
-        const result=await this._countRepository.deleteCount(id)
-        return result
+        const result=await this._countRepository.deleteCount(id);
+        return result;
     }
 
 }

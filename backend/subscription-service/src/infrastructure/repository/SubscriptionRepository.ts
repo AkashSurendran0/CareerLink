@@ -11,62 +11,62 @@ import { Op, QueryTypes } from "sequelize";
 export class SubscriptionRepository implements ISubscriptionRepository {
 
     async addSubscription(id: string, user: string, validity:number): Promise<{ success: boolean; }> {
-        const existingSubscription=await SubscriptionModel.findOne({where:{user:user}, raw:true})
+        const existingSubscription=await SubscriptionModel.findOne({where:{user:user}, raw:true});
         if(existingSubscription){
-            await SubscriptionModel.destroy({where:{user:user}})
+            await SubscriptionModel.destroy({where:{user:user}});
         }
-        const date=getNthDay(validity)
+        const date=getNthDay(validity);
         await SubscriptionModel.create({
             user,
             subscriptionType:id,
             validTill:date
-        })
-        return {success:true}
+        });
+        return {success:true};
     }
 
     async getByUser(user: string): Promise<Subscription | null> {
-        const plan=await SubscriptionModel.findOne({where:{user:user}, raw:true})
-        if(!plan) return null
+        const plan=await SubscriptionModel.findOne({where:{user:user}, raw:true});
+        if(!plan) return null;
         return new Subscription (
             plan?.id,
             plan?.user,
             plan?.subscriptionType,
             plan?.validTill,
             plan?.createdAt
-        )
+        );
     }
 
     async deletePlan(user: string): Promise<{ success: boolean; }> {
-        await SubscriptionModel.destroy({where:{user:user}})
-        return {success:true}
+        await SubscriptionModel.destroy({where:{user:user}});
+        return {success:true};
     }
 
     async getInfo(user: string): Promise<{ success: boolean; }> {
-        const plan=await SubscriptionModel.findOne({where:{user:user}, raw:true})
-        if(!plan) return {success:false}
-        if(new Date(plan.validTill) < new Date()) return {success:false}
-        return {success:true}
+        const plan=await SubscriptionModel.findOne({where:{user:user}, raw:true});
+        if(!plan) return {success:false};
+        if(new Date(plan.validTill) < new Date()) return {success:false};
+        return {success:true};
     }
 
     async getActivePlanUsers(plan: string): Promise<{ success: boolean; }> {
-        const existingPlans=await SubscriptionModel.findAll({where:{subscriptionType:plan}, raw:true})
-        if(!existingPlans || existingPlans.length == 0) return {success:true}
-        const now=new Date()
+        const existingPlans=await SubscriptionModel.findAll({where:{subscriptionType:plan}, raw:true});
+        if(!existingPlans || existingPlans.length == 0) return {success:true};
+        const now=new Date();
         for(let plan of existingPlans){
             if(plan.validTill > now){
-                return {success:false}
+                return {success:false};
             }
         }
 
-        return {success:true}
+        return {success:true};
     }
 
     async deletePlans(id: string): Promise<{ success: boolean; }> {
-        await SubscriptionModel.destroy({where:{subscriptionType:id}})
-        return {success:true}
+        await SubscriptionModel.destroy({where:{subscriptionType:id}});
+        return {success:true};
     }
 
-    async getSubscriptionAnalysis(): Promise<any> {
+    async getSubscriptionAnalysis(): Promise<Array<{ month: string; count: number }>> {
         const result = await sequelize.query(
             `
             WITH months AS (
@@ -89,10 +89,10 @@ export class SubscriptionRepository implements ISubscriptionRepository {
                 type: QueryTypes.SELECT,
             }
         );
-        return result
+        return result as Array<{ month: string; count: number }>;
     }
 
-    async groupByPlan(): Promise<any> {
+    async groupByPlan(): Promise<Array<{ subscriptionType: string; count: number }>> {
         const result = await sequelize.query(
             `
             SELECT "subscriptionType", COUNT(*) AS count
@@ -101,7 +101,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
             `,
             { type: QueryTypes.SELECT }
         );
-        return result
+        return result as Array<{ subscriptionType: string; count: number }>;
     }
 
     async getPremiumUserCount(): Promise<number> {
@@ -112,7 +112,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
                 }
             }
         });
-        return result.length
+        return result.length;
     }
 
 }

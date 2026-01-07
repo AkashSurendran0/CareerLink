@@ -30,7 +30,7 @@ export class SendResetOTP implements ISendResetOtp {
 
     constructor(@inject(TYPES.Mailer) private _mailer:Mailer, @inject(TYPES.IUserRepository) private _userRepository:IUserRepository){}
 
-    async mailOtp(email:string):Promise<{success:boolean, message:string} | {success:boolean, otp:number}>{
+    async mailOtp(email:string):Promise<{success:boolean, message:string} | {success:boolean}>{
         const userExists=await this._userRepository.findByEmail(email);
         if(!userExists){
             return {
@@ -55,7 +55,6 @@ export class SendResetOTP implements ISendResetOtp {
         await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60);
         return {
             success:true, 
-            otp:otp
         };
     }
 }

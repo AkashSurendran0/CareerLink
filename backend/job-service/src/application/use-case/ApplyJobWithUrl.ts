@@ -10,14 +10,14 @@ export class ApplyJob implements IApplyJob {
         @inject(TYPES.IJobApplicationsRepository) private _jobApplicationRepository:IJobApplicationsRepository
     ){}
 
-    async applyJob(data: any, user:string): Promise<{ success: boolean; }> {
+    async applyJob(data: { id: string; resumeUrl: string; coverLetter?: string }, user:string): Promise<{ success: boolean; }> {
         const {
-            id, 
+            id,
             resumeUrl,
             coverLetter
-        }=data
-        const result=await this._jobApplicationRepository.addApplications(user, id, resumeUrl, coverLetter)
-        return result
+        } = data;
+        const result=await this._jobApplicationRepository.addApplications(user, id, resumeUrl, coverLetter ?? "");
+        return result;
     }
 
 }

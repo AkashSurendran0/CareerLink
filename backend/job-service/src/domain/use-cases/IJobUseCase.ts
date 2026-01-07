@@ -1,5 +1,5 @@
-import { JobDTO } from "../../dto/JobDTO"
-import { JobApplicationDto } from "../../dto/JobApplicationDTO"
+import { JobDTO } from "../../dto/JobDTO";
+import { JobApplicationDto } from "../../dto/JobApplicationDTO";
 
 type JobDetails = {
     jobTitle:string,
@@ -27,7 +27,7 @@ export interface IGetJobDetails {
 }
 
 export interface IEditJob {
-    editJob(jobDetails: any): Promise<{success:boolean}>
+    editJob(jobDetails: Partial<JobDTO> & { _id: string }): Promise<{success:boolean}>
 }
 
 export interface ICloseJobApplication {
@@ -39,15 +39,15 @@ export interface IGetAvailableJobs {
 }
 
 export interface IApplyJob {
-    applyJob(data:any, user:string): Promise<{success:boolean}>
+    applyJob(data: { id: string; resumeUrl: string; coverLetter?: string }, user:string): Promise<{success:boolean}>
 }
 
 export interface IGetUserAppliedJobs {
-    getJobs(user:string): Promise<{success:boolean} | {success:boolean, jobs:any[]}>
+    getJobs(user:string): Promise<{success:boolean} | {success:boolean, jobs: unknown[]}>
 }
 
 export interface IGetJobApplicants {
-    getApplicants(id:string, filter:string): Promise<any>
+    getApplicants(id:string, filter:string): Promise<{ result: unknown[]; totalCount: unknown[] } | null>
 }
 
 export interface IAlterUserApplication {
@@ -57,9 +57,9 @@ export interface IAlterUserApplication {
 }
 
 export interface IGetCompanyAnalytics {
-    getCompanyAnalytics(): Promise<any>
+    getCompanyAnalytics(): Promise<Array<{ _id: string; count: number }>>
 }
 
 export interface IGetJobApplicationAnalytics {
-    getJobApplicationAnalytics(): Promise<any>
+    getJobApplicationAnalytics(): Promise<Array<{ month:number; count:number }>>
 }

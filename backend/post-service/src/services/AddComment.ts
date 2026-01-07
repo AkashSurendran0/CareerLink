@@ -13,8 +13,8 @@ export class AddComment implements IAddComment {
     ) {}
 
     async addComment(data: { comment: string; post: string; }, user: string): Promise<PostDto> {
-        const result=await this._postRepository.addComment(data, user)
-        return PostMapper.toDTO(result)
+        const result=await this._postRepository.addComment(data, user);
+        return PostMapper.toDTO(result);
     }
 
 }

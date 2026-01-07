@@ -10,9 +10,9 @@ export class GetCompanyAnalytics implements IGetCompanyAnalytics {
         @inject(TYPES.IJobRepository) private _jobRepository:IJobRepository
     ){}
 
-    async getCompanyAnalytics(): Promise<any> {
-        const result=await this._jobRepository.getJobAnalytics()
-        return result
+    async getCompanyAnalytics(): Promise<Array<{ _id: string; count: number }>> {
+        const result=await this._jobRepository.getJobAnalytics();
+        return result;
     }
 
 }

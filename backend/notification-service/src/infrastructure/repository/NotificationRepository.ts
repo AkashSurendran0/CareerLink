@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import { INotificationRepository } from "../../domain/repository/INotificationRepository";
-import { NotificationModel } from "../models/NotificationModel";
+import { NotificationModel, INotification } from "../models/NotificationModel";
 import { Notification } from "../../domain/entities/Notification";
 
 export class NotificationRepository implements INotificationRepository {
@@ -10,62 +10,62 @@ export class NotificationRepository implements INotificationRepository {
             user,
             content,
             routeTo
-        }
+        };
 
-        // using any at DB boundary
-        const noti: any = await NotificationModel.create(data)
+        // cast DB result to model interface
+        const noti = await NotificationModel.create(data) as INotification;
 
         return new Notification(
-            noti._id?.toString(),
-            noti.user,
-            noti.content,
-            String(noti.routeTo ?? ''),
+            noti._id?.toString() ?? "",
+            String(noti.user),
+            String(noti.content),
+            String(noti.routeTo ?? ""),
             Boolean(noti.isRead),
             noti.createdAt
-        )
+        );
     }
 
     async getAllNotifications(user:string) {
         // return plain objects from mongoose using lean()
-        const notifications: any[] = await NotificationModel.find({user}).lean().exec()
-        return notifications.map((noti: any) =>
+        const notifications = await NotificationModel.find({ user }).lean().exec() as Array<Partial<INotification> & { _id?: mongoose.Types.ObjectId }>;
+        return notifications.map((noti) =>
             new Notification(
-                noti._id?.toString(),
-                noti.user,
-                noti.content,
-                String(noti.routeTo ?? ''),
+                noti._id?.toString() ?? "",
+                String(noti.user),
+                String(noti.content),
+                String(noti.routeTo ?? ""),
                 Boolean(noti.isRead),
                 noti.createdAt
             )
-        )
+        );
     }
 
     async deleteAllNotifications(user:string): Promise<{success:boolean}> {
-        await NotificationModel.deleteMany({user})
-        return {success:true}
+        await NotificationModel.deleteMany({user});
+        return {success:true};
     }
 
     async deleteOneNotification(id:string): Promise<{success:boolean}> {
-        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
-        await NotificationModel.deleteOne(filter)
-        return {success:true}
+        const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
+        await NotificationModel.deleteOne(filter);
+        return {success:true};
     }
 
     async markOneAsRead (id:string): Promise<{success:boolean}> {
-        const filter: any = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id }
+        const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
         await NotificationModel.updateOne(
             filter,
             { $set: { isRead:true } }
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
     async markAllRead (user:string): Promise<{success:boolean}> {
         await NotificationModel.updateMany(
             { user },
             { $set: { isRead:true } }
-        )
-        return {success:true}
+        );
+        return {success:true};
     }
 
 }

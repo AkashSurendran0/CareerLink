@@ -13,9 +13,9 @@ export class GetAllNotifications implements IGetAllNotifications {
     ){}
 
     async getAllNotifications(user:string): Promise<NotificationDto[]>{
-        const notifications=await this._notificationRepository.getAllNotifications(user)
-        const noti=notifications.map(noti=>NotificationMapper.toDTO(noti))
-        return noti
+        const notifications=await this._notificationRepository.getAllNotifications(user);
+        const noti=notifications.map(noti=>NotificationMapper.toDTO(noti));
+        return noti;
     }
 
 }

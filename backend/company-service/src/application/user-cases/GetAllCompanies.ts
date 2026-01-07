@@ -14,7 +14,7 @@ export class GetAllCompanies implements IGetAllCompanies {
 
     async getApprovedCompanies (page:number, limit:number, query:string | undefined):Promise<{result: {id:string, logo:string, name:string, createdAt:Date, suspended:boolean}[], pageLimit:number}> {
         const approvedCompanies=await elasticClient.count({
-            index:'companies',
+            index:"companies",
             query:{
                 bool:{
                     must:[
@@ -23,14 +23,14 @@ export class GetAllCompanies implements IGetAllCompanies {
                     ]
                 }
             }
-        })
+        });
         
-        const totalApprovedCompanies=approvedCompanies.count
-        const approvedPageLimit=Math.ceil(totalApprovedCompanies/limit)
+        const totalApprovedCompanies=approvedCompanies.count;
+        const approvedPageLimit=Math.ceil(totalApprovedCompanies/limit);
 
-        let esQuery:any
+        let esQuery: Record<string, unknown>;
 
-        if(!query || query.trim()==''){
+        if(!query || query.trim()==""){
             esQuery={
                 bool:{
                     must:[
@@ -41,7 +41,7 @@ export class GetAllCompanies implements IGetAllCompanies {
                         {term:{rejected:false}}
                     ]
                 }
-            }
+            };
         }else{
             esQuery={
                 bool:{
@@ -57,27 +57,27 @@ export class GetAllCompanies implements IGetAllCompanies {
                         {term:{rejected:false}}
                     ]
                 }
-            }
+            };
         }
 
         const companies=await elasticClient.search({
-            index:'companies',
+            index:"companies",
             from:(page-1)*limit,
             size:limit,
             query:esQuery
-        })
+        }) as { hits: { hits: Array<{ _source: import("../../mapper/CompanyMapper").CompanySource }> } };
 
-        const hits=companies.hits.hits.map((hit:any)=>hit._source)
-        const result=hits.map((company:any)=>CompanyMapper.toDTO(company))
+        const hits=companies.hits.hits.map((hit)=>hit._source);
+        const result=hits.map((company)=>CompanyMapper.toDTO(company));
         return {
             result:result,
             pageLimit:approvedPageLimit
-        }
+        };
     }
 
     async getPendingCompanies (page:number, limit:number, query:string | undefined):Promise<{result: {id:string, logo:string, name:string, createdAt:Date, suspended:boolean}[], pageLimit:number}> {
         const pendingCompanies=await elasticClient.count({
-            index:'companies',
+            index:"companies",
             query:{
                 bool:{
                     must:[
@@ -86,14 +86,14 @@ export class GetAllCompanies implements IGetAllCompanies {
                     ]
                 }
             }
-        })
+        });
 
-        const totalPendingCompanies=pendingCompanies.count
-        const pendingPageLimit=Math.ceil(totalPendingCompanies/limit)
+        const totalPendingCompanies=pendingCompanies.count;
+        const pendingPageLimit=Math.ceil(totalPendingCompanies/limit);
 
-        let esQuery:any
+        let esQuery: Record<string, unknown>;
 
-        if(!query || query.trim()==''){
+        if(!query || query.trim()==""){
             esQuery={
                 bool:{
                     must:[
@@ -104,7 +104,7 @@ export class GetAllCompanies implements IGetAllCompanies {
                         {term:{rejected:false}}
                     ]
                 }
-            }
+            };
         }else{
             esQuery={
                 bool:{
@@ -120,22 +120,22 @@ export class GetAllCompanies implements IGetAllCompanies {
                         {term:{rejected:false}}
                     ]
                 }
-            }
+            };
         }
 
         const companies=await elasticClient.search({
-            index:'companies',
+            index:"companies",
             from:(page-1)*limit,
             size:limit,
             query:esQuery
-        })
+        }) as { hits: { hits: Array<{ _source: import("../../mapper/CompanyMapper").CompanySource }> } };
 
-        const hits=companies.hits.hits.map((hit:any)=>hit._source)
-        const result=hits.map((company:any)=>CompanyMapper.toDTO(company))
+        const hits=companies.hits.hits.map((hit)=>hit._source);
+        const result=hits.map((company)=>CompanyMapper.toDTO(company));
         return {
             result:result,
             pageLimit:pendingPageLimit
-        }
+        };
     }
 
 }

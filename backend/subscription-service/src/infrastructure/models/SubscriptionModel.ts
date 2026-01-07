@@ -29,7 +29,7 @@ SubscriptionModel.init(
     },
     {
         sequelize,
-        tableName:'subscriptions',
+        tableName:"subscriptions",
         timestamps:true
     }
-)
+);

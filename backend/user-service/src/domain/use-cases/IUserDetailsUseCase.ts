@@ -49,8 +49,11 @@ export interface IGetUserDetails {
     getUserDetails(id: string): Promise<Details | null>
 }
 
+export type GithubDetails = { name: string; image: string; followers: number; following: number; repos: number; totalStars?: number };
+export type HeatmapItem = { date: string; count: number; color: string };
+
 export interface IGetGithubDetails {
-    getGithubDetails(user: string): Promise<any>
-    getGithubHeatmap(user: string): Promise<any>
-    getGithubRepoDetails(page: number, user: string, limit: number): Promise<{ success: boolean, data: RepoDTO } | { success: boolean }>
+    getGithubDetails(user: string): Promise<{ success: boolean; details?: GithubDetails }>
+    getGithubHeatmap(user: string): Promise<{ success: boolean; heatmap?: HeatmapItem[] }>
+    getGithubRepoDetails(page: number, user: string, limit: number): Promise<{ success: boolean, data?: RepoDTO[] } | { success: boolean }>
 }

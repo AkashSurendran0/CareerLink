@@ -11,8 +11,8 @@ export class AlterPlanStatus implements IAlterPlanStatus {
     ) {}
 
     async alterPlanStatus(id: string): Promise<{ success: boolean; }> {
-        const result=await this._subscriptionTypeRepository.alterPlanStatus(id)
-        return result
+        const result=await this._subscriptionTypeRepository.alterPlanStatus(id);
+        return result;
     }
 
 }

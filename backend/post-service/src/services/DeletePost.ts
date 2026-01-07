@@ -10,9 +10,9 @@ export class DeletePost implements IDeletePost {
         @inject(TYPES.IPostRepository) private _postRepository:IPostRepository
     ) {}
 
-    async deletePost(id: string): Promise<any> {
-        await this._postRepository.deletePost(id)
-        return
+    async deletePost(id: string): Promise<void> {
+        await this._postRepository.deletePost(id);
+        return;
     }
 
 

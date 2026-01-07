@@ -11,8 +11,8 @@ export class DeleteOne implements IDeleteOne {
     ){}
 
     async deleteOne (id:string): Promise<{success:boolean}> {
-        const result=await this._notificationRepository.deleteOneNotification(id)
-        return result
+        const result=await this._notificationRepository.deleteOneNotification(id);
+        return result;
     }
 
 }

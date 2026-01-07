@@ -2,14 +2,14 @@ import { injectable } from "inversify";
 import { IGetAvailableCompanies } from "../../domain/use-cases/ICompanyUserCase";
 import { CompanyDTO } from "../../dto/CompanyDTO";
 import { elasticClient } from "../../utils/ElasticClient";
-import { CompanyMapper } from "../../mapper/CompanyMapper";
+import { CompanyMapper, CompanySource } from "../../mapper/CompanyMapper";
 import { logger } from "../../utils/logger";
 
 @injectable()
 export class GetAvailableCompanies implements IGetAvailableCompanies {
 
     async getAvailableCompanies(email: string, query: string): Promise<CompanyDTO[]> {
-        let esQuery: any
+        let esQuery: Record<string, unknown>;
         if (!query || query.trim() === "") {
             esQuery = {
                 bool: {
@@ -38,21 +38,21 @@ export class GetAvailableCompanies implements IGetAvailableCompanies {
             };
         }
         const indexExists = await elasticClient.indices.exists({
-            index: 'companies'
+            index: "companies"
         });
         if (!indexExists) {
             logger.error("companies index not found, returning empty array");
             return [];
         }
         const companies = await elasticClient.search({
-            index: 'companies',
+            index: "companies",
             query: esQuery
-        })
+        }) as { hits: { hits: Array<{ _source: CompanySource }> } };
 
-        let hits = companies.hits.hits.map((hit: any) => hit._source)
-        hits = hits.filter((comp) => comp.registeredBy != email)
-        const result = hits.map((company: any) => CompanyMapper.toDTO(company))
-        return result
+        let hits = companies.hits.hits.map((hit) => hit._source);
+        hits = hits.filter((comp) => comp.registeredBy != email);
+        const result = hits.map((company) => CompanyMapper.toDTO(company));
+        return result;
     }
 
 } 

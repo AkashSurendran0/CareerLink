@@ -13,8 +13,8 @@ export class GetJobDetails implements IGetJobDetails {
     ){}
 
     async getDetails(id: string): Promise<JobDTO> {
-        const details=await this._jobRepository.findDetails(id)
-        return JobMapper.toDTO(details)
+        const details=await this._jobRepository.findDetails(id);
+        return JobMapper.toDTO(details);
     }
 
 }

@@ -5,13 +5,13 @@ import { AdminLogin } from "./application/use-cases/AdminLogin";
 import { AdminController } from "./interfaces/controllers/AdminController";
 import { CheckAdmin } from "./application/use-cases/CheckAdmin";
 
-const container=new Container()
+const container=new Container();
 
-container.bind(TYPES.IAdminRepository).to(AdminRepository).inSingletonScope()
+container.bind(TYPES.IAdminRepository).to(AdminRepository).inSingletonScope();
 
-container.bind(TYPES.IAdminLogin).to(AdminLogin).inSingletonScope()
-container.bind(TYPES.ICheckAdmin).to(CheckAdmin).inSingletonScope()
+container.bind(TYPES.IAdminLogin).to(AdminLogin).inSingletonScope();
+container.bind(TYPES.ICheckAdmin).to(CheckAdmin).inSingletonScope();
 
-container.bind<AdminController>(TYPES.AdminController).to(AdminController)
+container.bind<AdminController>(TYPES.AdminController).to(AdminController);
 
-export default container
+export default container;

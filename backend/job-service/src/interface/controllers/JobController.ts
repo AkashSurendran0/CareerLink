@@ -1,14 +1,14 @@
-import { Request, Response } from "express"
-import { STATUS_CODES } from "../../utils/StatusCodes"
-import { injectable, inject } from "inversify"
-import { TYPES } from "../../types"
-import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants, IAlterUserApplication, IGetCompanyAnalytics, IGetJobApplicationAnalytics } from "../../domain/use-cases/IJobUseCase"
-import axios from "axios"
-import { uploadResume } from "../../config/upload"
-import { rabbitmqService } from "../../utils/Rabbitmq"
+import { Request, Response } from "express";
+import { STATUS_CODES } from "../../utils/StatusCodes";
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../types";
+import { IAddJob, IApplyJob, ICloseJobApplication, IEditJob, IGetAvailableJobs, IGetJobDetails, IGetAllJobs, IGetUserAppliedJobs, IGetJobApplicants, IAlterUserApplication, IGetCompanyAnalytics, IGetJobApplicationAnalytics } from "../../domain/use-cases/IJobUseCase";
+import axios from "axios";
+import { uploadResume } from "../../config/upload";
+import { rabbitmqService } from "../../utils/Rabbitmq";
 import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 @injectable()
 export class JobController {
@@ -30,16 +30,16 @@ export class JobController {
 
     addJob = async (req: Request, res: Response) => {
         try {
-            const jobDetails = req.body
-            const token = req.cookies?.token
+            const jobDetails = req.body;
+            const token = req.cookies?.token;
             const company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetails`, {
                 headers: {
                     Cookie: `token=${token}`
                 }
-            })
-            const id = company.data.result.id
-            const result = await this._addJob.addJob(jobDetails, id)
-            res.json({ result })
+            });
+            const id = company.data.result.id;
+            const result = await this._addJob.addJob(jobDetails, id);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -47,32 +47,32 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getAllJobs = async (req: Request, res: Response) => {
         try {
-            const token = req.cookies?.token
-            const { id } = req.query
+            const token = req.cookies?.token;
+            const { id } = req.query;
             let company;
-            if (id != 'null') {
+            if (id != "null") {
                 company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${id}`, {
                     headers: {
                         Cookie: `token=${token}`
                     }
-                })
+                });
             } else {
                 company = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetails`, {
                     headers: {
                         Cookie: `token=${token}`
                     }
-                })
+                });
             }
-            const companyId = company.data.result.id
-            const { start, limit, query, filter } = req.query
-            const numStart = Number(start)
-            const numLimit = Number(limit)
-            const result = await this._getAllJobs.getAllJobs(companyId, numStart, numLimit, query as string, filter as string)
-            res.json({ result })
+            const companyId = company.data.result.id;
+            const { start, limit, query, filter } = req.query;
+            const numStart = Number(start);
+            const numLimit = Number(limit);
+            const result = await this._getAllJobs.getAllJobs(companyId, numStart, numLimit, query as string, filter as string);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -80,14 +80,14 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getJobDetails = async (req: Request, res: Response) => {
         try {
-            const { id } = req.query
-            const jobId = String(id)
-            const details = await this._getJobDetails.getDetails(jobId)
-            res.json({ details })
+            const { id } = req.query;
+            const jobId = String(id);
+            const details = await this._getJobDetails.getDetails(jobId);
+            res.json({ details });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -95,13 +95,13 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     editJob = async (req: Request, res: Response) => {
         try {
-            const jobDetails = req.body
-            const result = await this._editJob.editJob(jobDetails)
-            res.json({ result })
+            const jobDetails = req.body;
+            const result = await this._editJob.editJob(jobDetails);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -109,14 +109,14 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     closeJobApplication = async (req: Request, res: Response) => {
         try {
-            const { id } = req.query
-            const companyId = String(id)
-            const result = await this._closeJobApplication.closeJob(companyId)
-            res.json({ result })
+            const { id } = req.query;
+            const companyId = String(id);
+            const result = await this._closeJobApplication.closeJob(companyId);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -124,23 +124,23 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getAvailableJobs = async (req: Request, res: Response) => {
         try {
-            const user = req.headers['user-id'] as string
-            const { query } = req.query
-            const jobs = await this._getAvailableJobs.getAvailableJobs(query as string, user)
+            const user = req.headers["user-id"] as string;
+            const { query } = req.query;
+            const jobs = await this._getAvailableJobs.getAvailableJobs(query as string, user);
             const filledJobs = await Promise.all(
                 jobs.map(async job => {
-                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job.company}`)
+                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job.company}`);
                     return {
                         ...job,
                         company: result.data.company
-                    }
+                    };
                 })
-            )
-            res.json({ jobs: filledJobs })
+            );
+            res.json({ jobs: filledJobs });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -148,14 +148,14 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     applyJobWithUrl = async (req: Request, res: Response) => {
         try {
-            const user = req.headers['user-id'] as string
-            const data = req.body
-            const result = await this._applyJob.applyJob(data, user)
-            res.json({ result })
+            const user = req.headers["user-id"] as string;
+            const data = req.body;
+            const result = await this._applyJob.applyJob(data, user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -163,21 +163,21 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     applyJobWithFile = async (req: Request, res: Response) => {
         try {
-            const user = req.headers['user-id'] as string
-            const buffer = req.file?.buffer
-            const { coverLetter, id } = req.body
-            const resumeUrl = await uploadResume(buffer!)
+            const user = req.headers["user-id"] as string;
+            const buffer = req.file?.buffer;
+            const { coverLetter, id } = req.body;
+            const resumeUrl = await uploadResume(buffer!);
             const data = {
                 id,
                 resumeUrl,
                 coverLetter
-            }
-            const result = await this._applyJob.applyJob(data, user)
-            res.json({ result })
+            };
+            const result = await this._applyJob.applyJob(data, user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -185,28 +185,30 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getUserAppliedJobs = async (req: Request, res: Response) => {
         try {
-            const user = req.headers['user-id'] as string
-            let jobs = await this._getUserAppliedJobs.getJobs(user)
-            if (jobs.success && 'jobs' in jobs) {
-                let companyDetails = new Set()
-                jobs.jobs.forEach((i: any) => {
-                    companyDetails.add(i.details.company)
-                })
+            const user = req.headers["user-id"] as string;
+            let jobs = await this._getUserAppliedJobs.getJobs(user);
+            if (jobs.success && "jobs" in jobs) {
+                let companyDetails = new Set();
+                jobs.jobs.forEach((i: unknown) => {
+                    const details = (i as { details?: { company: string } });
+                    if (details.details?.company) companyDetails.add(details.details.company);
+                });
                 for (let id of companyDetails) {
-                    let result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${id}`)
+                    let result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${id}`);
                     for (let i = 0; i < jobs.jobs.length; i++) {
-                        if (jobs.jobs[i].details.company == id) {
-                            jobs.jobs[i].companyName = result.data.company.name
-                            jobs.jobs[i].companyLogo = result.data.company.logo
+                        const jobItem = jobs.jobs[i] as { details?: { company?: string }; companyName?: string; companyLogo?: string };
+                        if (jobItem.details?.company == id) {
+                            jobItem.companyName = result.data.company.name;
+                            jobItem.companyLogo = result.data.company.logo;
                         }
                     }
                 }
             }
-            res.json({ jobs })
+            res.json({ jobs });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -214,19 +216,20 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getJobApplicants = async (req: Request, res: Response) => {
         try {
-            const { job, filter } = req.query
-            let result = await this._getJobApplicants.getApplicants(job as string, filter as string)
+            const { job, filter } = req.query;
+                let result = await this._getJobApplicants.getApplicants(job as string, filter as string);
             if (result && result.result.length > 0) {
                 for (let i = 0; i < result.result.length; i++) {
-                    const user = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result.result[i].applicants.user}`)
-                    result.result[i].applicants.userName = user.data.result.result.username
+                    const applicants = (result.result[i] as { applicants: { user: string; userName?: string } }).applicants;
+                    const user = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${applicants.user}`);
+                    applicants.userName = user.data.result.result.username;
                 }
             }
-            res.json({ result })
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -234,16 +237,16 @@ export class JobController {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     alterUserApplication = async (req: Request, res: Response) => {
         try {
-            const { jobId, user, company, action } = req.query
-            const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${user}`)
-            if (action == 'accept') {
-                const result = await this._alterUserApplication.acceptApplication(jobId as string, user as string)
+            const { jobId, user, company, action } = req.query;
+            const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${user}`);
+            if (action == "accept") {
+                const result = await this._alterUserApplication.acceptApplication(jobId as string, user as string);
                 if (result.success) {
-                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`);
                     const message = `Congratulations,
 Your application has been shortlisted by our hiring team.
 Our team will review your profile in detail and contact you with the next steps shortly.
@@ -252,25 +255,25 @@ Thank you for your interest in joining our company`;
                     const data = {
                         convoId: conversation.data.result.id,
                         message
-                    }
-                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data)
+                    };
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data);
                     await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.accepted", {
                         userEmail: userDetails.data?.result?.result?.email,
-                        action: 'applicationAccepted'
-                    })
+                        action: "applicationAccepted"
+                    });
                 }
-                res.json({ result })
-            } else if (action == 'reject') {
-                const result = await this._alterUserApplication.rejectApplication(jobId as string, user as string)
+                res.json({ result });
+            } else if (action == "reject") {
+                const result = await this._alterUserApplication.rejectApplication(jobId as string, user as string);
                 await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.rejected", {
                     userEmail: userDetails.data?.result?.result?.email,
-                    action: 'applicationRejected'
-                })
-                res.json({ result })
-            } else if (action == 'hire') {
-                const result = await this._alterUserApplication.hireUser(jobId as string, user as string)
+                    action: "applicationRejected"
+                });
+                res.json({ result });
+            } else if (action == "hire") {
+                const result = await this._alterUserApplication.hireUser(jobId as string, user as string);
                 if (result.success) {
-                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`)
+                    const conversation = await axios.post(`${process.env.API_GATEWAY_ROUTE}/chat/v1/startUserConversation?company=${company}&user=${user}`);
                     const message = `Congratulations,
 We are pleased to inform you that you have been selected to join our team.
 Our hiring team will reach out shortly with details regarding onboarding and next steps.
@@ -280,17 +283,17 @@ Thank you for choosing to be a part of our company.
                     const data = {
                         convoId: conversation.data.result.id,
                         message
-                    }
-                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data)
+                    };
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data);
                     await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.hired", {
                         userEmail: userDetails.data?.result?.result?.email,
-                        action: 'applicationHired'
-                    })
+                        action: "applicationHired"
+                    });
                 }
-                res.json({ result })
+                res.json({ result });
             } else {
-                const result = { success: false }
-                res.json({ result })
+                const result = { success: false };
+                res.json({ result });
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -299,21 +302,21 @@ Thank you for choosing to be a part of our company.
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getCompanyAnalytics = async (req: Request, res: Response) => {
         try {
-            const result = await this._getCompanyAnalytics.getCompanyAnalytics()
+            const result = await this._getCompanyAnalytics.getCompanyAnalytics();
             const companyDetails = await Promise.all(
-                result.map(async (job: any) => {
-                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job._id}`)
+                result.map(async (job: { _id: string; count: number }) => {
+                    const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job._id}`);
                     return {
                         ...job,
                         name: result.data.company.name
-                    }
+                    };
                 })
-            )
-            res.json({ companyDetails })
+            );
+            res.json({ companyDetails });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -321,12 +324,12 @@ Thank you for choosing to be a part of our company.
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
     getJobApplicationAnalytics = async (req: Request, res: Response) => {
         try {
-            const result = await this._getJobApplicationAnalytics.getJobApplicationAnalytics()
-            res.json({ result })
+            const result = await this._getJobApplicationAnalytics.getJobApplicationAnalytics();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ message: error.message });
@@ -334,6 +337,6 @@ Thank you for choosing to be a part of our company.
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
             }
         }
-    }
+    };
 
 }

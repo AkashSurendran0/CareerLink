@@ -25,7 +25,7 @@ AdminModel.init(
     },
     {
         sequelize,
-        tableName:'admins',
+        tableName:"admins",
         timestamps:true
     }
-)
+);

@@ -11,8 +11,8 @@ export class CheckCompanyRegistrationInfo implements ICheckCompanyRegistrationIn
     ){}
 
     async checkCompanyRegistrationInfo (user:string):Promise<{success:boolean, rejected:boolean} | {success:boolean}> {
-        const result=await this._companyRepository.checkCompany(user)
-        return result
+        const result=await this._companyRepository.checkCompany(user);
+        return result;
     }
 
 }

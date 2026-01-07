@@ -24,8 +24,8 @@ export class AddJob implements IAddJob {
     ){}
 
     async addJob(jobDetails:JobDetails, id:string): Promise<{ success: boolean; }> {
-        const result=await this._jobRepository.addJob(jobDetails, id)
-        return result
+        const result=await this._jobRepository.addJob(jobDetails, id);
+        return result;
     }
 
 }
