@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import { ICreateTailoredResume } from "../domain/services/IResumeServices";
 import dotenv from "dotenv";
 import pdf from "html-pdf-node";
-import {GoogleGenerativeAI} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import { logger } from "../utils/logger";
 
@@ -11,7 +11,7 @@ dotenv.config();
 @injectable()
 export class CreateTailoredResume implements ICreateTailoredResume {
 
-    async createTailoredResume(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<unknown> {
+    async createTailoredResume(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<{ success: boolean; pdf: Buffer; html: string; provider: string } | { success: false; message: string }> {
         try {
             const jobRec = job as Record<string, unknown>;
             const detailsRec = details as Record<string, unknown>;
@@ -79,9 +79,9 @@ export class CreateTailoredResume implements ICreateTailoredResume {
     Proficiency: ${proficiency}
     Skills: ${skills.join(", ")}
     Education:
-    ${education.map( (e) => `${String(e.degree ?? "")} - ${String(e.university ?? "")} (${String(e.passingYear ?? "")})` ).join("\n")}
+    ${education.map((e) => `${String(e.degree ?? "")} - ${String(e.university ?? "")} (${String(e.passingYear ?? "")})`).join("\n")}
     Experience:
-    ${experience.map( (ex) => `${String(ex.position ?? "")} at ${String(ex.company ?? "")} (${String(ex.experience ?? "")} year(s))` ).join("\n")}
+    ${experience.map((ex) => `${String(ex.position ?? "")} at ${String(ex.company ?? "")} (${String(ex.experience ?? "")} year(s))`).join("\n")}
     LinkedIn: ${linkedinLink}
     GitHub: ${githubLink}
     
@@ -128,13 +128,13 @@ export class CreateTailoredResume implements ICreateTailoredResume {
     No markdown.
     No explanations.
     No additional text.
-            `; 
+            `;
 
-            const htmlOutput=await this.generateResume(prompt);
-            const cleanHTML=this.cleanHTMLOutput(htmlOutput);
+            const htmlOutput = await this.generateResume(prompt);
+            const cleanHTML = this.cleanHTMLOutput(htmlOutput);
 
             const file = { content: cleanHTML };
-            const pdfBuffer = await pdf.generatePdf(file, { format: "A4" });
+            const pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
 
             return {
                 success: true,
@@ -144,22 +144,22 @@ export class CreateTailoredResume implements ICreateTailoredResume {
             };
 
         } catch (error: unknown) {
-            if (error instanceof Error) logger.error("Error generating resume with gemini", error);
+            if (error instanceof Error) logger.error({ error }, "Error generating resume with gemini");
             else logger.error("Error generating resume with gemini");
-            return {success:false, message:"Error generating resume, please try again later"};
+            return { success: false, message: "Error generating resume, please try again later" };
         }
-        
+
     }
 
-    private async generateResume (prompt:string): Promise<string> {
+    private async generateResume(prompt: string): Promise<string> {
 
         try {
             logger.info("Trying resume generation with Gemini...");
-            const geminiHtml=await this.callGeminiForResume(prompt);
+            const geminiHtml = await this.callGeminiForResume(prompt);
             logger.info("Successfully generated resume with Gemini");
             return geminiHtml;
         } catch (error: unknown) {
-            if (error instanceof Error) logger.info("Gemini failed, moving to OpenRouter free models:", error.message);
+            if (error instanceof Error) logger.info({ error: error.message }, "Gemini failed, moving to OpenRouter free models:");
             else logger.info("Gemini failed, moving to OpenRouter free models:");
             try {
                 logger.info("Trying resume generation with Grok...");
@@ -167,7 +167,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                 logger.info("Successfully generated resume with Grok");
                 return grokHtml;
             } catch (GrokError: unknown) {
-                if (GrokError instanceof Error) logger.error("Grok failed, moving to OpenRouter free models:", GrokError.message);
+                if (GrokError instanceof Error) logger.error({ error: GrokError.message }, "Grok failed, moving to OpenRouter free models:");
                 else logger.error("Grok failed, moving to OpenRouter free models:");
             }
         }
@@ -185,7 +185,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
             "meta-llama/llama-3.1-405b-instruct:free"
         ];
 
-        for(const model of freeModels) {
+        for (const model of freeModels) {
             try {
                 logger.info(`Trying resume generation with model: ${model}`);
 
@@ -220,7 +220,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                 );
 
                 const htmlContent = response.data.choices?.[0]?.message?.content;
-                
+
                 if (!htmlContent) {
                     throw new Error("No HTML content in response");
                 }
@@ -228,8 +228,8 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                 logger.info(`Successfully generated resume with model: ${model}`);
                 return htmlContent;
             } catch (error: unknown) {
-                if (error instanceof Error) logger.error(`Model ${model} failed:`, error.message);
-                else logger.error(`Model ${model} failed:`);
+                if (error instanceof Error) logger.error({ model, error: error.message }, "Model failed:");
+                else logger.error({ model }, "Model failed:");
                 continue;
             }
         }
@@ -237,24 +237,24 @@ export class CreateTailoredResume implements ICreateTailoredResume {
         throw new Error("All OpenRouter models failed for resume generation");
     }
 
-    private async callGeminiForResume (prompt:string): Promise<string> {
+    private async callGeminiForResume(prompt: string): Promise<string> {
         const GEMINI_KEY = process.env.GEMINI_AI_API;
         if (!GEMINI_KEY) {
             throw new Error("GEMINI_AI_API key is not configured");
         }
 
         const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-      
-        const model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-pro",
+
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-pro",
         });
 
         const result = await model.generateContent(prompt);
-        const htmlOutput = result.response.text(); 
+        const htmlOutput = result.response.text();
         return htmlOutput;
     }
 
-    private async callGrokForResume(prompt:string): Promise<string> {
+    private async callGrokForResume(prompt: string): Promise<string> {
         const GROK_KEY = process.env.GROK_AI_API;
 
         const response = await axios.post(
@@ -286,15 +286,15 @@ export class CreateTailoredResume implements ICreateTailoredResume {
     private cleanHTMLOutput(htmlOutput: string): string {
         // Remove markdown code blocks if present
         let cleaned = htmlOutput.replace(/```html\s*/gi, "")
-                               .replace(/```\s*/g, "")
-                               .replace(/```html/g, "")
-                               .trim();
-        
+            .replace(/```\s*/g, "")
+            .replace(/```html/g, "")
+            .trim();
+
         // Ensure it's wrapped in main tag if not already
         if (!cleaned.includes("<main")) {
             cleaned = `<main style="margin: 20px; font-family: Arial, Helvetica, sans-serif; color: #000;">\n${cleaned}\n</main>`;
         }
-        
+
         return cleaned;
     }
 

@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { ICreateTailoredCoverLetter } from "../domain/services/IResumeServices";
-import {GoogleGenerativeAI} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import axios from "axios";
 import { logger } from "../utils/logger";
@@ -10,7 +10,7 @@ dotenv.config();
 @injectable()
 export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
 
-    async createTailoredCoverLetter(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<unknown> {
+    async createTailoredCoverLetter(job: Record<string, unknown>, details: Record<string, unknown>, user: Record<string, unknown>): Promise<{ success: boolean; content: string; provider: string } | { success: false; message: string }> {
         try {
             const jobRec = job as Record<string, unknown>;
             const detailsRec = details as Record<string, unknown>;
@@ -98,16 +98,16 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
     No extra comments.
     No surrounding quotes.
             `;
-    
+
             const content = await this.callOpenRouter(prompt);
-    
-            return { 
-                success: true, 
+
+            return {
+                success: true,
                 content: content,
-                provider: "openrouter" 
+                provider: "openrouter"
             };
         } catch (error: unknown) {
-            if (error instanceof Error) logger.error("OpenRouter failed, trying fallback...", error.message);
+            if (error instanceof Error) logger.error({ error: error.message }, "OpenRouter failed, trying fallback...");
             else logger.error("OpenRouter failed, trying fallback...");
             return {
                 success: false,
@@ -116,7 +116,7 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
         }
     }
 
-    private async callOpenRouter (prompt:string): Promise<string> {
+    private async callOpenRouter(prompt: string): Promise<string> {
         const OPENROUTER_KEY = process.env.OPENROUTER_AI_API;
 
         const freeModels = [
@@ -129,7 +129,7 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
             "meta-llama/llama-3.1-405b-instruct:free"
         ];
 
-        for(const model of freeModels){
+        for (const model of freeModels) {
             try {
                 logger.info(`Trying OpenRouter model: ${model}`);
 
@@ -163,8 +163,8 @@ export class CreateTailoredCoverLetter implements ICreateTailoredCoverLetter {
                 }
 
             } catch (modelError: unknown) {
-                if (modelError instanceof Error) logger.error(`Model ${model} failed:`, modelError.message);
-                else logger.error(`Model ${model} failed:`);
+                if (modelError instanceof Error) logger.error({ model, error: modelError.message }, "Model failed:");
+                else logger.error({ model }, "Model failed:");
                 continue; // Try next model
             }
         }

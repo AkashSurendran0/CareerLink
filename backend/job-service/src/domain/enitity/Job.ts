@@ -12,7 +12,7 @@ export class Job {
         public responsibilities:string[],
         public benefits:string[],
         public experienceLevel:string,
-        public deadline:Date,
-        public createdAt:Date
+        public deadline:Date | undefined,
+        public createdAt:Date | undefined
     ){}
 }

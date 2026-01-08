@@ -2,10 +2,10 @@ import { PostDto } from "../dto/PostDto";
 import { IPost } from "../infrastructure/model/PostModel";
 import mongoose from "mongoose";
 
-type PostSource = Partial<IPost> & { _id?: string | mongoose.Types.ObjectId };
+type PostSource = Partial<Omit<IPost, "_id">> & { _id?: string | mongoose.Types.ObjectId };
 
 export class PostMapper {
-    static toDTO (post: PostSource): PostDto {
+    static toDTO(post: PostSource): PostDto {
         return {
             _id: String(post._id),
             image: post.image ?? null,

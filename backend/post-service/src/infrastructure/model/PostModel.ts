@@ -1,61 +1,62 @@
-import mongoose, {Document, Schema, Model} from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IPost extends Document {
-    image:string | null,
+    image: string | null,
     text: string | null,
-    createdBy:string,
-    comments:[{
-        comment:string,
-        by:string
-    }],
-    likes:number,
-    likedBy:string[],
-    createdAt:Date
+    createdBy: string,
+    comments: {
+        comment: string,
+        by: string,
+        createdAt?: Date
+    }[],
+    likes: number,
+    likedBy: string[],
+    createdAt: Date
 }
 
-const postSchema: Schema<IPost>=new Schema(
+const postSchema: Schema<IPost> = new Schema(
     {
-        image:{
+        image: {
             type: String,
             required: false,
             default: null
         },
-        text:{
+        text: {
             type: String,
             required: false,
             default: null
         },
-        createdBy:{
-            type:String,
-            required:true
+        createdBy: {
+            type: String,
+            required: true
         },
-        comments:[
+        comments: [
             {
-                comment:{
-                    type:String,
-                    required:false
+                comment: {
+                    type: String,
+                    required: false
                 },
-                by:{
-                    type:String,
-                    required:false
+                by: {
+                    type: String,
+                    required: false
                 },
-                createdAt:{
-                    type:Date,
-                    required:false,
-                    default:Date.now()
+                createdAt: {
+                    type: Date,
+                    required: false,
+                    default: Date.now()
                 }
             }
         ],
-        likes:{
-            type:Number,
-            default:0
+        likes: {
+            type: Number,
+            default: 0
         },
-        likedBy:[{
-            type:String,
-            required:false
+        likedBy: [{
+            type: String,
+            required: false
         }]
     },
-    {timestamps:true}
+    { timestamps: true }
 );
 
-export const PostModel:Model<IPost> = mongoose.model<IPost>("Posts", postSchema);
+export const PostModel: Model<IPost> = mongoose.model<IPost>("Posts", postSchema);

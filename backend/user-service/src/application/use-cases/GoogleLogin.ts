@@ -32,11 +32,12 @@ export class GoogleLogin implements IGoogleLogin {
 
                 await elasticClient.indices.refresh({ index: "users" });
             } catch (error: unknown) {
-                if (error instanceof Error) logger.error({ error } , "Cant insert into elasticsearch");
-                else logger.error({ error } , "Cant insert into elasticsearch");
+                if (error instanceof Error) logger.error({ error }, "Cant insert into elasticsearch");
+                else logger.error({ error }, "Cant insert into elasticsearch");
             }
         }
 
+        if (!user) throw new Error("User creation failed");
         return UserMapper.toDTO(user);
     }
 }

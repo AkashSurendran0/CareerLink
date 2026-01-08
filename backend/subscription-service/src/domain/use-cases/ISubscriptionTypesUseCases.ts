@@ -1,20 +1,20 @@
 import { SubscriptionTypeDto } from "../../dto/SubscriptionTypeDto";
 
-type Feature = {
+export type Feature = {
   text: string;
   code: string;
 };
 
-type SubscriptionData = {
-    name: string;
-    amount: number;
-    billingCycle: number;
-    features: Feature[];
-    active: boolean;
+export type SubscriptionData = {
+  name: string;
+  amount: number;
+  billingCycle: number;
+  features: Feature[];
+  active: boolean;
 }
 
 export interface IAddSubscription {
-    addSubscription(data:SubscriptionData): Promise<{success:boolean}>
+  addSubscription(data: SubscriptionData): Promise<{ success: boolean }>
 }
 
 export interface IGetAllPlans {
@@ -22,7 +22,7 @@ export interface IGetAllPlans {
 }
 
 export interface IAlterPlanStatus {
-  alterPlanStatus(id:string) : Promise<{success:boolean}>
+  alterPlanStatus(id: string): Promise<{ success: boolean }>
 }
 
 export interface IGetActivePlans {
@@ -30,7 +30,7 @@ export interface IGetActivePlans {
 }
 
 export interface IDeletePlanType {
-  deletePlanType(id:string): Promise<{success:boolean}>
+  deletePlanType(id: string): Promise<{ success: boolean }>
 }
 
 export interface IGetSubscriptionTypeAnalytics {
@@ -38,9 +38,9 @@ export interface IGetSubscriptionTypeAnalytics {
 }
 
 export interface IGetPlanDetails {
-  getPlanDetails(id:string): Promise<SubscriptionTypeDto>
+  getPlanDetails(id: string): Promise<SubscriptionTypeDto>
 }
 
 export interface IEditSubscription {
-  editSubscription(data:SubscriptionData): Promise<{success:boolean}>
+  editSubscription(data: SubscriptionData): Promise<{ success: boolean }>
 }

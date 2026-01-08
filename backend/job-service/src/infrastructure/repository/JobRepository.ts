@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { Job } from "../../domain/enitity/Job";
 import { IJobRepository } from "../../domain/repositories/IJobRepository";
 import { JobModel, IJobDetails } from "../model/JobModel";
-import mongoose from "mongoose";
 
 type JobDetails = {
     jobTitle: string,
@@ -160,19 +159,19 @@ export class JobRepository implements IJobRepository {
         return jobs.map(job =>
             new Job(
                 String(job._id),
-                job.company,
+                job.company as string,
                 Boolean(job.open),
-                job.jobTitle,
-                job.department,
-                job.jobType,
-                job.location,
-                job.jobDescription,
-                job.qualifications ?? [],
-                job.responsibilities ?? [],
-                job.benefits ?? [],
-                job.experienceLevel,
-                job.deadline,
-                job.createdAt
+                job.jobTitle as string,
+                job.department as string,
+                job.jobType as string,
+                job.location as string,
+                job.jobDescription as string,
+                job.qualifications as string[] ?? [],
+                job.responsibilities as string[] ?? [],
+                job.benefits as string[] ?? [],
+                job.experienceLevel as string,
+                job.deadline as Date,
+                job.createdAt as Date
             )
         );
     }

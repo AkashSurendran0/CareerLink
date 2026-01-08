@@ -12,7 +12,7 @@ type UserType = {
     password: string | null,
     googleId: string | null,
     suspended: boolean,
-    createdAt: string
+    createdAt: Date
 }
 
 @injectable()
@@ -25,8 +25,8 @@ export class UserRepository implements IUserRepository {
             userDoc.id.toString(),
             userDoc.username,
             userDoc.email,
-            userDoc.password,
-            userDoc.googleId,
+            userDoc.password || "",
+            userDoc.googleId || "",
             userDoc.suspended,
             userDoc.createdAt
         );
@@ -43,8 +43,8 @@ export class UserRepository implements IUserRepository {
             userData.id.toString(),
             userData.username,
             userData.email,
-            userData.password,
-            userData.googleId,
+            userData.password || "",
+            userData.googleId || "",
             userData.suspended,
             userData.createdAt
         );
@@ -61,8 +61,8 @@ export class UserRepository implements IUserRepository {
             userData.id.toString(),
             userData.username,
             userData.email,
-            userData.password,
-            userData.googleId,
+            userData.password || "",
+            userData.googleId || "",
             userData.suspended,
             userData.createdAt
         );
@@ -81,8 +81,8 @@ export class UserRepository implements IUserRepository {
             updatedUser.id.toString(),
             updatedUser.username,
             updatedUser.email,
-            updatedUser.password,
-            updatedUser.googleId,
+            updatedUser.password || "",
+            updatedUser.googleId || "",
             updatedUser.suspended,
             updatedUser.createdAt
         );
@@ -101,8 +101,8 @@ export class UserRepository implements IUserRepository {
                 user.id.toString(),
                 user.username,
                 user.email,
-                user.password,
-                user.googleId,
+                user.password || "",
+                user.googleId || "",
                 user.suspended,
                 user.createdAt
             )
@@ -122,8 +122,8 @@ export class UserRepository implements IUserRepository {
             updatedUser.id.toString(),
             updatedUser.username,
             updatedUser.email,
-            updatedUser.password,
-            updatedUser.googleId,
+            updatedUser.password || "",
+            updatedUser.googleId || "",
             updatedUser.suspended,
             updatedUser.createdAt
         );
@@ -137,8 +137,8 @@ export class UserRepository implements IUserRepository {
             user.id.toString(),
             user.username,
             user.email,
-            user.password,
-            user.googleId,
+            user.password || "",
+            user.googleId || "",
             user.suspended,
             user.createdAt
         );
@@ -157,8 +157,8 @@ export class UserRepository implements IUserRepository {
             updatedUser.id.toString(),
             updatedUser.username,
             updatedUser.email,
-            updatedUser.password,
-            updatedUser.googleId,
+            updatedUser.password || "",
+            updatedUser.googleId || "",
             updatedUser.suspended,
             updatedUser.createdAt
         );
@@ -171,8 +171,8 @@ export class UserRepository implements IUserRepository {
                 user.id.toString(),
                 user.username,
                 user.email,
-                user.password,
-                user.googleId,
+                user.password || "",
+                user.googleId || "",
                 user.suspended,
                 user.createdAt
             )
@@ -186,8 +186,8 @@ export class UserRepository implements IUserRepository {
                 user.id.toString(),
                 user.username,
                 user.email,
-                user.password,
-                user.googleId,
+                user.password || "",
+                user.googleId || "",
                 user.suspended,
                 user.createdAt
             )

@@ -2,7 +2,11 @@ import { JobDTO } from "../dto/JobDTO";
 import { IJobDetails } from "../infrastructure/model/JobModel";
 import mongoose from "mongoose";
 
-export type JobSource = Partial<IJobDetails> & { _id?: string | mongoose.Types.ObjectId };
+export type JobSource = Partial<Omit<IJobDetails, "deadline" | "createdAt">> & {
+    _id?: string | mongoose.Types.ObjectId;
+    deadline?: Date | undefined;
+    createdAt?: Date | undefined;
+};
 
 export class JobMapper {
     static toDTO(job: JobSource): JobDTO {

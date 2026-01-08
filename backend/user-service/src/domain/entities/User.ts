@@ -6,8 +6,8 @@ export class User {
         public password: string,
         public googleId: string,
         public suspended: boolean,
-        public createdAt?: Date,
-        public pending?: boolean,
-        public status?: boolean
+        public createdAt?: Date | undefined,
+        public pending?: boolean | undefined,
+        public status?: boolean | undefined
     ) { }
 }

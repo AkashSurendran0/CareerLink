@@ -9,6 +9,6 @@ export const dbConnect = async () =>{
         await mongoose.connect(`mongodb://${process.env.MONGO_HOST}:27017/careerLink`);
         logger.info("Mongodb connected successfully");
     } catch (error: unknown) {
-        logger.error("Mongodb connection failed", error as Error);
+        logger.error({error}, "Mongodb connection failed");
     }
 };

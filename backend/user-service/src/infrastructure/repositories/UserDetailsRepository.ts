@@ -1,21 +1,7 @@
-import { IUserDetailsRepository } from "../../domain/repositories/IUserDetailsRepository";
+import { IUserDetailsRepository, details } from "../../domain/repositories/IUserDetailsRepository";
 import { UserDetailsEntity } from "../../domain/entities/UserDetails";
 import { UserDetailsModel } from "../models/UserDetailsModel";
 import { injectable } from "inversify";
-
-type details = {
-    username: string,
-    profilePicture: string,
-    gender: string,
-    location: string,
-    proficiency: string,
-    aboutMe: string,
-    experience: string,
-    skills: string,
-    education: string,
-    linkedinLink: string,
-    githubLink: string
-}
 
 @injectable()
 export class UserDetailsRepository implements IUserDetailsRepository {
@@ -25,20 +11,20 @@ export class UserDetailsRepository implements IUserDetailsRepository {
             user: id,
             ...details
         };
-        const newDetails = await UserDetailsModel.insertOne(data);
+        const newDetails = await UserDetailsModel.create(data);
         return new UserDetailsEntity(
-            newDetails.id.toString(),
+            (newDetails as any)._id.toString(),
             newDetails.user,
-            newDetails.profilePicture,
-            newDetails.gender,
-            newDetails.aboutMe,
-            newDetails.location,
-            newDetails.proficiency,
-            newDetails.skills,
-            newDetails.education,
-            newDetails.experience,
-            newDetails.linkedinLink,
-            newDetails.githubLink
+            newDetails.profilePicture || "",
+            newDetails.gender || "",
+            newDetails.aboutMe || "",
+            newDetails.location || "",
+            newDetails.proficiency || "",
+            newDetails.skills || [],
+            newDetails.education as any || [],
+            newDetails.experience as any || [],
+            newDetails.linkedinLink || "",
+            newDetails.githubLink || ""
         );
     }
 
@@ -46,18 +32,18 @@ export class UserDetailsRepository implements IUserDetailsRepository {
         const details = await UserDetailsModel.findOne({ user: id });
         if (!details) return null;
         return new UserDetailsEntity(
-            details.id.toString(),
+            (details as any)._id.toString(),
             details.user,
-            details.profilePicture,
-            details.gender,
-            details.aboutMe,
-            details.location,
-            details.proficiency,
-            details.skills,
-            details.education,
-            details.experience,
-            details.linkedinLink,
-            details.githubLink
+            details.profilePicture || "",
+            details.gender || "",
+            details.aboutMe || "",
+            details.location || "",
+            details.proficiency || "",
+            details.skills as unknown as string[] || [],
+            details.education as any || [],
+            details.experience as any || [],
+            details.linkedinLink || "",
+            details.githubLink || ""
         );
     }
 
@@ -69,18 +55,18 @@ export class UserDetailsRepository implements IUserDetailsRepository {
         );
         if (!newDetails) return null;
         return new UserDetailsEntity(
-            newDetails.id.toString(),
+            (newDetails as any)._id.toString(),
             newDetails.user,
-            newDetails.profilePicture,
-            newDetails.gender,
-            newDetails.aboutMe,
-            newDetails.location,
-            newDetails.proficiency,
-            newDetails.skills,
-            newDetails.education,
-            newDetails.experience,
-            newDetails.linkedinLink,
-            newDetails.githubLink
+            newDetails.profilePicture || "",
+            newDetails.gender || "",
+            newDetails.aboutMe || "",
+            newDetails.location || "",
+            newDetails.proficiency || "",
+            newDetails.skills as unknown as string[] || [],
+            newDetails.education as any || [],
+            newDetails.experience as any || [],
+            newDetails.linkedinLink || "",
+            newDetails.githubLink || ""
         );
 
     }

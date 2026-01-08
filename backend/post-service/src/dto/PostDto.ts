@@ -3,11 +3,11 @@ export interface PostDto {
     image:string | null,
     text:string | null,
     createdBy:string,
-    comments:[{
+    comments:{
         comment:string,
         by:string,
         createdAt:Date
-    }],
+    }[],
     likes:number,
     likedBy:string[],
     createdAt:Date

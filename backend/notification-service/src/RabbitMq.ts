@@ -1,4 +1,4 @@
-import amqp, { Channel, ConsumeMessage } from "amqplib";
+import { connect, Connection, Channel, ConsumeMessage } from "amqplib";
 import { Mailer } from "./utils/MailHelper";
 import { IAddNotification } from "./domain/services/INotificationServices";
 import { inject, injectable } from "inversify";
@@ -10,36 +10,36 @@ dotenv.config();
 
 @injectable()
 export class RabbitMqService {
-    // Use amqplib types for connection/channel and keep them nullable until connected.
-    private connection: amqp.Connection | null = null;
-    private channel: Channel | null = null;
+    // Use any temporarily to bypass broken amqplib types
+    private connection: any = null;
+    private channel: any = null;
     private readonly exchange = ["company.events", "subscription.events", "connection.events", "jobApplication.events", "mail.events"];
 
     constructor(
-        @inject(TYPES.Mailer) private _mailer:Mailer,
-        @inject(TYPES.IAddNotification) private _addNotification:IAddNotification
-    ){}
+        @inject(TYPES.Mailer) private _mailer: Mailer,
+        @inject(TYPES.IAddNotification) private _addNotification: IAddNotification
+    ) { }
 
     public async connect(): Promise<void> {
         try {
-            this.connection=await amqp.connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`);
-            this.channel=await this.connection.createChannel();
+            this.connection = await connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`);
+            this.channel = await this.connection!.createChannel();
 
-            for(const exchange of this.exchange){
-                await this.channel.assertExchange(exchange, "topic", {durable:true});
+            for (const exchange of this.exchange) {
+                await this.channel!.assertExchange(exchange, "topic", { durable: true });
             }
 
             logger.info("RabbitMq connected and exchanges asserted");
         } catch (error: unknown) {
-            logger.error({error}, "RabbitMq connection failed");
+            logger.error({ error }, "RabbitMq connection failed");
             throw error;
         }
     }
 
-    public async consumeNotification():Promise<void> {
-        if(!this.channel) throw new Error("RabbitMq channel not initialized");
+    public async consumeNotification(): Promise<void> {
+        if (!this.channel) throw new Error("RabbitMq channel not initialized");
 
-        const queue=await this.channel.assertQueue("notification-queue", {durable:true});
+        const queue = await this.channel.assertQueue("notification-queue", { durable: true });
 
         await this.channel.bindQueue(queue.queue, "company.events", "company.approved");
         await this.channel.bindQueue(queue.queue, "company.events", "company.rejected");
@@ -55,19 +55,19 @@ export class RabbitMqService {
 
         logger.info("Notification service is listening for messages...");
 
-        this.channel.consume(queue.queue, async (msg: ConsumeMessage | null) => await this.handleMessages(msg), {noAck:false});
+        this.channel.consume(queue.queue, async (msg: ConsumeMessage | null) => await this.handleMessages(msg), { noAck: false });
     }
 
-    private async handleMessages(msg:ConsumeMessage | null): Promise<void> {
-        if(!msg) return; 
+    private async handleMessages(msg: ConsumeMessage | null): Promise<void> {
+        if (!msg) return;
 
-        const data=JSON.parse(msg.content.toString());
+        const data = JSON.parse(msg.content.toString());
 
-        try{
-            switch(data.action){
+        try {
+            switch (data.action) {
                 case "approved":
                     await this._addNotification.saveNotification(data.registeredBy, "Your Company has been approved 🎉", "/company/registeredCompany");
-                    await this._mailer.sendMail(data.registeredBy, "Your company has been approved on CareerLink! 🎉", 
+                    await this._mailer.sendMail(data.registeredBy, "Your company has been approved on CareerLink! 🎉",
                         `Hello ${data.companyName} team,
 
 We’re excited to let you know that your company registration on CareerLink has been approved!
@@ -84,7 +84,7 @@ The CareerLink Team
 
                 case "rejected":
                     await this._addNotification.saveNotification(data.registeredBy, "Update on your company registration", "/company/registeredCompany");
-                    await this._mailer.sendMail(data.registeredBy, "Update on your CareerLink company registration ", 
+                    await this._mailer.sendMail(data.registeredBy, "Update on your CareerLink company registration ",
                         `Hello ${data.companyName} team,
 Thank you for registering your company with CareerLink.  
 After reviewing your application, we regret to inform you that it was not approved at this time.
@@ -97,12 +97,12 @@ If you believe this decision was made in error, please contact our support team.
 Best regards,  
 The CareerLink Team
 `
-                    ); 
+                    );
                     break;
 
                 case "blocked":
                     await this._addNotification.saveNotification(data.registeredBy, "Company Account Temporarily Blocked", "/company/registeredCompany");
-                    await this._mailer.sendMail(data.registeredBy, "Company Account Temporarily Blocked", 
+                    await this._mailer.sendMail(data.registeredBy, "Company Account Temporarily Blocked",
                         `Hello ${data.companyName} Team,
 
 We wanted to inform you that your company account has been temporarily blocked by the admin due to policy or activity-related concerns.
@@ -119,11 +119,11 @@ Best regards,
 The CareerLink Team
 `
                     );
-                break;
+                    break;
 
                 case "unblocked":
                     await this._addNotification.saveNotification(data.registeredBy, "Company Account Reinstated Successfully", "/company/registeredCompany");
-                    await this._mailer.sendMail(data.registeredBy, "Company Account Reinstated Successfully", 
+                    await this._mailer.sendMail(data.registeredBy, "Company Account Reinstated Successfully",
                         `Hello ${data.companyName} Team,
 
 Good news! Your company account has been successfully unblocked by the admin.
@@ -137,7 +137,7 @@ Best regards,
 The CareerLink Team
 `
                     );
-                break;
+                    break;
 
                 case "upgraded":
                     await this._addNotification.saveNotification(data.user, "Upgraded to Vip Member 👑", "/settings");
@@ -164,7 +164,7 @@ The CareerLink Team
                     break;
 
                 case "sendWarningMail":
-                    await this._mailer.sendMail(data.reciever, "Warning Regarding Reported Activity on Your Account", 
+                    await this._mailer.sendMail(data.reciever, "Warning Regarding Reported Activity on Your Account",
                         `Hello,
 
 We are writing to inform you that we have received a report concerning content or activity associated with your account.
@@ -177,19 +177,18 @@ Thank you for your cooperation.
 
 Best regards,   
 The CareerLink Team
-` 
+`
                     );
-                break;
-                
+                    break;
+
                 default:
                     logger.info("Unknown type event", data.action);
             }
 
-            this.channel.ack(msg);
-        }catch(error: unknown){
-            logger.info({error}, "Error processing message");
+            this.channel!.ack(msg);
+        } catch (error: unknown) {
+            logger.info({ error }, "Error processing message");
             this.channel?.nack(msg, false, false);
         }
-    } 
+    }
 }
-

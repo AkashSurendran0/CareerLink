@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { ICreateCoverLetter } from "../domain/services/IResumeServices";
 import dotenv from "dotenv";
-import {GoogleGenerativeAI} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import { logger } from "../utils/logger";
 
@@ -10,7 +10,7 @@ dotenv.config();
 @injectable()
 export class CreateCoverLetter implements ICreateCoverLetter {
 
-    async createCoverLetter (data: Record<string, unknown>) {
+    async createCoverLetter(data: Record<string, unknown>): Promise<{ success: boolean; content: string; provider: string } | { success: false; message: string }> {
 
         try {
             const payload = data as Record<string, unknown>;
@@ -23,7 +23,7 @@ export class CreateCoverLetter implements ICreateCoverLetter {
             const finalSkills = Array.isArray(payload.finalSkills) ? payload.finalSkills as string[] : [];
             const finalCertifications = Array.isArray(payload.finalCertifications) ? payload.finalCertifications as string[] : [];
             const finalInterests = Array.isArray(payload.finalInterests) ? payload.finalInterests as string[] : [];
-            
+
             const prompt = `
     You are an expert cover-letter writer and a professional language editor.
     Your job is to generate a polished, professional cover letter with corrected spelling and normalized technical terms, while strictly following the user-provided data.
@@ -63,8 +63,8 @@ export class CreateCoverLetter implements ICreateCoverLetter {
     HR Name: ${hrName}
     Education: ${finalEducation.join(", ")}
     Experience: ${finalExperiences
-    .map((ex) => `${String((ex as Record<string, unknown>).position ?? "")} (${String((ex as Record<string, unknown>).span ?? "")})`)
-    .join(", ")}
+                    .map((ex) => `${String((ex as Record<string, unknown>).position ?? "")} (${String((ex as Record<string, unknown>).span ?? "")})`)
+                    .join(", ")}
     Skills: ${finalSkills.join(", ")}
     Certifications: ${finalCertifications.join(", ")}
     Why interested in the company: ${finalInterests.join(", ")}
@@ -73,15 +73,15 @@ export class CreateCoverLetter implements ICreateCoverLetter {
     
     `;
             const content = await this.callOpenRouter(prompt);
-    
-            return { 
-                success: true, 
+
+            return {
+                success: true,
                 content: content,
-                provider: "openrouter" 
+                provider: "openrouter"
             };
         } catch (error: unknown) {
-                if (error instanceof Error) logger.info("OpenRouter failed, trying fallback...", error.message);
-                else logger.info("OpenRouter failed, trying fallback...");
+            if (error instanceof Error) logger.info({ error: error.message }, "OpenRouter failed, trying fallback...");
+            else logger.info("OpenRouter failed, trying fallback...");
             return {
                 success: false,
                 message: "Error generating cover letter, please try again later"
@@ -89,7 +89,7 @@ export class CreateCoverLetter implements ICreateCoverLetter {
         }
     }
 
-    private async callOpenRouter (prompt:string): Promise<string> {
+    private async callOpenRouter(prompt: string): Promise<string> {
         const OPENROUTER_KEY = process.env.OPENROUTER_AI_API;
 
         const freeModels = [
@@ -102,7 +102,7 @@ export class CreateCoverLetter implements ICreateCoverLetter {
             "meta-llama/llama-3.1-405b-instruct:free"
         ];
 
-        for(const model of freeModels){
+        for (const model of freeModels) {
             try {
                 logger.info(`Trying OpenRouter model: ${model}`);
 
@@ -136,8 +136,8 @@ export class CreateCoverLetter implements ICreateCoverLetter {
                 }
 
             } catch (modelError: unknown) {
-                if (modelError instanceof Error) logger.error(modelError.message, `Model ${model} failed:`);
-                else logger.error(`Model ${model} failed`);
+                if (modelError instanceof Error) logger.error({ model, error: modelError.message }, "Model failed:");
+                else logger.error({ model }, "Model failed");
                 continue; // Try next model
             }
         }

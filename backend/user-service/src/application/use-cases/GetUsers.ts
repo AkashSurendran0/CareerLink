@@ -39,7 +39,7 @@ export class GetAllUsers implements IGetAllUsers {
             query: esQuery
         });
 
-        const hits = users.hits.hits.map((hit: { _source: unknown }) =>
+        const hits = users.hits.hits.map((hit: any) =>
             hit._source as {
                 id: string;
                 username: string;

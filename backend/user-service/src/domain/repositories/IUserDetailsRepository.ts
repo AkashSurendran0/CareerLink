@@ -1,6 +1,6 @@
 import { UserDetailsEntity } from "../entities/UserDetails";
 
-type details = {
+export type details = {
     gender?: string | undefined,
     profilePicture?: string | undefined,
     location?: string | undefined,

@@ -8,15 +8,20 @@ import { ISubscriptionRepository } from "../../domain/respository/ISubscriptionR
 export class GetSubscriptionTypeAnalytics implements IGetSubscriptionTypeAnalytics {
 
     constructor(
-        @inject(TYPES.ISubscriptionTypesRepository) private _subscriptionTypesRepository:ISubscriptionTypesRepository,
-        @inject(TYPES.ISubscriptionRepository) private _subscriptionRepository:ISubscriptionRepository
-    ){}
+        @inject(TYPES.ISubscriptionTypesRepository) private _subscriptionTypesRepository: ISubscriptionTypesRepository,
+        @inject(TYPES.ISubscriptionRepository) private _subscriptionRepository: ISubscriptionRepository
+    ) { }
 
     async getSubscriptionTypeAnalytics(): Promise<Array<{ subscriptionType: string; count: number; name?: string }>> {
-        const result=await this._subscriptionRepository.groupByPlan();
-        for(let i=0;i<result.length;i++){
-            const details=await this._subscriptionTypesRepository.findById(result[i].subscriptionType);
-            result[i].name=details.name;
+        const result = await this._subscriptionRepository.groupByPlan() as Array<{ subscriptionType: string; count: number; name?: string }>;
+        for (let i = 0; i < result.length; i++) {
+            const item = result[i];
+            if (item) {
+                const details = await this._subscriptionTypesRepository.findById(item.subscriptionType);
+                if (details) {
+                    item.name = details.name;
+                }
+            }
         }
         return result;
     }

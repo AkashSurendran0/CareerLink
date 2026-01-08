@@ -7,9 +7,9 @@ export class UserDetailsEntity {
         public aboutMe: string,
         public location: string,
         public proficiency: string,
-        public skills: [string],
-        public education: string[],
-        public experience: string[],
+        public skills: string[],
+        public education: Array<Record<string, unknown>>,
+        public experience: Array<Record<string, unknown>>,
         public linkedinLink: string,
         public githubLink: string
     ) { }

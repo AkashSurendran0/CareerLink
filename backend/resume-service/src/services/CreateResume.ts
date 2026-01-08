@@ -2,7 +2,7 @@ import { ICreateResume } from "../domain/services/IResumeServices";
 import { injectable, inject } from "inversify";
 import dotenv from "dotenv";
 import pdf from "html-pdf-node";
-import {GoogleGenerativeAI} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import { logger } from "../utils/logger";
 
@@ -11,25 +11,25 @@ dotenv.config();
 @injectable()
 export class CreateResume implements ICreateResume {
 
-        async createResume(data: Record<string, unknown>): Promise<unknown> {
-        
-            try {
-                const payload = data as Record<string, unknown>;
-                const fullName = String(payload.fullName ?? "");
-                const email = String(payload.email ?? "");
-                const phone = String(payload.phone ?? "");
-                const location = String(payload.location ?? "");
-                const summary = String(payload.summary ?? "");
-                const finalEducation = Array.isArray(payload.finalEducation) ? payload.finalEducation as Array<Record<string, unknown>> : [];
-                const finalSkills = Array.isArray(payload.finalSkills) ? payload.finalSkills as string[] : [];
-                const finalCertifications = Array.isArray(payload.finalCertifications) ? payload.finalCertifications as string[] : [];
-                const finalExperiences = Array.isArray(payload.finalExperiences) ? payload.finalExperiences as Array<Record<string, unknown>> : [];
-                const finalProjects = Array.isArray(payload.finalProjects) ? payload.finalProjects as Array<Record<string, unknown>> : [];
-                const finalInterests = Array.isArray(payload.finalInterests) ? payload.finalInterests as string[] : [];
-                const finalLanguages = Array.isArray(payload.finalLanguages) ? payload.finalLanguages as string[] : [];
-                const linkedinUrl = String(payload.linkedinUrl ?? "");
-        
-        const prompt = `
+    async createResume(data: Record<string, unknown>): Promise<{ success: boolean; pdf: Buffer; html: string; provider: string } | { success: false; message: string }> {
+
+        try {
+            const payload = data as Record<string, unknown>;
+            const fullName = String(payload.fullName ?? "");
+            const email = String(payload.email ?? "");
+            const phone = String(payload.phone ?? "");
+            const location = String(payload.location ?? "");
+            const summary = String(payload.summary ?? "");
+            const finalEducation = Array.isArray(payload.finalEducation) ? payload.finalEducation as Array<Record<string, unknown>> : [];
+            const finalSkills = Array.isArray(payload.finalSkills) ? payload.finalSkills as string[] : [];
+            const finalCertifications = Array.isArray(payload.finalCertifications) ? payload.finalCertifications as string[] : [];
+            const finalExperiences = Array.isArray(payload.finalExperiences) ? payload.finalExperiences as Array<Record<string, unknown>> : [];
+            const finalProjects = Array.isArray(payload.finalProjects) ? payload.finalProjects as Array<Record<string, unknown>> : [];
+            const finalInterests = Array.isArray(payload.finalInterests) ? payload.finalInterests as string[] : [];
+            const finalLanguages = Array.isArray(payload.finalLanguages) ? payload.finalLanguages as string[] : [];
+            const linkedinUrl = String(payload.linkedinUrl ?? "");
+
+            const prompt = `
   You are an expert ATS resume writer and professional HTML designer.
   
   Your job is to generate a fully ATS-friendly resume in clean HTML.
@@ -86,8 +86,8 @@ export class CreateResume implements ICreateResume {
   
   Education:
   ${finalEducation
-    .map((e) => `${String((e as Record<string, unknown>).degree ?? "")} - ${String((e as Record<string, unknown>).institute ?? "")} (${String((e as Record<string, unknown>).passingYear ?? "")})`)
-  .join("\n")}
+                    .map((e) => `${String((e as Record<string, unknown>).degree ?? "")} - ${String((e as Record<string, unknown>).institute ?? "")} (${String((e as Record<string, unknown>).passingYear ?? "")})`)
+                    .join("\n")}
   
   Skills:
   ${finalSkills.join(", ")}
@@ -97,13 +97,13 @@ export class CreateResume implements ICreateResume {
   
   Experience:
     ${finalExperiences
-    .map((ex) => `${String((ex as Record<string, unknown>).position ?? "")} at ${String((ex as Record<string, unknown>).company ?? "")} (${String((ex as Record<string, unknown>).span ?? "")})`)
-    .join("\n")}
+                    .map((ex) => `${String((ex as Record<string, unknown>).position ?? "")} at ${String((ex as Record<string, unknown>).company ?? "")} (${String((ex as Record<string, unknown>).span ?? "")})`)
+                    .join("\n")}
   
   Projects:
     ${finalProjects
-    .map((p) => `${String((p as Record<string, unknown>).name ?? "")} - ${String((p as Record<string, unknown>).description ?? "")}`)
-    .join("\n")}
+                    .map((p) => `${String((p as Record<string, unknown>).name ?? "")} - ${String((p as Record<string, unknown>).description ?? "")}`)
+                    .join("\n")}
   
   Languages:
   ${finalLanguages.join(", ")}
@@ -112,35 +112,35 @@ export class CreateResume implements ICreateResume {
   ${finalInterests.join(", ")}
       `;
 
-        const htmlOutput=await this.generateResume(prompt);
-        const cleanHTML=this.cleanHTMLOutput(htmlOutput);
-        
-        const file = { content: cleanHTML };
-        const pdfBuffer = await pdf.generatePdf(file, { format: "A4" });
-        
-        return {
-          success: true,
-          pdf: pdfBuffer,
-          html: cleanHTML,
-          provider: "openrouter"
-        };
-            } catch (error: unknown) {
-                if (error instanceof Error) logger.error("Error generating resume with gemini", error);
-                else logger.error("Error generating resume with gemini");
-                return {success:false, message:"Error generating resume, please try again later"};
-            }
+            const htmlOutput = await this.generateResume(prompt);
+            const cleanHTML = this.cleanHTMLOutput(htmlOutput);
+
+            const file = { content: cleanHTML };
+            const pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
+
+            return {
+                success: true,
+                pdf: pdfBuffer,
+                html: cleanHTML,
+                provider: "openrouter"
+            };
+        } catch (error: unknown) {
+            if (error instanceof Error) logger.error({ error }, "Error generating resume with gemini");
+            else logger.error("Error generating resume with gemini");
+            return { success: false, message: "Error generating resume, please try again later" };
+        }
 
     }
 
-    private async generateResume (prompt:string): Promise<string> {
+    private async generateResume(prompt: string): Promise<string> {
 
         try {
             logger.info("Trying resume generation with Gemini...");
-            const geminiHtml=await this.callGeminiForResume(prompt);
+            const geminiHtml = await this.callGeminiForResume(prompt);
             logger.info("Successfully generated resume with Gemini");
             return geminiHtml;
         } catch (error: unknown) {
-            if (error instanceof Error) logger.info("Gemini failed, moving to OpenRouter free models:", error.message);
+            if (error instanceof Error) logger.info({ error: error.message }, "Gemini failed, moving to OpenRouter free models:");
             else logger.info("Gemini failed, moving to OpenRouter free models:");
             try {
                 logger.info("Trying resume generation with Grok...");
@@ -148,7 +148,7 @@ export class CreateResume implements ICreateResume {
                 logger.info("Successfully generated resume with Grok");
                 return grokHtml;
             } catch (GrokError: unknown) {
-                if (GrokError instanceof Error) logger.info("Grok failed, moving to OpenRouter free models:", GrokError.message);
+                if (GrokError instanceof Error) logger.info({ error: GrokError.message }, "Grok failed, moving to OpenRouter free models:");
                 else logger.info("Grok failed, moving to OpenRouter free models:");
             }
         }
@@ -166,7 +166,7 @@ export class CreateResume implements ICreateResume {
             "meta-llama/llama-3.1-405b-instruct:free"
         ];
 
-        for(const model of freeModels) {
+        for (const model of freeModels) {
             try {
                 logger.info(`Trying resume generation with model: ${model}`);
 
@@ -201,7 +201,7 @@ export class CreateResume implements ICreateResume {
                 );
 
                 const htmlContent = response.data.choices?.[0]?.message?.content;
-                
+
                 if (!htmlContent) {
                     throw new Error("No HTML content in response");
                 }
@@ -209,8 +209,8 @@ export class CreateResume implements ICreateResume {
                 logger.info(`Successfully generated resume with model: ${model}`);
                 return htmlContent;
             } catch (error: unknown) {
-                if (error instanceof Error) logger.info(`Model ${model} failed:`, error.message);
-                else logger.info(`Model ${model} failed:`);
+                if (error instanceof Error) logger.info({ model, error: error.message }, "Model failed:");
+                else logger.info({ model }, "Model failed:");
                 continue;
             }
         }
@@ -218,24 +218,24 @@ export class CreateResume implements ICreateResume {
         throw new Error("All OpenRouter models failed for resume generation");
     }
 
-    private async callGeminiForResume (prompt:string): Promise<string> {
+    private async callGeminiForResume(prompt: string): Promise<string> {
         const GEMINI_KEY = process.env.GEMINI_AI_API;
         if (!GEMINI_KEY) {
             throw new Error("GEMINI_AI_API key is not configured");
         }
 
         const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-      
-        const model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-pro",
+
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-pro",
         });
 
         const result = await model.generateContent(prompt);
-        const htmlOutput = result.response.text(); 
+        const htmlOutput = result.response.text();
         return htmlOutput;
     }
 
-    private async callGrokForResume(prompt:string): Promise<string> {
+    private async callGrokForResume(prompt: string): Promise<string> {
         const GROK_KEY = process.env.GROK_AI_API;
 
         const response = await axios.post(
@@ -267,15 +267,15 @@ export class CreateResume implements ICreateResume {
     private cleanHTMLOutput(htmlOutput: string): string {
         // Remove markdown code blocks if present
         let cleaned = htmlOutput.replace(/```html\s*/gi, "")
-                               .replace(/```\s*/g, "")
-                               .replace(/```html/g, "")
-                               .trim();
-        
+            .replace(/```\s*/g, "")
+            .replace(/```html/g, "")
+            .trim();
+
         // Ensure it's wrapped in main tag if not already
         if (!cleaned.includes("<main")) {
             cleaned = `<main style="margin: 20px; font-family: Arial, Helvetica, sans-serif; color: #000;">\n${cleaned}\n</main>`;
         }
-        
+
         return cleaned;
     }
 

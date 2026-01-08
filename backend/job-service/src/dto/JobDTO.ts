@@ -11,7 +11,7 @@ export interface JobDTO {
     responsibilities: string[],
     benefits: string[],
     experienceLevel: string,
-    deadline: Date,
-    createdAt: Date,
+    deadline: Date | undefined,
+    createdAt: Date | undefined,
     count?: number
 }

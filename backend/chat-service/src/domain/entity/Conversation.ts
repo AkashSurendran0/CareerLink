@@ -5,6 +5,6 @@ export class Conversation {
         public users: string[],
         public createdAt: Date,
         public lastMessage?: unknown,
-        public unreadCount?: number
+        public unreadCount?: number | null
     ) { }
 }

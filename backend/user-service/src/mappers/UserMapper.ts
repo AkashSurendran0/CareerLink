@@ -1,7 +1,7 @@
 import { UserDTO } from "../dto/UserDTO";
 
 export class UserMapper {
-    static toDTO(user: { id: string; username: string; email: string; suspended?: boolean; status?: boolean; isVip?: boolean; createdAt?: Date | string }): UserDTO {
+    static toDTO(user: any): UserDTO {
         return {
             id: user.id,
             username: user.username,
@@ -9,7 +9,7 @@ export class UserMapper {
             suspended: Boolean(user.suspended),
             status: Boolean(user.status),
             isVip: Boolean(user.isVip),
-            createdAt: user.createdAt as Date | undefined,
+            createdAt: user.createdAt instanceof Date ? user.createdAt : undefined,
         };
     }
 }

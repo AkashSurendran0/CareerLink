@@ -1,10 +1,10 @@
 export interface ReportDto {
     id:string,
-    reportedBy:string | null,
-    reportedChat:string | null,
-    reportedAccount:string | null,
+    reportedBy:string | null | undefined,
+    reportedChat:string | null | undefined,
+    reportedAccount:string | null | undefined,
     reason:string,
     status:string,
     createdAt:Date,
-    reportedCompany:string
+    reportedCompany:string | undefined | null
 }

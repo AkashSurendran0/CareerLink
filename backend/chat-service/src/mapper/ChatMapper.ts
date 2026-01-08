@@ -11,13 +11,13 @@ export class ChatMapper {
                 _id: String(item._id),
                 sendBy: item.sendBy,
                 isScheduleMessage: Boolean(item.isScheduleMessage),
-                time: item.time,
-                date: item.date,
-                message: item.message,
+                time: item.time ?? "",
+                date: item.date ?? "",
+                message: item.message ?? "",
                 isRead: Boolean(item.isRead),
-                sendAt: item.sendAt
+                sendAt: (item.sendAt instanceof Date) ? item.sendAt : new Date(String(item.sendAt ?? Date.now()))
             })),
-            createdAt: chat.createdAt
+            createdAt: (chat.createdAt instanceof Date) ? chat.createdAt : new Date(String(chat.createdAt ?? Date.now()))
         };
     }
 }

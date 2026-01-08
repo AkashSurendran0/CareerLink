@@ -9,15 +9,15 @@ import { ReportMapper } from "../mapper/ReportMapper";
 export class GetReportDetails implements IGetReportDetails {
 
     constructor(
-        @inject(TYPES.IReportRepository) private _reportRepository:IReportRepository
-    ){}
+        @inject(TYPES.IReportRepository) private _reportRepository: IReportRepository
+    ) { }
 
     async getReportDetails(reportId: string): Promise<{ success: boolean; report?: ReportDto; }> {
-        const result=await this._reportRepository.findById(reportId);
-        if(result.success){
-            const report=ReportMapper.toDTO(result.report);
-            return {success:true, report};
-        }else{
+        const result = await this._reportRepository.findById(reportId);
+        if (result.success) {
+            const report = ReportMapper.toDTO(result.report!);
+            return { success: true, report };
+        } else {
             return result;
         }
     }

@@ -5,7 +5,7 @@ import { Notification } from "../../domain/entities/Notification";
 
 export class NotificationRepository implements INotificationRepository {
 
-    async insertNotification(user:string, content:string, routeTo:string) {
+    async insertNotification(user: string, content: string, routeTo: string) {
         const data = {
             user,
             content,
@@ -25,9 +25,9 @@ export class NotificationRepository implements INotificationRepository {
         );
     }
 
-    async getAllNotifications(user:string) {
+    async getAllNotifications(user: string) {
         // return plain objects from mongoose using lean()
-        const notifications = await NotificationModel.find({ user }).lean().exec() as Array<Partial<INotification> & { _id?: mongoose.Types.ObjectId }>;
+        const notifications = await NotificationModel.find({ user }).lean().exec() as unknown as Array<Partial<INotification> & { _id?: mongoose.Types.ObjectId }>;
         return notifications.map((noti) =>
             new Notification(
                 noti._id?.toString() ?? "",
@@ -40,32 +40,32 @@ export class NotificationRepository implements INotificationRepository {
         );
     }
 
-    async deleteAllNotifications(user:string): Promise<{success:boolean}> {
-        await NotificationModel.deleteMany({user});
-        return {success:true};
+    async deleteAllNotifications(user: string): Promise<{ success: boolean }> {
+        await NotificationModel.deleteMany({ user });
+        return { success: true };
     }
 
-    async deleteOneNotification(id:string): Promise<{success:boolean}> {
+    async deleteOneNotification(id: string): Promise<{ success: boolean }> {
         const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
         await NotificationModel.deleteOne(filter);
-        return {success:true};
+        return { success: true };
     }
 
-    async markOneAsRead (id:string): Promise<{success:boolean}> {
+    async markOneAsRead(id: string): Promise<{ success: boolean }> {
         const filter: Record<string, unknown> = mongoose.Types.ObjectId.isValid(id) ? { _id: new mongoose.Types.ObjectId(id) } : { _id: id };
         await NotificationModel.updateOne(
             filter,
-            { $set: { isRead:true } }
+            { $set: { isRead: true } }
         );
-        return {success:true};
+        return { success: true };
     }
 
-    async markAllRead (user:string): Promise<{success:boolean}> {
+    async markAllRead(user: string): Promise<{ success: boolean }> {
         await NotificationModel.updateMany(
             { user },
-            { $set: { isRead:true } }
+            { $set: { isRead: true } }
         );
-        return {success:true};
+        return { success: true };
     }
 
 }

@@ -10,10 +10,11 @@ import { stripe } from "../../config/stripe";
 import { IBuySubscription, IDeletePlan, IGetActivePlanUsers, IGetPremiumUserCount, IGetSubscriptionAnalysis, IGetSubscriptionInfo, IGetUserSubscription } from "../../domain/use-cases/ISubscriptionUseCase";
 import axios from "axios";
 import { logger } from "../../utils/logger";
+import { Feature, SubscriptionData } from "../../domain/use-cases/ISubscriptionTypesUseCases";
 
 dotenv.config();
 
-const razorpay=new Razorpay({
+const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY!,
     key_secret: process.env.RAZORPAY_API_SECRET!
 });
@@ -22,31 +23,31 @@ const razorpay=new Razorpay({
 export class SubscriptionController {
 
     constructor(
-        @inject(TYPES.IAddSubscription) private _addSubscription:IAddSubscription,
-        @inject(TYPES.IGetAllPlans) private _getAllPlans:IGetAllPlans,
-        @inject(TYPES.IAlterPlanStatus) private _alterPlanStatus:IAlterPlanStatus,
-        @inject(TYPES.IGetActivePlans) private _getActivePlans:IGetActivePlans,
-        @inject(TYPES.IBuySubscription) private _buySubscription:IBuySubscription,
-        @inject(TYPES.IGetUserSubscription) private _getUserSubscription:IGetUserSubscription,
-        @inject(TYPES.IDeletePlan) private _deletePlan:IDeletePlan,
-        @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo:IGetSubscriptionInfo,
-        @inject(TYPES.IGetActivePlanUsers) private _getActivePlanUsers:IGetActivePlanUsers,
-        @inject(TYPES.IDeletePlanType) private _deletePlanType:IDeletePlanType,
-        @inject(TYPES.IGetSubscriptionAnalysis) private _getSubscriptionAnalysis:IGetSubscriptionAnalysis,
-        @inject(TYPES.IGetSubscriptionTypeAnalytics) private _getSubscriptionTypeAnalytics:IGetSubscriptionTypeAnalytics,
-        @inject(TYPES.IGetPremiumUserCount) private _premiumUserCount:IGetPremiumUserCount,
-        @inject(TYPES.IGetPlanDetails) private _getPlanDetails:IGetPlanDetails,
-        @inject(TYPES.IEditSubscription) private _editSubscription:IEditSubscription
-    ) {}
+        @inject(TYPES.IAddSubscription) private _addSubscription: IAddSubscription,
+        @inject(TYPES.IGetAllPlans) private _getAllPlans: IGetAllPlans,
+        @inject(TYPES.IAlterPlanStatus) private _alterPlanStatus: IAlterPlanStatus,
+        @inject(TYPES.IGetActivePlans) private _getActivePlans: IGetActivePlans,
+        @inject(TYPES.IBuySubscription) private _buySubscription: IBuySubscription,
+        @inject(TYPES.IGetUserSubscription) private _getUserSubscription: IGetUserSubscription,
+        @inject(TYPES.IDeletePlan) private _deletePlan: IDeletePlan,
+        @inject(TYPES.IGetSubscriptionInfo) private _getSubscriptionInfo: IGetSubscriptionInfo,
+        @inject(TYPES.IGetActivePlanUsers) private _getActivePlanUsers: IGetActivePlanUsers,
+        @inject(TYPES.IDeletePlanType) private _deletePlanType: IDeletePlanType,
+        @inject(TYPES.IGetSubscriptionAnalysis) private _getSubscriptionAnalysis: IGetSubscriptionAnalysis,
+        @inject(TYPES.IGetSubscriptionTypeAnalytics) private _getSubscriptionTypeAnalytics: IGetSubscriptionTypeAnalytics,
+        @inject(TYPES.IGetPremiumUserCount) private _premiumUserCount: IGetPremiumUserCount,
+        @inject(TYPES.IGetPlanDetails) private _getPlanDetails: IGetPlanDetails,
+        @inject(TYPES.IEditSubscription) private _editSubscription: IEditSubscription
+    ) { }
 
-    addSubscription = async (req:Request, res:Response) => {
+    addSubscription = async (req: Request, res: Response) => {
         try {
-            const data = req.body as Record<string, unknown>;
-            const result=await this._addSubscription.addSubscription(data);
-            res.json({result});
+            const data = req.body as SubscriptionData;
+            const result = await this._addSubscription.addSubscription(data);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -54,13 +55,13 @@ export class SubscriptionController {
         }
     };
 
-    getAllPlans = async (req:Request, res:Response) => {
+    getAllPlans = async (req: Request, res: Response) => {
         try {
-            const result=await this._getAllPlans.getAllPlans();
-            res.json({result});
+            const result = await this._getAllPlans.getAllPlans();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -68,17 +69,17 @@ export class SubscriptionController {
         }
     };
 
-    alterPlanStatus = async (req:Request, res:Response) => {
+    alterPlanStatus = async (req: Request, res: Response) => {
         try {
-            const {plan}=req.query;
+            const { plan } = req.query;
             if (typeof plan !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Plan parameter is required" });
             }
-            const result=await this._alterPlanStatus.alterPlanStatus(plan);
-            res.json({result});
+            const result = await this._alterPlanStatus.alterPlanStatus(plan);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -86,13 +87,13 @@ export class SubscriptionController {
         }
     };
 
-    getActivePlans = async (req:Request, res:Response) => {
+    getActivePlans = async (req: Request, res: Response) => {
         try {
-            const result=await this._getActivePlans.getActivePlans();
-            res.json({result});
+            const result = await this._getActivePlans.getActivePlans();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -100,24 +101,24 @@ export class SubscriptionController {
         }
     };
 
-    createOrder = async (req:Request, res:Response) => {
+    createOrder = async (req: Request, res: Response) => {
         try {
-            const {amount}=req.body;
+            const { amount } = req.body;
 
-            const options={
-                amount:amount*100,
-                currency:"INR",
-                receipt:"receipt_" + Date.now()
+            const options = {
+                amount: amount * 100,
+                currency: "INR",
+                receipt: "receipt_" + Date.now()
             };
-            const order=await razorpay.orders.create(options);
+            const order = await razorpay.orders.create(options);
 
             return res.json({
-                success:true,
+                success: true,
                 order
             });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -125,7 +126,7 @@ export class SubscriptionController {
         }
     };
 
-    verifyPayment = async (req:Request, res:Response) => {
+    verifyPayment = async (req: Request, res: Response) => {
         try {
             const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
             const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -142,7 +143,7 @@ export class SubscriptionController {
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -150,30 +151,30 @@ export class SubscriptionController {
         }
     };
 
-    createStripePayment = async (req:Request, res:Response) => {
+    createStripePayment = async (req: Request, res: Response) => {
         try {
-            const email=req.headers["user-email"] as string;
-            const user=req.headers["user-id"] as string;
-            const {amount, id, validity}=req.body;
-            
+            const email = req.headers["user-email"] as string;
+            const user = req.headers["user-id"] as string;
+            const { amount, id, validity } = req.body;
+
             const session = await stripe.checkout.sessions.create({
-                payment_method_types:["card"],
-                mode:"payment",
-                success_url:`${process.env.FRONTEND_ROUTE}/settings`,
-                cancel_url:`${process.env.FRONTEND_ROUTE}/becomeVip`,
-                line_items:[
+                payment_method_types: ["card"],
+                mode: "payment",
+                success_url: `${process.env.FRONTEND_ROUTE}/settings`,
+                cancel_url: `${process.env.FRONTEND_ROUTE}/becomeVip`,
+                line_items: [
                     {
-                        price_data:{
-                            currency:"inr",
-                            product_data:{
-                                name:"Premium subscription"
+                        price_data: {
+                            currency: "inr",
+                            product_data: {
+                                name: "Premium subscription"
                             },
-                            unit_amount:amount*100
+                            unit_amount: amount * 100
                         },
-                        quantity:1
+                        quantity: 1
                     }
                 ],
-                metadata:{
+                metadata: {
                     user,
                     id,
                     validity,
@@ -181,10 +182,10 @@ export class SubscriptionController {
                 }
             });
 
-            res.json({success:true, id:session.id, url:session.url});
+            res.json({ success: true, id: session.id, url: session.url });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -192,13 +193,13 @@ export class SubscriptionController {
         }
     };
 
-    controlWebhook = async (req:Request, res:Response) => {
+    controlWebhook = async (req: Request, res: Response) => {
         try {
-            const sig=req.headers["stripe-signature"];
+            const sig = req.headers["stripe-signature"];
             let event;
 
             try {
-                event=stripe.webhooks.constructEvent(req.body, sig!, process.env.STRIPE_WEBHOOK_SECRET!);
+                event = stripe.webhooks.constructEvent(req.body, sig!, process.env.STRIPE_WEBHOOK_SECRET!);
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     console.error("Webhook signature verification failed:", error.message);
@@ -208,8 +209,8 @@ export class SubscriptionController {
                 return res.status(400).send(`Webhook Error: Unexpected error`);
             }
 
-            if(event.type == "checkout.session.completed"){
-                const session=event.data.object; 
+            if (event.type == "checkout.session.completed") {
+                const session = event.data.object;
                 const planId = typeof session?.metadata?.id === "string" ? session.metadata.id : undefined;
                 const userId = typeof session?.metadata?.user === "string" ? session.metadata.user : undefined;
                 const validityStr = typeof session?.metadata?.validity === "string" ? session.metadata.validity : undefined;
@@ -222,7 +223,7 @@ export class SubscriptionController {
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -230,20 +231,20 @@ export class SubscriptionController {
         }
     };
 
-    buyPremium = async (req:Request, res:Response) => {
+    buyPremium = async (req: Request, res: Response) => {
         try {
-            const email=req.headers["user-email"] as string;
-            const {id, time}=req.query;
+            const email = req.headers["user-email"] as string;
+            const { id, time } = req.query;
             if (typeof id !== "string" || typeof time !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id and time parameters are required" });
             }
-            const validity=parseInt(time);
-            const user=req.headers["user-id"] as string;
-            const result=await this._buySubscription.buySubscription(id, user, validity, email);
-            res.json({result});
+            const validity = parseInt(time);
+            const user = req.headers["user-id"] as string;
+            const result = await this._buySubscription.buySubscription(id, user, validity, email);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -251,10 +252,10 @@ export class SubscriptionController {
         }
     };
 
-    getUserPlan = async (req:Request, res:Response) => {
+    getUserPlan = async (req: Request, res: Response) => {
         try {
-            let id=req.headers["user-id"] as string;
-            let {user}=req.query;
+            let id = req.headers["user-id"] as string;
+            let { user } = req.query;
             let userId: string;
             if (typeof user === "string") {
                 userId = user;
@@ -262,11 +263,11 @@ export class SubscriptionController {
                 userId = id;
             }
             // const user=req.headers['user-id'] as string
-            const result=await this._getUserSubscription.getSubscription(userId);
-            res.json({result});
+            const result = await this._getUserSubscription.getSubscription(userId);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -274,15 +275,15 @@ export class SubscriptionController {
         }
     };
 
-    deletePlan = async (req:Request, res:Response) => {
+    deletePlan = async (req: Request, res: Response) => {
         try {
-            const user=req.headers["user-id"] as string;
+            const user = req.headers["user-id"] as string;
             await axios.delete(`${process.env.API_GATEWAY_ROUTE}/resume/v1/deletePlan?user=${user}`);
-            const result=await this._deletePlan.deletePlan(user);
-            res.json({result}); 
+            const result = await this._deletePlan.deletePlan(user);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -290,21 +291,21 @@ export class SubscriptionController {
         }
     };
 
-    getSubscriptionInfo = async (req:Request, res:Response) => {
+    getSubscriptionInfo = async (req: Request, res: Response) => {
         try {
-            let id=req.headers["user-id"] as string;
-            let {user}=req.query;
+            let id = req.headers["user-id"] as string;
+            let { user } = req.query;
             let userId: string;
             if (typeof user === "string") {
                 userId = user;
             } else {
                 userId = id;
             }
-            const result=await this._getSubscriptionInfo.getInfo(userId);
-            res.json({result});
+            const result = await this._getSubscriptionInfo.getInfo(userId);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -312,7 +313,7 @@ export class SubscriptionController {
         }
     };
 
-    adminUpgradeUser = async (req:Request, res:Response) => {
+    adminUpgradeUser = async (req: Request, res: Response) => {
         try {
             const data = req.body as Record<string, unknown>;
             const planId = typeof (data.selectedPlan as Record<string, unknown> | undefined)?.['_id'] === 'string' ? (data.selectedPlan as Record<string, unknown>)!['_id'] as string : undefined;
@@ -322,11 +323,11 @@ export class SubscriptionController {
             if (typeof planId !== "string" || typeof userId !== "string" || typeof billingCycle !== "number" || typeof email !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request data" });
             }
-            const result=await this._buySubscription.buySubscription(planId, userId, billingCycle, email);
-            res.json({result});
+            const result = await this._buySubscription.buySubscription(planId, userId, billingCycle, email);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -334,18 +335,18 @@ export class SubscriptionController {
         }
     };
 
-    adminDowngradeUser = async (req:Request, res:Response) => {
+    adminDowngradeUser = async (req: Request, res: Response) => {
         try {
-            const {id}=req.query;
+            const { id } = req.query;
             if (typeof id !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
             }
             await axios.delete(`${process.env.API_GATEWAY_ROUTE}/resume/v1/deletePlan?user=${id}`);
-            const result=await this._deletePlan.deletePlan(id);
-            res.json({result});
+            const result = await this._deletePlan.deletePlan(id);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -353,17 +354,17 @@ export class SubscriptionController {
         }
     };
 
-    getActivePlanUsers = async (req:Request, res:Response) => {
+    getActivePlanUsers = async (req: Request, res: Response) => {
         try {
-            const {plan}=req.query;
+            const { plan } = req.query;
             if (typeof plan !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "plan parameter is required" });
             }
-            const result=await this._getActivePlanUsers.getActiveUsers(plan);
-            res.json({result});
+            const result = await this._getActivePlanUsers.getActiveUsers(plan);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -371,17 +372,17 @@ export class SubscriptionController {
         }
     };
 
-    deleteSubscriptionPlan = async (req:Request, res:Response) => {
+    deleteSubscriptionPlan = async (req: Request, res: Response) => {
         try {
-            const {plan}=req.query;
+            const { plan } = req.query;
             if (typeof plan !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "plan parameter is required" });
             }
-            const result=await this._deletePlanType.deletePlanType(plan);
-            res.json({result});
+            const result = await this._deletePlanType.deletePlanType(plan);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -389,13 +390,13 @@ export class SubscriptionController {
         }
     };
 
-    getSubscriptionAnalytics = async (req:Request, res:Response) => {
+    getSubscriptionAnalytics = async (req: Request, res: Response) => {
         try {
-            const result=await this._getSubscriptionAnalysis.getSubscriptionAnalysis();
-            res.json({result});
+            const result = await this._getSubscriptionAnalysis.getSubscriptionAnalysis();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -403,13 +404,13 @@ export class SubscriptionController {
         }
     };
 
-    getSubscriptionTypeAnalytics = async (req:Request, res:Response) => {
+    getSubscriptionTypeAnalytics = async (req: Request, res: Response) => {
         try {
-            const result=await this._getSubscriptionTypeAnalytics.getSubscriptionTypeAnalytics();
-            res.json({result});
+            const result = await this._getSubscriptionTypeAnalytics.getSubscriptionTypeAnalytics();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -417,13 +418,13 @@ export class SubscriptionController {
         }
     };
 
-    getPremiumUserCount = async (req:Request, res:Response) => {
+    getPremiumUserCount = async (req: Request, res: Response) => {
         try {
-            const result=await this._premiumUserCount.getPremiumUserCount();
-            res.json({result});
+            const result = await this._premiumUserCount.getPremiumUserCount();
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -431,17 +432,17 @@ export class SubscriptionController {
         }
     };
 
-    getPlanDetails = async (req:Request, res:Response) => {
+    getPlanDetails = async (req: Request, res: Response) => {
         try {
-            const {id}=req.query;
+            const { id } = req.query;
             if (typeof id !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "id parameter is required" });
             }
-            const result=await this._getPlanDetails.getPlanDetails(id);
-            res.json({result});
+            const result = await this._getPlanDetails.getPlanDetails(id);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
@@ -449,7 +450,7 @@ export class SubscriptionController {
         }
     };
 
-    editSubscriptionPlan = async (req:Request, res:Response) => {
+    editSubscriptionPlan = async (req: Request, res: Response) => {
         try {
             const payload = req.body as Record<string, unknown>;
             const editPayload = {
@@ -457,14 +458,14 @@ export class SubscriptionController {
                 name: String(payload.name ?? ""),
                 amount: Number(payload.amount ?? 0),
                 billingCycle: Number(payload.billingCycle ?? 0),
-                features: Array.isArray(payload.features) ? payload.features as Array<Record<string, unknown>> : [],
+                features: Array.isArray(payload.features) ? payload.features as Feature[] : [],
                 active: Boolean(payload.active ?? false)
             };
-            const result=await this._editSubscription.editSubscription(editPayload);
-            res.json({result});
+            const result = await this._editSubscription.editSubscription(editPayload as SubscriptionData);
+            res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
-                logger.error({error}, "error");
+                logger.error({ error }, "error");
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
             } else {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
