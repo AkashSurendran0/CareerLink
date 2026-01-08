@@ -108,7 +108,7 @@ services:
       - api-gateway
       - elastic
     ports:
-      - "5001:5001"
+      - "127.0.0.1:5001:5001"
     networks:
       - careerlink-network
 
@@ -143,7 +143,7 @@ services:
     depends_on:
       - api-gateway
     ports:
-      - "5004:5004"
+      - "127.0.0.1:5004:5004"
     networks:
       - careerlink-network
 
@@ -220,7 +220,7 @@ services:
     container_name: frontend
     environment:
       - JWT_SECRET=careerlinkJWT
-      - API_GATEWAY_ROUTE=https://careerlink.ddns.net/backend
+      - API_GATEWAY_ROUTE=https://careerlink.space/backend
     restart: always
     depends_on:
       - api-gateway
