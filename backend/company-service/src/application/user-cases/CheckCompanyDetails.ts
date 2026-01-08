@@ -14,6 +14,7 @@ export class CheckCompanyDetails implements ICheckCompanyDetails {
 
     async getCompanyInfo(id: string): Promise<CompanyDTO> {
         const result = await this._companyRepository.findById(id);
+        if (!result) throw new Error("Company not found");
         return CompanyMapper.toDTO(result);
     }
 

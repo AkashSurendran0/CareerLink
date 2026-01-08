@@ -23,9 +23,9 @@ export const connectDB = async () =>{
         logger.info("Admin PSQL database connected successfully");
     } catch (error: unknown) {
         if (error instanceof Error) {
-            logger.error("Database connection failed", error);
+            logger.error({error}, "Database connection failed");
         } else {
-            logger.error("Database connection failed", { error });
+            logger.error({ error }, "Database connection failed");
         }
     }
 }; 

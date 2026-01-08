@@ -8,14 +8,14 @@ export type CompanySource = {
     companySize?: string | number;
     foundedYear?: string | number;
     industry?: string;
-    websiteURL?: string | null;
+    websiteURL?: string | null | undefined;
     location?: string;
     aboutCompany?: string;
     approved?: boolean;
     suspended?: boolean;
     rejected?: boolean;
-    createdAt?: Date | string;
-    rejectReasons?: string[] | null;
+    createdAt?: Date | undefined;
+    rejectReasons?: string[] | null | undefined;
 }
 
 export class CompanyMapper {
