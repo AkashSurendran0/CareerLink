@@ -9,7 +9,7 @@ class RabbitMqService {
     private channel: Channel | null=null;
 
     constructor(
-        private readonly url:string = `amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`
+        private readonly url:string = process.env.RABBITMQ_URL as string
     ){}
 
     public async connect(): Promise<void> {

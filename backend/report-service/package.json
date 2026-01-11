@@ -18,6 +18,7 @@
     "@types/express": "^5.0.6",
     "@types/inversify": "^2.0.32",
     "@types/mongoose": "^5.11.96",
+    "@types/pg": "^8.16.0",
     "@types/sequelize": "^4.28.20",
     "jiti": "^2.6.1",
     "typescript": "^5.9.3",

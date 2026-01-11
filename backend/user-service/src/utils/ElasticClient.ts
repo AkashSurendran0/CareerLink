@@ -4,10 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const elasticClient=new Client({
-    node:`${process.env.ELASTIC_CLIENT_ROUTE}`,
+    node:`${process.env.ELASTIC_ENDPOINT}`,
     auth:{
-        username:"elastic",
-        password:"akash1"
+        apiKey:process.env.ELASTIC_KEY as string
     },
     tls:{
         rejectUnauthorized:false

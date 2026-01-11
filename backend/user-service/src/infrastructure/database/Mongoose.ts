@@ -6,7 +6,7 @@ dotenv.config();
 
 export const dbConnect = async () => {
     try {
-        await mongoose.connect(`mongodb://${process.env.MONGO_HOST}:27017/careerLink`);
+        await mongoose.connect(process.env.MONGO_ATLAS_URL as string);
         logger.info("Mongodb connected successfully");
     } catch (error: unknown) {
         if (error instanceof Error) logger.error({ err: error }, "Mongodb connection failed");

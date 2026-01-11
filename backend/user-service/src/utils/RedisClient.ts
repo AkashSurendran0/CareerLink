@@ -1,12 +1,12 @@
 import Redis from "ioredis";
 import dotenv from "dotenv";
 import { logger } from "./logger";
+import { createClient } from "redis";
 
 dotenv.config();
 
-export const redisClient=new Redis({
-    host: process.env.REDIS_HOST,
-    port: 6379
+export const redisClient=createClient({
+    url: process.env.REDIS_URL as string
 });
 
 redisClient.on("connect", ()=>{

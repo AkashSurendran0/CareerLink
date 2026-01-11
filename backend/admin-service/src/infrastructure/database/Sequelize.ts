@@ -1,25 +1,22 @@
 import {Sequelize} from "sequelize";
 import dotenv from "dotenv";
 import { logger } from "../../utils/logger";
+import pkg from "pg";
 
+const { Pool } = pkg;
 dotenv.config();
 
-export const sequelize=new Sequelize(
-    "careerlink",
-    "postgres",
-    "akash1", 
-    {
-        host: `${process.env.SEQUALIZE_HOST}`,
-        port: 5432,
-        dialect: "postgres",
-        logging: false
+export const sequelize=new Pool({
+    connectionString: process.env.SEQUALIZE_URL as string,
+    ssl: {
+        rejectUnauthorized: false
     }
-);
+});
 
 export const connectDB = async () =>{ 
     try {
-        await sequelize.authenticate();
-        await sequelize.sync({alter: true});
+        await sequelize.connect();
+        await sequelize.query("SELECT 1");
         logger.info("Admin PSQL database connected successfully");
     } catch (error: unknown) {
         if (error instanceof Error) {

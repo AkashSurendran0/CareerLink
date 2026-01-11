@@ -22,7 +22,7 @@ export class RabbitMqService {
 
     public async connect(): Promise<void> {
         try {
-            this.connection = await connect(`amqp://achu:akash1@${process.env.RABBITMQ_HOST}:5672`);
+            this.connection = await connect(process.env.RABBITMQ_URL as string);
             this.channel = await this.connection!.createChannel();
 
             for (const exchange of this.exchange) {

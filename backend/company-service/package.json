@@ -39,6 +39,7 @@
     "@types/inversify": "^2.0.32",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
+    "@types/pg": "^8.16.0",
     "@types/sequelize": "^4.28.20",
     "jiti": "^2.6.1",
     "ts-node": "^10.9.2",
