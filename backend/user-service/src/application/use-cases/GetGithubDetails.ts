@@ -44,11 +44,11 @@ export class GetGithubDetails implements IGetGithubDetails {
                 const totalStars = Array.isArray(repoInfo.data)
                     ? repoInfo.data.reduce((acc: number, repo: unknown) => {
                         const stargazers = (repo as { stargazers_count?: number }).stargazers_count;
-                        return acc + (typeof stargazers === 'number' ? stargazers : 0);
+                        return acc + (typeof stargazers === "number" ? stargazers : 0);
                     }, 0)
                     : 0;
                 details.totalStars = totalStars;
-                await redisClient.set(`detailsFor${user}`, JSON.stringify(details), "EX", 3600);
+                await redisClient.set(`detailsFor${user}`, JSON.stringify(details), {EX: 3600});
             }
             return { success: true, details };
         } catch (error: unknown) {
@@ -106,7 +106,7 @@ export class GetGithubDetails implements IGetGithubDetails {
                     });
                 });
 
-                await redisClient.set(`heatmapFor${user}`, JSON.stringify(heatmap), "EX", 3600);
+                await redisClient.set(`heatmapFor${user}`, JSON.stringify(heatmap), {EX: 3600});
 
             }
             return { success: true, heatmap };
@@ -127,7 +127,7 @@ export class GetGithubDetails implements IGetGithubDetails {
                 const skipRepo = Math.floor(skip / limit) + 1;
                 const result = await axios.get(`https://api.github.com/users/${user}/repos?per_page=${limit}&page=${skipRepo}`);
                 data = (result.data as unknown[]).map((repo) => RepoMapper.toDTO(repo as any));
-                await redisClient.set(`reposInPage${page}WithLimit${limit}for${user}`, JSON.stringify(data), "EX", 3600);
+                await redisClient.set(`reposInPage${page}WithLimit${limit}for${user}`, JSON.stringify(data), {EX: 3600});
             }
             return { success: true, data };
         } catch (error: unknown) {

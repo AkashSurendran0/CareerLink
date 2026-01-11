@@ -86,7 +86,7 @@ export class SendOTP implements ISendOTP {
         };
         await this._mailer.sendMail(data.to, data.subject, data.text);
         const cacheKey = `keyFor${email}`;
-        await redisClient.set(cacheKey, JSON.stringify(otp), "EX", 60);
+        await redisClient.set(cacheKey, JSON.stringify(otp), {EX: 60});
         return {
             success: true,
         };
