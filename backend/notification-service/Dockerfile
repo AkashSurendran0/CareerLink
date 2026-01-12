@@ -30,4 +30,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 5004
 
 # Start service
-CMD ["node", "dist/main.js", "--host", "0.0.0.0"]
+CMD ["node", "dist/server.js"]
