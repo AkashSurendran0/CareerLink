@@ -167,7 +167,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                 logger.info("Successfully generated resume with Grok");
                 return grokHtml;
             } catch (GrokError: unknown) {
-                if (GrokError instanceof Error) logger.error({ error: GrokError.message }, "Grok failed, moving to OpenRouter free models:");
+                if (GrokError instanceof Error) logger.warn({ error: GrokError.message }, "Grok failed, moving to OpenRouter free models:");
                 else logger.error("Grok failed, moving to OpenRouter free models:");
             }
         }
@@ -228,8 +228,8 @@ export class CreateTailoredResume implements ICreateTailoredResume {
                 logger.info(`Successfully generated resume with model: ${model}`);
                 return htmlContent;
             } catch (error: unknown) {
-                if (error instanceof Error) logger.error({ model, error: error.message }, "Model failed:");
-                else logger.error({ model }, "Model failed:");
+                if (error instanceof Error) logger.warn({ model, error: error.message }, "Model failed:");
+                else logger.warn({ model }, "Model failed:");
                 continue;
             }
         }

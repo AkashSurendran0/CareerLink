@@ -113,6 +113,7 @@ export class CreateResume implements ICreateResume {
       `;
 
             const htmlOutput = await this.generateResume(prompt);
+            console.log("Generated HTML Output:", htmlOutput);
             const cleanHTML = this.cleanHTMLOutput(htmlOutput);
 
             const file = { content: cleanHTML };
