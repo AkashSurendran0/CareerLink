@@ -13,6 +13,18 @@ redisClient.on("connect", ()=>{
     logger.info("Redis connected");
 });
 
-redisClient.on("error", (err)=>{
-    logger.error({err} ,"Redis connection error");
+redisClient.on("ready", () => {
+    logger.info("Redis ready");
 });
+
+redisClient.on("error", (err) => {
+    logger.error({ err }, "Redis connection error");
+});
+
+(async () => {
+    try {
+        await redisClient.connect();
+    } catch (err) {
+        logger.error({ err }, "Redis failed to connect");
+    }
+})();
