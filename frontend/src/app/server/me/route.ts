@@ -8,7 +8,6 @@ interface DecodedToken extends JwtPayload {
 
 export async function GET() {
   const cookieStore = await cookies();
-  console.log("Cookies in /server/me route:", cookieStore.getAll());
   const token = cookieStore.get("token")?.value;
   console.log("Token in /server/me route:", token);
   if (!token) {
@@ -17,6 +16,7 @@ export async function GET() {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
+    console.log("Decoded token in /server/me route:", decoded);
     return Response.json({ userEmail: decoded.email, userId: decoded.id });
   } catch (error) {
     return Response.json({ userEmail: null }, { status: 401 });
