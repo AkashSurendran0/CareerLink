@@ -117,8 +117,15 @@ export class CreateResume implements ICreateResume {
             const cleanHTML = this.cleanHTMLOutput(htmlOutput);
             console.log('html',  cleanHTML)
             const file = { content: cleanHTML };
-            const pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
-            console.log('buffer', pdfBuffer)
+            let pdfBuffer;
+try {
+    pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
+    console.log('buffer', pdfBuffer);
+} catch (pdfError: unknown) {
+    if (pdfError instanceof Error) logger.error({ pdfError }, "PDF generation failed");
+    else logger.error({ pdfError }, "PDF generation failed (unknown)");
+    return { success: false, message: "Failed to generate PDF" };
+}
 
             return {
                 success: true,
