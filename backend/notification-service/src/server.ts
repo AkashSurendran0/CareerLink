@@ -7,8 +7,15 @@ import NotificationRouter from "./routes/NotificationRoutes";
 import { initSocket } from "./utils/Socket";
 import http from "http";
 import { logger } from "./utils/logger";
+import Router from "express";
 
 const app=express();
+const router=Router();
+
+router.get("/health", (_req, res)=>{
+    res.status(200).send("Notification service is healthy");
+});
+
 const server=http.createServer(app);
 initSocket(server);
 dbConnect(); 

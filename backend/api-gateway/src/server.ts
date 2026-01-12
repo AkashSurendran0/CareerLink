@@ -4,9 +4,15 @@ import gatewayRoutes from "./routes/gatewayRoutes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { logger } from "./utils/logger";
+import { Router } from "express";
 
 dotenv.config();
 const app=express();
+const router=Router();
+
+router.get("/health", (_req, res)=>{
+    res.status(200).send("API Gateway is healthy");
+});
 
 app.use(cors({
     origin:true,

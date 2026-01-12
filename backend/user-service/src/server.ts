@@ -11,8 +11,15 @@ import { rabbitmqService } from "./utils/Rabbitmq";
 import { initUserSocket } from "./utils/Socket";
 import http from "http";
 import { logger } from "./utils/logger";
+import Router from "express";  
 
 const app = express();
+const router = Router();
+
+router.get("/health", (_req, res) => {
+    res.status(200).send("User service is healthy");
+}); 
+
 const server=http.createServer(app);
 initUserSocket(server);
 dotenv.config();
