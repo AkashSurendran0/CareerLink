@@ -16,6 +16,8 @@ router.get("/health", (_req, res)=>{
     res.status(200).send("Notification service is healthy");
 });
 
+app.use(router);
+
 const server=http.createServer(app);
 initSocket(server);
 dbConnect(); 

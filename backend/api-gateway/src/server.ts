@@ -14,6 +14,8 @@ router.get("/health", (_req, res)=>{
     res.status(200).send("API Gateway is healthy");
 });
 
+app.use(router);
+
 app.use(cors({
     origin:true,
     credentials:true,
