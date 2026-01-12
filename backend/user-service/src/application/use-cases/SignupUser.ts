@@ -84,7 +84,7 @@ export class SendOTP implements ISendOTP {
                     Thanks,  
                     The CareerLink Team 🚀`
         };
-        await this._mailer.sendMail(data.to, data.subject, data.text);
+        this._mailer.sendMail(data.to, data.subject, data.text);
         const cacheKey = `keyFor${email}`;
         await redisClient.set(cacheKey, JSON.stringify(otp), {EX: 60});
         return {
