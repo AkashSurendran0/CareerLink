@@ -8,8 +8,9 @@ interface DecodedToken extends JwtPayload {
 
 export async function GET() {
   const cookieStore = await cookies();
+  console.log("Cookies in /server/me route:", cookieStore.getAll());
   const token = cookieStore.get("token")?.value;
-  
+  console.log("Token in /server/me route:", token);
   if (!token) {
     return Response.json({ userEmail: null }, { status: 401 });
   }
