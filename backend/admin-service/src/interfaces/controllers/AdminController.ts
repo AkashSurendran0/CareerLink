@@ -24,12 +24,14 @@ export class AdminController {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
                 res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_WEEK),
                 });
             }

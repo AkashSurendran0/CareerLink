@@ -45,12 +45,14 @@ export class UserController {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
                 res.cookie("refreshToken", r.refreshToken ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_WEEK),
                 });
             }
@@ -74,12 +76,14 @@ export class UserController {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_HOUR),
                 });
                 res.cookie("refreshToken", t.refreshToken ?? "", {
                     httpOnly: true,
                     secure: false,
                     sameSite: "lax",
+                    path: "/",
                     maxAge: Number(process.env.MAX_AGE_1_WEEK),
                 });
             }
@@ -115,12 +119,14 @@ export class UserController {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
+                path: "/",
                 maxAge: Number(process.env.MAX_AGE_1_HOUR),
             });
             res.cookie("refreshToken", token.refreshToken, {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
+                path: "/",
                 maxAge: Number(process.env.MAX_AGE_1_WEEK),
             });
             res.json({ token });

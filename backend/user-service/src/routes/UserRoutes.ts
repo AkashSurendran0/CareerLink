@@ -38,12 +38,14 @@ router.get(
       httpOnly: true,
       secure: false,
       sameSite: "lax",
+      path: "/",
       maxAge: Number(process.env.MAX_AGE_1_HOUR),
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
+      path: "/",
       maxAge: Number(process.env.MAX_AGE_1_WEEK),
     });
     res.redirect(`${process.env.FRONTEND_ROUTE}/feed`);
