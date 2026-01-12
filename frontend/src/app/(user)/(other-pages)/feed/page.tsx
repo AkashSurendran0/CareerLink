@@ -68,7 +68,7 @@ export default function FeedsPage() {
 
   const fetchUserId=async()=>{
     try {
-      const res=await fetch('/api/me')
+      const res=await fetch('/server/me')
       const data=await res.json()
       setUserId(data.userId)
     } catch (error) {

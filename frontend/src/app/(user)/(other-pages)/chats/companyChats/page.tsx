@@ -245,7 +245,7 @@ export default function ChatsPage() {
 
     const fetchUserId = async () => {
         try {
-            const res = await fetch('/api/me')
+            const res = await fetch('/server/me')
             const data = await res.json()
             setCompanyOwnerId(data.userId)
         } catch (error) {

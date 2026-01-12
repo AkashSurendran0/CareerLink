@@ -31,7 +31,7 @@ export default function AuthGuard({
         // Logged-in user should not access auth-only pages
         if (authOnlyRoutes.includes(pathname)) {
           try {
-            const res = await fetch('/api/me', { credentials: 'include' })
+            const res = await fetch('/server/me', { credentials: 'include' })
             if (res.ok) {
               router.replace('/feed')
               return
@@ -45,7 +45,7 @@ export default function AuthGuard({
 
       // 🔐 Private routes (all other pages)
       try {
-        const res = await fetch('/api/me', {
+        const res = await fetch('/server/me', {
           credentials: 'include',
         })
 

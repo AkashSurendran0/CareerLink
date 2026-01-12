@@ -121,7 +121,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const res = await fetch('/api/me')
+        const res = await fetch('/server/me')
         const data = await res.json()
         setUserEmail(data.userEmail)
         setUserId(data.userId)
