@@ -25,6 +25,12 @@ FROM node:20-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV API_GATEWAY_ROUTE=https://careerlink.space/api
+ENV JWT_SECRET=careerlinkJWT
+ENV NEXT_PUBLIC_API_GATEWAY_ROUTE=https://careerlink.space/api
+ENV NEXT_PUBLIC_FRONTEND_ROUTE=https://careerlink.space
+ENV NEXT_PUBLIC_MAX_AGE_1_HOUR=3600
+ENV NEXT_PUBLIC_RAZORPAY_API_KEY=rzp_test_RlTalei3CXVNOp
 
 # Copy required files only
 COPY --from=builder /app/package*.json ./
