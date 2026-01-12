@@ -115,9 +115,10 @@ export class CreateResume implements ICreateResume {
             const htmlOutput = await this.generateResume(prompt);
             console.log("Generated HTML Output:", htmlOutput);
             const cleanHTML = this.cleanHTMLOutput(htmlOutput);
-
+            console.log('html',  cleanHTML)
             const file = { content: cleanHTML };
             const pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
+            console.log('buffer', pdfBuffer)
 
             return {
                 success: true,
