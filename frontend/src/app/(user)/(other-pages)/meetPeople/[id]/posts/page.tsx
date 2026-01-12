@@ -56,7 +56,7 @@ function MyPosts({params}: Props) {
 
     const fetchUserId=async()=>{
         try {
-        const res=await fetch('/server/me', {credentials:"include"})
+        const res=await fetch('/server/me', {method:"GET", credentials:"include"})
         const data=await res.json()
         setUserId(data.userId)
         } catch (error) {

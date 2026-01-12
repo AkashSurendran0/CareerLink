@@ -15,6 +15,7 @@ export async function GET() {
   }
 
   try {
+    console.log(process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     console.log("Decoded token in /server/me route:", decoded);
     return Response.json({ userEmail: decoded.email, userId: decoded.id });
