@@ -17,6 +17,7 @@ export class GetAllUsers implements IGetAllUsers {
                 match_all: {}
             }
         });
+        console.log("Total users in Elasticsearch:", countResponse.count);
         const totalUsers = countResponse.count;
         const pageLimit = Math.ceil(totalUsers / limit);
 
@@ -31,14 +32,14 @@ export class GetAllUsers implements IGetAllUsers {
                 }
             };
         }
-
+        
         const users = await elasticClient.search({
             index: "users",
             from: (page - 1) * limit,
             size: limit,
             query: esQuery
         });
-
+        console.log("Elasticsearch search response:", users);
         const hits = users.hits.hits.map((hit: any) =>
             hit._source as {
                 id: string;
@@ -50,6 +51,7 @@ export class GetAllUsers implements IGetAllUsers {
                 createdAt?: Date | string;
             }
         );
+        console.log("Mapped hits:", hits);
         const result = hits.map((user) => UserMapper.toDTO(user));
         return {
             result: result,
