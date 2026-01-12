@@ -2,15 +2,17 @@ import sgMail from "@sendgrid/mail";
 import { injectable } from "inversify";
 import { logger } from "./logger";
 import dotenv from "dotenv";
+import { initSendGrid } from "./InitSendgrid";
 dotenv.config();
 
-const SENDGRID_API_KEY = process.env.SENDGRID_API || "";
 const SENDER_EMAIL = process.env.SENDGRID_EMAIL || "akashsurendran1001@gmail.com";
 
 @injectable()
 export class Mailer {
+    private sgMail;
+
     constructor() {
-        sgMail.setApiKey(SENDGRID_API_KEY);
+        this.sgMail = initSendGrid();
         logger.info("SendGrid Mailer initialized successfully");
     }
 
@@ -23,7 +25,7 @@ export class Mailer {
         };
 
         try {
-            const response = await sgMail.send(msg);
+            const response = await this.sgMail.send(msg);
             logger.info("Mail sent");
             return response;
         } catch (err: unknown) {
