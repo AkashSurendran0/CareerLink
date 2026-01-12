@@ -14,6 +14,8 @@ services:
       - ./api-gateway/.env.production
     networks:
       - backend-network
+    ports:
+      - "5000:5000"
     depends_on:
       - user-service
       - admin-service
@@ -32,8 +34,8 @@ services:
       context: ./user-service
       dockerfile: Dockerfile
     container_name: user-service
-    expose:
-      - "5001"
+    ports:
+      - "5001:5001"
     env_file:
       - ./user-service/.env.production
     networks:
@@ -67,8 +69,8 @@ services:
       context: ./notification-service
       dockerfile: Dockerfile
     container_name: notification-service
-    expose:
-      - "5004"
+    ports:
+      - "5004:5004"
     env_file:
       - ./notification-service/.env.production
     networks:
