@@ -6,7 +6,13 @@ let io:Server;
 
 export function initSocket(server:http.Server) {
     io=new Server(server, {
-        cors: {origin:"*"}
+        path: "/notification/socket.io",
+        cors: {
+        origin: "https://careerlink.space",
+        credentials: true,
+        },
+        transports: ["websocket"],
+        allowEIO3: true,
     });
 
     io.on("connection", (socket)=>{

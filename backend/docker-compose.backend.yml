@@ -10,12 +10,21 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
-    ports:
-      - "5000:5000"
     env_file:
       - ./api-gateway/.env.production
     networks:
       - backend-network
+    depends_on:
+      - user-service
+      - admin-service
+      - company-service
+      - notification-service
+      - job-service
+      - resume-service
+      - post-service
+      - subscription-service
+      - chat-service
+      - report-service
     restart: unless-stopped
 
   user-service:
@@ -23,12 +32,10 @@ services:
       context: ./user-service
       dockerfile: Dockerfile
     container_name: user-service
-    ports:
-      - "5001:5001"
+    expose:
+      - "5001"
     env_file:
       - ./user-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -38,12 +45,8 @@ services:
       context: ./admin-service
       dockerfile: Dockerfile
     container_name: admin-service
-    ports:
-      - "5002:5002"
     env_file:
       - ./admin-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -53,12 +56,8 @@ services:
       context: ./company-service
       dockerfile: Dockerfile
     container_name: company-service
-    ports:
-      - "5003:5003"
     env_file:
       - ./company-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -68,12 +67,10 @@ services:
       context: ./notification-service
       dockerfile: Dockerfile
     container_name: notification-service
-    ports:
-      - "5004:5004"
+    expose:
+      - "5004"
     env_file:
       - ./notification-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -83,12 +80,8 @@ services:
       context: ./job-service
       dockerfile: Dockerfile
     container_name: job-service
-    ports:
-      - "5005:5005"
     env_file:
       - ./job-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -98,12 +91,8 @@ services:
       context: ./resume-service
       dockerfile: Dockerfile
     container_name: resume-service
-    ports:
-      - "5006:5006"
     env_file:
       - ./resume-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -113,12 +102,8 @@ services:
       context: ./post-service
       dockerfile: Dockerfile
     container_name: post-service
-    ports:
-      - "5007:5007"
     env_file:
       - ./post-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -128,12 +113,8 @@ services:
       context: ./subscription-service
       dockerfile: Dockerfile
     container_name: subscription-service
-    ports:
-      - "5008:5008"
     env_file:
       - ./subscription-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -143,12 +124,8 @@ services:
       context: ./chat-service
       dockerfile: Dockerfile
     container_name: chat-service
-    ports:
-      - "5009:5009"
     env_file:
       - ./chat-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped
@@ -158,12 +135,8 @@ services:
       context: ./report-service
       dockerfile: Dockerfile
     container_name: report-service
-    ports:
-      - "5010:5010"
     env_file:
       - ./report-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - backend-network
     restart: unless-stopped

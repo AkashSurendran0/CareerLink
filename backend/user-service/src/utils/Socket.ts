@@ -5,7 +5,13 @@ import { logger } from "./logger";
 
 export const initUserSocket = (server: http.Server) => {
     const io = new Server(server, {
-        cors: { origin: "*", credentials: true }
+        path: "/user/socket.io",
+        cors: {
+        origin: "https://careerlink.space",
+        credentials: true,
+        },
+        transports: ["websocket"],
+        allowEIO3: true,
     });
 
     interface CallRoom {
