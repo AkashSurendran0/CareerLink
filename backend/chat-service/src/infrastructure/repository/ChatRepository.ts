@@ -248,4 +248,27 @@ export class ChatRepository implements IChatRepository {
         return {success:true};
     }
 
+    async addRejectedCallStatus(convoId: string): Promise<{ success: boolean; }> {
+        const time = new Date().toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        await ChatModel.findOneAndUpdate(
+            { conversation: convoId },
+            {
+                $push: {
+                    content: {
+                        callStatus: "rejected",
+                        time
+                    }
+                }
+            },
+            {
+                upsert: true,
+                new: true
+            },
+        );
+        return {success:true};
+    }
+
 }

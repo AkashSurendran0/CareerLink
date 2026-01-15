@@ -29,6 +29,7 @@ interface IncomingCall {
   caller: string;
   callerImage: string;
   callType: string;
+  convoId: string;
 }
 
 interface OutgoingCall {
@@ -68,13 +69,14 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }
 
   useEffect(() => {
-    userSocket.on('incoming-call', ({ from, caller, callerImage, callType }) => {
+    userSocket.on('incoming-call', ({ from, caller, callerImage, callType, convoId }) => {
       setCallerId(from)
       const data = {
         from,
         caller,
         callerImage,
-        callType
+        callType, 
+        convoId
       }
       setIncomingCall(data)
     })
@@ -215,7 +217,8 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     setCallDeclined(false)
     userSocket.emit('reject-call', {
       userId,
-      callerId
+      callerId,
+      convoId: incomingCall?.convoId
     })
     setIncomingCall(null)
   }

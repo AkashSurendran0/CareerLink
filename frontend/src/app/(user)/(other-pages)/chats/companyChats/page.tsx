@@ -11,6 +11,7 @@ import { enqueueSnackbar } from "notistack"
 import { CallOptionsPopup } from "@/reusable-components/companyCallOptions"
 import { ScheduleCallModal } from "@/reusable-components/scheduleCallModal"
 import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMessage"
+import { CallStatusMessage } from "@/reusable-components/callStatusMessage"
 
 interface Conversation {
     _id: string;
@@ -37,6 +38,8 @@ interface Message {
     time: string;
     isScheduleMessage?: boolean;
     timestamp?: string;
+    callStatus?: string,
+    duration?: string,
 }
 
 interface UserChats {
@@ -261,7 +264,8 @@ export default function ChatsPage() {
             callerImage: companyDetails?.logo || null,
             to: selectedUser?.users,
             reciever: selectedUser?.username,
-            callType: 'voice-call'
+            callType: 'voice-call',
+            convoId: selectedConvo
         })
     }
 
@@ -274,7 +278,8 @@ export default function ChatsPage() {
             callerImage: companyDetails?.logo || null,
             to: selectedUser?.users,
             reciever: selectedUser?.username,
-            callType: 'video-call'
+            callType: 'video-call',
+            convoId: selectedConvo
         })
     }
 
@@ -502,6 +507,17 @@ export default function ChatsPage() {
                                                         onCall={videoCallUser}
                                                         isMe={isMe}
                                                         isRead={message.isRead}
+                                                    />
+                                                )
+                                            }
+
+                                            if(message.callStatus) {
+                                                return (
+                                                    <CallStatusMessage
+                                                    key={message._id}
+                                                    status={message.callStatus}
+                                                    time={message.time}
+                                                    duration={message.duration ?? ""}
                                                     />
                                                 )
                                             }
