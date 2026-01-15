@@ -14,4 +14,5 @@ export interface IChatRepository {
     getReportedMessage(convo: string, chatId: string): Promise<Chat>
     scheduleCall(data: Data, companyId: string): Promise<Chat>
     deleteChat(id: string): Promise<{ success: boolean }>
+    addAcceptedCallStatus(convoId:string, duration:string): Promise<{success:boolean}>
 }

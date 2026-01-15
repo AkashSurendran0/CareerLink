@@ -7,8 +7,8 @@ export const initUserSocket = (server: http.Server) => {
     const io = new Server(server, {
         path: "/user/socket.io",
         cors: {
-        origin: "https://careerlink.space",
-        credentials: true,
+            origin:"http://localhost:3000",
+            credentials: true,
         },
         transports: ["websocket"],
         allowEIO3: true,
@@ -147,7 +147,7 @@ export const initUserSocket = (server: http.Server) => {
             socket.to(callId).emit("ice-candidate", { candidate });
         });
 
-        socket.on("end-call", ({ callId }) => {
+        socket.on("end-call", async ({ callId, formattedDuration }) => {
             socket.leave(callId);
             const entries = [...onlineUsers.entries()];
             const userEntry = entries.find(([_, sid]) => sid === socket.id);
@@ -161,9 +161,12 @@ export const initUserSocket = (server: http.Server) => {
                     busyUsers.delete(otherUser);
                     activeCalls.delete(userId);
                     activeCalls.delete(otherUser);
-
+                    
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addAcceptedCallStatus?user1=${userId}&user2=${otherUser}&duration=${formattedDuration}`);
+                    
                     const otherSocket = onlineUsers.get(otherUser);
-                    if (otherSocket) {
+                    if (otherSocket) { 
+
                         io.to(otherSocket).emit("end-call", {
                             reason: "USER_LEFT"
                         });

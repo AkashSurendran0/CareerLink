@@ -8,7 +8,7 @@ export function initSocket(server:http.Server) {
     io=new Server(server, {
         path: "/notification/socket.io",
         cors: {
-        origin: "https://careerlink.space",
+        origin: "http://localhost:3000",
         credentials: true,
         },
         transports: ["websocket"],

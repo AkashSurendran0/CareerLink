@@ -1,6 +1,9 @@
 {
     "name": "careerlink-monorepo",
     "private": true,
+    "overrides": {
+      "@opentelemetry/api": "1.8.0"
+    },
     "workspaces": [
         "backend/*",
         "frontend",

@@ -11,6 +11,7 @@ import { ReadMessages } from "./services/ReadMessages";
 import { GetReportedMessage } from "./services/GetReportedMessage";
 import { ScheduleCall } from "./services/ScheduleCall";
 import { DeleteConversation } from "./services/DeleteConversation";
+import { AddAcceptedCallStatus } from "./services/AddAcceptedCallStatus";
 
 const container=new Container();
 
@@ -25,6 +26,7 @@ container.bind(TYPES.IReadMessages).to(ReadMessages).inSingletonScope();
 container.bind(TYPES.IGetReportedMessage).to(GetReportedMessage).inSingletonScope();
 container.bind(TYPES.IScheduleCall).to(ScheduleCall).inSingletonScope();
 container.bind(TYPES.IDeleteConversation).to(DeleteConversation).inSingletonScope();
+container.bind(TYPES.IAddAcceptedCallStatus).to(AddAcceptedCallStatus).inSingletonScope();
 
 container.bind(TYPES.ChatController).to(ChatController).inSingletonScope();
 

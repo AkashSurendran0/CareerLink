@@ -2,8 +2,10 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IChatContent {
     _id?: mongoose.Types.ObjectId;
-    sendBy: string;
+    sendBy?: string;
     isScheduleMessage?: boolean;
+    callStatus?: string;
+    duration?: string;
     time?: string;
     date?: string;
     message?: string;
@@ -27,10 +29,18 @@ const chatSchema: Schema<IChat> = new Schema(
         content: [{
             sendBy: {
                 type: String,
-                required: true
+                required: false
             },
             isScheduleMessage: {
                 type: Boolean,
+                required: false
+            },
+            callStatus: {
+                type: String,
+                required:false
+            },
+            duration: {
+                type: String,
                 required: false
             },
             time: {
@@ -45,8 +55,14 @@ const chatSchema: Schema<IChat> = new Schema(
                 type: String,
                 required: false
             },
-            isRead: { type: Boolean, default: false },
-            sendAt: { type: Date, default: Date.now }
+            isRead: { 
+                type: Boolean, 
+                default: false 
+            },
+            sendAt: { 
+                type: Date, 
+                default: Date.now 
+            }
         }]
     },
     { timestamps: true }

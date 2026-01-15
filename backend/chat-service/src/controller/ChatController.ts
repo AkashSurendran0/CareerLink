@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IAddAcceptedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -19,7 +19,8 @@ export class ChatController {
         @inject(TYPES.IReadMessages) private _readMessages: IReadMessages,
         @inject(TYPES.IGetReportedMessage) private _getReportedMessages: IGetReportedMessage,
         @inject(TYPES.IScheduleCall) private _scheduleCall: IScheduleCall,
-        @inject(TYPES.IDeleteConversation) private _deleteConversation: IDeleteConversation
+        @inject(TYPES.IDeleteConversation) private _deleteConversation: IDeleteConversation,
+        @inject(TYPES.IAddAcceptedCallStatus) private _addAcceptedCallStatus: IAddAcceptedCallStatus
     ) { }
 
     startUserConversation = async (req: Request, res: Response) => {
@@ -176,6 +177,20 @@ export class ChatController {
             const { company } = req.query as { company: string };
             const result = await this._scheduleCall.scheduleCall(data, company);
             res.json({ result });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
+
+    addAcceptedCallStatus = async (req:Request, res:Response) => {
+        try {
+            const {user1, user2, duration}=req.query as {user1:string, user2:string, duration:string};
+            const result=await this._addAcceptedCallStatus.addAcceptedCallStatus(user1, user2, duration);
+            res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
                 res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });

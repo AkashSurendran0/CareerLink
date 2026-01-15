@@ -129,17 +129,20 @@ export class JobController {
     getAvailableJobs = async (req: Request, res: Response) => {
         try {
             const user = req.headers["user-id"] as string;
+            const email = req.headers["user-email"] as string;
             const { query } = req.query;
             const jobs = await this._getAvailableJobs.getAvailableJobs(query as string, user);
-            const filledJobs = await Promise.all(
+            const resolvedJobs = await Promise.all(
                 jobs.map(async job => {
                     const result = await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/checkCompanyDetails?id=${job.company}`);
+                    if(result.data.company.registeredBy == email) return null;
                     return {
                         ...job,
                         company: result.data.company
                     };
                 })
             );
+            const filledJobs = resolvedJobs.filter(Boolean);
             res.json({ jobs: filledJobs });
         } catch (error: unknown) {
             if (error instanceof Error) {

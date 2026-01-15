@@ -462,7 +462,7 @@ export default function VoiceCall({ params }: Props) {
     const handleEndCall = () => {
         localStreamRef.current?.getTracks().forEach(t => t.stop())
         pcRef.current?.close()
-        userSocket.emit("end-call", { callId })
+        userSocket.emit("end-call", { callId, callDuration })
         sessionStorage.removeItem(`${callId}`)
         window.history.back()
     }
