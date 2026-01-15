@@ -16,13 +16,15 @@ export class ChatRepository implements IChatRepository {
         if (!newMessage) throw new Error("Failed to send message");
         const contents = (newMessage.content ?? []).map((item: IChatContent | Content) => new Content(
             String(item._id),
-            item.sendBy,
             Boolean(item.isRead),
             item.sendAt as Date,
+            item.sendBy,
             item.time,
             item.date,
             item.message,
-            Boolean(item.isScheduleMessage)
+            Boolean(item.isScheduleMessage),
+            item.callStatus,
+            item.duration,
         ));
         return new Chat(
             String(newMessage._id),
@@ -37,13 +39,15 @@ export class ChatRepository implements IChatRepository {
         if (!messages) return null;
         const contents = (messages.content ?? []).map((item: IChatContent | Content) => new Content(
             String(item._id),
-            item.sendBy,
             Boolean(item.isRead),
             item.sendAt as Date,
+            item.sendBy,
             item.time,
             item.date,
             item.message,
-            Boolean(item.isScheduleMessage)
+            Boolean(item.isScheduleMessage),
+            item.callStatus,
+            item.duration,
         ));
         return new Chat(
             String(messages._id),
@@ -152,13 +156,15 @@ export class ChatRepository implements IChatRepository {
 
         const contents = (chats[0]?.content ?? []).map((item: IChatContent | Content) => new Content(
             String(item._id),
-            item.sendBy,
             Boolean(item.isRead),
             item.sendAt as Date,
+            item.sendBy,
             item.time,
             item.date,
             item.message,
-            Boolean(item.isScheduleMessage)
+            Boolean(item.isScheduleMessage),
+            item.callStatus,
+            item.duration,
         ));
 
         const chatDoc = chats[0];
@@ -192,13 +198,15 @@ export class ChatRepository implements IChatRepository {
         const newMsg = newMessage as IChat;
         const contents = (newMsg.content ?? []).map((item: IChatContent | Content) => new Content(
             String(item._id),
-            item.sendBy,
             Boolean(item.isRead),
             item.sendAt as Date,
+            item.sendBy,
             item.time,
             item.date,
             item.message,
-            Boolean(item.isScheduleMessage)
+            Boolean(item.isScheduleMessage),
+            item.callStatus,
+            item.duration,
         ));
         return new Chat(
             String(newMessage._id),
@@ -214,6 +222,30 @@ export class ChatRepository implements IChatRepository {
             const result = await ChatModel.deleteOne({ conversation: id });
         }
         return { success: true };
+    }
+
+    async addAcceptedCallStatus(convoId: string, duration: string): Promise<{ success: boolean; }> {
+        const time = new Date().toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        await ChatModel.findOneAndUpdate(
+            { conversation: convoId },
+            {
+                $push: {
+                    content: {
+                        callStatus: "attended",
+                        duration,
+                        time
+                    }
+                }
+            },
+            {
+                upsert: true,
+                new: true
+            },
+        );
+        return {success:true};
     }
 
 }

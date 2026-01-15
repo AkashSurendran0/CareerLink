@@ -167,7 +167,7 @@ export default function CreateJobPage() {
                         <Image
                         width={300}
                         height={300}
-                        src="/job-posting-illustration-with-plants.jpg"
+                        src="/gettyimages-1199509483-612x612.jpg"
                         alt="Job posting"
                         className="w-full h-40 object-cover rounded-lg"
                         />
@@ -252,7 +252,7 @@ export default function CreateJobPage() {
                         <Image
                         width={300}
                         height={300}
-                        src="/job-description-illustration-with-person.jpg"
+                        src="/360_F_717120945_x31RHKgzFbhnT2YDzHR8IyTZYOhj8HSH.jpg"
                         alt="Job description"
                         className="w-full h-40 object-cover rounded-lg"
                         />
@@ -288,7 +288,7 @@ export default function CreateJobPage() {
                         <Image
                         width={300}
                         height={300}
-                        src="/requirements-illustration-with-building-and-plants.jpg"
+                        src="/employee-9191975_640.jpg"
                         alt="Requirements"
                         className="w-full h-40 object-cover rounded-lg"
                         />
@@ -428,7 +428,7 @@ export default function CreateJobPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <Image
-                        src="/application-settings-illustration-with-phone-and-c.jpg"
+                        src="/360_F_121973339_P7laHfBJmkg40Ox1rLkGzf7gOnThEgtT.jpg"
                         alt="Application settings"
                         className="w-full h-40 object-cover rounded-lg"
                         width={300}

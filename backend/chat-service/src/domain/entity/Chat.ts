@@ -1,13 +1,15 @@
 export class Content {
     constructor (
         public _id:string,
-        public sendBy:string,
         public isRead:boolean,
         public sendAt:Date,
+        public sendBy?:string,
         public time?:string,
         public date?:string,
         public message?:string,
         public isScheduleMessage?:boolean,
+        public callStatus?: string,
+        public duration?: string,
     ){}
 }
 

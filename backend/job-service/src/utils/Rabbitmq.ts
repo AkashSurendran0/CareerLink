@@ -10,7 +10,7 @@ class RabbitMqService {
 
     constructor(
         private readonly url:string = process.env.RABBITMQ_URL as string
-    ){}
+    ){} 
 
     public async connect(): Promise<void> {
         try {

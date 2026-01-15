@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Heart, MessageCircle, ImageIcon, Smile, X, User } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 import { enqueueSnackbar } from 'notistack';
-import { addComment, alterPostLike, getAllPosts, loadSinglePostDetails, postContent } from '@/services/userService';
+import { addComment, alterPostLike, getAllPosts, getUserDetails, loadSinglePostDetails, postContent, viewOtherUserDetails } from '@/services/userService';
 import { useLoading } from '../../template';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import LikedUsersModal from '@/reusable-components/likedUsersList';
 
 interface Comment {
   _id: string
@@ -30,6 +31,11 @@ interface Post {
   comments: Comment[]
 }
 
+interface LikedUsers {
+  pfp?: string,
+  name: string
+}
+
 interface SinglePostUserDetails {
   pfp?: string
   name: string
@@ -49,10 +55,15 @@ export default function FeedsPage() {
   const [userId, setUserId]=useState<string | null>(null)
   const [content, setContent] = useState('')
   const [newComment, setNewComment] = useState('')
+  const [likedUserDetails, setLikedUserDetails] = useState<LikedUsers[]>([])
+  const [showLikedUsers, setShowLikedUsers] = useState(false)
   const shownRef = useRef(0)
+  const hasFetched = useRef(false)
   const LIMIT=2
 
   useEffect(()=>{
+    if (hasFetched.current) return
+    hasFetched.current = true
     getPosts()
   }, [])
   
@@ -62,6 +73,7 @@ export default function FeedsPage() {
     const result=await getAllPosts(LIMIT, shownRef.current)
     shownRef.current+=result.result.allPost.length
     if(shownRef.current>=result.result.count) setFinished(true)
+      console.log('1', result)
     setPosts([...result.result.allPost])
     setIsLoading(false)
   }
@@ -150,6 +162,7 @@ export default function FeedsPage() {
     setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
     const result=await loadSinglePostDetails(post._id)
     setLoading(false)
+    console.log(result.result)
     setSelectedPost(result.result)
   }
 
@@ -160,6 +173,21 @@ export default function FeedsPage() {
     }else{
       router.push(`/meetPeople/${id}`)
     }
+  }
+
+  const seeLikedUsers = async (users:string[]) => {
+    setLoading(true)
+    for(const user of users) { 
+      const result=await viewOtherUserDetails(user)
+      setLikedUserDetails(prev => [...prev, {pfp: result.userDetails?.profilePicture, name:result.userDetails?.username}])
+    }
+    setLoading(false)
+    setShowLikedUsers(true)
+  }
+
+  const closeLikedUserModal = async () => {
+    setLikedUserDetails([])
+    setShowLikedUsers(false)
   }
 
   if (isLoading) {
@@ -177,6 +205,9 @@ export default function FeedsPage() {
   return (
         <main className="flex-1 overflow-auto">
           <div className="max-w-8xl mx-auto px-4 py-6 space-y-4">
+            {showLikedUsers && (
+              <LikedUsersModal onClose={closeLikedUserModal} users={likedUserDetails}/>
+            )}
             {selectedPost && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
@@ -210,13 +241,16 @@ export default function FeedsPage() {
                     {/* Post Image */}
                     {selectedPost.image && (
                       <div className="mb-4 -mx-6">
-                        <Image width={300} height={300} src={selectedPost.image || "/placeholder.svg"} alt="Post content" className="w-full h-96 object-cover" />
+                        <Image width={300} height={300} src={selectedPost.image || "/placeholder.svg"} alt="Post content" className="w-full object-cover" />
                       </div>
                     )}
 
                     {/* Engagement Stats */}
                     <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4 mb-4">
-                      <div className="flex items-center space-x-1">
+                      <div 
+                      className="flex items-center space-x-1"
+                      onClick={()=>seeLikedUsers(selectedPost.likedBy)}
+                      >
                         <Heart size={16} className={`text-red-500 ${userId && selectedPost.likedBy.includes(userId)? 'fill-red-500':'' }`} />
                         <span>{selectedPost.likes}</span>
                       </div>
@@ -386,16 +420,18 @@ export default function FeedsPage() {
                       )}
 
                       {post.image && (
-                      <div className="mb-4 -mx-4">
-                        <Image
-                          width={300}
-                          height={300}
-                          src={post.image || "/placeholder.svg"}
-                          alt="Post content"
-                          className="w-full object-cover"
-                          style={{ aspectRatio: "auto" }}
-                        />
-                      </div>
+                        <div className='w-full flex justify-center'>
+                          <div className="mb-4 -mx-4">
+                            <Image
+                              width={300}
+                              height={300}
+                              src={post.image || "/placeholder.svg"}
+                              alt="Post content"
+                              className="w-100 object-cover"
+                              style={{ aspectRatio: "auto" }}
+                            />
+                          </div>
+                        </div>
                     )}
 
                     <div className="border-t border-gray-200 px-4 py-2 bg-gray-50 flex items-center justify-between">

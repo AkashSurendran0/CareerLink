@@ -3,8 +3,10 @@ export interface ChatDto {
     conversation:string,
     content: Array<{
         _id: string,
-        sendBy: string,
+        sendBy?: string,
         isScheduleMessage?: boolean,
+        callStatus?: string,
+        duration?: string,
         time?: string,
         date?: string,
         message?: string,

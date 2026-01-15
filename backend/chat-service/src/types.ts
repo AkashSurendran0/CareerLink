@@ -9,5 +9,6 @@ export const TYPES = {
     IReadMessages:"IReadMessages",
     IGetReportedMessage:"IGetReportedMessage",
     IScheduleCall:"IScheduleCall",
-    IDeleteConversation:"IDeleteConversation"
+    IDeleteConversation:"IDeleteConversation",
+    IAddAcceptedCallStatus:"IAddAcceptedCallStatus"
 };

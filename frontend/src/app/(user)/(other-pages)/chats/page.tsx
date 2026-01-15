@@ -11,6 +11,7 @@ import ReportModal from "@/reusable-components/reportModal"
 import ConfirmModal from "@/reusable-components/confirmModal"
 import { enqueueSnackbar } from "notistack"
 import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMessage"
+import { CallStatusMessage } from "@/reusable-components/callStatusMessage"
 
 interface Conversation {
   _id: string;
@@ -28,7 +29,7 @@ interface Conversation {
 
 interface Message {
   _id: string;
-  sendBy: string;
+  sendBy?: string;
   sender: string;
   message: string;
   isRead: boolean;
@@ -36,6 +37,8 @@ interface Message {
   time: string;
   conversation: string;
   isScheduleMessage?: boolean;
+  callStatus?: string,
+  duration?: string,
 }
 
 interface UserChats {
@@ -293,7 +296,7 @@ export default function ChatsPage() {
   const reportUserMessage = async () => {
     setConfirmModal(false)
     setLoading(true)
-    const result = await reportMessage(selectedMessage!.sendBy, selectedMessage!._id, selectedReport!)
+    const result = await reportMessage(selectedMessage!.sendBy ?? "", selectedMessage!._id, selectedReport!)
     setLoading(false)
     if (result.result.success) {
       enqueueSnackbar('Report has been submitted with the message', { variant: 'success' })
@@ -481,6 +484,17 @@ export default function ChatsPage() {
                             onCall={videoCallUser}
                             isMe={isMe}
                             isRead={message.isRead}
+                          />
+                        )
+                      }
+                      console.log(message)
+                      if(message.callStatus) {
+                        return (
+                          <CallStatusMessage
+                          key={message._id}
+                          status={message.callStatus}
+                          time={message.time}
+                          duration={message.duration ?? ""}
                           />
                         )
                       }

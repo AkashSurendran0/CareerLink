@@ -5,143 +5,192 @@
             "label": "run frontend",
             "type": "shell",
             "command": "npm run dev",
-            "options": { "cwd": "frontend"}
+            "options": {
+                "cwd": "frontend"
+            }
         },
         {
             "label": "watch api-gateway",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/api-gateway"}
+            "options": {
+                "cwd": "backend/api-gateway"
+            }
         },
         {
             "label": "run api-gateway",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/api-gateway"}
+            "options": {
+                "cwd": "backend/api-gateway"
+            }
         },
         {
             "label": "watch user-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/user-service"}
+            "options": {
+                "cwd": "backend/user-service"
+            },
+            "problemMatcher": [
+                "$go"
+            ]
         },
         {
             "label": "run user-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/user-service"}
+            "options": {
+                "cwd": "backend/user-service"
+            }
         },
         {
             "label": "watch admin-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/admin-service"}
+            "options": {
+                "cwd": "backend/admin-service"
+            }
         },
         {
             "label": "run admin-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/admin-service"}
+            "options": {
+                "cwd": "backend/admin-service"
+            }
         },
         {
             "label": "watch company-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/company-service"}
+            "options": {
+                "cwd": "backend/company-service"
+            }
         },
         {
             "label": "run company-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/company-service"}
+            "options": {
+                "cwd": "backend/company-service"
+            }
         },
         {
             "label": "watch notification-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/notification-service"}
+            "options": {
+                "cwd": "backend/notification-service"
+            }
         },
         {
             "label": "run notification-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/notification-service"}
+            "options": {
+                "cwd": "backend/notification-service"
+            }
         },
         {
             "label": "watch job-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/job-service"}
+            "options": {
+                "cwd": "backend/job-service"
+            }
         },
         {
             "label": "run job-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/job-service"}
+            "options": {
+                "cwd": "backend/job-service"
+            }
         },
         {
             "label": "watch resume-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/resume-service"}
+            "options": {
+                "cwd": "backend/resume-service"
+            }
         },
         {
             "label": "run resume-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/resume-service"}
+            "options": {
+                "cwd": "backend/resume-service"
+            }
         },
         {
             "label": "watch post-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/post-service"}
+            "options": {
+                "cwd": "backend/post-service"
+            }
         },
         {
             "label": "run post-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/post-service"}
+            "options": {
+                "cwd": "backend/post-service"
+            }
         },
         {
             "label": "watch subscription-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/subscription-service"}
+            "options": {
+                "cwd": "backend/subscription-service"
+            }
         },
         {
             "label": "run subscription-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/subscription-service"}
+            "options": {
+                "cwd": "backend/subscription-service"
+            }
         },
         {
             "label": "watch chat-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/chat-service"}
+            "options": {
+                "cwd": "backend/chat-service"
+            }
         },
         {
             "label": "run chat-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/chat-service"}
+            "options": {
+                "cwd": "backend/chat-service"
+            }
         },
         {
             "label": "watch report-service",
             "type": "shell",
             "command": "npm run watch",
-            "options": {"cwd": "backend/report-service"}
+            "options": {
+                "cwd": "backend/report-service"
+            }
         },
         {
             "label": "run report-service",
             "type": "shell",
             "command": "npm run dev",
-            "options": {"cwd": "backend/report-service"}
+            "options": {
+                "cwd": "backend/report-service"
+            }
         },
         {
             "label": "Start all services",
-            "dependsOn":[
+            "dependsOn": [
                 "run frontend",
                 "watch api-gateway",
                 "run api-gateway",
@@ -164,13 +213,13 @@
                 "watch chat-service",
                 "run chat-service",
                 "watch report-service",
-                "run report-service",
+                "run report-service"
             ],
             "dependsOrder": "parallel"
         },
         {
             "label": "run all services",
-            "dependsOn":[
+            "dependsOn": [
                 "run frontend",
                 "run api-gateway",
                 "run user-service",
@@ -183,12 +232,11 @@
                 "run subscription-service",
                 "run chat-service",
                 "run report-service"
-            ],
-        }
-        ,
+            ]
+        },
         {
             "label": "watch all services",
-            "dependsOn":[
+            "dependsOn": [
                 "watch frontend",
                 "watch api-gateway",
                 "watch user-service",
@@ -201,7 +249,7 @@
                 "watch subscription-service",
                 "watch chat-service",
                 "watch report-service"
-            ],
+            ]
         }
     ]
 }

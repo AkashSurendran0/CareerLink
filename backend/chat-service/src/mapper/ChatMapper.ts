@@ -9,8 +9,10 @@ export class ChatMapper {
             conversation: chat.conversation,
             content: (chat.content ?? []).map((item: IChatContent | Content) => ({
                 _id: String(item._id),
-                sendBy: item.sendBy,
+                sendBy: item.sendBy ?? "",
                 isScheduleMessage: Boolean(item.isScheduleMessage),
+                callStatus: item.callStatus ?? "",
+                duration: item.duration ?? "",
                 time: item.time ?? "",
                 date: item.date ?? "",
                 message: item.message ?? "",
@@ -20,4 +22,4 @@ export class ChatMapper {
             createdAt: (chat.createdAt instanceof Date) ? chat.createdAt : new Date(String(chat.createdAt ?? Date.now()))
         };
     }
-}
+} 

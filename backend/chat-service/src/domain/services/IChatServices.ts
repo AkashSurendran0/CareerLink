@@ -38,3 +38,7 @@ export interface IScheduleCall {
 export interface IDeleteConversation {
     deleteConversation(user1:string, user2:string): Promise<{success:boolean}>
 }
+
+export interface IAddAcceptedCallStatus {
+    addAcceptedCallStatus(user1:string, user2:string, duration:string): Promise<{success:boolean}>
+}
