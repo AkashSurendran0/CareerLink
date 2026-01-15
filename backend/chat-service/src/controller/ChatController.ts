@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IAddAcceptedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IAddAcceptedCallStatus, IAddRejectedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -20,7 +20,8 @@ export class ChatController {
         @inject(TYPES.IGetReportedMessage) private _getReportedMessages: IGetReportedMessage,
         @inject(TYPES.IScheduleCall) private _scheduleCall: IScheduleCall,
         @inject(TYPES.IDeleteConversation) private _deleteConversation: IDeleteConversation,
-        @inject(TYPES.IAddAcceptedCallStatus) private _addAcceptedCallStatus: IAddAcceptedCallStatus
+        @inject(TYPES.IAddAcceptedCallStatus) private _addAcceptedCallStatus: IAddAcceptedCallStatus,
+        @inject(TYPES.IAddRejectedCallStatus) private _addRejectedCallStatus: IAddRejectedCallStatus
     ) { }
 
     startUserConversation = async (req: Request, res: Response) => {
@@ -190,6 +191,20 @@ export class ChatController {
         try {
             const {user1, user2, duration}=req.query as {user1:string, user2:string, duration:string};
             const result=await this._addAcceptedCallStatus.addAcceptedCallStatus(user1, user2, duration);
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
+
+    addRejectCallStatus = async (req:Request, res:Response) => {
+        try {
+            const {user1, user2} = req.query as {user1:string, user2:string};  
+            const result=await  this._addRejectedCallStatus.addRejectCallStatus(user1, user2);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {

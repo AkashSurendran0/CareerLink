@@ -10,5 +10,6 @@ export const TYPES = {
     IGetReportedMessage:"IGetReportedMessage",
     IScheduleCall:"IScheduleCall",
     IDeleteConversation:"IDeleteConversation",
-    IAddAcceptedCallStatus:"IAddAcceptedCallStatus"
+    IAddAcceptedCallStatus:"IAddAcceptedCallStatus",
+    IAddRejectedCallStatus:"IAddRejectedCallStatus"
 };

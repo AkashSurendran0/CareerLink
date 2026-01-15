@@ -12,6 +12,7 @@ import { GetReportedMessage } from "./services/GetReportedMessage";
 import { ScheduleCall } from "./services/ScheduleCall";
 import { DeleteConversation } from "./services/DeleteConversation";
 import { AddAcceptedCallStatus } from "./services/AddAcceptedCallStatus";
+import { AddRejectedCallStatus } from "./services/AddRejectedCallStatus";
 
 const container=new Container();
 
@@ -27,6 +28,7 @@ container.bind(TYPES.IGetReportedMessage).to(GetReportedMessage).inSingletonScop
 container.bind(TYPES.IScheduleCall).to(ScheduleCall).inSingletonScope();
 container.bind(TYPES.IDeleteConversation).to(DeleteConversation).inSingletonScope();
 container.bind(TYPES.IAddAcceptedCallStatus).to(AddAcceptedCallStatus).inSingletonScope();
+container.bind(TYPES.IAddRejectedCallStatus).to(AddRejectedCallStatus).inSingletonScope();
 
 container.bind(TYPES.ChatController).to(ChatController).inSingletonScope();
 

@@ -42,3 +42,7 @@ export interface IDeleteConversation {
 export interface IAddAcceptedCallStatus {
     addAcceptedCallStatus(user1:string, user2:string, duration:string): Promise<{success:boolean}>
 }
+
+export interface IAddRejectedCallStatus {
+    addRejectCallStatus(user1:string, user2:string): Promise<ChatDto | {success:boolean}>
+}

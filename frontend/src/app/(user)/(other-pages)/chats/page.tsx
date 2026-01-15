@@ -180,6 +180,7 @@ export default function ChatsPage() {
       if (selectedConvo == convoId) {
         if (!userChats) {
           setUserChats(message)
+          
         } else {
           const lastMessage = message?.content[message?.content?.length - 1]
           setUserChats((prev) => prev ? ({
@@ -314,7 +315,8 @@ export default function ChatsPage() {
       callerImage: userDetails?.profilePicture || null,
       to: selectedUser?.users,
       reciever: selectedUser?.username,
-      callType: 'voice-call'
+      callType: 'voice-call',
+      convoId: selectedConvo
     })
   }
 
@@ -327,7 +329,8 @@ export default function ChatsPage() {
       callerImage: userDetails?.profilePicture || null,
       to: selectedUser?.users,
       reciever: selectedUser?.username,
-      callType: 'video-call'
+      callType: 'video-call',
+      convoId: selectedConvo
     })
   }
 
@@ -487,7 +490,7 @@ export default function ChatsPage() {
                           />
                         )
                       }
-                      console.log(message)
+                      
                       if(message.callStatus) {
                         return (
                           <CallStatusMessage

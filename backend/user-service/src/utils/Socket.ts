@@ -27,7 +27,7 @@ export const initUserSocket = (server: http.Server) => {
     io.on("connection", (socket) => {
         logger.info(`User socket connected: ${socket.id}`);
 
-        socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType }) => {
+        socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType, convoId }) => {
             if ((!onlineUsers.has(to))) {
                 io.to(socket.id).emit("call-failed", {
                     reason: "USER_OFFLINE"
@@ -59,7 +59,8 @@ export const initUserSocket = (server: http.Server) => {
                 from,
                 caller,
                 callerImage,
-                callType
+                callType,
+                convoId
             });
 
             io.to(socket.id).emit("ringing", {
@@ -68,7 +69,7 @@ export const initUserSocket = (server: http.Server) => {
             });
         });
 
-        socket.on("reject-call", ({ userId, callerId }) => {
+        socket.on("reject-call", async ({ userId, callerId, convoId }) => {
             const callerSocket = onlineUsers.get(callerId);
             if (!callerSocket) return;
 
@@ -76,6 +77,9 @@ export const initUserSocket = (server: http.Server) => {
             if (busyUsers.has(callerId)) busyUsers.delete(callerId);
             activeCalls.delete(userId);
             activeCalls.delete(callerId);
+
+            const message=await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addRejectCallStatus?user1=${userId}&user2=${callerId}`);
+            io.to(convoId).emit("receive-message", message.data.result, convoId); 
 
             io.to(callerSocket).emit("call-declined");
         });
