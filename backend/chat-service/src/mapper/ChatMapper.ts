@@ -16,6 +16,7 @@ export class ChatMapper {
                 time: item.time ?? "",
                 date: item.date ?? "",
                 message: item.message ?? "",
+                attachment: item.attachment ?? "",
                 isRead: Boolean(item.isRead),
                 sendAt: (item.sendAt instanceof Date) ? item.sendAt : new Date(String(item.sendAt ?? Date.now()))
             })),

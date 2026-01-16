@@ -12,6 +12,7 @@ interface Props {
 interface CallDetails {
     name: string;
     image: string;
+    convoId: string;
 }
 
 export default function VoiceCall({ params }: Props) {
@@ -33,10 +34,11 @@ export default function VoiceCall({ params }: Props) {
 
         const raw = sessionStorage.getItem(`${callId}`)
         if (!raw) return
-        const { name, image } = JSON.parse(raw)
+        const { name, image, convoId } = JSON.parse(raw)
         const data = {
             name,
-            image
+            image, 
+            convoId
         }
         setCallDetails(data)
 
@@ -351,7 +353,8 @@ export default function VoiceCall({ params }: Props) {
         const formattedDuration=formatTime(callDuration)
         localStreamRef.current?.getTracks().forEach(t => t.stop())
         pcRef.current?.close()
-        userSocket.emit("end-call", { callId, formattedDuration })
+        const convoId = callDetails?.convoId
+        userSocket.emit("end-call", { callId, formattedDuration, convoId })
         sessionStorage.removeItem(`${callId}`)
         window.history.back()
     }

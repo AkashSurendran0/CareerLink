@@ -7,10 +7,10 @@ import mongoose from "mongoose";
 @injectable()
 export class ChatRepository implements IChatRepository {
 
-    async sendMessage(sender: string, message: string, conversation: string): Promise<Chat> {
+    async sendMessage(sender: string, message: string, conversation: string, url:string | null): Promise<Chat> {
         const newMessage = await ChatModel.findOneAndUpdate(
             { conversation },
-            { $push: { content: { sendBy: sender, message: message } } },
+            { $push: { content: { sendBy: sender, message: message, attachment:url } } },
             { upsert: true, new: true }
         ) as IChat | null;
         if (!newMessage) throw new Error("Failed to send message");
@@ -22,6 +22,7 @@ export class ChatRepository implements IChatRepository {
             item.time,
             item.date,
             item.message,
+            item.attachment,
             Boolean(item.isScheduleMessage),
             item.callStatus,
             item.duration,
@@ -45,6 +46,7 @@ export class ChatRepository implements IChatRepository {
             item.time,
             item.date,
             item.message,
+            item.attachment,
             Boolean(item.isScheduleMessage),
             item.callStatus,
             item.duration,
@@ -86,7 +88,10 @@ export class ChatRepository implements IChatRepository {
                 {
                     $match:
                     {
-                        "content.sendBy": { $ne: id },
+                        $and:[
+                            {"content.sendBy": {$exists: true}},
+                            {"content.sendBy": {$ne: id}}
+                        ] 
                     },
                 },
             ]);
@@ -162,6 +167,7 @@ export class ChatRepository implements IChatRepository {
             item.time,
             item.date,
             item.message,
+            item.attachment,
             Boolean(item.isScheduleMessage),
             item.callStatus,
             item.duration,
@@ -204,6 +210,7 @@ export class ChatRepository implements IChatRepository {
             item.time,
             item.date,
             item.message,
+            item.attachment,
             Boolean(item.isScheduleMessage),
             item.callStatus,
             item.duration,

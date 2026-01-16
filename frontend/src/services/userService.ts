@@ -387,7 +387,7 @@ export const getConversations = async () => {
     return res.data
 }
 
-export const sendMessage = async (data: unknown, companyId?: string | null) => {
+export const sendMessage = async (data: FormData, companyId?: string | null) => {
     const res = await api.patch(`${CHAT_V1_ROUTE}/sendMessage?company=${companyId}`, data)
     return res.data
 }

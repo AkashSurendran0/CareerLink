@@ -10,15 +10,12 @@ import { ChatMapper } from "../mapper/ChatMapper";
 export class AddRejectedCallStatus implements  IAddRejectedCallStatus {
 
     constructor(
-        @inject(TYPES.IConversationRepository) private _conversationRepository:IConversationRepository,
         @inject(TYPES.IChatRepository) private _chatRepository:IChatRepository
     ){}
 
-    async addRejectCallStatus(user1: string, user2: string): Promise<ChatDto | {success:boolean}> {
-        const convo=await this._conversationRepository.findByUsers(user1, user2);
-        if(!convo) return {success:false};
-        await this._chatRepository.addRejectedCallStatus(convo.conversation?._id as string);
-        const result=await this._chatRepository.getByConvo(convo.conversation?._id as string);
+    async addRejectCallStatus(convo: string): Promise<ChatDto | {success:boolean}> {
+        await this._chatRepository.addRejectedCallStatus(convo);
+        const result=await this._chatRepository.getByConvo(convo);
         if(!result) return {success:false};
         return ChatMapper.toDTO(result);
     }

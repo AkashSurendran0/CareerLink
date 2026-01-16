@@ -27,7 +27,7 @@ export const initUserSocket = (server: http.Server) => {
     io.on("connection", (socket) => {
         logger.info(`User socket connected: ${socket.id}`);
 
-        socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType, convoId }) => {
+        socket.on("ring-call", ({ from, caller, callerImage, to, reciever, callType, callerType, convoId, companyId }) => {
             if ((!onlineUsers.has(to))) {
                 io.to(socket.id).emit("call-failed", {
                     reason: "USER_OFFLINE"
@@ -60,7 +60,8 @@ export const initUserSocket = (server: http.Server) => {
                 caller,
                 callerImage,
                 callType,
-                convoId
+                convoId,
+                companyId
             });
 
             io.to(socket.id).emit("ringing", {
@@ -78,13 +79,13 @@ export const initUserSocket = (server: http.Server) => {
             activeCalls.delete(userId);
             activeCalls.delete(callerId);
 
-            const message=await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addRejectCallStatus?user1=${userId}&user2=${callerId}`);
+            const message=await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addRejectCallStatus?convo=${convoId}`);
             io.to(convoId).emit("receive-message", message.data.result, convoId); 
 
             io.to(callerSocket).emit("call-declined");
         });
 
-        socket.on("accept-call", ({ callId, callerId, calleeName, calleeImage, callerName, callerImage }) => {
+        socket.on("accept-call", ({ callId, callerId, convoId, calleeName, calleeImage, callerName, callerImage }) => {
             const callerSocket = onlineUsers.get(callerId);
             if (!callerSocket) {
                 io.to(socket.id).emit("call-failed", {
@@ -92,17 +93,19 @@ export const initUserSocket = (server: http.Server) => {
                 });
                 return;
             }
-
+            
             io.to(callerSocket).emit("call-accepted", {
                 callId,
                 name: calleeName,
-                image: calleeImage
+                image: calleeImage,
+                convoId
             });
 
             io.to(socket.id).emit("call-accepted", {
                 callId,
                 name: callerName,
-                image: callerImage
+                image: callerImage,
+                convoId
             });
         });
 
@@ -151,7 +154,7 @@ export const initUserSocket = (server: http.Server) => {
             socket.to(callId).emit("ice-candidate", { candidate });
         });
 
-        socket.on("end-call", async ({ callId, formattedDuration }) => {
+        socket.on("end-call", async ({ callId, formattedDuration, convoId }) => {
             socket.leave(callId);
             const entries = [...onlineUsers.entries()];
             const userEntry = entries.find(([_, sid]) => sid === socket.id);
@@ -166,7 +169,7 @@ export const initUserSocket = (server: http.Server) => {
                     activeCalls.delete(userId);
                     activeCalls.delete(otherUser);
                     
-                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addAcceptedCallStatus?user1=${userId}&user2=${otherUser}&duration=${formattedDuration}`);
+                    await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/addAcceptedCallStatus?convo=${convoId}&duration=${formattedDuration}`);
                     
                     const otherSocket = onlineUsers.get(otherUser);
                     if (otherSocket) { 

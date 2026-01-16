@@ -7,7 +7,7 @@ type Data = {
 }
 
 export interface IChatRepository {
-    sendMessage(sender: string, message: string, conversation: string): Promise<Chat>
+    sendMessage(sender: string, message: string, conversation: string, url:string | null): Promise<Chat>
     getByConvo(convo: string): Promise<Chat | null>
     readMessages(convo: string, user: string): Promise<{ success: boolean }>
     getLastMessageAndCount(convo: string, id: string): Promise<{ lastMessage: unknown | null; unreadCount: number | null }>

@@ -12,8 +12,8 @@ export class SendMessage implements ISendMessage {
         @inject(TYPES.IChatRepository) private _chatRepository:IChatRepository
     ){}
 
-    async sendMessage(sender: string, message: string, conversation: string): Promise<ChatDto> {
-        const result=await this._chatRepository.sendMessage(sender, message, conversation);
+    async sendMessage(sender: string, message: string, conversation: string, url:string | null): Promise<ChatDto> {
+        const result=await this._chatRepository.sendMessage(sender, message, conversation, url);
         return ChatMapper.toDTO(result);
     }
 

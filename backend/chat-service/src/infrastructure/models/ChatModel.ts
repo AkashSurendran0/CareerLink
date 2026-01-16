@@ -9,6 +9,7 @@ export interface IChatContent {
     time?: string;
     date?: string;
     message?: string;
+    attachment?: string;
     isRead?: boolean;
     sendAt?: Date;
 }
@@ -54,6 +55,10 @@ const chatSchema: Schema<IChat> = new Schema(
             message: {
                 type: String,
                 required: false
+            },
+            attachment: {
+                type: String,
+                required: false,
             },
             isRead: { 
                 type: Boolean, 
