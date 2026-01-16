@@ -10,6 +10,7 @@ export interface ChatDto {
         time?: string,
         date?: string,
         message?: string,
+        attachment?: string,
         isRead?: boolean,
         sendAt?: Date
     }>,

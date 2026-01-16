@@ -7,6 +7,7 @@ export class Content {
         public time?:string,
         public date?:string,
         public message?:string,
+        public attachment?: string,
         public isScheduleMessage?:boolean,
         public callStatus?: string,
         public duration?: string,

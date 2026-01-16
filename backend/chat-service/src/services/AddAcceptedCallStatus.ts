@@ -8,14 +8,11 @@ import { IChatRepository } from "../domain/repository/IChatRepository";
 export class AddAcceptedCallStatus implements IAddAcceptedCallStatus {
 
     constructor(
-        @inject(TYPES.IConversationRepository) private _conversationRepository:IConversationRepository,
         @inject(TYPES.IChatRepository) private _chatRepository:IChatRepository
     ){}
 
-    async addAcceptedCallStatus(user1: string, user2: string, duration: string): Promise<{ success: boolean; }> {
-        const convo=await this._conversationRepository.findByUsers(user1, user2);
-        if(!convo.success) return {success:false};
-        const result=await this._chatRepository.addAcceptedCallStatus(convo.conversation?._id as string, duration);
+    async addAcceptedCallStatus(convo: string, duration: string): Promise<{ success: boolean; }> {
+        const result=await this._chatRepository.addAcceptedCallStatus(convo, duration);
         return result;
     }
 

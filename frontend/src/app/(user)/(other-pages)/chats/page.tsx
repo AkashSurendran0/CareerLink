@@ -21,6 +21,7 @@ interface Conversation {
   online?: boolean;
   lastMessage?: {
     content?: {
+      sendAt: string;
       message: string;
       isRead: boolean;
     };
@@ -32,6 +33,7 @@ interface Message {
   sendBy?: string;
   sender: string;
   message: string;
+  attachment?: string;
   isRead: boolean;
   date: string;
   time: string;
@@ -68,6 +70,7 @@ export default function ChatsPage() {
   const [confirmModal, setConfirmModal] = useState(false)
   const [selectedReport, setSelectedReport] = useState<string | null>(null)
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
+  const [selectedAttachment, setSelectedAttachment] = useState<File | null>(null)
   const hideTimerRef = useRef<number | null>(null)
   const longPressTimer = useRef<number | null>(null)
 
@@ -198,6 +201,17 @@ export default function ChatsPage() {
     }
   }, [selectedConvo])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const image=e.target.files?.[0]
+    if (!image) return
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if(!validTypes.includes(image.type)){
+      enqueueSnackbar('Please choose a valid image', {variant:'error'})
+      return
+    }
+    setSelectedAttachment(image)
+  }
+
   const getDetails = async () => {
     const result = await getUserDetails()
     setUserDetails(result.userDetails)
@@ -205,6 +219,7 @@ export default function ChatsPage() {
 
   const getUserConversations = async () => {
     const result = await getConversations()
+    console.log('result', result.result)
     setConversations(result.result)
   }
 
@@ -222,28 +237,35 @@ export default function ChatsPage() {
   );
 
   const handleSendMessage = async () => {
-    if (messageInput.trim() && selectedUser && selectedConvo) {
-      const data = {
-        convoId: selectedConvo,
-        message: messageInput
+    if(messageInput.trim() || selectedAttachment){
+      if (selectedUser && selectedConvo) {
+        const formData = new FormData()
+        if(selectedAttachment){
+          setLoading(true)
+          formData.append('image', selectedAttachment)
+        } 
+        formData.append('convoId', selectedConvo)
+        formData.append('message', messageInput)
+        const result = await sendMessage(formData)
+        setLoading(false)
+        const lastMessage = result.result?.content[result.result?.content?.length - 1]
+        if (!userChats) {
+          setUserChats(result.result)
+        } else {
+          setUserChats((prev) => prev ? ({
+            ...prev,
+            content: [...prev.content, lastMessage]
+          }) : null)
+        }
+  
+        userSocket.emit("send-message", {
+          convoId: selectedConvo,
+          message: result.result,
+          userId
+        })
+        setMessageInput("")
+        setSelectedAttachment(null)
       }
-      const result = await sendMessage(data)
-      const lastMessage = result.result?.content[result.result?.content?.length - 1]
-      if (!userChats) {
-        setUserChats(result.result)
-      } else {
-        setUserChats((prev) => prev ? ({
-          ...prev,
-          content: [...prev.content, lastMessage]
-        }) : null)
-      }
-
-      userSocket.emit("send-message", {
-        convoId: selectedConvo,
-        message: result.result,
-        userId
-      })
-      setMessageInput("")
     }
   }
 
@@ -316,7 +338,9 @@ export default function ChatsPage() {
       to: selectedUser?.users,
       reciever: selectedUser?.username,
       callType: 'voice-call',
-      convoId: selectedConvo
+      callerType: 'user',
+      convoId: selectedConvo,
+      companyId: null
     })
   }
 
@@ -330,7 +354,9 @@ export default function ChatsPage() {
       to: selectedUser?.users,
       reciever: selectedUser?.username,
       callType: 'video-call',
-      convoId: selectedConvo
+      callerType: 'user',
+      convoId: selectedConvo,
+      companyId: null
     })
   }
 
@@ -409,7 +435,22 @@ export default function ChatsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2">
                           <h3 className="font-medium text-gray-900 truncate">{user.username}</h3>
-                          {/* <span className="text-xs text-gray-500 flex-shrink-0">{user.timestamp}</span> */}
+                          <div className="flex gap-2  ">
+                            {user?.lastMessage?.content?.sendAt && (
+                              <span className="text-xs text-gray-500 flex-shrink-0">
+                                {new Date(user.lastMessage.content.sendAt).toLocaleDateString()}
+                              </span>
+                            )} 
+                            <span className="text-xs text-gray-500 flex-shrink-0">|</span>
+                            {user?.lastMessage?.content?.sendAt && (
+                              <span className="text-xs text-gray-500 flex-shrink-0">
+                                {new Date(user.lastMessage.content.sendAt).toLocaleTimeString("en-GB", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                })}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <p className={`text-sm ${user?.lastMessage?.content?.isRead ? 'text-gray-500' : 'text-black'}  truncate`}>{user?.lastMessage?.content?.message}</p>
                       </div>
@@ -529,11 +570,14 @@ export default function ChatsPage() {
                               onTouchMove={handleTouchEnd}
                             >
                               <div
-                                className={`px-4 py-2 rounded-lg max-w-xs ${isMe
-                                  ? "bg-blue-500 text-white rounded-br-none"
-                                  : "bg-gray-100 text-gray-900 rounded-bl-none"
-                                  }`}
-                              >
+                                className={`${message.message && `
+                                  px-4 py-2 rounded-lg max-w-xs ${isMe
+                                    ? "bg-blue-500 text-white rounded-br-none"
+                                    : "bg-gray-100 text-gray-900 rounded-bl-none"
+                                    }`}
+                                  `
+                                }
+                                >
                                 <p className="text-sm whitespace-pre-line">{message.message}</p>
                                 {!isMe && (hoveredMessageId === message._id || longPressMessageId === message._id) && (
                                   <button
@@ -546,6 +590,17 @@ export default function ChatsPage() {
                                   </button>
                                 )}
                               </div>
+                              {message.attachment && (
+                                  <div className="mt-2">
+                                    <Image
+                                      width={300}
+                                      height={300}
+                                      src={message.attachment || "/placeholder.svg"}
+                                      alt="Attachment"
+                                      className="h-50 w-50 object-cover rounded-lg border border-gray-200"
+                                    />
+                                  </div>
+                              )}
                               {isMe && (
                                 <div className="flex items-center gap-1 mt-1">
                                   {message.isRead ? (
@@ -553,23 +608,9 @@ export default function ChatsPage() {
                                   ) : (
                                     <CheckCheck className="h-4 w-4 text-blue-500" />
                                   )}
-                                  {/* <span className="text-xs text-gray-500">{message.timestamp}</span> */}
                                 </div>
                               )}
                             </div>
-                            {/* {isMe && (
-                          userDetails.profilePicture ? (
-                          <Image
-                            height={300}
-                            width={300}
-                            src={userDetails.profilePicture}
-                            alt="You"
-                            className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                          />
-                        ) : (
-                          <User className="h-8 w-8 rounded-full object-cover flex-shrink-0"/>
-                        )
-                      )} */}
                           </div>
                         </div>
                       )
@@ -583,6 +624,25 @@ export default function ChatsPage() {
               </div>
 
               <div className="p-4 border-t border-gray-200 flex-shrink-0">
+                {selectedAttachment && (
+                  <div className="mb-3 flex items-end gap-2">
+                    <div className="relative inline-block">
+                      <Image
+                        width={300}
+                        height={300}
+                        src={URL.createObjectURL(selectedAttachment)}
+                        alt="Preview"
+                        className="h-20 w-20 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        onClick={()=>setSelectedAttachment(null)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -591,6 +651,23 @@ export default function ChatsPage() {
                     onChange={(e) => setMessageInput(e.target.value)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
+                  {!selectedAttachment && (
+                    <>
+                      <input
+                          type="file"
+                        id="attachment-input"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                      <label
+                        htmlFor="attachment-input"
+                        className="p-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <Paperclip className="h-5 w-5" />
+                      </label>
+                    </>
+                  )}
                   <button
                     onClick={handleSendMessage}
                     className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"

@@ -32,6 +32,11 @@ export class ConversationRepository implements IConversationRepository {
                 $match: {
                     users: { $ne: id }
                 }
+            },
+            {
+                $sort:{
+                    createdAt: -1  
+                }
             }
         ]);
         return userConversations.map((convo) => (

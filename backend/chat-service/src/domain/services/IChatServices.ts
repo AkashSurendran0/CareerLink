@@ -16,7 +16,7 @@ export interface IGetConversations {
 }
 
 export interface ISendMessage {
-    sendMessage(sender:string, message:string, conversation:string): Promise<ChatDto>
+    sendMessage(sender:string, message:string, conversation:string, url:string | null): Promise<ChatDto>
 }
 
 export interface IGetChats {
@@ -40,9 +40,9 @@ export interface IDeleteConversation {
 }
 
 export interface IAddAcceptedCallStatus {
-    addAcceptedCallStatus(user1:string, user2:string, duration:string): Promise<{success:boolean}>
+    addAcceptedCallStatus(convo:string, duration:string): Promise<{success:boolean}>
 }
 
 export interface IAddRejectedCallStatus {
-    addRejectCallStatus(user1:string, user2:string): Promise<ChatDto | {success:boolean}>
+    addRejectCallStatus(convo:string): Promise<ChatDto | {success:boolean}>
 }

@@ -5,6 +5,7 @@ import { TYPES } from "../types";
 import { IAddAcceptedCallStatus, IAddRejectedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 import dotenv from "dotenv";
+import { uploadPost } from "../config/upload";
 
 dotenv.config();
 
@@ -76,12 +77,26 @@ export class ChatController {
     sendMessage = async (req: Request, res: Response) => {
         try {
             const { convoId, message } = req.body;
+            let url=null;
+            if(req.file){
+                const buffer=req.file?.buffer;
+                if (!buffer) {
+                    res.status(STATUS_CODES.BAD_REQUEST).json({ message: "File buffer is required" });
+                    return;
+                }
+                const fileType=req.file.mimetype.split("/")[1];
+                if (!fileType) {
+                    res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid file type" });
+                    return;
+                }
+                url=await uploadPost(buffer, fileType);
+            }  
             const id = req.headers["user-id"] as string;
             const { company } = req.query as { company: string };
             let sender;
             if (company === "undefined") sender = id;
             else sender = company || id;
-            const result = await this._sendMessage.sendMessage(sender, message, convoId);
+            const result = await this._sendMessage.sendMessage(sender, message, convoId, url);
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -124,9 +139,11 @@ export class ChatController {
     getCompanyConversations = async (req: Request, res: Response) => {
         try {
             const { company } = req.query as { company: string };
+            console.log(company);
             let result = await this._getConversations.getConversations(company);
+            console.log(result);
             for (let i = 0; i < result.length; i++) {
-                const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i]!.users[0]}`);
+                const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i]!.users}`);
                 // @ts-ignore
                 result[i].email = userDetails.data.result.result.email;
                 // @ts-ignore
@@ -134,6 +151,7 @@ export class ChatController {
                 // @ts-ignore
                 result[i].pfp = userDetails.data.result?.pfp || null;
             }
+            console.log(result);
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -189,8 +207,9 @@ export class ChatController {
 
     addAcceptedCallStatus = async (req:Request, res:Response) => {
         try {
-            const {user1, user2, duration}=req.query as {user1:string, user2:string, duration:string};
-            const result=await this._addAcceptedCallStatus.addAcceptedCallStatus(user1, user2, duration);
+            const {convo, duration}=req.query as {convo:string, duration:string};
+            console.log(convo, duration);
+            const result=await this._addAcceptedCallStatus.addAcceptedCallStatus(convo, duration);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -203,8 +222,8 @@ export class ChatController {
 
     addRejectCallStatus = async (req:Request, res:Response) => {
         try {
-            const {user1, user2} = req.query as {user1:string, user2:string};  
-            const result=await  this._addRejectedCallStatus.addRejectCallStatus(user1, user2);
+            const {convo} = req.query as {convo:string};  
+            const result=await  this._addRejectedCallStatus.addRejectCallStatus(convo);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {

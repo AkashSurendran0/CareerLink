@@ -150,12 +150,13 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
   }, [userEmail])
 
   useEffect(() => {
-    userSocket.on("call-accepted", ({ callId, name, image }) => {
+    userSocket.on("call-accepted", ({ callId, name, image, convoId }) => {
       sessionStorage.setItem(
         `${callId}`,
         JSON.stringify({
           name,
-          image
+          image, 
+          convoId
         })
       )
       if (incomingCall?.callType == 'voice-call' || outgoingCall?.callType == 'voice-call') {
@@ -228,6 +229,7 @@ function MainNavbar({ setSidebarOpen }: NavbarProps) {
     userSocket.emit('accept-call', {
       callId,
       callerId,
+      convoId: incomingCall?.convoId,
       calleeName: userDetails?.username,
       calleeImage: userDetails?.profilePicture || null,
       callerName: incomingCall?.caller,
