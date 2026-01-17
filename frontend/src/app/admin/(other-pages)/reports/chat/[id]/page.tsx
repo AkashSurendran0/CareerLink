@@ -75,16 +75,23 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
   }
 
   const getReportedMessageDetails = async () => {
+    console.log(4)
     if (!reportDetails || !reportDetails.reportedBy || !reportDetails.reportedChat) return
+    console.log(5)
     const result = await getReportedMessage(id, reportDetails.reportedBy, reportDetails.reportedChat)
+    console.log(6, result)
     const message = await result.content.filter((msg: Message) => msg._id == reportDetails.reportedChat)
+    console.log(7, message)
     setReportedMessage(message[0])
     setReportedMessages(result.content)
   }
 
   const fetchReportDetails = async () => {
+    console.log(1)
     const result = await getReportDetails(reportId)
+    console.log(2, result)
     if (result.result.success) {
+      console.log(3)
       setReportDetails(result.result.report)
     } else {
       enqueueSnackbar('Report not available, please try again later')
