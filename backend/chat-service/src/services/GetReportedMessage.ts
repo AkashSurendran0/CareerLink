@@ -16,8 +16,10 @@ export class GetReportedMessage implements IGetReportedMessage {
 
     async getReportedMessage(user1: string, user2: string, chatId: string): Promise<ChatDto> {
         const convo = await this._conversationRepository.findByUsers(user1, user2);
+        console.log(convo);
         if (!convo || !convo.conversation) return {} as ChatDto;
         const chats = await this._chatRepository.getReportedMessage(convo.conversation._id, chatId);
+        console.log(chats);
         return ChatMapper.toDTO(chats);
     }
 
