@@ -165,6 +165,7 @@ export class ChatController {
     getReportedMessage = async (req: Request, res: Response) => {
         try {
             const { user1, user2, chatId } = req.query as { user1: string, user2: string, chatId: string };
+            console.log(user1, user2, chatId);
             const result = await this._getReportedMessages.getReportedMessage(user1, user2, chatId);
             res.json(result);
         } catch (error: unknown) {
