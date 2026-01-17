@@ -7,7 +7,7 @@ export const initUserSocket = (server: http.Server) => {
     const io = new Server(server, {
         path: "/user/socket.io",
         cors: {
-            origin:"http://localhost:3000",
+            origin:"https://careerlink.space",
             credentials: true,
         },
         transports: ["websocket"],
