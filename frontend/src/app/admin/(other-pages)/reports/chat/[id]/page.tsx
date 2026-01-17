@@ -6,6 +6,7 @@ import { changeUserStatus, closeReport, getDetailsByQuery, getReportDetails, get
 import { enqueueSnackbar } from "notistack"
 import { User } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { CallStatusMessage } from "@/reusable-components/callStatusMessage"
 
 interface Props {
   params: Promise<{ id: string }>,
@@ -22,9 +23,17 @@ interface UserDetails {
 
 interface Message {
   _id: string;
-  sendBy: string;
+  sendBy?: string;
   sender: string;
   message: string;
+  attachment?: string;
+  isRead: boolean;
+  date: string;
+  time: string;
+  conversation: string;
+  isScheduleMessage?: boolean;
+  callStatus?: string,
+  duration?: string,
 }
 
 interface ReportDetails {
@@ -127,6 +136,17 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
                 {reportedMessages.map((msg) => {
                   const isReporter = reportDetails.reportedBy == msg.sendBy
 
+                  if(msg.callStatus) {
+                    return (
+                      <CallStatusMessage
+                        key={msg._id}
+                        status={msg.callStatus}
+                        time={msg.time}
+                        duration={msg.duration ?? ""}
+                      />
+                    )
+                  }
+
                   return (
                     <div key={msg._id} className={`flex gap-3 ${isReporter ? "justify-start" : "justify-end"}`}>
                       {isReporter && (
@@ -150,17 +170,28 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
                       <div className={`flex flex-col ${isReporter ? "items-start" : "items-end"} max-w-[75%]`}>
                         <span className="text-xs text-blue-600 mb-1">{msg.sender}</span>
                         <div
-                          className={`rounded-2xl px-4 py-2 ${isReporter
-                            ? "bg-gray-100 text-gray-900"
-                            : reportedMessage._id == msg._id
-                              ? "bg-blue-500 text-white ring-2 ring-red-400"
-                              : "bg-blue-500 text-white"
+                          className={`${msg.message && `
+                            px-4 py-2 rounded-lg max-w-xs ${isReporter
+                            ? "bg-blue-500 text-white rounded-br-none"
+                            : "bg-gray-100 text-gray-900 rounded-bl-none"
                             }`}
+                          `
+                        }
                         >
                           <p className="text-sm leading-relaxed">{msg.message}</p>
                         </div>
+                      {msg.attachment && (
+                        <div className="mt-2">
+                          <Image
+                            width={300}
+                            height={300}
+                            src={msg.attachment || "/placeholder.svg"}
+                            alt="Attachment"
+                            className="h-50 w-50 object-cover rounded-lg border border-gray-200"
+                          />
+                        </div>
+                      )}
                       </div>
-
                       {!isReporter && (
                         <div className="flex-shrink-0">
                           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
