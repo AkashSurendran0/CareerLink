@@ -31,9 +31,14 @@ interface Props {
 }
 
 interface HeatMapData {
-    [key: string]: number
+    [key: number]: HeatMapArray[][]
 }
 
+interface HeatMapArray {
+    date: string,
+    count: number, 
+    color: string
+}
 function GitHubActivity({ params }: Props) {
     const id = (params as unknown as { id: string }).id
     const [loading, setLoading] = useState(true)
