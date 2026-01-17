@@ -81,6 +81,7 @@ export default function DashboardPage() {
     const getRecentDetails = async () => {
         const users = await getUsers(1, 3, '')
         const result = [...users.users.result]
+        console.log('users', result)
         result.sort(
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
