@@ -27,7 +27,13 @@ interface Repo {
 }
 
 interface HeatMapData {
-    [key: string]: number
+    [key: number]: HeatMapArray[][]
+}
+
+interface HeatMapArray {
+    date: string,
+    count: number, 
+    color: string
 }
 
 function GitHubActivity() {
@@ -68,6 +74,7 @@ function GitHubActivity() {
 
     const getActivityDetails = async (name: string) => {
         const details = await getGithubActivity(name)
+        console.log(details)
         if (details.result.success) {
             setHeatMap(details.result.heatmap)
         } else {
