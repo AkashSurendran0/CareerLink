@@ -23,4 +23,4 @@ export class GetReportedMessage implements IGetReportedMessage {
         return ChatMapper.toDTO(chats);
     }
 
-}
+} 
