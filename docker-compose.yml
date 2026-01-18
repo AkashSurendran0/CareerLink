@@ -4,77 +4,7 @@ networks:
   careerlink-network:
     driver: bridge
 
-volumes:
-  mongo_data:
-  postgres_data:
-  elastic_data:
-
 services:
-  # ===================== INFRA =====================
-
-  mongo:
-    image: mongo:7
-    container_name: mongo
-    restart: always
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - careerlink-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    restart: always
-    networks:
-      - careerlink-network
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: careerlink
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: akash1
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - careerlink-network
-
-  elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
-    container_name: elastic
-    restart: always
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - ELASTIC_PASSWORD=akash1
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    volumes:
-      - elastic_data:/usr/share/elasticsearch/data
-    networks:
-      - careerlink-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9200"]
-      interval: 10s
-      retries: 30
-      start_period: 20s
-      timeout: 5s
-
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    restart: always
-    environment:
-      RABBITMQ_DEFAULT_USER: achu
-      RABBITMQ_DEFAULT_PASS: akash1
-    ports:
-      - "15672:15672" 
-    networks:
-      - careerlink-network
-
-  # ===================== BACKEND =====================
 
   api-gateway:
     build: ./backend/api-gateway
@@ -83,16 +13,16 @@ services:
     env_file:
       - ./backend/api-gateway/.env.production
     depends_on:
-      elastic:
-        condition: service_healthy
-      mongo:
-        condition: service_started
-      redis:
-        condition: service_started
-      postgres:
-        condition: service_started
-      rabbitmq:
-        condition: service_started
+      - user-service
+      - admin-service
+      - company-service
+      - notification-service
+      - job-service
+      - resume-service
+      - post-service
+      - subscription-service
+      - chat-service
+      - report-service
     ports:
       - "127.0.0.1:5000:5000"
     networks:
@@ -104,9 +34,6 @@ services:
     restart: always
     env_file:
       - ./backend/user-service/.env.production
-    depends_on:
-      - api-gateway
-      - elastic
     ports:
       - "127.0.0.1:5001:5001"
     networks:
@@ -118,8 +45,6 @@ services:
     restart: always
     env_file:
       - ./backend/admin-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -129,8 +54,6 @@ services:
     restart: always
     env_file:
       - ./backend/company-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -140,8 +63,6 @@ services:
     restart: always
     env_file:
       - ./backend/notification-service/.env.production
-    depends_on:
-      - api-gateway
     ports:
       - "127.0.0.1:5004:5004"
     networks:
@@ -153,8 +74,6 @@ services:
     restart: always
     env_file:
       - ./backend/job-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -164,8 +83,6 @@ services:
     restart: always
     env_file:
       - ./backend/resume-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -175,8 +92,6 @@ services:
     restart: always
     env_file:
       - ./backend/post-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -186,8 +101,6 @@ services:
     restart: always
     env_file:
       - ./backend/subscription-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -197,8 +110,6 @@ services:
     restart: always
     env_file:
       - ./backend/chat-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -208,8 +119,6 @@ services:
     restart: always
     env_file:
       - ./backend/report-service/.env.production
-    depends_on:
-      - api-gateway
     networks:
       - careerlink-network
 
@@ -220,49 +129,11 @@ services:
     container_name: frontend
     environment:
       - JWT_SECRET=careerlinkJWT
-      - API_GATEWAY_ROUTE=https://careerlink.space/backend
+      - API_GATEWAY_ROUTE=https://careerlink.space/api
     restart: always
-    depends_on:
-      - api-gateway
     ports:
       - "127.0.0.1:3000:3000"
     networks:
       - careerlink-network
 
-  # ===================== LOGGING =====================
-
-  loki:
-    image: grafana/loki:2.9.4
-    container_name: loki
-    command: -config.file=/etc/loki/loki-config.yml
-    volumes:
-      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
-    ports:
-      - "3100:3100"
-    networks:
-      - careerlink-network
-
-  promtail:
-    image: grafana/promtail:2.9.4
-    container_name: promtail
-    volumes:
-      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/config.yml
-    depends_on:
-      - loki
-    networks:
-      - careerlink-network
-
-  grafana:
-    image: grafana/grafana:10.2.2
-    container_name: grafana
-    restart: always
-    ports:
-      - "3001:3000"
-    depends_on:
-      - loki
-    networks:
-      - careerlink-network
 
