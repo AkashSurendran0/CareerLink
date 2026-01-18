@@ -23,6 +23,7 @@ services:
       - subscription-service
       - chat-service
       - report-service
+      - frontend
     ports:
       - "127.0.0.1:5000:5000"
     networks:
