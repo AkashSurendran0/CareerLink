@@ -288,8 +288,9 @@ Thank you for choosing to be a part of our company.
                         message
                     };
                     await axios.patch(`${process.env.API_GATEWAY_ROUTE}/chat/v1/sendMessage?company=${company}`, data);
-                    await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.hired", {
+                    await rabbitmqService.publishEvent("jobApplication.events", "jobApplication.applicationHired", {
                         userEmail: userDetails.data?.result?.result?.email,
+                        userName: userDetails.data?.result?.result?.username,
                         action: "applicationHired"
                     });
                 }

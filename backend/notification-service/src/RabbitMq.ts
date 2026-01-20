@@ -152,6 +152,7 @@ The CareerLink Team
                     break;
 
                 case "applicationAccepted":
+                    console.log(data.userEmail);
                     await this._addNotification.saveNotification(data.userEmail, "You have been shortlisted !!", "/profile/user/jobsApplied");
                     break;
 
@@ -161,6 +162,22 @@ The CareerLink Team
 
                 case "applicationHired":
                     await this._addNotification.saveNotification(data.userEmail, "You have been hired !!", "/profile/user/jobsApplied");
+                    await this._mailer.sendMail(data.userEmail, "Welcome to the Team",
+                        `Dear ${data.username},
+
+We are pleased to inform you that you have been selected.
+Congratulations on your successful application. We were impressed with your qualifications and believe you will be a valuable addition to our team.
+
+Please note that further instructions regarding your start date, onboarding process, and required documentation will be shared with you shortly. For now, no action is required on your part.
+
+If you have any immediate questions, feel free to reach out.
+Welcome aboard—we look forward to working with you.
+
+Best regards,   
+The CareerLink Team
+`
+                    );
+                    
                     break;
 
                 case "sendWarningMail":
