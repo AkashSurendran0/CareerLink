@@ -1,30 +1,30 @@
-import Redis from "ioredis";
+import { createClient } from "redis";
 import dotenv from "dotenv";
 import { logger } from "./logger";
-import { createClient } from "redis";
 
 dotenv.config();
 
-export const redisClient=createClient({
-    url: process.env.REDIS_URL as string
+export const redisClient = createClient({
+  url: process.env.REDIS_URL as string,
 });
 
-redisClient.on("connect", ()=>{
+let isConnected = false;
+
+export async function connectRedis() {
+  if (isConnected) return;
+
+  redisClient.on("connect", () => {
     logger.info("Redis connected");
-});
+  });
 
-redisClient.on("ready", () => {
+  redisClient.on("ready", () => {
     logger.info("Redis ready");
-});
+  });
 
-redisClient.on("error", (err) => {
+  redisClient.on("error", (err) => {
     logger.error({ err }, "Redis connection error");
-});
+  });
 
-(async () => {
-    try {
-        await redisClient.connect();
-    } catch (err) {
-        logger.error({ err }, "Redis failed to connect");
-    }
-})();
+  await redisClient.connect();
+  isConnected = true;
+}

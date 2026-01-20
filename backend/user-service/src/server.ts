@@ -12,6 +12,7 @@ import { initUserSocket } from "./utils/Socket";
 import http from "http";
 import { logger } from "./utils/logger";
 import Router from "express";  
+import { connectRedis } from "./utils/RedisClient";
 
 const app = express();
 const router = Router();
@@ -26,6 +27,7 @@ const server=http.createServer(app);
 initUserSocket(server);
 dotenv.config();
 connectDB();
+connectRedis();
 dbConnect();  
 app.use(session({ 
     secret: "batman",
