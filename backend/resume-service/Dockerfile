@@ -1,33 +1,37 @@
 # ---------- Build Stage ----------
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy package files first (better caching)
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy source code
 COPY . .
-
-# Build TypeScript
 RUN npm run build
 
 
 # ---------- Production Stage ----------
-FROM node:20-alpine
+FROM node:20-slim
+
+# Install Chromium + fonts
+RUN apt-get update && apt-get install -y \
+  chromium \
+  fonts-liberation \
+  libatk-bridge2.0-0 \
+  libgtk-3-0 \
+  libnss3 \
+  libxss1 \
+  libasound2 \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /app
 
-# Copy only required files from builder
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
-# Expose service port (change per service)
 EXPOSE 5006
 
-# Start service
 CMD ["node", "dist/server.js"]

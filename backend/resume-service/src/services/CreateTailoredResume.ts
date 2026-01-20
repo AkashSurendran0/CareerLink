@@ -5,6 +5,7 @@ import pdf from "html-pdf-node";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import { logger } from "../utils/logger";
+import { generatePdfFromHtml } from "../utils/puppeteerPdf";
 
 dotenv.config();
 
@@ -133,8 +134,7 @@ export class CreateTailoredResume implements ICreateTailoredResume {
             const htmlOutput = await this.generateResume(prompt);
             const cleanHTML = this.cleanHTMLOutput(htmlOutput);
 
-            const file = { content: cleanHTML };
-            const pdfBuffer = await (pdf as any).generatePdf(file, { format: "A4" });
+            const pdfBuffer = await generatePdfFromHtml(cleanHTML);
 
             return {
                 success: true,
