@@ -22,7 +22,7 @@ export class GetAvailableJobs implements IGetAvailableJobs {
             const application = await this._jobApplicationRepository.getJobApplicants(job._id, "All");
             if (application!.result.length > 0) {
                 for (const app of application!.result as any[]) {
-                    if (app.user == user) {
+                    if (app.applicants.user == user) {
                         include = true;
                     }
                     if (include) break;
