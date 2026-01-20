@@ -260,7 +260,7 @@ export default function ChatsPage() {
         }
         formData.append("convoId", selectedConvo);
         formData.append("message", messageInput);
-        const result = await sendMessage(formData);
+        const result = await sendMessage(formData, companyDetails?.id);
         setLoading(false);
         const lastMessage =
           result.result?.content[result.result?.content?.length - 1];
