@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { STATUS_CODES } from "../utils/StatusCodes";
 import { TYPES } from "../types";
-import { IAddAcceptedCallStatus, IAddRejectedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
+import { IAddAcceptedCallStatus, IAddRejectedCallStatus, IDeleteConversation, IGetChats, IGetConversations, IGetOtherUser, IGetReportedMessage, IReadMessages, IScheduleCall, ISendMessage, IStartConversation } from "../domain/services/IChatServices";
 import axios from "axios";
 import dotenv from "dotenv";
 import { uploadPost } from "../config/upload";
@@ -22,7 +22,8 @@ export class ChatController {
         @inject(TYPES.IScheduleCall) private _scheduleCall: IScheduleCall,
         @inject(TYPES.IDeleteConversation) private _deleteConversation: IDeleteConversation,
         @inject(TYPES.IAddAcceptedCallStatus) private _addAcceptedCallStatus: IAddAcceptedCallStatus,
-        @inject(TYPES.IAddRejectedCallStatus) private _addRejectedCallStatus: IAddRejectedCallStatus
+        @inject(TYPES.IAddRejectedCallStatus) private _addRejectedCallStatus: IAddRejectedCallStatus,
+        @inject(TYPES.IGetOtherUser) private _getOtherUser: IGetOtherUser
     ) { }
 
     startUserConversation = async (req: Request, res: Response) => {
@@ -139,9 +140,7 @@ export class ChatController {
     getCompanyConversations = async (req: Request, res: Response) => {
         try {
             const { company } = req.query as { company: string };
-            console.log(company);
             let result = await this._getConversations.getConversations(company);
-            console.log(result);
             for (let i = 0; i < result.length; i++) {
                 const userDetails = await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${result[i]!.users}`);
                 // @ts-ignore
@@ -151,7 +150,6 @@ export class ChatController {
                 // @ts-ignore
                 result[i].pfp = userDetails.data.result?.pfp || null;
             }
-            console.log(result);
             res.json({ result });
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -164,9 +162,8 @@ export class ChatController {
 
     getReportedMessage = async (req: Request, res: Response) => {
         try {
-            const { user1, user2, chatId } = req.query as { user1: string, user2: string, chatId: string };
-            console.log(user1, user2, chatId);
-            const result = await this._getReportedMessages.getReportedMessage(user1, user2, chatId);
+            const { convo, chatId } = req.query as { convo: string, chatId: string };
+            const result = await this._getReportedMessages.getReportedMessage(convo, chatId);
             res.json(result);
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -209,7 +206,6 @@ export class ChatController {
     addAcceptedCallStatus = async (req:Request, res:Response) => {
         try {
             const {convo, duration}=req.query as {convo:string, duration:string};
-            console.log(convo, duration);
             const result=await this._addAcceptedCallStatus.addAcceptedCallStatus(convo, duration);
             res.json({result});
         } catch (error: unknown) {
@@ -225,6 +221,20 @@ export class ChatController {
         try {
             const {convo} = req.query as {convo:string};  
             const result=await  this._addRejectedCallStatus.addRejectCallStatus(convo);
+            res.json({result});
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                res.status(STATUS_CODES.NOT_FOUND).json({ message: error.message });
+            } else {
+                res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Unexpected error occurred" });
+            }
+        }
+    };
+
+    getOtherUser = async (req:Request, res:Response) => {
+        try {
+            const {reportedUser, convo} = req.query as {reportedUser:string, convo:string};
+            const result=await this._getOtherUser.getOtherUser(reportedUser, convo);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {

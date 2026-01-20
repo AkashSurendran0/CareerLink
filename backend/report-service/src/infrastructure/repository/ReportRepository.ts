@@ -74,6 +74,7 @@ export class ReportRepository implements IReportRepository {
             reportedBy?: string | null;
             reportedChat?: string | null;
             reportedAccount?: string | null;
+            reportedConvo?:string | null;
             reason: string;
             status: string;
             createdAt: Date;
@@ -85,6 +86,7 @@ export class ReportRepository implements IReportRepository {
                 report.id,
                 report.reportedBy,
                 report.reportedChat,
+                report.reportedConvo,
                 report.reportedAccount,
                 report.reason,
                 report.status,
@@ -100,6 +102,7 @@ export class ReportRepository implements IReportRepository {
             id: string;
             reportedBy?: string | null;
             reportedChat?: string | null;
+            reportedConvo?:string | null;
             reportedAccount?: string | null;
             reason: string;
             status: string;
@@ -113,6 +116,7 @@ export class ReportRepository implements IReportRepository {
                 report.id,
                 report.reportedBy,
                 report.reportedChat,
+                report.reportedConvo,
                 report.reportedAccount,
                 report.reason,
                 report.status,
@@ -129,6 +133,7 @@ export class ReportRepository implements IReportRepository {
             existingReport.id,
             existingReport.reportedBy ?? null,
             existingReport.reportedChat ?? null,
+            existingReport.reportedConvo ?? null,
             existingReport.reportedAccount ?? null,
             existingReport.reason,
             existingReport.status,
@@ -146,11 +151,11 @@ export class ReportRepository implements IReportRepository {
         return {success:true};
     }
 
-    async reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{ success: boolean; }> {
+    async reportMessage(reporter: string, convo: string, chat: string, type: string): Promise<{ success: boolean; }> {
         const existingReport=await ReportModel.findOne({
             where:{
                 reportedBy:reporter,
-                reportedAccount:sendBy,
+                reportedConvo:convo,
                 status:"Pending"
             }
         });
@@ -158,8 +163,8 @@ export class ReportRepository implements IReportRepository {
         await ReportModel.create(
             {
                 reportedBy:reporter,
-                reportedAccount:sendBy,
-                reportedChat:chat,
+                reportedConvo:convo,
+                reportedChat:chat, 
                 reason:type
             }
         );

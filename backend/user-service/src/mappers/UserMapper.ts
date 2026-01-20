@@ -9,7 +9,7 @@ export class UserMapper {
             suspended: Boolean(user.suspended),
             status: Boolean(user.status),
             isVip: Boolean(user.isVip),
-            createdAt: user.createdAt instanceof Date ? user.createdAt : undefined,
+            createdAt: user.createdAt instanceof Date ? user.createdAt : user.createdAt,
         };
     }
 }

@@ -10,7 +10,6 @@ const api=axios.create({
 
 api.interceptors.request.use(
     (config)=>{
-        console.log(apiGatewayRoute, frontedRoute)
         const openRoutes=["/user/v1/login", 
             "/user/v1/signup", 
             "/user/v1/changePassword", 

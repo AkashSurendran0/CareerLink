@@ -19,6 +19,7 @@ export class GetPreviousUserReports implements IGetPreviousUserReports {
             reportedBy: report.reportedBy ?? null,
             reportedChat: report.reportedChat ?? null,
             reportedAccount: report.reportedAccount ?? null,
+            reportedConvo: report.reportedConvo ?? null,
             reason: report.reason,
             status: report.status,
             createdAt: report.createdAt,

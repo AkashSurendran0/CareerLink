@@ -632,6 +632,7 @@ export default function ChatsPage() {
                             onRemind={() =>
                               remindUser(message.date, message.time)
                             }
+                            admin={false}
                             onCall={videoCallUser}
                             isMe={isMe}
                             isRead={message.isRead}

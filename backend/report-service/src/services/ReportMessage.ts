@@ -10,8 +10,8 @@ export class ReportMessage implements IReportMessage {
         @inject(TYPES.IReportRepository) private _reportRepository:IReportRepository
     ){}
 
-    async reportMessage(reporter: string, sendBy: string, chat: string, type: string): Promise<{ success: boolean; }> {
-        const result=await this._reportRepository.reportMessage(reporter, sendBy, chat, type);
+    async reportMessage(reporter: string, convo: string, chat: string, type: string): Promise<{ success: boolean; }> {
+        const result=await this._reportRepository.reportMessage(reporter, convo, chat, type);
         return result;
     }
 

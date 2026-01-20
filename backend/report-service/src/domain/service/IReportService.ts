@@ -25,7 +25,7 @@ export interface ICloseReport {
 }
 
 export interface IReportMessage {
-    reportMessage(reporter:string, sendBy:string, chat:string, type:string): Promise<{success:boolean}>
+    reportMessage(reporter:string, convo:string, chat:string, type:string): Promise<{success:boolean}>
 }
 
 export interface IGetReportAnalytics {

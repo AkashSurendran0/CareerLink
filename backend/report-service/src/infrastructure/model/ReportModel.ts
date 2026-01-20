@@ -5,6 +5,7 @@ export class ReportModel extends Model {
     public id!:string;
     public reportedBy!:string;
     public reportedChat?:string;
+    public reportedConvo?:string;
     public reportedAccount?:string;
     public reportedCompany?:string;
     public reason!:string;
@@ -24,6 +25,10 @@ ReportModel.init(
             type:DataTypes.STRING
         },
         reportedChat:{
+            type:DataTypes.STRING,
+            defaultValue:null
+        },
+        reportedConvo:{
             type:DataTypes.STRING,
             defaultValue:null
         },
@@ -49,3 +54,4 @@ ReportModel.init(
         timestamps:true
     }
 );
+ 

@@ -73,7 +73,6 @@ export default function FeedsPage() {
     const result=await getAllPosts(LIMIT, shownRef.current)
     shownRef.current+=result.result.allPost.length
     if(shownRef.current>=result.result.count) setFinished(true)
-      console.log('1', result)
     setPosts([...result.result.allPost])
     setIsLoading(false)
   }
@@ -162,7 +161,6 @@ export default function FeedsPage() {
     setSinglePostUserDetails({pfp:post.pfp, name:post.userName})
     const result=await loadSinglePostDetails(post._id)
     setLoading(false)
-    console.log(result.result)
     setSelectedPost(result.result)
   }
 

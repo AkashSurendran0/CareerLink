@@ -66,4 +66,10 @@ export class ConversationRepository implements IConversationRepository {
         return { success: true };
     }
 
+    async getOtherUser(user: string, convo: string): Promise<{ isCompany: boolean; id: string; }> {
+        const existingConversation = await ConversationModel.findById(convo);
+        const otherUser=existingConversation?.users.filter(a => a!=user);
+        return {isCompany:existingConversation?.isCompany ?? false, id:otherUser![0] ?? ""};
+    }
+
 }

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { changeUserStatus, closeReport, getDetailsByQuery, getReportDetails, getReportedMessage, sendWarningMail } from "@/services/adminService"
+import { changeCompanyStatus, changeUserStatus, closeReport, discoverCompanyInfo, getDetailsByQuery, getReportDetails, getReportedMessage, sendWarningMail } from "@/services/adminService"
 import { enqueueSnackbar } from "notistack"
 import { User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { CallStatusMessage } from "@/reusable-components/callStatusMessage"
+import { ScheduledMeetingMessage } from "@/reusable-components/scheduleMeetingMessage"
 
 interface Props {
   params: Promise<{ id: string }>,
@@ -51,17 +52,24 @@ interface ReportDetails {
 export default function ReportedChatPage({ params, searchParams }: Props) {
   const router = useRouter()
   const id = (params as unknown as { id: string }).id
+  const isCompany = (searchParams as unknown as { isCompany: string }).isCompany
   const reportId = (searchParams as unknown as { reportId: string }).reportId
+  const other = (searchParams as unknown as { other: string }).other
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+  const [companyDetails, setCompanyDetails] = useState<UserDetails | null>(null)
   const [reportDetails, setReportDetails] = useState<ReportDetails | null>(null)
   const [reportedMessages, setReportedMessages] = useState<Message[]>([])
   const [reportedMessage, setReportedMessage] = useState<Message | null>(null)
 
 
   useEffect(() => {
-    getUserDetails()
+    if(!isCompany) return
+
+    if(isCompany == 'false') getUserDetails()
+    else getCompanyDetails()
+
     fetchReportDetails()
-  }, [])
+  }, [isCompany, id])
 
   useEffect(() => {
     if (!reportDetails) return
@@ -70,28 +78,33 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
   }, [reportDetails])
 
   const getUserDetails = async () => {
-    const result = await getDetailsByQuery(id)
+    const result = await getDetailsByQuery(other)
     setUserDetails(result.result)
   }
 
+  const getCompanyDetails = async () => {
+    const result = await discoverCompanyInfo(other)
+    const data = {
+      result : {
+        username : result.result.name,
+        email : result.result.registeredBy
+      },
+      pfp : result.result.logo
+    }
+    setUserDetails(data)
+  }
+
   const getReportedMessageDetails = async () => {
-    console.log(4)
     if (!reportDetails || !reportDetails.reportedBy || !reportDetails.reportedChat) return
-    console.log(5)
-    const result = await getReportedMessage(id, reportDetails.reportedBy, reportDetails.reportedChat)
-    console.log(6, result)
+    const result = await getReportedMessage(id, reportDetails.reportedChat)
     const message = await result.content.filter((msg: Message) => msg._id == reportDetails.reportedChat)
-    console.log(7, message)
     setReportedMessage(message[0])
     setReportedMessages(result.content)
   }
 
   const fetchReportDetails = async () => {
-    console.log(1)
     const result = await getReportDetails(reportId)
-    console.log(2, result)
     if (result.result.success) {
-      console.log(3)
       setReportDetails(result.result.report)
     } else {
       enqueueSnackbar('Report not available, please try again later')
@@ -105,9 +118,10 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
 
   const suspendUser = async () => {
     const user = {
-      id: id
+      id: other
     }
-    await changeUserStatus(user)
+    if(isCompany == 'true') changeCompanyStatus(user)
+    else changeUserStatus(user)
     await alterReportStatus()
     router.push('/admin/reports')
   }
@@ -142,6 +156,21 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
               <div className="space-y-4">
                 {reportedMessages.map((msg) => {
                   const isReporter = reportDetails.reportedBy == msg.sendBy
+
+                  if (msg.isScheduleMessage) {
+                    return (
+                      <ScheduledMeetingMessage
+                      key={msg._id}
+                      date={msg.date}
+                      time={msg.time}
+                      admin={true}
+                      // onRemind={videoCallUser}
+                      // onCall={videoCallUser}
+                      isMe={!isReporter}
+                      isRead={msg.isRead}
+                      />
+                    )
+                  }
 
                   if(msg.callStatus) {
                     return (
@@ -305,7 +334,15 @@ export default function ReportedChatPage({ params, searchParams }: Props) {
                       onClick={suspendUser}
                       className="cursor-pointer w-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                     >
-                      Suspend User
+                      {isCompany == 'true' ? (
+                        <>
+                          Suspend Company
+                        </>
+                      ) : (
+                        <>
+                          Suspend User
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={sendMail}

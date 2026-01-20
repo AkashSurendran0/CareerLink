@@ -5,4 +5,5 @@ export interface IConversationRepository {
     getConversations(id:string): Promise<Conversation[]>
     findByUsers(user1:string, user2:string): Promise<{success:boolean, conversation?:Conversation}>
     deleteConversation(id:string): Promise<{success:boolean}>
+    getOtherUser(user:string, convo:string): Promise<{isCompany: boolean; id: string;}>
 }

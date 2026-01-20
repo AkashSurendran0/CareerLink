@@ -28,7 +28,7 @@ export interface IReadMessages {
 }
 
 export interface IGetReportedMessage {
-    getReportedMessage(user1:string, user2:string, chatId:string): Promise<ChatDto>
+    getReportedMessage(convo:string, chatId:string): Promise<ChatDto>
 }
 
 export interface IScheduleCall {
@@ -45,4 +45,8 @@ export interface IAddAcceptedCallStatus {
 
 export interface IAddRejectedCallStatus {
     addRejectCallStatus(convo:string): Promise<ChatDto | {success:boolean}>
+}
+
+export interface IGetOtherUser {
+    getOtherUser(reportedUser:string, convo:string): Promise<{isCompany:boolean, id:string}>
 }

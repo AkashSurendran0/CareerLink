@@ -19,5 +19,6 @@ router.delete("/deleteConversation", chatController.deleteConversation);
 router.patch("/scheduleCall", chatController.scheduleCall);
 router.patch("/addAcceptedCallStatus", chatController.addAcceptedCallStatus);
 router.patch("/addRejectCallStatus", chatController.addRejectCallStatus);
+router.get("/getOtherUser", chatController.getOtherUser);
 
 export default router;

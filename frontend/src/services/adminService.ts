@@ -136,8 +136,8 @@ export const discoverCompanyInfo = async (id:string) => {
     return res.data
 }
 
-export const getReportedMessage = async (user1:string, user2:string, reportedChat:string) => {
-    const res=await api.get(`${CHAT_V1_ROUTE}/getReportedMessage?user1=${user1}&user2=${user2}&chatId=${reportedChat}`)
+export const getReportedMessage = async (convo:string, chat:string) => {
+    const res=await api.get(`${CHAT_V1_ROUTE}/getReportedMessage?convo=${convo}&chatId=${chat}`)
     return res.data
 }
 

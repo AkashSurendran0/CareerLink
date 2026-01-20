@@ -15,6 +15,8 @@ type ReportDtoWithExtras = import("../dto/ReportDto").ReportDto & {
     reportedUserProfile?: string | null;
     reportedUserEmail?: string | null;
     reportedUserStatus?: boolean | null;
+    isCompany?: boolean;
+    otherId?: string;
 };
 
 @injectable()
@@ -81,7 +83,22 @@ export class ReportController {
                 const reportWithExtras = report as unknown as ReportDtoWithExtras;
                 const userDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${report.reportedBy}`);
                 reportWithExtras.reportedUserName = userDetails?.data?.result?.result?.username ?? null;
-                if(report.reportedAccount){
+                if(report.reportedConvo){
+                    const otherUser=await axios.get(`${process.env.API_GATEWAY_ROUTE}/chat/v1/getOtherUser?reportedUser=${report.reportedBy}&convo=${report.reportedConvo}`);
+                    if(otherUser.data.result.isCompany){
+                        const reportedCompanyDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/company/v1/getCompanyDetailsByQuery?id=${otherUser.data.result.id}`);
+                        const companyName = reportedCompanyDetails?.data?.result?.name ?? null;
+                        reportWithExtras.reportedCompanyName = companyName;
+                        reportWithExtras.otherId = otherUser.data.result.id;
+                        reportWithExtras.isCompany = otherUser.data.result.isCompany;
+                    }else{
+                        const reportedAccountDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${otherUser.data.result.id}`);
+                        const accountName = reportedAccountDetails?.data?.result?.result?.username ?? null;
+                        reportWithExtras.otherId = otherUser.data.result.id;
+                        reportWithExtras.reportedAccountName = accountName;
+                        reportWithExtras.isCompany = otherUser.data.result.isCompany;
+                    }
+                }else if(report.reportedAccount){
                     const reportedAccountDetails=await axios.get(`${process.env.API_GATEWAY_ROUTE}/user/v1/getDetailsByQuery?id=${report.reportedAccount}`);
                     const accountName = reportedAccountDetails?.data?.result?.result?.username ?? null;
                     reportWithExtras.reportedAccountName = accountName;
@@ -164,11 +181,11 @@ export class ReportController {
     reportMessage = async (req:Request, res:Response) => {
         try {
             const id=req.headers["user-id"] as string;
-            const {sendBy, chat, type} = req.query;
-            if (typeof sendBy !== "string" || typeof chat !== "string" || typeof type !== "string") {
+            const {convo, chat, type} = req.query;
+            if (typeof convo !== "string" || typeof chat !== "string" || typeof type !== "string") {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "sendBy, chat, and type parameters are required" });
             }
-            const result=await this._reportMessage.reportMessage(id, sendBy, chat, type);
+            const result=await this._reportMessage.reportMessage(id, convo, chat, type);
             res.json({result});
         } catch (error: unknown) {
             if (error instanceof Error) {

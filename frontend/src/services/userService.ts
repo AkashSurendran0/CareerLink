@@ -432,8 +432,8 @@ export const reportCompany = async (id: string, type: string) => {
     return res.data
 }
 
-export const reportMessage = async (sendBy: string, chatId: string, type: string) => {
-    const res = await api.post(`${REPORT_V1_ROUTE}/reportMessage?sendBy=${sendBy}&chat=${chatId}&type=${type}`)
+export const reportMessage = async (convo: string, chatId: string, type: string) => {
+    const res = await api.post(`${REPORT_V1_ROUTE}/reportMessage?convo=${convo}&chat=${chatId}&type=${type}`)
     return res.data
 }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import api from './lib/api'
 
 const publicRoutes = ['/', '/login', '/signup', '/resetPassword']
 const authOnlyRoutes = ['/login', '/signup', '/resetPassword']
@@ -24,7 +25,6 @@ export default function AuthGuard({
       }
 
       const isPublicRoute = publicRoutes.includes(pathname)
-      console.log('AuthGuard check:', pathname, isPublicRoute)
 
       // ✅ Public routes (landing page / login / signup / reset)
       if (isPublicRoute) {
@@ -54,6 +54,22 @@ export default function AuthGuard({
           router.replace('/login')
           return
         }
+        
+        const result=await api.get(`${process.env.NEXT_PUBLIC_API_GATEWAY_ROUTE}/user/v1/check`)
+
+
+        const isBlocked = result.data?.result?.success === true
+      
+        if(isBlocked && pathname !== '/blocked'){
+          router.replace('/blocked')
+          return
+        }
+
+        if(!isBlocked && pathname === '/blocked'){
+          router.replace('/feed')
+          return
+        }
+
       } catch {
         router.replace('/login')
         return

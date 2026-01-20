@@ -7,6 +7,7 @@ export class ReportMapper {
             id: report.id,
             reportedBy: report.reportedBy,
             reportedChat: report.reportedChat,
+            reportedConvo: report.reportedConvo,
             reportedAccount: report.reportedAccount,
             reason: report.reason,
             status: report.status,

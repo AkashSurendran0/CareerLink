@@ -17,10 +17,13 @@ interface Report {
     createdAt: string;
     reportedAccount?: string;
     reportedChat?: string;
+    reportedConvo?: string;
     reportedAccountName?: string;
     reportedCompany?: string;
     reportedCompanyName?: string;
     reportedUserName?: string;
+    isCompany?: boolean;
+    otherId?: string;
 }
 
 export default function ReportsPage() {
@@ -57,7 +60,7 @@ export default function ReportsPage() {
     }
 
     const routeToViewSingleReportPage = async (report: Report) => {
-        if (report.reportedAccount && report.reportedChat) router.push(`/admin/reports/chat/${report.reportedAccount}?reportId=${report.id}`)
+        if (report.reportedConvo && report.reportedChat) router.push(`/admin/reports/chat/${report.reportedConvo}?reportId=${report.id}&isCompany=${report.isCompany}&other=${report.otherId}`)
         else if (report.reportedAccount) router.push(`/admin/reports/user/${report.reportedAccount}?reportId=${report.id}`)
         else if (report.reportedCompany) router.push(`/admin/reports/company/${report.reportedCompany}?reportId=${report.id}`)
     }
@@ -149,9 +152,9 @@ export default function ReportsPage() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm">
                                                 <div className="text-blue-600 font-medium">
-                                                    {report.reportedAccount && report.reportedChat && (
+                                                    {report.reportedConvo && report.reportedChat && (
                                                         <>
-                                                            Chat:{report.reportedAccountName}
+                                                            Chat:{report.reportedAccountName || report.reportedCompanyName}
                                                         </>
                                                     )}
                                                     {report.reportedAccount && !report.reportedChat && (
@@ -203,9 +206,9 @@ export default function ReportsPage() {
                                 <div>
                                     <span className="text-gray-600">Reported Entity:</span>
                                     <div className="text-blue-600 font-medium">
-                                        {report.reportedAccount && report.reportedChat && (
+                                        {report.reportedConvo && report.reportedChat && (
                                             <>
-                                                Chat:{report.reportedAccountName}
+                                                Chat:{report.reportedAccountName || report.reportedCompanyName}
                                             </>
                                         )}
                                         {report.reportedAccount && !report.reportedChat && (

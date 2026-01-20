@@ -11,5 +11,6 @@ export const TYPES = {
     IScheduleCall:"IScheduleCall",
     IDeleteConversation:"IDeleteConversation",
     IAddAcceptedCallStatus:"IAddAcceptedCallStatus",
-    IAddRejectedCallStatus:"IAddRejectedCallStatus"
+    IAddRejectedCallStatus:"IAddRejectedCallStatus",
+    IGetOtherUser:"IGetOtherUser"
 };

@@ -1,6 +1,18 @@
 "use client"
 
+import { userLogout } from "@/services/userService"
+import { useRouter } from "next/navigation"
+
 export default function BlockedPage() {
+  const router=useRouter()
+
+  const handleLogout = async () => {
+    const result=await userLogout()
+      if(result.success){
+        router.replace('/login')
+      }
+      console.log("User logged out")
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,8 +46,11 @@ export default function BlockedPage() {
             <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
               Contact Support
             </button>
-            <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-md transition-colors">
-              Learn More
+            <button 
+            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-md transition-colors"
+            onClick={handleLogout}
+            >
+              Logout
             </button>
           </div>
 

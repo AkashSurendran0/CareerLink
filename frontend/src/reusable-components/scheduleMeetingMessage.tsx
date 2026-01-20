@@ -4,10 +4,11 @@ import { Calendar, Clock, Phone, Bell, Video, CheckCheck } from "lucide-react"
 interface ScheduledMeetingMessageProps {
     date: string
     time: string
-    onRemind: () => void
-    onCall: () => void
+    onRemind?: () => void
+    onCall?: () => void
     isMe: boolean
     isRead: boolean
+    admin: boolean
 }
 
 export function ScheduledMeetingMessage({
@@ -16,7 +17,8 @@ export function ScheduledMeetingMessage({
   onRemind,
   onCall,
   isMe,
-  isRead
+  isRead,
+  admin
 }: ScheduledMeetingMessageProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -52,7 +54,7 @@ export function ScheduledMeetingMessage({
                         </div>
                     </div>
 
-                    {isMe && (
+                    {isMe && !admin && (
                         <div className="flex gap-2">
                             <button
                             onClick={onRemind}
@@ -71,7 +73,7 @@ export function ScheduledMeetingMessage({
                         </div>
                     )}
                 </div>
-                {isMe && (
+                {isMe && !admin  && (
                     <div className="flex items-center gap-1 mt-1">
                     {isRead ? (
                         <CheckCheck className="h-4 w-4 text-green-500" />

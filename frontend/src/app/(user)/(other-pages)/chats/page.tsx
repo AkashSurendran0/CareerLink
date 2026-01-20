@@ -219,7 +219,6 @@ export default function ChatsPage() {
 
   const getUserConversations = async () => {
     const result = await getConversations()
-    console.log('result', result.result)
     setConversations(result.result)
   }
 
@@ -319,7 +318,7 @@ export default function ChatsPage() {
   const reportUserMessage = async () => {
     setConfirmModal(false)
     setLoading(true)
-    const result = await reportMessage(selectedMessage!.sendBy ?? "", selectedMessage!._id, selectedReport!)
+    const result = await reportMessage(selectedConvo!, selectedMessage!._id, selectedReport!)
     setLoading(false)
     if (result.result.success) {
       enqueueSnackbar('Report has been submitted with the message', { variant: 'success' })
@@ -437,19 +436,19 @@ export default function ChatsPage() {
                           <h3 className="font-medium text-gray-900 truncate">{user.username}</h3>
                           <div className="flex gap-2  ">
                             {user?.lastMessage?.content?.sendAt && (
-                              <span className="text-xs text-gray-500 flex-shrink-0">
-                                {new Date(user.lastMessage.content.sendAt).toLocaleDateString()}
-                              </span>
+                              <>
+                                <span className="text-xs text-gray-500 flex-shrink-0">
+                                  {new Date(user.lastMessage.content.sendAt).toLocaleDateString()}
+                                </span>
+                                <span className="text-xs text-gray-500 flex-shrink-0">|</span>
+                                <span className="text-xs text-gray-500 flex-shrink-0">
+                                  {new Date(user.lastMessage.content.sendAt).toLocaleTimeString("en-GB", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                  })}
+                                </span>
+                              </>
                             )} 
-                            <span className="text-xs text-gray-500 flex-shrink-0">|</span>
-                            {user?.lastMessage?.content?.sendAt && (
-                              <span className="text-xs text-gray-500 flex-shrink-0">
-                                {new Date(user.lastMessage.content.sendAt).toLocaleTimeString("en-GB", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                })}
-                              </span>
-                            )}
                           </div>
                         </div>
                         <p className={`text-sm ${user?.lastMessage?.content?.isRead ? 'text-gray-500' : 'text-black'}  truncate`}>{user?.lastMessage?.content?.message}</p>
@@ -526,6 +525,7 @@ export default function ChatsPage() {
                             time={message.time}
                             onRemind={videoCallUser}
                             onCall={videoCallUser}
+                            admin={false}
                             isMe={isMe}
                             isRead={message.isRead}
                           />

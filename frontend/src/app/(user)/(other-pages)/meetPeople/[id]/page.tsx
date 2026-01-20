@@ -40,7 +40,6 @@ export default function ProfileDashboard({params}: Props) {
 
         const fetchUserDetails=async ()=>{
             const details=await viewOtherUserDetails(id)
-            console.log(details.userDetails)
             setUserDetails(details.userDetails)
         }
 

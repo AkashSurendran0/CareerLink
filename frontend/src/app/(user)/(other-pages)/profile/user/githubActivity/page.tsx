@@ -74,7 +74,6 @@ function GitHubActivity() {
 
     const getActivityDetails = async (name: string) => {
         const details = await getGithubActivity(name)
-        console.log(details)
         if (details.result.success) {
             setHeatMap(details.result.heatmap)
         } else {
